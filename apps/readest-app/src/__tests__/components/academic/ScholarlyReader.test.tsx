@@ -137,6 +137,59 @@ describe('continuous academic flow', () => {
     expect(disconnect).toHaveBeenCalledTimes(2);
   });
 
+  it('keeps short equations at reading font scale, centered and zoomable', async () => {
+    const equation = { ...block('equation', 2, 'visual-region'), role: 'equation' as const };
+    equation.source[0]!.boxes[0] = { x: 10, y: 20, width: 80, height: 20 };
+    const onZoom = vi.fn();
+    const result = render(
+      <ScholarlyReader document={documentFor([equation])} session={session} onZoom={onZoom} />,
+    );
+    await act(async () => intersect(true));
+    const preview = screen.getByRole('button', { name: 'equation: Tap to zoom' });
+    expect(preview.style.maxWidth).toBe('120px');
+    expect(preview.classList.contains('mx-auto')).toBe(true);
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(120);
+    fireEvent.click(preview);
+    expect(onZoom).toHaveBeenCalledWith(equation);
+
+    result.rerender(
+      <ScholarlyReader
+        document={documentFor([equation])}
+        session={session}
+        onZoom={onZoom}
+        viewSettings={{ defaultFontSize: 24 }}
+      />,
+    );
+    expect(preview.style.maxWidth).toBe('160px');
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(160);
+  });
+
+  it('fits long equations to the available flow width without imposing equation scaling on figures', async () => {
+    const equation = { ...block('long-equation', 2, 'visual-region'), role: 'equation' as const };
+    equation.source[0]!.boxes[0] = { x: 10, y: 20, width: 400, height: 20 };
+    const result = render(
+      <ScholarlyReader document={documentFor([equation])} session={session} onZoom={vi.fn()} />,
+    );
+    await act(async () => intersect(true));
+    expect(screen.getByRole('button').style.maxWidth).toBe('600px');
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(360);
+    width = 220;
+    await act(async () => resize());
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(220);
+    result.unmount();
+
+    render(
+      <ScholarlyReader
+        document={documentFor([block('figure', 2, 'visual-region')])}
+        session={session}
+        onZoom={vi.fn()}
+      />,
+    );
+    await act(async () => intersect(true));
+    expect(screen.getByRole('button').style.maxWidth).toBe('');
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(220);
+  });
+
   it('ignores a cancelled preview rejection after a fresh render succeeds', async () => {
     let reject!: (error: Error) => void;
     renderRegion.mockImplementationOnce(

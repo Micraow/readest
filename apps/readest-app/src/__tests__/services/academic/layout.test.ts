@@ -66,6 +66,92 @@ describe('deterministic academic layout', () => {
     expect(validateSourceCoverage(d)).toEqual([]);
     expect(doc([p])).toEqual(d);
   });
+  it('keeps narrow, repeatedly aligned column gutters separate before constructing lines', () => {
+    // Real HPCC geometry has a 17.075 pt gutter on one row, below the old 18 pt split.
+    const p = page([
+      item(0, 'A title spanning the article', 90, 60, 440, 18),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 1, `Left column sentence ${i}.`, 63.761, 130 + i * 11, 237.119, 8.9664),
+      ),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 7, `Right column sentence ${i}.`, 317.955, 130 + i * 11, 241.758, 8.9664),
+      ),
+    ]);
+    p.width = 612;
+    const d = doc([p]);
+    expect(d.pages[0]?.columns).toHaveLength(2);
+    expect(
+      d.pages[0]?.lines
+        .filter((line) => /Left/.test(line.text))
+        .every((line) => !/Right/.test(line.text)),
+    ).toBe(true);
+    const text = d.blocks.map((block) => block.text).join(' ');
+    expect(text.indexOf('Left column sentence 5.')).toBeLessThan(
+      text.indexOf('Right column sentence 0.'),
+    );
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('places short bibliography markers on the correct side of a narrow gutter', () => {
+    const p = page(
+      Array.from({ length: 6 }, (_, i) => [
+        item(i * 3, `[${i + 1}] Left reference entry.`, 40, 120 + i * 12, 245, 8),
+        item(i * 3 + 1, `[${i + 20}]`, 295, 120 + i * 12, 13, 8),
+        item(i * 3 + 2, `Right reference entry ${i}.`, 313, 120 + i * 12, 237, 8),
+      ]).flat(),
+    );
+    const d = doc([p]);
+    expect(d.pages[0]?.lines).toHaveLength(12);
+    expect(
+      d.pages[0]?.lines.every(
+        (line) => !(line.text.includes('Left') && line.text.includes('Right')),
+      ),
+    ).toBe(true);
+    expect(d.blocks.find((block) => block.text.startsWith('[20]'))?.text).toBe(
+      '[20] Right reference entry 0.',
+    );
+  });
+  it('keeps run-in abstract text together and joins a wrapped article title', () => {
+    const p = page([
+      item(0, 'A long article title wrapping', 80, 60, 440, 24),
+      item(1, 'onto a second line', 180, 89, 240, 24),
+      item(2, 'Abstract— The method has low', 40, 150, 245, 9),
+      item(3, 'latency and modest resource usage.', 40, 161, 245, 9),
+      item(4, 'Its measurements are reproducible.', 40, 172, 245, 9),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 5, `Right body ${i}.`, 310, 150 + i * 14, 245),
+      ),
+    ]);
+    const d = doc([p]);
+    expect(d.blocks[0]?.text).toBe('A long article title wrapping onto a second line');
+    expect(d.blocks.find((block) => block.text.startsWith('Abstract'))?.text).toContain(
+      'low latency',
+    );
+    expect(d.blocks.find((block) => block.text.startsWith('Abstract'))?.type).toBe('paragraph');
+  });
+  it('attaches a dropped capital only to the first body row instead of merging three baselines', () => {
+    // The initial glyph occupies almost three body rows, as in the MP-RDMA introduction.
+    const initial = item(0, 'M', 48.96, 444.133035, 25.99304, 27.535);
+    initial.box.height = 24.89164;
+    initial.baseline = 463.38;
+    const body = [
+      item(1, 'ODULAR designs need high through-', 76.08, 444.4161426, 224.29399, 9.9626),
+      item(2, 'put and lower latency to meet increas-', 76.08, 455.33614846, 224.025, 9.9626),
+      item(3, 'ing demand from clients.', 48.95981028, 466.25615432, 251.5626, 9.9626),
+    ];
+    body.forEach((line, index) => {
+      line.box.height = 9.1257416;
+      line.baseline = 451.38 + index * 10.92000586;
+    });
+    const d = doc([page([initial, ...body])]);
+    expect(d.pages[0]?.lines).toHaveLength(3);
+    expect(d.blocks).toHaveLength(1);
+    expect(d.blocks[0]?.type).toBe('paragraph');
+    expect(d.blocks[0]?.text).toBe(
+      'MODULAR designs need high throughput and lower latency to meet increasing demand from clients.',
+    );
+    expect(d.blocks[0]?.source[0]?.itemIndices).toEqual([0, 1, 2, 3]);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
   it('preserves a ruled algorithm with every numbered line in one crop', () => {
     const p = page([
       item(0, 'Algorithm 1: Local procedure', 330, 201, 220),
@@ -105,6 +191,102 @@ describe('deterministic academic layout', () => {
     expect(d.blocks[0]?.source[0]?.boxes[0]?.width).toBeGreaterThan(490);
     expect(d.pages[0]?.columns).toHaveLength(2);
     expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('uses separate captions to bound adjacent figures and retains every caption row', () => {
+    const p = page([
+      item(0, 'Figure 1: Left panels', 40, 170, 245, 9),
+      item(1, 'Figure 2: Right panels with a wrapped', 310, 180, 245, 9),
+      item(2, 'caption continuing on the next line.', 310, 191, 210, 9),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 3, `Left prose ${i}.`, 40, 230 + i * 14, 245),
+      ),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 9, `Right prose ${i}.`, 310, 230 + i * 14, 245),
+      ),
+    ]);
+    p.graphics = [40, 170, 310, 440].map((x) => ({
+      kind: 'form',
+      box: { x, y: 90, width: 115, height: 65 },
+    }));
+    const d = doc([p]);
+    const figures = d.blocks.filter((block) => block.role === 'figure');
+    expect(figures).toHaveLength(2);
+    expect(figures[0]?.source[0]?.itemIndices).toContain(0);
+    expect(figures[1]?.source[0]?.itemIndices).toEqual([1, 2]);
+    expect(figures.every((block) => block.source[0]!.boxes[0]!.width < 300)).toBe(true);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('keeps disconnected diagram pieces and small labels with their shared caption', () => {
+    const p = page([
+      item(0, 'Fig. 2. A chart above the diagram.', 310, 140, 190, 8),
+      item(1, 'Fig. 3. Packet header with two panels', 310, 300, 245, 8),
+      item(2, 'and a wrapped caption.', 310, 310, 180, 8),
+      ...Array.from({ length: 8 }, (_, i) =>
+        item(i + 3, `Left prose ${i}.`, 40, 220 + i * 14, 245),
+      ),
+      ...Array.from({ length: 5 }, (_, i) =>
+        item(i + 11, `Right prose ${i}.`, 310, 340 + i * 14, 245),
+      ),
+    ]);
+    p.graphics = [
+      { kind: 'path', box: { x: 380, y: 70, width: 100, height: 60 } },
+      { kind: 'image', box: { x: 333, y: 178, width: 65, height: 20 } },
+      { kind: 'image', box: { x: 475, y: 178, width: 65, height: 20 } },
+      { kind: 'path', box: { x: 333, y: 242, width: 207, height: 30 } },
+      { kind: 'path', box: { x: 404, y: 165, width: 3, height: 5 } },
+    ];
+    const d = doc([p]);
+    const figures = d.blocks.filter((block) => block.role === 'figure');
+    expect(figures).toHaveLength(2);
+    const diagram = figures.find((block) => block.source[0]?.itemIndices.includes(1));
+    expect(diagram?.source[0]?.itemIndices).toEqual([1, 2]);
+    expect(diagram?.source[0]?.boxes[0]?.y).toBeLessThanOrEqual(165);
+    expect(diagram?.source[0]?.boxes[0]?.height).toBeGreaterThan(145);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('recognizes a standalone Roman table label without treating a table reference as a caption', () => {
+    const p = page([
+      item(0, 'TABLE I', 135, 100, 35, 8),
+      item(1, 'MEASURED VALUES', 100, 111, 110, 8),
+      item(2, 'Name     Value', 50, 137, 200, 8),
+      item(3, 'Sample      12', 50, 153, 200, 8),
+      item(4, 'Table I summarizes the results of this measurement.', 40, 200, 245),
+      item(5, 'Further prose belongs outside the source table.', 40, 214, 245),
+    ]);
+    p.graphics = [130, 146, 167].map((y) => ({
+      kind: 'rule',
+      box: { x: 40, y, width: 245, height: 0.5 },
+    }));
+    const d = doc([p]);
+    const tables = d.blocks.filter((block) => block.role === 'table');
+    expect(tables).toHaveLength(1);
+    expect(tables[0]?.source[0]?.itemIndices).toContain(0);
+    expect(tables[0]?.source[0]?.itemIndices).not.toContain(4);
+    expect(
+      d.blocks.some(
+        (block) => block.type !== 'visual-region' && block.text.startsWith('Table I summarizes'),
+      ),
+    ).toBe(true);
+  });
+  it('keeps thin-rule diagrams whose components are individually smaller than body text', () => {
+    const p = page([
+      item(0, 'Fig. 5. A compact window diagram.', 310, 105, 220, 8),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 1, `Left body sentence ${i}.`, 40, 150 + i * 14, 245),
+      ),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 7, `Right body sentence ${i}.`, 310, 150 + i * 14, 245),
+      ),
+    ]);
+    p.graphics = [
+      { kind: 'rule', box: { x: 321, y: 72, width: 231, height: 1 } },
+      ...Array.from({ length: 15 }, (_, i) => ({
+        kind: 'path' as const,
+        box: { x: 330 + i * 14, y: 84, width: 9, height: 5 },
+      })),
+    ];
+    const d = doc([p]);
+    expect(d.blocks.find((block) => block.role === 'figure')?.source[0]?.itemIndices).toContain(0);
   });
   it('suppresses repeated headers and page numbers, preserving source coverage', () => {
     const pages = [1, 2, 3].map((n) =>
@@ -230,6 +412,23 @@ describe('deterministic academic layout', () => {
     expect(d.blocks.some((b) => b.role === 'equation')).toBe(true);
     expect(validateSourceCoverage(d)).toEqual([]);
   });
+  it('keeps short inline-math continuations and parameter prose in the text flow', () => {
+    const p = page([
+      item(0, 'A small loss can lead to a dramatic throughput degradation', 40, 120, 245),
+      item(1, '(e.g., <≈60%) [2].', 40, 132, 80),
+      item(2, 'Second, a single path cannot use the whole network.', 40, 144, 245),
+      item(3, 'We select timing parameters from the prior experiment', 40, 180, 245),
+      item(4, 'paper; Ti = 300μs, Td = 4μs, Ti = 900μs,', 40, 192, 245),
+      item(5, 'and compare the results using the same workload.', 40, 204, 245),
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i + 6, `Right column body ${i}.`, 310, 120 + i * 14, 245),
+      ),
+    ]);
+    const d = doc([p]);
+    expect(d.blocks.filter((block) => block.role === 'equation')).toHaveLength(0);
+    expect(d.blocks.map((block) => block.text).join(' ')).toContain('(e.g., <≈60%) [2].');
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
   it('falls back conservatively for rotated body and textless scans', () => {
     const p = page([item(0, 'Rotated body text', 40, 150, 200)]);
     p.items[0]!.angle = Math.PI / 2;
@@ -305,6 +504,32 @@ describe('deterministic academic layout', () => {
     expect(d.blocks[0]?.type).toBe('visual-region');
     expect(d.blocks[0]?.fallbackReason).toMatch(/three or more/i);
     expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('keeps compact three-column prose out of the two-column path', () => {
+    const p = page(
+      [50, 205, 360].flatMap((x, c) =>
+        Array.from({ length: 6 }, (_, i) =>
+          item(c * 6 + i, `Column ${c} sentence.`, x, 100 + i * 14, 130),
+        ),
+      ),
+    );
+    const d = doc([p]);
+    expect(d.pages[0]?.columns).toEqual([]);
+    expect(d.blocks[0]?.fallbackReason).toMatch(/three or more/i);
+  });
+  it('keeps independently captioned figures separate without any body text columns', () => {
+    const p = page([
+      item(0, 'Figure 1. First measured plot.', 40, 220, 190),
+      item(1, 'Figure 2. Second measured plot.', 360, 220, 190),
+    ]);
+    p.graphics = [40, 360].map((x) => ({
+      kind: 'image',
+      box: { x, y: 100, width: 200, height: 100 },
+    }));
+    const d = doc([p]);
+    const figures = d.blocks.filter((block) => block.role === 'figure');
+    expect(figures).toHaveLength(2);
+    expect(figures.map((block) => block.source[0]?.itemIndices)).toEqual([[0], [1]]);
   });
   it('yields on long documents and stops at the next page after cancellation', async () => {
     const pages = Array.from({ length: 120 }, (_, n) =>

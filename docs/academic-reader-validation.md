@@ -4,10 +4,101 @@ Implementation scope: Phases 0–3, based on upstream
 `4c3ccfe85d4afd81e674b67d6a0627d83ba0744d`. No OCR, remote parser, AI, translation,
 Zotero writes or cloud upload were added.
 
-The published final source checkpoint is
+Before the quality correction, the implementation source checkpoint was
 [`288f421885745ad9e9d08879d0febf183ad92add`](https://github.com/Micraow/readest/commit/288f421885745ad9e9d08879d0febf183ad92add),
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
+
+## Reflow quality correction: academic-4 (2026-10-06)
+
+The academic-2 source-coverage and build gates below did not establish reading
+quality. A published, Distiller-optimized HPCC copy exposed a complete-page fallback
+on PDF page 3 and a clipped Figure 3 caption on page 4; MP-RDMA exposed interleaved
+columns, detached diagram pieces, and inline prose promoted to oversized formulas.
+These failures were reproduced in the original Linux CEF application before repair.
+
+The correction uses three local inputs (46 pages): the original author HPCC golden,
+an additional 15-page optimized HPCC copy tested privately, and the 16-page
+MP-RDMA ToN author copy with SHA-256
+`1622088345c08283aa4b920f5f43c461c044043012c3587ea9599c00ff26d3c1`.
+PDFs, extracted prose, and screenshots remain outside the repository. The committed
+public fixtures contain only geometry from the public author copies and generated
+replacement labels. The supplied-copy geometry and document-specific assertions
+remain local and are excluded from publication.
+
+Changes in `academic-4`:
+
+- Infer recurring column whitespace before joining baselines; short bibliography
+  markers participate in the final gutter position. Genuine three-column layouts
+  keep their explicit conservative fallback.
+- Use real captions and local source bands to collect complete figures, small
+  vector/image pieces, captions, and rotated axis labels. Distinct captions remain
+  separate even when padding overlaps. Figure/table references in prose are not
+  captions, and standalone Roman-numeral table labels are recognized.
+- Preserve complete column-local display mathematics, including raised fractions
+  and multi-branch braces, while keeping inline settings and reference URLs in prose.
+  Equation previews use the surrounding text scale rather than stretching every
+  short expression to the article width.
+- Join wrapped article titles, preserve run-in abstracts, and do not assign prose
+  outside a crop via geometric ownership slack. Attach a multi-row dropped capital
+  only to its first body baseline, preserving the subsequent line order.
+- Increment the parser version so old academic-2 and intermediate academic-3
+  layout caches are not reused.
+
+Acceptance adds semantic and rendered checks, not just source counts: no unexpected
+cross-column prose in the 46-page corpus, separate ownership for all 54 figure/table
+captions, complete target labels/branches/numerators, and before/after crop pixels.
+Both the primary repair and subsequent boundary regressions were tested red before
+their fixes. Final frontend/native build and installed-application results are
+recorded below when completed; a dependency-warming binary with the old frontend
+is not a corrected deliverable.
+
+Frozen correction source: `0d3567ca478fceef2da5aebd2cc4955b8bffddc4`.
+Local source gates passed: TypeScript/Biome; 158 focused academic tests; and the
+offline-compatible aggregate with **13,095 passed, 16 skipped**, **1,117 test files
+passed, 4 skipped**, retaining the existing `novel-import.test.ts` exclusion. Those counts include the
+local-only supplied-copy cases; they are not the public-checkout test count. The reduced
+public fixture/test set independently passes TypeScript/Biome and all 144 focused
+academic checks, with identical application-source blobs.
+The final Tauri frontend export passed with all 25 HTML pages and five verified
+academic-4 parser chunks. An initial concurrent frontend attempt was terminated
+with exit 137; the same constrained build completed after tests and old native
+test processes finished. This was a resource retry, not a skipped compiler gate.
+
+The corrected Linux native build passed offline with the pinned CEF toolchain.
+It remains a debug/unoptimized native profile with a production frontend, not an
+optimized release build. The 226,739,936-byte ELF has SHA-256
+`73d5e2ea54b2ff748537c90444285afce6a638c81d39bb07bf27ac3be2694e52`.
+All five frontend parser chunks were matched byte-for-byte to embedded Brotli
+assets; only academic-4 was present. `RUNPATH=$ORIGIN`, runtime dependencies
+resolve without build-toolchain paths, and the minimum GLIBC version is 2.39.
+Native reader acceptance passed using the portable candidate and preserved profiles:
+
+- The exact optimized HPCC file regenerated academic-4 automatically. Old
+  academic-2/3 cache files were neither deleted nor modified.
+- HPCC pages 3 and 10 show complete, local figure crops and live body text rather
+  than page images; page 4 retains both Figure 3 caption rows and normal timer prose.
+- MP-RDMA's abstract and dropped-cap introduction have correct text order. Its
+  packet-header diagram includes both panels, callouts, and the complete caption.
+- Figure zoom/pan/close returns to the same reading position; scrolling away and
+  back reloads crops; a 663-pixel window keeps content within the viewport.
+- The final drop-cap change affects only MP-RDMA page 1. Reanalysis of the preserved
+  HPCC runtime geometry produces identical blocks across all 15 pages.
+
+The portable candidate's symbol stripping was verified to preserve all loadable
+ELF sections/segments. The final portable archive was verified after packaging: all 238 payload files
+match the included `SHA256SUMS`, launcher/binary executable modes are retained,
+and no absolute or parent-traversing paths, PDFs, screenshots, profiles, or caches
+are included. The 206,024,890-byte archive has SHA-256
+`dc0c5f471e97f42d7c6515dba538e439faed615f0e22745a5088b5ae242597ad`.
+Library publication is a separate delivery action subject to its current file scope.
+
+Known remaining limitation from native inspection: complex inline fractions in
+the optimized HPCC parameter discussion around PDF pages 9–10 can still flatten
+into an imperfect numerator/denominator text order. Display-equation crop fixes do
+not claim complete inline mathematical reconstruction. The original PDF view
+remains the authoritative presentation for that expression. This is recorded
+separately from the repaired cross-column body order and figure/caption failures.
 
 ## Final source and frontend gates
 
@@ -183,8 +274,9 @@ not the PDF, original text or vector drawing paths.
 
 ## Remaining acceptance
 
-Real Zotero Personal Library/Storage authentication and the user's own HPCC
-attachment have not been exercised. No real key or private metadata was supplied.
+Real Zotero Personal Library/Storage authentication and authenticated attachment
+downloads have not been exercised. The separately supplied local PDF was tested
+in the reader as described above. No real API key or library metadata was supplied.
 Mocked downloads/offline reopening do not substitute for that check.
 
 On Android first, then Linux, confirm the user's collection hierarchy, lazy HPCC

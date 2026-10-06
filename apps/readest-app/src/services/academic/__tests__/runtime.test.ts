@@ -143,6 +143,55 @@ describe('academic PDF session lifecycle', () => {
     expect(options.transform).toEqual([1, 0, 0, 1, -100 * scale, -200 * scale]);
     await session.destroy();
   });
+  it.each([
+    { rotation: 0, transform: [1, 0, 0, -1, -20, 822], point: [120, 622] },
+    { rotation: 90, transform: [0, 1, 1, 0, -30, -20], point: [220, 130] },
+    { rotation: 180, transform: [-1, 0, 0, 1, 632, -30], point: [532, 230] },
+    { rotation: 270, transform: [0, -1, -1, 0, 822, 632], point: [432, 722] },
+  ])('maps a scale-one crop origin to canvas zero with page rotation $rotation and a shifted CropBox', async ({
+    rotation,
+    transform,
+    point,
+  }) => {
+    const p = page();
+    p.rotate = rotation;
+    p.getViewport.mockImplementation(({ scale }: { scale: number }) => ({
+      width: (rotation % 180 ? 792 : 612) * scale,
+      height: (rotation % 180 ? 612 : 792) * scale,
+      transform: transform.map((value) => value * scale),
+    }));
+    mocks.getPage.mockResolvedValue(p);
+    vi.stubGlobal('devicePixelRatio', 2);
+    const session = await openAcademicPdf(file());
+    const canvas = {
+      width: 0,
+      height: 0,
+      style: { width: '', height: '' },
+      getContext: vi.fn(() => ({})),
+    } as unknown as HTMLCanvasElement;
+    try {
+      await session.renderRegion(1, { x: 100, y: 200, width: 200, height: 100 }, canvas, 400);
+      const options = p.render.mock.calls[0]![0] as {
+        transform: number[];
+        viewport: { transform: number[] };
+      };
+      const matrix = options.viewport.transform;
+      // This point is the PDF-space inverse of the crop's top-left corner.
+      expect(
+        matrix[0]! * point[0]! + matrix[2]! * point[1]! + matrix[4]! + options.transform[4]!,
+      ).toBe(0);
+      expect(
+        matrix[1]! * point[0]! + matrix[3]! * point[1]! + matrix[5]! + options.transform[5]!,
+      ).toBe(0);
+      expect(options.transform).toEqual([1, 0, 0, 1, -400, -800]);
+      expect([canvas.width, canvas.height]).toEqual([800, 400]);
+      expect(canvas.style).toEqual({ width: '400px', height: '200px' });
+    } finally {
+      await session.destroy();
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('cancels active rendering and analysis when the session is destroyed', async () => {
     const p = page();
     const cancel = vi.fn();

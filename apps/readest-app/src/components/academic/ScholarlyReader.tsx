@@ -10,8 +10,10 @@ function VisualRegion({
   session,
   root,
   onZoom,
+  fontSize,
 }: {
   block: ScholarlyBlock;
+  fontSize: number;
   session: AcademicPdfSession;
   root: RefObject<HTMLDivElement | null>;
   onZoom: (block: ScholarlyBlock) => void;
@@ -24,6 +26,10 @@ function VisualRegion({
   const [failed, setFailed] = useState(false);
   const source = block.source[0];
   const box = source?.boxes[0];
+  const maximumWidth =
+    block.role === 'equation' && box
+      ? (box.width * fontSize) / Math.max(1, block.fontStats.median)
+      : undefined;
   useEffect(() => {
     const node = host.current;
     if (!node) return;
@@ -60,21 +66,24 @@ function VisualRegion({
     const observer = new ResizeObserver(measure);
     observer.observe(node);
     return () => observer.disconnect();
-  }, []);
+  }, [maximumWidth]);
   useEffect(() => {
     const target = canvas.current;
     if (!target || !source || !box || !visible || !width) return;
     const controller = new AbortController();
     setFailed(false);
-    void session.renderRegion(source.page, box, target, width, controller.signal).catch(() => {
-      if (!controller.signal.aborted) setFailed(true);
-    });
+    const targetWidth = Math.min(width, maximumWidth ?? width);
+    void session
+      .renderRegion(source.page, box, target, targetWidth, controller.signal)
+      .catch(() => {
+        if (!controller.signal.aborted) setFailed(true);
+      });
     return () => {
       controller.abort();
       target.width = 0;
       target.height = 0;
     };
-  }, [session, source, box, visible, width]);
+  }, [session, source, box, visible, width, maximumWidth]);
   if (!source || !box) return null;
   const label = `${block.role ?? 'visual'}: ${_('Tap to zoom')}`;
   return (
@@ -82,8 +91,8 @@ function VisualRegion({
       <button
         type='button'
         ref={host}
-        className='eink-bordered border-base-300 relative block w-full overflow-hidden rounded border bg-white'
-        style={{ aspectRatio: `${box.width} / ${box.height}` }}
+        className='eink-bordered border-base-300 relative mx-auto block w-full overflow-hidden rounded border bg-white'
+        style={{ aspectRatio: `${box.width} / ${box.height}`, maxWidth: maximumWidth }}
         onClick={() => onZoom(block)}
         aria-label={label}
       >
@@ -117,6 +126,7 @@ export default function ScholarlyReader({
   const root = useRef<HTMLDivElement>(null);
   const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
   const settings = { ...globalSettings, ...viewSettings };
+  const fontSize = Math.max(16, settings.defaultFontSize || 18);
   const storageKey = `readest:academic-position:${scholarly.fingerprint}`;
   useLayoutEffect(() => {
     const element = root.current;
@@ -161,7 +171,7 @@ export default function ScholarlyReader({
       <article
         className='mx-auto max-w-3xl select-text px-5 py-6 sm:px-10'
         style={{
-          fontSize: Math.max(16, settings.defaultFontSize || 18),
+          fontSize,
           lineHeight: Math.max(1.35, settings.lineHeight || 1.6),
           fontFamily: font ? `"${font}", serif` : 'serif',
         }}
@@ -176,6 +186,7 @@ export default function ScholarlyReader({
               <VisualRegion
                 key={block.id}
                 block={block}
+                fontSize={fontSize}
                 session={session}
                 root={root}
                 onZoom={onZoom}

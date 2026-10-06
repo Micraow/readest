@@ -14,7 +14,7 @@ import type {
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-2';
+export const PARSER_VERSION = 'academic-4';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -80,12 +80,32 @@ function lineText(items: PdfTextItem[]): string {
 /** Stable baseline clustering, then split spatially disconnected runs before column detection. */
 export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set()): LayoutLine[] {
   const items = page.items.filter((i) => i.text.trim() && !excluded.has(i.index));
+  const font = bodyFont(items);
+  const dropCaps = new Map<PdfTextItem, PdfTextItem>();
+  for (const initial of items) {
+    if (!/^\p{Lu}$/u.test(initial.text) || initial.fontSize < font * 1.7) continue;
+    const firstRun = items.find(
+      (item) =>
+        item.fontSize < initial.fontSize * 0.7 &&
+        item.fontSize >= font * 0.9 &&
+        (item.text.match(/\p{L}{3,}/gu) ?? []).length >= 3 &&
+        Math.abs(item.box.y - initial.box.y) < font * 0.5 &&
+        item.box.x >= right(initial.box) - 0.5 &&
+        item.box.x - right(initial.box) < font * 0.6,
+    );
+    if (firstRun) dropCaps.set(initial, firstRun);
+  }
   const rows: Array<{ baseline: number; size: number; items: PdfTextItem[] }> = [];
   // Main glyphs establish baseline anchors before superscripts/subscripts are attached.
-  for (const item of [...items].sort(
-    (a, b) =>
-      b.fontSize - a.fontSize || a.baseline - b.baseline || a.box.x - b.box.x || a.index - b.index,
-  )) {
+  for (const item of items
+    .filter((item) => !dropCaps.has(item))
+    .sort(
+      (a, b) =>
+        b.fontSize - a.fontSize ||
+        a.baseline - b.baseline ||
+        a.box.x - b.box.x ||
+        a.index - b.index,
+    )) {
     let closest: (typeof rows)[number] | undefined;
     let distance = Infinity;
     for (const row of rows) {
@@ -106,6 +126,49 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
     if (closest) closest.items.push(item);
     else rows.push({ baseline: item.baseline, size: item.fontSize, items: [item] });
   }
+  // A dropped capital spans several baselines. Attach it only after ordinary
+  // rows exist, so its larger font cannot merge those rows into one x-sorted line.
+  for (const [initial, firstRun] of dropCaps)
+    rows.find((row) => row.items.includes(firstRun))!.items.push(initial);
+  // Infer a recurring gutter from separate text runs before joining a baseline.
+  // A fixed word-gap threshold alone joins real two-column lines with narrow gutters.
+  const rawLines = items.map((item) => ({
+    id: `item-${item.index}`,
+    text: item.text,
+    box: item.box,
+    itemIndices: [item.index],
+    fontSize: item.fontSize,
+  }));
+  const candidate = detectColumns(page, rawLines, false).cut;
+  let gutter: number | undefined;
+  let support = 2;
+  if (candidate !== undefined) {
+    const font = bodyFont(items);
+    // Long runs locate the column neighborhood, but short reference markers can
+    // sit inside that estimate. Snap to whitespace shared by complete baselines.
+    for (let cut = Math.floor(candidate - font * 2); cut <= candidate + font * 2; cut++) {
+      const count = rows.filter((row) => {
+        if (row.items.some((item) => item.box.x < cut && right(item.box) > cut)) return false;
+        const left = row.items.filter((item) => right(item.box) <= cut);
+        const rhs = row.items.filter((item) => item.box.x >= cut);
+        return (
+          left.length &&
+          rhs.length &&
+          unionBoxes(left.map((item) => item.box)).width > page.width * 0.13 &&
+          unionBoxes(rhs.map((item) => item.box)).width > page.width * 0.13
+        );
+      }).length;
+      if (
+        count > support ||
+        (count === support &&
+          gutter !== undefined &&
+          Math.abs(cut - candidate) < Math.abs(gutter - candidate))
+      ) {
+        support = count;
+        gutter = cut;
+      }
+    }
+  }
   const lines: LayoutLine[] = [];
   for (const row of rows) {
     let group: PdfTextItem[] = [];
@@ -116,13 +179,18 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
         text: lineText(group),
         box: unionBoxes(group.map((i) => i.box)),
         itemIndices: group.map((i) => i.index),
-        fontSize: median(group.map((i) => i.fontSize)),
+        fontSize: median(group.filter((item) => !dropCaps.has(item)).map((i) => i.fontSize)),
       });
       group = [];
     };
     for (const item of row.items.sort((a, b) => a.box.x - b.box.x || a.index - b.index)) {
       const previous = group[group.length - 1];
-      if (previous && item.box.x - right(previous.box) > Math.max(18, row.size * 1.8)) flush();
+      if (
+        previous &&
+        (item.box.x - right(previous.box) > Math.max(18, row.size * 1.8) ||
+          (gutter !== undefined && right(previous.box) <= gutter && item.box.x >= gutter))
+      )
+        flush();
       group.push(item);
     }
     flush();
@@ -153,11 +221,12 @@ interface Region {
   role: VisualRole;
   confidence: number;
   reason?: string;
+  captionId?: string;
 }
 const captionRole = (text: string): VisualRole | undefined => {
   if (/^\s*(?:Algorithm|Procedure)\s+\d+[.:\s]/i.test(text)) return 'algorithm';
-  if (/^\s*Table\s+(?:\d+|[IVX]+)[.:\s]/i.test(text)) return 'table';
-  if (/^\s*(?:Figure|Fig\.)\s*\d+[.:\s]/i.test(text)) return 'figure';
+  if (/^\s*Table\s+(?:\d+|[IVX]+)(?:[.:](?:\s|$)|\s*$)/i.test(text)) return 'table';
+  if (/^\s*(?:Figure|Fig\.)\s*\d+(?:[.:](?:\s|$)|\s*$)/i.test(text)) return 'figure';
   return undefined;
 };
 function connected(a: Rect, b: Rect, gap: number): boolean {
@@ -264,12 +333,126 @@ function detectVisualRegions(
       });
     }
   }
+  // A shared caption establishes the figure boundary before graphics are grouped.
+  // Mere geometric proximity merges adjacent column figures, while filtering out
+  // small image/path components loses diagram labels and disconnected panels.
+  const figureColumns = detectColumns(page, lines);
+  for (const caption of captions.filter((line) => captionRole(line.text) === 'figure')) {
+    const cut = figureColumns.cut;
+    if (
+      cut === undefined &&
+      captions.some(
+        (other) =>
+          other !== caption &&
+          captionRole(other.text) === 'figure' &&
+          Math.abs(other.box.y - caption.box.y) < font * 4 &&
+          horizontalOverlap(other.box, caption.box) === 0,
+      )
+    )
+      continue; // With sparse text, keep independently captioned graphics local.
+    let wide = cut === undefined || (caption.box.x < cut - 2 && right(caption.box) > cut + 2);
+    if (!wide && cut !== undefined) {
+      const leftCaption = caption.box.x < cut;
+      const sameSide = (box: Rect) => box.x + box.width / 2 < cut === leftCaption;
+      const preceding = Math.max(
+        page.height * 0.05,
+        ...captions
+          .filter((line) => line.box.y < caption.box.y && sameSide(line.box))
+          .map((line) => bottom(line.box)),
+      );
+      const bandGraphics = page.graphics.filter(
+        (graphic) => graphic.box.y >= preceding && bottom(graphic.box) <= caption.box.y + 2,
+      );
+      const oppositeBody = lines.filter(
+        (line) =>
+          !sameSide(line.box) &&
+          line.box.y >= preceding &&
+          !captionRole(line.text) &&
+          line.fontSize >= font * 0.94 &&
+          (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length >= 6,
+      );
+      const oppositeBodyStart = Math.min(...oppositeBody.map((line) => line.box.y));
+      const oppositeCaption = captions.some(
+        (line) =>
+          line !== caption &&
+          !sameSide(line.box) &&
+          line.box.y >= preceding &&
+          line.box.y < oppositeBodyStart,
+      );
+      const oppositeProse = oppositeBodyStart < caption.box.y;
+      // A short, left-aligned shared caption can label a full-width panel grid.
+      // Independent captions or prose in the opposite column prevent widening.
+      wide =
+        !oppositeCaption &&
+        !oppositeProse &&
+        unionBoxes(bandGraphics.map((graphic) => graphic.box)).width > page.width * 0.65;
+    }
+    const scopeLeft = wide || caption.box.x < cut! ? 0 : cut!;
+    const scopeRight = wide || caption.box.x >= cut! ? page.width : cut!;
+    const inColumn = (box: Rect) => box.x >= scopeLeft - 2 && right(box) <= scopeRight + 2;
+    const column = !wide ? figureColumns.columns[caption.box.x >= cut! ? 1 : 0]?.box : undefined;
+    const priorCaptions = captions.filter(
+      (line) => line !== caption && line.box.y < caption.box.y && inColumn(line.box),
+    );
+    const priorProse = lines.filter(
+      (line) =>
+        line.box.y < caption.box.y &&
+        inColumn(line.box) &&
+        !captionRole(line.text) &&
+        line.fontSize >= font * 0.94 &&
+        (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length >= 6,
+    );
+    const lowerBound = Math.max(
+      page.height * 0.05,
+      ...priorCaptions.map((line) => bottom(captionBox(line, lines, page, column))),
+      ...priorProse.map((line) => bottom(line.box)),
+    );
+    const components = page.graphics.filter(
+      (graphic) =>
+        inColumn(graphic.box) &&
+        graphic.box.y >= lowerBound - 1 &&
+        bottom(graphic.box) <= caption.box.y + 2 &&
+        !regions.some((region) => centerInside(graphic.box, region.box)),
+    );
+    const drawing = unionBoxes(components.map((graphic) => graphic.box));
+    if (
+      drawing.width < font * 3 ||
+      drawing.height < font ||
+      caption.box.y - bottom(drawing) > font * 6
+    )
+      continue;
+    const captionBounds = captionBox(caption, lines, page, column ?? drawing);
+    const labelBand: Rect = {
+      x: scopeLeft,
+      y: drawing.y - font * 0.6,
+      width: scopeRight - scopeLeft,
+      height: bottom(captionBounds) - drawing.y + font * 0.6,
+    };
+    // Text glyphs (especially rotated axis labels and ticks) need not occur in a
+    // graphics operator's bounds. Include the associated text in the figure band.
+    const labels = page.items.filter(
+      (item) => item.text.trim() && centerInside(item.box, labelBand),
+    );
+    let box = unionBoxes([drawing, captionBounds, ...labels.map((item) => item.box)]);
+    if (column) {
+      // Retain the original column's centering when the caption is wider on one side.
+      const x = Math.min(column.x, box.x);
+      box = { ...box, x, width: Math.max(right(column), right(box)) - x };
+    }
+    regions.push({
+      box: padded(box, 2, page),
+      role: 'figure',
+      confidence: 0.94,
+      captionId: caption.id,
+    });
+  }
   const forms = page.graphics
     .filter(
       (g) =>
         (g.kind === 'form' || g.kind === 'image') &&
         g.box.width > font * 1.5 &&
-        g.box.height > font * 1.5,
+        g.box.height > font * 1.5 &&
+        !regions.some((region) => centerInside(g.box, region.box)),
     )
     .map((g) => g.box);
   // Nearby panels and their labels must form a full-width band before column inference.
@@ -363,72 +546,138 @@ function detectVisualRegions(
       });
     }
   }
-  // Standalone equations include nearby fragmented baselines and right-side equation numbers.
+  // Display math is a column-local block, not an isolated symbol or baseline.
   const available = lines.filter(
-    (l) =>
-      !l.itemIndices.every((id) => excluded.has(id)) &&
-      !regions.some((r) => centerInside(l.box, r.box)),
+    (line) =>
+      !line.itemIndices.every((id) => excluded.has(id)) &&
+      !regions.some((region) => centerInside(line.box, region.box)),
   );
-  for (const graphic of page.graphics) {
-    const rule = graphic.box;
-    if (
-      graphic.kind !== 'rule' ||
-      rule.height > 1.5 ||
-      rule.width < 5 ||
-      rule.width > font * 12 ||
-      regions.some((r) => centerInside(rule, r.box))
-    )
-      continue;
-    const nearby = available.filter(
+  const mathColumns = detectColumns(page, available);
+  const mathCut = mathColumns.cut;
+  const itemByIndex = new Map(page.items.map((item) => [item.index, item]));
+  const mathSymbol = /[=+−∑∫√∏≤≥≈≠∞∂∇\u0370-\u03ff\u2200-\u22ff]/;
+  for (const [columnIndex, { box: column }] of mathColumns.columns.entries()) {
+    const colLeft = mathCut !== undefined && columnIndex === 1 ? mathCut : 0;
+    const colRight = mathCut !== undefined && columnIndex === 0 ? mathCut : page.width;
+    // A numeric numerator may have been mistaken for a margin page number. It
+    // still contributes to crop geometry when connected to a genuine display.
+    const columnLines = lines.filter(
       (line) =>
-        horizontalOverlap(rule, line.box) > Math.min(rule.width, line.box.width) * 0.5 &&
-        line.box.width < rule.width * 2 &&
-        (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length < 3,
+        line.box.x >= colLeft - 2 &&
+        right(line.box) <= colRight + 5 &&
+        (!line.itemIndices.every((id) => excluded.has(id)) || /^\d+$/.test(line.text)) &&
+        !regions.some((region) => centerInside(line.box, region.box)),
     );
-    const above = nearby.filter(
-      (line) => bottom(line.box) <= rule.y + font * 0.3 && bottom(line.box) >= rule.y - font * 1.6,
-    );
-    const below = nearby.filter(
-      (line) => line.box.y >= rule.y - font * 0.3 && line.box.y <= rule.y + font * 1.6,
-    );
-    if (above.length && below.length)
-      regions.push({
-        box: padded(
-          unionBoxes([rule, ...above.map((l) => l.box), ...below.map((l) => l.box)]),
-          2,
-          page,
-        ),
-        role: 'equation',
-        confidence: 0.8,
-        reason: 'Fraction layout retained without reconstructing mathematical notation',
+    const hasNumber = (line: LayoutLine) =>
+      line.itemIndices.some((id) => {
+        const item = itemByIndex.get(id)!;
+        return /^\(\d+[a-z]?\)$/.test(item.text.trim()) && item.box.x > right(column) - font * 3;
       });
-  }
-  const mathCut = detectColumns(page, available).cut;
-  for (const line of available) {
-    if (regions.some((r) => centerInside(line.box, r.box))) continue;
-    const math = /[=∑∫√∏≤≥≈≠∞∂∇\u0370-\u03ff\u2200-\u22ff]/.test(line.text);
-    const numbered = /^\(\d+[a-z]?\)$/.test(line.text.trim());
-    const fragments =
-      line.itemIndices.length >= 4 && line.text.length / line.itemIndices.length < 4;
-    const prose = (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length;
-    if (!(numbered || (math && prose < 4 && (line.box.width < page.width * 0.65 || fragments))))
-      continue;
-    const colLeft = mathCut !== undefined && line.box.x >= mathCut ? mathCut : 0;
-    const colRight = mathCut !== undefined && line.box.x < mathCut ? mathCut : page.width;
-    const hasOtherColumn = mathCut !== undefined;
-    const neighbors = available.filter(
-      (l) =>
-        Math.abs(l.box.y - line.box.y) < font * 1.4 &&
-        (!hasOtherColumn || (l.box.x >= colLeft - 2 && right(l.box) <= colRight + 5)) &&
-        (l.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length < 5,
-    );
-    const box = unionBoxes(neighbors.map((l) => l.box));
-    regions.push({
-      box: padded(box, 2, page),
-      role: 'equation',
-      confidence: numbered ? 0.9 : 0.65,
-      reason: 'Display mathematics retained in original layout',
+    const prose = columnLines.filter((line) => {
+      if (hasNumber(line)) return false;
+      const words = (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length;
+      const connectiveWords = (
+        line.text.match(
+          /\b(?:the|a|an|we|is|are|be|for|to|from|with|where|since|thus|and|of|by|as|at)\b/gi,
+        ) ?? []
+      ).length;
+      return (
+        /https?:|www\.|[?&][\w-]+=/.test(line.text) ||
+        /^(?:where|since|thus|and|but|hence)\b/i.test(line.text) ||
+        words >= 4 ||
+        (line.box.x < column.x + font * 1.4 &&
+          (connectiveWords >= 2 ||
+            (!mathSymbol.test(line.text) && /\b[a-zA-Z]{3,}\b/.test(line.text))))
+      );
     });
+    const midline = (line: LayoutLine) => line.box.y + line.box.height / 2;
+    const inlineRows = prose.filter((text) =>
+      columnLines.some(
+        (line) => /=/.test(line.text) && Math.abs(midline(line) - midline(text)) < font * 0.65,
+      ),
+    );
+    const fragments = columnLines.filter(
+      (line) =>
+        !prose.includes(line) &&
+        !inlineRows.some((text) => Math.abs(midline(text) - midline(line)) < font * 1.3),
+    );
+    const groups: LayoutLine[][] = [];
+    for (const line of fragments.sort((a, b) => a.box.y - b.box.y)) {
+      const previous = groups[groups.length - 1];
+      const previousBottom = previous
+        ? Math.max(...previous.map((part) => bottom(part.box)))
+        : -Infinity;
+      const proseBetween = prose.some(
+        (text) => text.box.y >= previousBottom && text.box.y <= line.box.y,
+      );
+      if (previous && !proseBetween && line.box.y - previousBottom <= font * 0.9)
+        previous.push(line);
+      else groups.push([line]);
+    }
+    for (const group of groups) {
+      const box = unionBoxes(group.map((line) => line.box));
+      const numbered = group.some(hasNumber);
+      const fractionRules = page.graphics.filter(
+        ({ kind, box: rule }) =>
+          kind === 'rule' &&
+          rule.height <= 1.5 &&
+          rule.width >= 5 &&
+          rule.width <= font * 12 &&
+          rule.y >= box.y &&
+          bottom(rule) <= bottom(box) &&
+          horizontalOverlap(rule, box) > Math.min(rule.width, box.width) * 0.5 &&
+          group.some(
+            (line) =>
+              bottom(line.box) <= rule.y + font * 0.3 && horizontalOverlap(rule, line.box) > 0,
+          ) &&
+          group.some(
+            (line) => line.box.y >= rule.y - font * 0.3 && horizontalOverlap(rule, line.box) > 0,
+          ),
+      );
+      if (!group.some((line) => mathSymbol.test(line.text)) && !fractionRules.length) continue;
+      if (!numbered) {
+        const equalities = group.filter((line) => /=/.test(line.text));
+        const baselines = equalities.length ? equalities.map(midline) : [box.y + box.height / 2];
+        // Reassemble the whole local row before testing indentation and spacing.
+        // Inline sums, settings tuples and fractions touch their prose row even
+        // when PDF text extraction splits a standalone '=' or raised operator.
+        // Compare the expression's main row, not the top of its tall brackets:
+        // a display's ascenders can overlap a preceding short prose line.
+        const inline = prose.some((line) =>
+          baselines.some((baseline) => Math.abs(midline(line) - baseline) < font * 1.3),
+        );
+        if (inline || (!equalities.length && box.x < column.x + font * 1.3)) continue;
+      }
+      // Stretchy brace bottoms can descend beyond the nominal PDF font box.
+      const delimiterTails = group
+        .flatMap((line) => line.itemIndices)
+        .flatMap((id) => {
+          const item = itemByIndex.get(id)!;
+          return /[⎩⎭]/.test(item.text)
+            ? [{ ...item.box, height: item.baseline + item.fontSize - item.box.y }]
+            : [];
+        });
+      const crop = padded(
+        unionBoxes([box, ...delimiterTails, ...fractionRules.map((graphic) => graphic.box)]),
+        2,
+        page,
+      );
+      // Delimiter ascent boxes may overlap the previous prose line although
+      // their painted glyphs do not. Keep that line's ink out of the crop.
+      const precedingBottom = Math.max(
+        0,
+        ...prose
+          .filter((line) => line.box.y < box.y && horizontalOverlap(line.box, crop) > 0)
+          .map((line) => bottom(line.box) + 0.5),
+      );
+      const cropTop = Math.max(crop.y, Math.min(precedingBottom, ...group.map(midline)));
+      regions.push({
+        box: { ...crop, y: cropTop, height: bottom(crop) - cropTop },
+        role: 'equation',
+        confidence: numbered ? 0.9 : 0.75,
+        reason: 'Display mathematics retained in original layout',
+      });
+    }
   }
   // Merge intersecting visual detections so a source item can never be emitted twice.
   const merged: Region[] = [];
@@ -436,6 +685,9 @@ function detectVisualRegions(
     let current = region;
     for (let i = 0; i < merged.length; i++) {
       const other = merged[i]!;
+      // Padding can overlap between two separately captioned figures. That is not
+      // evidence that their panels belong to one visual block.
+      if (current.captionId && other.captionId && current.captionId !== other.captionId) continue;
       if (
         horizontalOverlap(current.box, other.box) > 1 &&
         verticalOverlap(current.box, other.box) > 1
@@ -450,6 +702,7 @@ function detectVisualRegions(
               : other.role,
           confidence: Math.min(current.confidence, other.confidence),
           reason: current.reason ?? other.reason,
+          captionId: current.captionId ?? other.captionId,
         };
         merged.splice(i, 1);
         i = -1;
@@ -500,6 +753,7 @@ function suppressedItems(
 function detectColumns(
   page: PageGeometry,
   lines: LayoutLine[],
+  checkColumnCount = true,
 ): { columns: LayoutColumn[]; cut?: number; ambiguous?: string } {
   const font = bodyFont(page.items);
   const body = lines.filter(
@@ -513,7 +767,9 @@ function detectColumns(
     if (anchor) anchor.count++;
     else anchors.push({ x: line.box.x, count: 1 });
   }
-  if (anchors.filter((a) => a.count >= 5).length >= 3)
+  // Raw PDF runs can be style fragments within one line; only completed lines
+  // establish independently aligned columns for this ambiguity guard.
+  if (checkColumnCount && anchors.filter((a) => a.count >= 5).length >= 3)
     return { columns: [], ambiguous: 'Three or more text columns are not safely supported' };
   let best: { cut: number; score: number; left: LayoutLine[]; right: LayoutLine[] } | undefined;
   for (let cut = page.width * 0.36; cut <= page.width * 0.64; cut += 2) {
@@ -524,6 +780,12 @@ function detectColumns(
     const leftEdge = Math.max(...left.map((l) => right(l.box)));
     const rightEdge = Math.min(...rhs.map((l) => l.box.x));
     if (rightEdge - leftEdge < font * 0.7) continue;
+    // Do not reinterpret two of three columns as one oversized column.
+    if (
+      leftEdge - Math.min(...left.map((l) => l.box.x)) > page.width * 0.49 ||
+      Math.max(...rhs.map((l) => right(l.box))) - rightEdge > page.width * 0.49
+    )
+      continue;
     const score =
       Math.min(left.length, rhs.length) -
       crossings * 3 -
@@ -582,7 +844,10 @@ function heading(
 ): boolean {
   if (line.fontSize >= font * 1.16 && line.text.length < 180) return true;
   if (line.fontSize < font * 0.94 || line.text.length >= 100) return false;
-  if (/^(?:abstract|references|bibliography|acknowledg(?:e)?ments|appendix)\b/i.test(line.text))
+  if (
+    /^abstract\s*[:—–-]?\s*$/i.test(line.text) ||
+    /^(?:references|bibliography|acknowledg(?:e)?ments|appendix)\b/i.test(line.text)
+  )
     return true;
   if (!/^(?:[1-9]|1\d)(?:\.\d+)*\s+\p{Lu}/u.test(line.text)) return false;
   // A number can begin a body continuation. Require size or style evidence;
@@ -677,7 +942,17 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
               ? 'list'
               : 'paragraph';
       const previous = pending[pending.length - 1];
-      const gap = previous ? line.box.y - bottom(previous.box) : Infinity;
+      const droppedInitial = previous?.itemIndices.some((id) => {
+        const item = items.get(id)!;
+        return /^\p{Lu}$/u.test(item.text) && item.fontSize > previous.fontSize * 1.7;
+      });
+      const previousBottom = previous
+        ? previous.box.y +
+          (droppedInitial
+            ? Math.min(previous.box.height, previous.fontSize * 1.35)
+            : previous.box.height)
+        : 0;
+      const gap = previous ? line.box.y - previousBottom : Infinity;
       const indent = previous ? line.box.x - previous.box.x : 0;
       if (
         type === 'paragraph' &&
@@ -695,10 +970,18 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
         (gap > font * 0.85 ||
           (indent > font * 0.85 && /[.!?][”"')\]]?$/.test(previous.text)) ||
           Math.abs(line.fontSize - previous.fontSize) > font * 0.2);
+      const wrappedTitle =
+        previous &&
+        type === 'heading' &&
+        pendingType === 'heading' &&
+        line.fontSize > font * 1.55 &&
+        Math.abs(line.fontSize - previous.fontSize) < line.fontSize * 0.05 &&
+        gap < line.fontSize * 0.7 &&
+        gap >= -line.fontSize * 0.2;
       if (
         previous &&
         (type !== pendingType ||
-          type === 'heading' ||
+          (type === 'heading' && !wrappedTitle) ||
           startsReference ||
           newParagraph ||
           gap > font * 1.2 ||
@@ -707,7 +990,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
         flush();
       pendingType = type;
       pending.push(line);
-      if (type === 'heading') flush();
+      if (type === 'heading' && line.fontSize <= font * 1.55) flush();
     }
     flush();
   }
@@ -785,7 +1068,7 @@ function analyzePage(
   const blocks: ScholarlyBlock[] = [];
   for (const region of regions) {
     const items = page.items.filter(
-      (i) => !assigned.has(i.index) && centerInside(i.box, region.box, 0.7),
+      (i) => !assigned.has(i.index) && centerInside(i.box, region.box),
     );
     items.forEach((i) => assigned.add(i.index));
     const block = makeBlock(
