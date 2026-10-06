@@ -152,6 +152,73 @@ describe('deterministic academic layout', () => {
     );
     expect(validateSourceCoverage(d)).toEqual([]);
   });
+  it.each([8, 16])('keeps a %i-prefixed body continuation in its paragraph', (count) => {
+    // HPCC page 3 PDF.js geometry: narrow glyph boxes leave a 6.861 pt gap,
+    // despite an ordinary 10.959 pt baseline advance. Labels are synthetic.
+    const body = [
+      'The evaluation includes several machines and',
+      `${count} Edge nodes joined by fast links. We deliberately choose`,
+      'representative traffic for the remaining measurements.',
+    ].map((text, index) => ({
+      ...item(index, text, 317.955, 600.987288 + index * 10.959, 240.249128832, 8.9664),
+      box: {
+        x: 317.955,
+        y: 600.987288 + index * 10.959,
+        width: 240.249128832,
+        height: 4.0976448,
+      },
+      baseline: 605.067 + index * 10.959,
+      fontName: 'g_d0_f6',
+      fontFamily: 'sans-serif',
+    }));
+    const p = page(body, 3);
+    p.width = 612;
+    p.height = 792;
+    const d = doc([p]);
+    expect(d.blocks).toHaveLength(1);
+    expect(d.blocks[0]?.type).toBe('paragraph');
+    expect(d.blocks[0]?.text).toBe(body.map((i) => i.text).join(' '));
+    expect(d.blocks[0]?.source[0]?.itemIndices).toEqual([0, 1, 2]);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('requires font evidence for numbered headings and retains opaque same-size heading styles', () => {
+    const p = page([
+      item(0, 'An ordinary body paragraph provides the dominant font.', 40, 100, 420),
+      item(1, '2 Section title', 40, 150, 120, 10.8),
+      item(2, 'More ordinary body prose supplies a reliable font sample.', 40, 180, 420),
+      item(3, '2.1', 40, 220, 14),
+      { ...item(4, 'Opaque styled title', 60, 220, 150), fontName: 'g_d0_f5' },
+      item(5, 'A body-sized numbered sentence stays ordinary even when isolated.', 40, 250, 420),
+      item(6, '8 More machines appear in the experiment.', 40, 290, 280),
+      { ...item(7, '16', 40, 330, 12), fontName: 'g_d0_f5' },
+      item(8, 'Workers appear with only their count emphasized.', 56, 330, 300),
+    ]);
+    const d = doc([p]);
+    expect(d.blocks.filter((b) => b.type === 'heading').map((b) => [b.text, b.level])).toEqual([
+      ['2 Section title', 2],
+      ['2.1 Opaque styled title', 3],
+    ]);
+    expect(d.blocks.find((b) => b.text.startsWith('8 More'))?.type).toBe('paragraph');
+    expect(d.blocks.find((b) => b.text.startsWith('16 Workers'))?.type).toBe('paragraph');
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('retains distinctly styled numbered run-in headings before same-baseline body text', () => {
+    const p = page([
+      item(0, 'Ordinary body prose establishes the document typeface.', 40, 100, 420),
+      { ...item(1, '3.2.1', 40, 140, 22), fontName: 'g_d4_f21' },
+      { ...item(2, 'Device behavior.', 72, 140, 85), fontName: 'g_d4_f21' },
+      item(3, 'The rest of this line is ordinary paragraph prose.', 161, 140, 250),
+      item(4, 'More body text continues on a later baseline.', 40, 154, 420),
+    ]);
+    const d = doc([p]);
+    expect(d.blocks[1]?.type).toBe('heading');
+    expect(d.blocks[1]?.level).toBe(3);
+    expect(d.blocks[1]?.text).toBe(
+      '3.2.1 Device behavior. The rest of this line is ordinary paragraph prose.',
+    );
+    expect(d.blocks[1]?.source[0]?.itemIndices).toEqual([1, 2, 3]);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
   it('retains display math as a visual region', () => {
     const p = page([
       item(0, 'A prose introduction.', 40, 120, 480),

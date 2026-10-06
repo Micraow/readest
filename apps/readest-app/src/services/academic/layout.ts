@@ -14,7 +14,7 @@ import type {
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-1';
+export const PARSER_VERSION = 'academic-2';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -574,18 +574,50 @@ function makeBlock(
     fontStats: fontStatistics(page.items.filter((i) => wanted.has(i.index))),
   };
 }
-function heading(line: LayoutLine, font: number): boolean {
+function heading(
+  line: LayoutLine,
+  font: number,
+  bodyTypeface: string | undefined,
+  items: Map<number, PdfTextItem>,
+): boolean {
+  if (line.fontSize >= font * 1.16 && line.text.length < 180) return true;
+  if (line.fontSize < font * 0.94 || line.text.length >= 100) return false;
+  if (/^(?:abstract|references|bibliography|acknowledg(?:e)?ments|appendix)\b/i.test(line.text))
+    return true;
+  if (!/^(?:[1-9]|1\d)(?:\.\d+)*\s+\p{Lu}/u.test(line.text)) return false;
+  // A number can begin a body continuation. Require size or style evidence;
+  // PDF.js font identifiers are opaque, so compare with the dominant body face.
+  if (line.fontSize >= font * 1.08) return true;
+  const leadingStyle: PdfTextItem[] = [];
+  let inStyledPrefix = true;
+  let characters = 0,
+    styled = 0;
+  for (const index of line.itemIndices) {
+    const item = items.get(index)!;
+    const length = item.text.trim().length;
+    characters += length;
+    if (bodyTypeface && item.fontName && item.fontName !== bodyTypeface) {
+      styled += length;
+      if (inStyledPrefix) leadingStyle.push(item);
+    } else inStyledPrefix = false;
+  }
+  // An emphasized number or word alone does not make the whole line a heading.
+  // Run-in headings may instead have a complete styled label before body prose.
   return (
-    (line.fontSize >= font * 1.16 && line.text.length < 180) ||
-    (line.fontSize >= font * 0.94 &&
-      line.text.length < 100 &&
-      (/^(?:[1-9]|1\d)(?:\.\d+)*\s+\p{Lu}/u.test(line.text) ||
-        /^(?:abstract|references|bibliography|acknowledg(?:e)?ments|appendix)\b/i.test(line.text)))
+    (characters > 0 && styled >= characters * 0.8) ||
+    /^(?:[1-9]|1\d)(?:\.\d+)*\s+\p{Lu}.+[.:]$/u.test(lineText(leadingStyle))
   );
 }
 const listStart = (s: string) => /^(?:[•●▪◦‣–]\s*|[-*]\s+|\d+[.)]\s+|[a-z][.)]\s+)/i.test(s);
 function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): ScholarlyBlock[] {
   const font = bodyFont(page.items);
+  const items = new Map(page.items.map((item) => [item.index, item]));
+  const typefaces = new Map<string, number>();
+  for (const item of page.items) {
+    if (Math.abs(item.fontSize - font) > font * 0.06) continue;
+    typefaces.set(item.fontName, (typefaces.get(item.fontName) ?? 0) + item.text.trim().length);
+  }
+  const bodyTypeface = [...typefaces].sort((a, b) => b[1] - a[1])[0]?.[0];
   const blocks: ScholarlyBlock[] = [];
   const groups = cut
     ? [
@@ -621,7 +653,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
       pending = [];
     };
     for (const line of [...group].sort((a, b) => a.box.y - b.box.y || a.box.x - b.box.x)) {
-      const isHeading = heading(line, font);
+      const isHeading = heading(line, font, bodyTypeface, items);
       const footnoteRule = page.graphics.some(
         (g) =>
           g.kind === 'rule' &&
