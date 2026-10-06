@@ -1,0 +1,93 @@
+/** Scale-1 PDF.js rotated viewport coordinates, in points, top-left origin. */
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+export interface PdfTextItem {
+  index: number;
+  text: string;
+  box: Rect;
+  baseline: number;
+  fontSize: number;
+  fontName: string;
+  fontFamily: string;
+  angle: number;
+  hasEOL: boolean;
+}
+export interface PdfGraphic {
+  box: Rect;
+  kind: 'form' | 'image' | 'path' | 'rule';
+}
+export interface PageGeometry {
+  page: number;
+  width: number;
+  height: number;
+  rotation: number;
+  items: PdfTextItem[];
+  graphics: PdfGraphic[];
+  tagged: boolean;
+}
+export interface SourceSpan {
+  page: number;
+  boxes: Rect[];
+  itemIndices: number[];
+}
+export interface FontStatistics {
+  median: number;
+  min: number;
+  max: number;
+  names: string[];
+}
+export interface LayoutLine {
+  id: string;
+  text: string;
+  box: Rect;
+  itemIndices: number[];
+  fontSize: number;
+}
+export interface LayoutColumn {
+  box: Rect;
+  confidence: number;
+}
+export type VisualRole = 'figure' | 'table' | 'algorithm' | 'equation' | 'unknown';
+export interface ScholarlyBlock {
+  id: string;
+  type: 'heading' | 'paragraph' | 'list' | 'reference' | 'footnote' | 'visual-region';
+  text: string;
+  source: SourceSpan[];
+  order: number;
+  confidence: number;
+  fontStats: FontStatistics;
+  level?: number;
+  listItems?: string[];
+  role?: VisualRole;
+  /** Why a region/page was preserved visually instead of reordered. */
+  fallbackReason?: string;
+}
+export interface PageAnalysis extends PageGeometry {
+  lines: LayoutLine[];
+  columns: LayoutColumn[];
+  visualRegions: Array<{ box: Rect; role: VisualRole; confidence: number }>;
+  blockIds: string[];
+  suppressedItemIndices: number[];
+  unsupportedReason?: string;
+}
+export interface ScholarlyDocument {
+  schemaVersion: number;
+  parserVersion: string;
+  fingerprint: string;
+  pageCount: number;
+  metadata: { title?: string; pdfjsVersion: string };
+  pages: PageAnalysis[];
+  blocks: ScholarlyBlock[];
+  readingOrder: string[];
+  sourceMap: Record<string, SourceSpan[]>;
+  warnings: string[];
+}
+export interface AnalysisProgress {
+  completed: number;
+  total: number;
+  stage: 'hashing' | 'extracting' | 'layout' | 'cached';
+}
