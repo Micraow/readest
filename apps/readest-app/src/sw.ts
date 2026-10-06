@@ -1,5 +1,5 @@
 import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
-import { NetworkFirst, CacheFirst, ExpirationPlugin, Serwist } from 'serwist';
+import { NetworkFirst, NetworkOnly, CacheFirst, ExpirationPlugin, Serwist } from 'serwist';
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -26,6 +26,17 @@ const serwist = new Serwist({
     ],
   },
   runtimeCaching: [
+    // Private provider requests must never enter CacheStorage. Serwist does not
+    // honor fetch(cache: 'no-store') automatically; a cached Request can retain
+    // its Authorization header as well as an undeletable second PDF copy.
+    {
+      matcher: ({ url, request }) =>
+        request.cache === 'no-store' ||
+        request.headers.has('Authorization') ||
+        request.headers.has('Zotero-API-Key') ||
+        url.hostname === 'api.zotero.org',
+      handler: new NetworkOnly(),
+    },
     {
       matcher: ({ url, request }) => {
         const clientRoutes = ['/library', '/reader'];
