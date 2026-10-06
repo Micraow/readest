@@ -33,6 +33,7 @@ import NotebookToggler from './NotebookToggler';
 import TranslationToggler from './TranslationToggler';
 import ViewMenu from './ViewMenu';
 import SyncInfoDialog from './SyncInfoDialog';
+import AcademicReadingButton from '@/components/academic/AcademicReadingButton';
 
 interface HeaderBarProps {
   bookKey: string;
@@ -334,6 +335,13 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         </div>
 
         <div className='header-tools-end bg-base-100 z-20 ms-auto flex h-full min-w-max items-center gap-x-4 ps-2 max-[350px]:gap-x-2'>
+          {bookData?.book?.format === 'PDF' && bookData.file && (
+            <AcademicReadingButton
+              file={bookData.file}
+              title={bookTitle}
+              viewSettings={viewSettings ?? undefined}
+            />
+          )}
           <NotebookToggler bookKey={bookKey} />
           <Dropdown
             label={_('View Options')}

@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import ZoteroSettings from '@/components/zotero/ZoteroSettings';
 import React, { useEffect, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import {
@@ -80,6 +81,7 @@ import SubPageHeader from './SubPageHeader';
 import { BoxedList, NavigationRow, SectionTitle, SettingLabel, Tips } from './primitives';
 
 type SubPage =
+  | 'zotero'
   | 'kosync'
   | 'bookorbit'
   | 'webdav'
@@ -239,6 +241,7 @@ const IntegrationsPanel: React.FC = () => {
       requestedSubPage === 'pagebound' ||
       requestedSubPage === 'notion' ||
       requestedSubPage === 'opds' ||
+      requestedSubPage === 'zotero' ||
       requestedSubPage === 'audiobookshelf' ||
       requestedSubPage === 'send' ||
       requestedSubPage === 'localsend'
@@ -255,6 +258,27 @@ const IntegrationsPanel: React.FC = () => {
   // SubPageHeader's "Integrations" label lands at the exact same Y position
   // as the list-view's h2 — clicking a row reads as a navigation morph
   // rather than a layout shift.
+  if (subPage === 'zotero')
+    return (
+      <div className='my-4 w-full'>
+        <SubPageHeader
+          parentLabel={_('Integrations')}
+          currentLabel={_('Zotero')}
+          onBack={() => setSubPage(null)}
+        />
+        <ZoteroSettings />
+        <button
+          type='button'
+          className='btn btn-contrast mx-4 mt-4'
+          onClick={() => {
+            useSettingsStore.getState().setSettingsDialogOpen(false);
+            router.push('/zotero');
+          }}
+        >
+          {_('Open Zotero Library')}
+        </button>
+      </div>
+    );
   if (subPage === 'kosync')
     return (
       <div className='my-4 w-full'>
@@ -843,6 +867,12 @@ const IntegrationsPanel: React.FC = () => {
         <SectionTitle className='mb-2'>{_('Content Sources')}</SectionTitle>
         <div className='card eink-bordered border-base-200 bg-base-100 overflow-hidden border'>
           <div className='divide-base-200 divide-y'>
+            <IntegrationRow
+              icon={RiFileList3Line}
+              title={_('Zotero')}
+              status={_('Read-only Personal Library')}
+              onClick={() => setSubPage('zotero')}
+            />
             <IntegrationRow
               icon={RiRssLine}
               title={_('OPDS Catalogs')}

@@ -40,6 +40,14 @@ afterEach(() => {
 });
 
 describe('ImportMenuPopup', () => {
+  it('opens the provider-owned Zotero shelf and closes the import menu', () => {
+    const onOpenZotero = vi.fn();
+    const { onClose } = renderPopup({ onOpenZotero });
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Zotero Library' }));
+    expect(onOpenZotero).toHaveBeenCalledOnce();
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
   it('shows the same always-available options as the library header menu', () => {
     renderPopup();
 

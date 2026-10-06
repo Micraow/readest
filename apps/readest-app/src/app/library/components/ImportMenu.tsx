@@ -16,6 +16,7 @@ export interface ImportMenuProps {
   onImportBookFromNovelUrl?: () => void;
   onOpenCatalogManager: () => void;
   onOpenFeeds: () => void;
+  onOpenZotero?: () => void;
 }
 
 const ImportMenu: React.FC<ImportMenuProps> = ({
@@ -27,6 +28,7 @@ const ImportMenu: React.FC<ImportMenuProps> = ({
   onImportBookFromNovelUrl,
   onOpenCatalogManager,
   onOpenFeeds,
+  onOpenZotero,
 }) => {
   const _ = useTranslation();
   const { appService } = useEnv();
@@ -101,6 +103,16 @@ const ImportMenu: React.FC<ImportMenuProps> = ({
         Icon={<MdRssFeed className='h-5 w-5' />}
         onClick={handleOpenFeeds}
       />
+      {onOpenZotero && (
+        <MenuItem
+          label={_('Zotero Library')}
+          Icon={<LuLibrary className='h-5 w-5' />}
+          onClick={() => {
+            setIsDropdownOpen?.(false);
+            onOpenZotero();
+          }}
+        />
+      )}
       <MenuItem
         label={appService?.isOnlineCatalogsAccessible ? _('Online Library') : _('OPDS Catalogs')}
         Icon={<LuLibrary className='h-5 w-5' />}
