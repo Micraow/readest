@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-10-06",
+  "purpose": "Readest Academic Reading Mode regression corpus",
+  "asset_policy": "Metadata only. Acquire authorized PDFs from the original URLs on demand into an ignored local directory. No PDFs, extracted copyright text, or private data are included.",
+  "verification": {
+    "method": "Each selected PDF URL was opened successfully with the web tool and identified as application/pdf; title and page count were checked from extracted metadata/text. Primary-source pages were opened separately.",
+    "limits": "This checks public availability and provenance, not blanket copyright clearance, a byte-level download checksum, or a full visual layout audit. Layout descriptions are anticipated test coverage; local acquisition should verify PDF signature and hash before pinning a golden fixture.",
+    "page_numbering": "regression_targets.pdf_page is 1-based PDF page order, not printed proceedings page numbers"
+  },
+  "entries": [
+    {
+      "id": "hpcc",
+      "title": "HPCC: High Precision Congestion Control",
+      "year": 2019,
+      "golden": true,
+      "source_url": "https://liyuliang001.github.io/",
+      "pdf_url": "https://liyuliang001.github.io/publications/hpcc.pdf",
+      "source_kind": "author",
+      "page_count": 15,
+      "anticipated_layout": [
+        "Two-column ACM article with a full-width title/author block",
+        "Numbered equations and a numbered pseudocode algorithm",
+        "Dense multi-panel plots, captions, inline citations, references, mathematical appendix"
+      ],
+      "regression_targets": [
+        {
+          "pdf_page": 6,
+          "target": "Algorithm 1 and nearby equations must remain readable and distinct from prose"
+        },
+        {
+          "pdf_page": 10,
+          "target": "Figure 9 is a wide, eight-panel figure; retain panels and caption as one figure block"
+        },
+        {
+          "pdf_page": 14,
+          "target": "Mathematical appendix with equations, lemma, proof, subscripts and superscripts"
+        }
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "dctcp",
+      "title": "Data Center TCP (DCTCP)",
+      "year": 2010,
+      "golden": false,
+      "source_url": "https://www.microsoft.com/en-us/research/publication/data-center-tcp-dctcp/",
+      "pdf_url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2017/01/dctcp-sigcomm2010.pdf",
+      "source_kind": "author-employer",
+      "page_count": 12,
+      "anticipated_layout": [
+        "Older two-column ACM typography",
+        "Figures embedded among body columns, traffic plots and diagrams",
+        "Footnotes, hyphenated lines, numbered sections and dense references"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "conga",
+      "title": "CONGA: Distributed Congestion-Aware Load Balancing for Datacenters",
+      "year": 2014,
+      "golden": false,
+      "source_url": "https://people.csail.mit.edu/alizadeh/publications.html",
+      "pdf_url": "https://people.csail.mit.edu/alizadeh/papers/conga-sigcomm14.pdf",
+      "source_kind": "author",
+      "page_count": 12,
+      "anticipated_layout": [
+        "Two-column ACM layout",
+        "Network topology and design-space diagrams with labels",
+        "Mixed plots, math, citations and figure references"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "hula",
+      "title": "HULA: Scalable Load Balancing Using Programmable Data Planes",
+      "year": 2016,
+      "golden": false,
+      "source_url": "https://nkatta.github.io/",
+      "pdf_url": "https://nkatta.github.io/papers/hula-sosr16.pdf",
+      "source_kind": "author",
+      "page_count": 12,
+      "anticipated_layout": [
+        "Two-column ACM SOSR layout with full-width affiliation text",
+        "Algorithm/pipeline material and network diagrams",
+        "Dense plots, labels, footnotes and references"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "drill",
+      "title": "DRILL: Micro Load Balancing for Low-latency Data Center Networks",
+      "year": 2017,
+      "golden": false,
+      "source_url": "https://pbg.cs.illinois.edu/papers/",
+      "pdf_url": "https://pbg.cs.illinois.edu/papers/ghorbani17drill.pdf",
+      "source_kind": "author",
+      "page_count": 14,
+      "anticipated_layout": [
+        "Newer two-column ACM layout with multi-block author affiliations",
+        "Small topology diagrams next to prose",
+        "Mathematical analysis and many comparative plots"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "dcqcn",
+      "title": "Congestion Control for Large-Scale RDMA Deployments",
+      "year": 2015,
+      "golden": false,
+      "source_url": "https://www.microsoft.com/en-us/research/publication/congestion-control-for-large-scale-rdma-deployments/",
+      "pdf_url": "https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p523.pdf",
+      "source_kind": "publisher-conference linked by author-employer",
+      "page_count": 14,
+      "anticipated_layout": [
+        "Two-column ACM paper with a long wrapped title",
+        "Fluid-model equations and protocol/control-loop figures",
+        "Experimental charts, parameter tables and references"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "aquila",
+      "title": "Aquila: A unified, low-latency fabric for datacenter networks",
+      "year": 2022,
+      "golden": false,
+      "source_url": "https://www.usenix.org/conference/nsdi22/presentation/gibson",
+      "pdf_url": "https://www.usenix.org/system/files/nsdi22-paper-gibson.pdf",
+      "source_kind": "publisher-conference",
+      "page_count": 19,
+      "anticipated_layout": [
+        "Publisher cover page before an 18-page two-column USENIX article",
+        "Large author block and architecture diagrams",
+        "Tables, multi-panel evaluation figures and references"
+      ],
+      "regression_targets": [
+        {
+          "pdf_page": 1,
+          "target": "Recognize publisher cover page instead of treating its text as the paper abstract"
+        },
+        {
+          "pdf_page": 2,
+          "target": "Start article title, authors and abstract on the first article page"
+        }
+      ],
+      "redistribution_caveat": "USENIX expressly provides free public access to this paper. Free access alone does not establish an unrestricted redistribution license; keep the PDF out of the repository and review author/publisher rights before rebundling."
+    },
+    {
+      "id": "pfabric",
+      "title": "pFabric: Minimal Near-Optimal Datacenter Transport",
+      "year": 2013,
+      "golden": false,
+      "source_url": "https://people.csail.mit.edu/alizadeh/publications.html",
+      "pdf_url": "https://people.csail.mit.edu/alizadeh/papers/pfabric-sigcomm13.pdf",
+      "source_kind": "author",
+      "page_count": 12,
+      "anticipated_layout": [
+        "Older two-column ACM article",
+        "Bulleted design descriptions, explanatory diagrams and mathematical intuition",
+        "Dense comparative performance plots, footnotes and references"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "homa",
+      "title": "Homa: A Receiver-Driven Low-Latency Transport Protocol Using Network Priorities",
+      "year": 2018,
+      "golden": false,
+      "source_url": "https://people.csail.mit.edu/alizadeh/publications.html",
+      "pdf_url": "https://people.csail.mit.edu/alizadeh/papers/homa-sigcomm18.pdf",
+      "source_kind": "author",
+      "page_count": 15,
+      "anticipated_layout": [
+        "Two-column ACM article with a long wrapped title",
+        "Protocol/timing diagrams and multi-panel performance plots",
+        "References and article metadata; extracted PDF title contains a spurious -1.5cm prefix"
+      ],
+      "redistribution_caveat": "Public author/publisher access is verified; this is not a redistribution license. Preserve the PDF notice and citation. Do not bundle or commit the PDF; check the current rights notice or obtain permission before redistribution/commercial reuse."
+    },
+    {
+      "id": "dart",
+      "title": "Dart: Divide and Specialize for Fast Response to Congestion in RDMA-based Datacenter Networks",
+      "year": 2020,
+      "golden": false,
+      "source_url": "https://www.cs.uic.edu/~balajee/",
+      "pdf_url": "https://www.cs.uic.edu/~balajee/papers/dart-ton.pdf",
+      "source_kind": "author",
+      "page_count": 14,
+      "version_note": "IEEE/ACM Transactions on Networking accepted article; PDF carries a pre-pagination notice",
+      "anticipated_layout": [
+        "IEEE journal two-column layout",
+        "Repeated accepted-publication header and running article headers",
+        "Roman-numeral sections, bold abstract/index terms, plots, equations and references"
+      ],
+      "redistribution_caveat": "Author-hosted IEEE accepted article. The PDF notice permits personal use and requires IEEE permission for republication/redistribution. Do not bundle or commit the PDF; review rights for the intended test use."
+    }
+  ]
+}
