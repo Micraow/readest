@@ -31,7 +31,7 @@ const nextConfig = {
   // Emit browser source maps for the Tauri export build so Sentry can
   // symbolicate crashes. `scripts/upload-sourcemaps.mjs` uploads them after the
   // build and strips the .map files, so they never ship inside the app bundle.
-  productionBrowserSourceMaps: exportOutput,
+  productionBrowserSourceMaps: exportOutput && process.env['READEST_BUILD_SOURCEMAPS'] !== '0',
   // Monorepo: trace from the repo root so workspace packages land in the
   // standalone tree. Only relevant to — and only set for — the Docker build.
   outputFileTracingRoot: standaloneOutput ? path.join(__dirname, '../../') : undefined,
@@ -48,6 +48,7 @@ const nextConfig = {
     // a build interrupted mid-compile leaves a partial cache that the next
     // build mishandles, fanning out workers until it exhausts RAM.
     turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: false,
     // `middleware.ts` matches /api/*, so Next buffers a clone of every request
     // body to let both the middleware and the route handler read it. Past this
     // limit the clone is truncated and the handler sees a short body ending
