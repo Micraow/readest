@@ -53,13 +53,17 @@ their fixes. Final frontend/native build and installed-application results are
 recorded below when completed; a dependency-warming binary with the old frontend
 is not a corrected deliverable.
 
-Frozen correction source: `0d3567ca478fceef2da5aebd2cc4955b8bffddc4`.
+Frozen local build source: `0d3567ca478fceef2da5aebd2cc4955b8bffddc4`.
+Published corrective source: [`f7af41401cc9289b2e0e9bf7d7bedb5d0ce46f76`](https://github.com/Micraow/readest/commit/f7af41401cc9289b2e0e9bf7d7bedb5d0ce46f76),
+with identical application-source blobs and only public-source/synthetic fixtures.
 Local source gates passed: TypeScript/Biome; 158 focused academic tests; and the
 offline-compatible aggregate with **13,095 passed, 16 skipped**, **1,117 test files
 passed, 4 skipped**, retaining the existing `novel-import.test.ts` exclusion. Those counts include the
 local-only supplied-copy cases; they are not the public-checkout test count. The reduced
 public fixture/test set independently passes TypeScript/Biome and all 144 focused
-academic checks, with identical application-source blobs.
+academic checks. Its offline-compatible aggregate independently passes with
+**13,081 passed, 16 skipped**, **1,117 test files passed, 4 skipped**, with the same
+explicit external-network test exclusion.
 The final Tauri frontend export passed with all 25 HTML pages and five verified
 academic-4 parser chunks. An initial concurrent frontend attempt was terminated
 with exit 137; the same constrained build completed after tests and old native
@@ -89,8 +93,8 @@ The portable candidate's symbol stripping was verified to preserve all loadable
 ELF sections/segments. The final portable archive was verified after packaging: all 238 payload files
 match the included `SHA256SUMS`, launcher/binary executable modes are retained,
 and no absolute or parent-traversing paths, PDFs, screenshots, profiles, or caches
-are included. The 206,024,890-byte archive has SHA-256
-`dc0c5f471e97f42d7c6515dba538e439faed615f0e22745a5088b5ae242597ad`.
+are included. The 206,025,785-byte archive has SHA-256
+`4fa844a9595460f1a6dc286348080ddd23133a82809f8fdd8edd8fd9aaa8a146`.
 Library publication is a separate delivery action subject to its current file scope.
 
 Known remaining limitation from native inspection: complex inline fractions in
