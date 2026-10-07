@@ -153,3 +153,72 @@ it('stops chunk hashing when cancelled between reads', async () => {
   ).rejects.toMatchObject({ name: 'AbortError' });
   expect(slice).toHaveBeenCalledTimes(1);
 });
+
+const captionFixture = (): ScholarlyDocument => {
+  const doc = fixture();
+  const captionBox = { x: 20, y: 80, width: 120, height: 10 };
+  const figureBox = { x: 10, y: 10, width: 150, height: 90 };
+  doc.pages[0]!.items = [
+    {
+      index: 0,
+      text: 'Figure 1: Synthetic plot.',
+      box: captionBox,
+      baseline: 88,
+      fontSize: 10,
+      fontName: 'f',
+      fontFamily: '',
+      angle: 0,
+      hasEOL: true,
+    },
+  ];
+  const source = [{ page: 1, boxes: [figureBox], itemIndices: [0] }];
+  doc.blocks = [
+    {
+      id: 'figure',
+      type: 'visual-region',
+      role: 'figure',
+      text: '',
+      source,
+      order: 0,
+      confidence: 0.9,
+      fontStats: { median: 10, min: 10, max: 10, names: ['f'] },
+      captions: [
+        {
+          role: 'figure',
+          label: '1',
+          text: 'Figure 1: Synthetic plot.',
+          source: { page: 1, boxes: [captionBox], itemIndices: [0] },
+        },
+      ],
+    },
+  ];
+  doc.pages[0]!.blockIds = ['figure'];
+  doc.readingOrder = ['figure'];
+  doc.sourceMap = { figure: source };
+  return doc;
+};
+
+it('retains explicit caption associations on cached reopen without duplicate source ownership', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toEqual(doc);
+});
+
+it('rejects a caption association that refers to an item outside its owning visual', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  doc.pages[0]!.items.push({ ...doc.pages[0]!.items[0]!, index: 1, text: 'Unrelated source.' });
+  doc.pages[0]!.suppressedItemIndices = [1];
+  doc.blocks[0]!.captions![0]!.source.itemIndices = [1];
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toBeNull();
+});
+
+it('rejects a mismatched caption kind rather than silently dropping its association', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  doc.blocks[0]!.role = 'table';
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toBeNull();
+});

@@ -9,12 +9,13 @@ import type {
   ScholarlyBlock,
   ScholarlyDocument,
   SourceSpan,
+  VisualCaption,
   VisualRole,
 } from './types';
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-5';
+export const PARSER_VERSION = 'academic-6';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -183,11 +184,13 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
       });
       group = [];
     };
-    for (const item of row.items.sort((a, b) => a.box.x - b.box.x || a.index - b.index)) {
+    const ordered = row.items.sort((a, b) => a.box.x - b.box.x || a.index - b.index);
+    for (const [index, item] of ordered.entries()) {
       const previous = group[group.length - 1];
       if (
         previous &&
-        (item.box.x - right(previous.box) > Math.max(18, row.size * 1.8) ||
+        ((captionRole(lineText(group)) && captionRole(lineText(ordered.slice(index)))) ||
+          item.box.x - right(previous.box) > Math.max(18, row.size * 1.8) ||
           (gutter !== undefined && right(previous.box) <= gutter && item.box.x >= gutter))
       )
         flush();
@@ -221,7 +224,7 @@ interface Region {
   role: VisualRole;
   confidence: number;
   reason?: string;
-  captionId?: string;
+  captionIds?: string[];
 }
 const captionRole = (text: string): VisualRole | undefined => {
   if (/^\s*(?:Algorithm|Procedure)\s+\d+[.:\s]/i.test(text)) return 'algorithm';
@@ -338,18 +341,61 @@ function detectVisualRegions(
   // small image/path components loses diagram labels and disconnected panels.
   const figureColumns = detectColumns(page, lines);
   for (const caption of captions.filter((line) => captionRole(line.text) === 'figure')) {
-    const cut = figureColumns.cut;
-    if (
-      cut === undefined &&
-      captions.some(
-        (other) =>
-          other !== caption &&
-          captionRole(other.text) === 'figure' &&
-          Math.abs(other.box.y - caption.box.y) < font * 4 &&
-          horizontalOverlap(other.box, caption.box) === 0,
-      )
-    )
-      continue; // With sparse text, keep independently captioned graphics local.
+    if (regions.some((region) => region.captionIds?.includes(caption.id))) continue;
+    const peers = captions.filter(
+      (other) =>
+        other !== caption &&
+        captionRole(other.text) === 'figure' &&
+        Math.abs(other.box.y - caption.box.y) < font * 4 &&
+        horizontalOverlap(other.box, caption.box) === 0,
+    );
+    let cut = figureColumns.cut;
+    // A local pair has a reliable split; more captions keep the existing path-based fallback.
+    if (cut === undefined && peers.length > 1) continue;
+    let sharedCaptions = [caption];
+    let sharedTop: number | undefined;
+    // A local pair of captions is independent of the page's prose columns.
+    // Keep a shared legend intact when it crosses their local boundary above the plots.
+    if (cut === undefined && peers.length === 1) {
+      const pair = [caption, peers[0]!].sort((a, b) => a.box.x - b.box.x);
+      let localCut = (right(pair[0]!.box) + pair[1]!.box.x) / 2;
+      const captionTop = Math.min(...pair.map((line) => line.box.y));
+      const cores = page.graphics.filter(
+        (graphic) =>
+          graphic.box.width > font * 3 &&
+          graphic.box.height > font * 3 &&
+          bottom(graphic.box) <= captionTop + 2 &&
+          captionTop - bottom(graphic.box) < font * 8,
+      );
+      const leftEdge = Math.max(
+        ...cores
+          .filter((graphic) => graphic.box.x + graphic.box.width / 2 < localCut)
+          .map((graphic) => right(graphic.box)),
+      );
+      const rightEdge = Math.min(
+        ...cores
+          .filter((graphic) => graphic.box.x + graphic.box.width / 2 >= localCut)
+          .map((graphic) => graphic.box.x),
+      );
+      if (Number.isFinite(leftEdge) && Number.isFinite(rightEdge) && leftEdge < rightEdge)
+        localCut = (leftEdge + rightEdge) / 2;
+      const coreTop = Math.min(...cores.map((graphic) => graphic.box.y));
+      const sharedLegend = page.items.filter(
+        (item) =>
+          !excluded.has(item.index) &&
+          item.text.trim() &&
+          isHorizontal(item) &&
+          item.box.x < localCut &&
+          right(item.box) > localCut &&
+          item.box.y >= coreTop - font * 2 &&
+          bottom(item.box) <= coreTop + font * 0.35 &&
+          (item.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length < 6,
+      );
+      if (sharedLegend.length) {
+        sharedCaptions = pair;
+        sharedTop = Math.min(...sharedLegend.map((item) => item.box.y));
+      } else cut = localCut;
+    }
     let wide = cut === undefined || (caption.box.x < cut - 2 && right(caption.box) > cut + 2);
     if (!wide && cut !== undefined) {
       const leftCaption = caption.box.x < cut;
@@ -390,7 +436,10 @@ function detectVisualRegions(
     const scopeLeft = wide || caption.box.x < cut! ? 0 : cut!;
     const scopeRight = wide || caption.box.x >= cut! ? page.width : cut!;
     const inColumn = (box: Rect) => box.x >= scopeLeft - 2 && right(box) <= scopeRight + 2;
-    const column = !wide ? figureColumns.columns[caption.box.x >= cut! ? 1 : 0]?.box : undefined;
+    const column =
+      !wide && figureColumns.cut !== undefined
+        ? figureColumns.columns[caption.box.x >= cut! ? 1 : 0]?.box
+        : undefined;
     const priorCaptions = captions.filter(
       (line) => line !== caption && line.box.y < caption.box.y && inColumn(line.box),
     );
@@ -421,12 +470,16 @@ function detectVisualRegions(
       caption.box.y - bottom(drawing) > font * 6
     )
       continue;
-    const captionBounds = captionBox(caption, lines, page, column ?? drawing);
+    const captionBounds =
+      sharedCaptions.length > 1
+        ? unionBoxes(sharedCaptions.map((line) => captionBox(line, lines, page, line.box)))
+        : captionBox(caption, lines, page, column ?? drawing);
+    const labelTop = Math.min(drawing.y, sharedTop ?? drawing.y) - font * 0.6;
     const labelBand: Rect = {
       x: scopeLeft,
-      y: drawing.y - font * 0.6,
+      y: labelTop,
       width: scopeRight - scopeLeft,
-      height: bottom(captionBounds) - drawing.y + font * 0.6,
+      height: bottom(captionBounds) - labelTop,
     };
     // Text glyphs (especially rotated axis labels and ticks) need not occur in a
     // graphics operator's bounds. Include the associated text in the figure band.
@@ -439,11 +492,26 @@ function detectVisualRegions(
       const x = Math.min(column.x, box.x);
       box = { ...box, x, width: Math.max(right(column), right(box)) - x };
     }
+    let crop = padded(box, 2, page);
+    if (peers.length && figureColumns.cut === undefined) {
+      // Captions can abut prose. Padding must not repaint the following body row.
+      const followingTop = Math.min(
+        ...lines
+          .filter(
+            (line) =>
+              line.box.y >= bottom(captionBounds) - 1.5 &&
+              !captionRole(line.text) &&
+              horizontalOverlap(line.box, box) > font,
+          )
+          .map((line) => line.box.y),
+      );
+      crop = { ...crop, height: Math.min(bottom(crop), followingTop - 0.5) - crop.y };
+    }
     regions.push({
-      box: padded(box, 2, page),
+      box: crop,
       role: 'figure',
       confidence: 0.94,
-      captionId: caption.id,
+      captionIds: sharedCaptions.map((line) => line.id),
     });
   }
   const forms = page.graphics
@@ -687,7 +755,12 @@ function detectVisualRegions(
       const other = merged[i]!;
       // Padding can overlap between two separately captioned figures. That is not
       // evidence that their panels belong to one visual block.
-      if (current.captionId && other.captionId && current.captionId !== other.captionId) continue;
+      if (
+        current.captionIds?.length &&
+        other.captionIds?.length &&
+        !current.captionIds.some((id) => other.captionIds!.includes(id))
+      )
+        continue;
       if (
         horizontalOverlap(current.box, other.box) > 1 &&
         verticalOverlap(current.box, other.box) > 1
@@ -702,7 +775,7 @@ function detectVisualRegions(
               : other.role,
           confidence: Math.min(current.confidence, other.confidence),
           reason: current.reason ?? other.reason,
-          captionId: current.captionId ?? other.captionId,
+          captionIds: [...new Set([...(current.captionIds ?? []), ...(other.captionIds ?? [])])],
         };
         merged.splice(i, 1);
         i = -1;
@@ -1118,6 +1191,34 @@ function analyzePage(
       region.confidence,
     );
     block.role = region.role;
+    const owned = new Set(items.map((item) => item.index));
+    const associated = lines.filter(
+      (line) =>
+        (region.role === 'figure' || region.role === 'table') &&
+        captionRole(line.text) === region.role &&
+        line.itemIndices.every((id) => owned.has(id)) &&
+        (!region.captionIds?.length || region.captionIds.includes(line.id)),
+    );
+    const visualCaptions: VisualCaption[] = associated.flatMap((line) => {
+      const label = line.text.match(/^\s*(?:Figure|Fig\.|Table)\s*(\d+|[IVX]+)(?:[.:\s]|$)/i)?.[1];
+      const role = captionRole(line.text);
+      if (!label || (role !== 'figure' && role !== 'table')) return [];
+      const bounds = captionBox(line, lines, page, line.box);
+      const captionItems = items.filter((item) => centerInside(item.box, bounds));
+      return [
+        {
+          role,
+          label,
+          text: joinLines(clusterLines({ ...page, items: captionItems }).map((part) => part.text)),
+          source: {
+            page: page.page,
+            boxes: [unionBoxes(captionItems.map((item) => item.box))],
+            itemIndices: captionItems.map((item) => item.index),
+          },
+        },
+      ];
+    });
+    if (visualCaptions.length) block.captions = visualCaptions;
     block.fallbackReason = region.reason;
     blocks.push(block);
   }
@@ -1273,25 +1374,19 @@ function mentionsFloat(text: string, role: VisualRole, label: string): boolean {
   return false;
 }
 
-function anchorFloats(blocks: ScholarlyBlock[], pages: PageAnalysis[]): ScholarlyBlock[] {
+function anchorFloats(blocks: ScholarlyBlock[]): ScholarlyBlock[] {
   const after = new Map<ScholarlyBlock, ScholarlyBlock[]>();
   const moved = new Set<ScholarlyBlock>();
   for (const block of blocks.filter(isFloat)) {
-    const span = block.source[0];
-    const page = pages.find((p) => p.page === span?.page);
-    if (!span || !page) continue;
-    const owned = new Set(span.itemIndices);
-    const caption = page.lines.find(
-      (line) =>
-        captionRole(line.text) === block.role && line.itemIndices.every((id) => owned.has(id)),
-    );
-    const label = caption?.text.match(/^\s*(Figure|Fig\.|Table)\s*(\d+|[IVX]+)(?:[.:\s]|$)/i);
-    if (!label) continue;
+    if (!block.captions?.length) continue;
     const anchor = blocks.find(
       (candidate) =>
         (candidate.type === 'paragraph' || candidate.type === 'list') &&
-        mentionsFloat(candidate.text, block.role!, label[2]!) &&
-        candidate.source.some((source) => Math.abs(source.page - span.page) <= 1),
+        block.captions!.some(
+          (caption) =>
+            mentionsFloat(candidate.text, caption.role, caption.label) &&
+            candidate.source.some((source) => Math.abs(source.page - caption.source.page) <= 1),
+        ),
     );
     if (!anchor) continue;
     const floats = after.get(anchor) ?? [];
@@ -1313,7 +1408,7 @@ function finalize(
     if (block.type === 'heading') references = /^(?:references|bibliography)\b/i.test(block.text);
     else if (references && block.type === 'paragraph') block.type = 'reference';
   }
-  const blocks = anchorFloats(mergeAcrossFlow(ordered, pages), pages);
+  const blocks = anchorFloats(mergeAcrossFlow(ordered, pages));
   const sourceMap: Record<string, SourceSpan[]> = {};
   for (let order = 0; order < blocks.length; order++) {
     const block = blocks[order]!;

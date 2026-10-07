@@ -52,6 +52,12 @@ export interface LayoutColumn {
   confidence: number;
 }
 export type VisualRole = 'figure' | 'table' | 'algorithm' | 'equation' | 'unknown';
+export interface VisualCaption {
+  role: 'figure' | 'table';
+  label: string;
+  text: string;
+  source: SourceSpan;
+}
 export interface ScholarlyBlock {
   id: string;
   type: 'heading' | 'paragraph' | 'list' | 'reference' | 'footnote' | 'visual-region';
@@ -63,6 +69,8 @@ export interface ScholarlyBlock {
   level?: number;
   listItems?: string[];
   role?: VisualRole;
+  /** Semantic caption associations; source ownership remains in the block source. */
+  captions?: VisualCaption[];
   /** Why a region/page was preserved visually instead of reordered. */
   fallbackReason?: string;
 }

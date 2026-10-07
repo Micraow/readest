@@ -531,6 +531,128 @@ describe('deterministic academic layout', () => {
     expect(figures).toHaveLength(2);
     expect(figures.map((block) => block.source[0]?.itemIndices)).toEqual([[0], [1]]);
   });
+  for (const captionWidth of [230, 265]) {
+    it(`keeps nearby independently captioned plots separate above single-column prose (${captionWidth})`, () => {
+      const p = page([
+        item(0, 'Figure 12: First experiment.', 80, 220, captionWidth, 11),
+        item(1, 'Figure 13: Second experiment.', 353, 220, captionWidth, 11),
+        ...Array.from({ length: 8 }, (_, i) =>
+          item(
+            i + 2,
+            `Ordinary body prose continues in one column with observation ${i}.`,
+            70,
+            233 + i * 14,
+            560,
+            11,
+          ),
+        ),
+      ]);
+      p.width = 700;
+      p.graphics = [80, 353].map((x) => ({
+        kind: 'path',
+        box: { x, y: 100, width: 265, height: 100 },
+      }));
+      const d = doc([p]);
+      const figures = d.blocks.filter((block) => block.role === 'figure');
+      expect(d.pages[0]?.lines.filter((line) => /^Figure/.test(line.text))).toHaveLength(2);
+      expect(figures).toHaveLength(2);
+      expect(figures.map((block) => block.source[0]?.itemIndices)).toEqual([[0], [1]]);
+      expect(figures.map((block) => block.captions?.map((caption) => caption.label))).toEqual([
+        ['12'],
+        ['13'],
+      ]);
+      expect(
+        figures.every((block) => {
+          const box = block.source[0]!.boxes[0]!;
+          return box.y + box.height < 233;
+        }),
+      ).toBe(true);
+      expect(
+        d.blocks
+          .filter((block) => block.type === 'paragraph')
+          .flatMap((block) => block.source[0]!.itemIndices),
+      ).toEqual([2, 3, 4, 5, 6, 7, 8, 9]);
+      expect(d.pages[0]?.columns).toHaveLength(1);
+      expect(validateSourceCoverage(d)).toEqual([]);
+    });
+  }
+  it('recognizes independent caption starts fragmented by PDF font runs', () => {
+    const p = page([
+      item(0, 'Figure', 80, 220, 30, 11),
+      item(1, '12:', 114, 220, 18, 11),
+      item(2, 'First experiment.', 136, 220, 204, 11),
+      item(3, 'Fig.', 353, 220, 20, 11),
+      item(4, '13:', 377, 220, 18, 11),
+      item(5, 'Second experiment.', 399, 220, 219, 11),
+      item(
+        6,
+        'Figure 12 and Figure 13 are ordinary inline references in this paragraph.',
+        70,
+        260,
+        560,
+        11,
+      ),
+    ]);
+    p.width = 700;
+    const lines = clusterLines(p);
+    expect(lines.map((line) => line.itemIndices)).toEqual([[0, 1, 2], [3, 4, 5], [6]]);
+    expect(lines[0]?.text).toBe('Figure 12: First experiment.');
+    expect(lines[1]?.text).toBe('Fig. 13: Second experiment.');
+  });
+  it('retains a shared legend and both caption associations in one visual', () => {
+    const p = page([
+      item(0, 'Figure 12: First measured plot.', 80, 220, 265, 11),
+      item(1, 'Figure 13: Second measured plot.', 353, 220, 265, 11),
+      item(2, 'with a continued explanation.', 353, 233, 185, 11),
+      item(3, 'Control and treatment', 275, 82, 150, 9),
+      item(
+        4,
+        'The second result in Figure 13 supplies the first useful observation.',
+        70,
+        260,
+        560,
+        11,
+      ),
+      item(
+        5,
+        'The first result in Figure 12 supplies a later useful observation.',
+        70,
+        300,
+        560,
+        11,
+      ),
+    ]);
+    p.width = 700;
+    p.graphics = [80, 353].map((x) => ({
+      kind: 'path',
+      box: { x, y: 100, width: 265, height: 100 },
+    }));
+    const d = doc([p]);
+    const figures = d.blocks.filter((block) => block.role === 'figure');
+    expect(figures).toHaveLength(1);
+    expect(figures[0]?.source[0]?.itemIndices).toEqual([0, 1, 2, 3]);
+    const firstMention = d.blocks.findIndex((block) => block.text.startsWith('The second result'));
+    expect(d.blocks[firstMention + 1]?.id).toBe(figures[0]?.id);
+    expect(
+      figures[0]?.captions?.map((caption) => ({
+        label: caption.label,
+        ids: caption.source.itemIndices,
+      })),
+    ).toEqual([
+      { label: '12', ids: [0] },
+      { label: '13', ids: [1, 2] },
+    ]);
+    expect(figures[0]?.captions?.[1]?.text).toBe(
+      'Figure 13: Second measured plot. with a continued explanation.',
+    );
+    const crop = figures[0]!.source[0]!.boxes[0]!;
+    expect(crop.y).toBeLessThanOrEqual(82);
+    expect(crop.x).toBeLessThanOrEqual(80);
+    expect(crop.x + crop.width).toBeGreaterThanOrEqual(618);
+    expect(crop.y + crop.height).toBeGreaterThanOrEqual(244);
+    expect(crop.y + crop.height).toBeLessThan(260);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
   it('yields on long documents and stops at the next page after cancellation', async () => {
     const pages = Array.from({ length: 120 }, (_, n) =>
       page(
@@ -576,4 +698,40 @@ describe('deterministic academic layout', () => {
       analyzeDocumentAsync([page([])], 'a'.repeat(64), '6.2.108', controller.signal),
     ).rejects.toMatchObject({ name: 'AbortError' });
   });
+});
+
+it('does not attach a figure caption to a conservatively merged table region', () => {
+  const p = page([
+    item(0, 'Table 1: Synthetic values.', 40, 100),
+    item(1, 'Figure 1: Synthetic illustration.', 40, 180),
+    item(2, 'Figure 1 is discussed in this paragraph.', 40, 250),
+    item(3, 'Table 1 is discussed in another paragraph.', 40, 280),
+  ]);
+  p.graphics.push({ kind: 'image', box: { x: 40, y: 120, width: 220, height: 50 } });
+  const d = doc([p]);
+  const region = d.blocks.find((b) => b.type === 'visual-region')!;
+  expect(region.role).toBe('table');
+  expect((region.captions ?? []).every((caption) => caption.role === region.role)).toBe(true);
+  expect(region.order).toBeLessThan(d.blocks.find((b) => b.text.startsWith('Figure 1 is'))!.order);
+  expect(validateSourceCoverage(d)).toEqual([]);
+});
+
+it('preserves the existing independent crops for three captioned plots above single-column prose', () => {
+  const p = page([
+    ...[40, 330, 620].map((x, i) => item(i, `Figure ${i + 1}: Synthetic plot.`, x, 180)),
+    ...Array.from({ length: 8 }, (_, i) =>
+      item(3 + i, `Full-width body line ${i}.`, 40, 220 + i * 14, 830),
+    ),
+  ]);
+  p.width = 900;
+  p.graphics = [40, 330, 620].map((x) => ({
+    kind: 'image',
+    box: { x, y: 80, width: 220, height: 80 },
+  }));
+  const d = doc([p]);
+  const figures = d.blocks.filter((b) => b.role === 'figure');
+  expect(figures).toHaveLength(3);
+  expect(figures.flatMap((b) => b.captions?.map((c) => c.label) ?? [])).toEqual(['1', '2', '3']);
+  expect(figures.every((b) => b.source[0]!.boxes[0]!.width < 250)).toBe(true);
+  expect(validateSourceCoverage(d)).toEqual([]);
 });

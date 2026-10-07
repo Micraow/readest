@@ -81,6 +81,16 @@ const schema = z.object({
       level: index.optional(),
       listItems: z.array(z.string()).optional(),
       role: role.optional(),
+      captions: z
+        .array(
+          z.object({
+            role: z.enum(['figure', 'table']),
+            label: z.string().regex(/^(?:\d+|[IVX]+)$/i),
+            text: z.string().min(1),
+            source,
+          }),
+        )
+        .optional(),
       fallbackReason: z.string().optional(),
     }),
   ),
@@ -154,6 +164,21 @@ function validReferences(document: ScholarlyDocument): boolean {
       JSON.stringify(document.sourceMap[block.id]) !== JSON.stringify(block.source)
     )
       return false;
+    for (const caption of block.captions ?? []) {
+      const owned = new Set(
+        block.source
+          .filter((span) => span.page === caption.source.page)
+          .flatMap((span) => span.itemIndices),
+      );
+      if (
+        block.type !== 'visual-region' ||
+        block.role !== caption.role ||
+        !caption.source.boxes.length ||
+        !caption.source.itemIndices.length ||
+        caption.source.itemIndices.some((id) => !owned.has(id))
+      )
+        return false;
+    }
     for (const span of block.source) {
       const page = pages.get(span.page);
       if (
