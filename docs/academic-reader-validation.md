@@ -9,54 +9,97 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
-## Structured inline content and source-order figures: academic-11 (in validation)
+## Structured inline content and source-order figures: academic-11 (2026-10-07)
 
-Same-file native comparison exposed issues remaining in academic-8: an inline
-fraction became scrambled text, citation-based float movement reversed two
-adjacent figures, and small charts with raster captions were enlarged too far.
+Same-file native comparison exposed issues remaining in academic-8: inline math
+became scrambled text, citation-based float movement reversed adjacent figures,
+and small charts with raster captions were enlarged too far. The academic-9 and
+academic-10 native candidates were withheld when real reading exposed further
+fraction placement and undecodable summation-glyph defects.
 
 The local pipeline now preserves source-near float order after completing an
 interrupted paragraph, extracts safe bottom captions as selectable text, scales
 small visuals relative to source text, and keeps adjacent source-row plots together.
-Inline runs preserve explicit font styles and scripts; actual fraction bars bound
-local source crops with their complete numerator and denominator. Geometric
-overlap alone cannot turn scripts on adjacent prose rows into a fraction.
-The full source crop remains available in the image viewer. Parser `academic-11`
-invalidates earlier analysis without deleting it.
+Inline runs retain explicit bold, italic and script styles, including CM-Super's
+documented short font names. Actual fraction bars bound local source crops;
+undecodable glyphs retain their original PDF appearance instead of guessing a
+Unicode replacement. Ordinary text beside the notation determines its grouping
+baseline while original source geometry stays intact.
 
-The academic-9 native candidate was withheld: a numerator on an earlier physical
-line could place its entire fraction before the corresponding prose prefix, and
-small math glyphs could prevent a continued paragraph from joining around a float.
-The next iteration anchors fractions to ordinary text beside their division axis,
-uses prose runs for body-size comparisons, and keeps a display expression adjacent
-to its colon-ending introduction before deferred figures or notes. Styled lettered
-section headings no longer consume the first wrapped body line as a list.
-Inline-source completeness is now validated during analysis, independently of
-block ownership, so a complete block cannot hide missing rendered glyphs.
+Body-size comparisons use prose runs rather than counting small mathematical
+glyphs. Display expressions stay adjacent to their colon-ending introductions
+before deferred figures or notes. Numbered emphasized leads remain in the same
+paragraph as their body text, bold run-in labels preserve paragraph boundaries,
+and footnotes have superscript markers and a distinct note presentation.
 
-Where a following source row touches an inline crop, rendering may remove its edge
-ink only after a full-width blank raster band below the lowest selected baseline.
-This preserves continuous descenders and leaves an inseparable source unchanged.
-The same rule applies in preview and zoom. Closing the image viewer immediately
-also cancels its initial label timer rather than scheduling work after dismissal.
+Where a following source row touches an inline crop, rendering removes edge ink
+only after finding a full-width blank raster band below the lowest selected
+baseline. This preserves continuous descenders and leaves an inseparable source
+unchanged. Preview and zoom use the same rule. Inline-source completeness is
+validated independently of block ownership. Parser `academic-11` invalidates
+older analysis without deleting it.
 
-Synthetic regressions were observed failing before their fixes. Four local PDF
-copies pass source mapping, figure order, paragraph continuity, inline fraction,
-font metadata and cache round-trip assertions. Independent review also checked
-fraction crop closure and caption ownership. These are pre-build checks;
-academic-11 native same-page comparison and final build results are still pending here.
-The academic-10 native candidate corrected fraction placement and the lower crop edge,
-but was withheld after a user screenshot exposed misdecoded summation glyphs. PDF.js
-reported these symbols as control characters with a displaced baseline, splitting
-notation from its surrounding prose. The next correction preserves undecodable
-glyphs as local source visuals and uses nearby ordinary text only for grouping;
-original source geometry remains intact. This does not guess replacement symbols.
-CM-Super's documented short font names now preserve bold and slanted styles;
-bold run-in labels retain paragraph boundaries. Numbered emphasized leads stay
-with their ordinary-text continuation, while footnote markers retain superscripts
-and notes have a distinct, noninteractive presentation. Citation and footnote
-navigation is not synthesized where the original PDF has no link destination.
+### Actual Linux acceptance
 
+The independently staged portable candidate was opened in the native CEF app
+with the supplied HPCC PDF, MP-RDMA and the supplied single-column manuscript.
+Normal reading and zoomed pixels were compared with the original PDFs; local
+styles were also compared with Scholaread on the same supplied document.
+
+- HPCC summation symbols and adjacent fractions retain their order and baseline;
+  rate and reduction-factor fractions appear after their correct prose prefixes.
+- MP-RDMA's continued mathematical paragraph remains complete before its figure;
+  the available-window expression follows its introduction. Numbered italic
+  paragraph leads stay with their continuation, and the fifth footnote is visibly
+  distinct without suggesting an unimplemented link.
+- The single-column document preserves separate bold paragraph labels, compact
+  adjacent figures, shared legends, both captions and the three-line display
+  expression. Algorithms 1 and 2 retain all 11 and 17 numbered lines respectively,
+  indentation, vertical guides, formulas and borders. Normal-size and enlarged
+  views were inspected; hiding viewer controls exposes the complete final line.
+- At 527px window width, prose wraps and adjacent figures stack without horizontal
+  overflow. Scrolling away and back reloads visuals; zoom dismissal and reopening
+  Reading preserve position. Nineteen older cache files kept their hashes and
+  modification times; the three new academic-11 caches were reused unchanged.
+
+This is representative same-page acceptance, not an exhaustive semantic audit of
+all pages. All private PDFs, extracted prose, paper-specific assertions, geometry
+and screenshots remain outside the public source repository.
+
+### Build and checks
+
+Application source `8e3d70113eb1e080fb070e990129366f9e0fbcfd` has the same complete
+Git tree as public source
+[`eeb324bfe8d9675a7a5c78abd5fdfe08ae2d33eb`](https://github.com/Micraow/readest/commit/eeb324bfe8d9675a7a5c78abd5fdfe08ae2d33eb).
+The Linux candidate uses a production frontend and the existing debug/unoptimized
+CEF native profile. Its unstripped ELF is 226,740,032 bytes, SHA-256
+`601e84b8a20e6da498c2e88c4707843e10b570953692cccfaeb4824dcd335f2a`.
+The complete frontend export passed with a 2048 MiB Node heap, source maps disabled
+and one Rayon thread; the locked offline native build passed. These resource limits
+avoid the earlier exit-137 frontend attempt without changing application behavior.
+
+TypeScript, Biome and 238 focused academic/UI tests passed. The final aggregate
+completed in eight bounded shards: **13,176 passed, 16 skipped**, **1,126 test files
+passed, 4 skipped**. Its only additional exclusion is the previously documented
+`src/__tests__/services/novel/novel-import.test.ts`, which performs unmocked external
+network contact. Four local PDF copies (61 pages) also passed source mapping,
+figure order, paragraph continuity, style and cache round-trip assertions.
+The source head had no GitHub Actions/check runs when checked; local results are
+not described as a remote CI pass.
+
+### Remaining limitations
+
+The reader does not reconstruct arbitrary mathematical semantics. Unrecognized
+complex notation can still need the Original PDF view; an inline operator and its
+operand may wrap across lines, and high magnification can reveal tiny neighboring
+ink at a crop's upper edge. Preserved notation and algorithms remain local source
+images rather than selectable mathematical expressions.
+
+Scholaread's same-file view still has more spacious typography and retains some
+monospaced parameter fonts that this reader currently normalizes to the reading
+font. Original PDF links and inferred citation/footnote navigation are not yet
+represented by the academic inline model. The supplied MP-RDMA citation example
+has no original PDF link annotation. These are recorded gaps, not claimed fixes.
 The academic-8 and UI-1 delivered artifacts remain separate historical versions.
 
 ## Continuous reading and local caption repair: academic-8 (2026-10-07)
