@@ -110,7 +110,7 @@ describe('manual academic reading session', () => {
         onClose={onClose}
       />,
     );
-    await screen.findByText(/Reading Mode unavailable/);
+    await screen.findByText(/Reading mode is not available/);
     fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
     expect(onClose).toHaveBeenCalledOnce();
   });

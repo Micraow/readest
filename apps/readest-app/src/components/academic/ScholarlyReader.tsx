@@ -4,6 +4,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument } from '@/services/academic/types';
+import { visualRoleLabel } from './labels';
 
 function VisualRegion({
   block,
@@ -85,7 +86,7 @@ function VisualRegion({
     };
   }, [session, source, box, visible, width, maximumWidth]);
   if (!source || !box) return null;
-  const label = `${block.role ?? 'visual'}: ${_('Tap to zoom')}`;
+  const label = `${_(visualRoleLabel(block.role))}: ${_('Tap to zoom')}`;
   return (
     <figure className='my-6'>
       <button
@@ -99,13 +100,12 @@ function VisualRegion({
         <canvas ref={canvas} className='block max-w-full' role='img' aria-label={label} />
         {failed && (
           <span className='absolute inset-0 flex items-center justify-center bg-white p-4 text-sm text-black'>
-            {_('Preview unavailable. Tap to retry in the viewer.')}
+            {_('Could not load the image. Tap to try again.')}
           </span>
         )}
       </button>
       <figcaption className='text-base-content/60 mt-1 text-center text-xs'>
         {_('Tap to zoom')}
-        {block.fallbackReason ? ` · ${_('Original layout preserved')}` : ''}
       </figcaption>
     </figure>
   );

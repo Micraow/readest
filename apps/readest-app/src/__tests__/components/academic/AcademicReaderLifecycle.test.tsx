@@ -138,11 +138,11 @@ const openReading = async () => {
   );
   expect(mocks.open).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
-  await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+  await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
   return { ...result, onOpenChange };
 };
 const zoom = async () => {
-  fireEvent.click(screen.getByRole('button', { name: 'figure: Tap to zoom' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Figure: Tap to zoom' }));
   return screen.findByRole('button', { name: 'Image viewer' });
 };
 const nativeBack = () =>
@@ -158,7 +158,7 @@ describe('academic dialog lifecycle and navigation', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(session.destroy).toHaveBeenCalledOnce());
     fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
-    await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+    await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     expect(mocks.open).toHaveBeenCalledTimes(2);
     fireEvent.click(screen.getByRole('button', { name: 'Close Reading Mode' }));
     expect(session.destroy).toHaveBeenCalledTimes(2);
@@ -207,7 +207,7 @@ describe('academic dialog lifecycle and navigation', () => {
           finish = resolve;
         }),
     );
-    fireEvent.click(screen.getByRole('button', { name: 'figure: Tap to zoom' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Figure: Tap to zoom' }));
     const signal = session.renderRegion.mock.calls[0]![4]!;
     const canvas = session.renderRegion.mock.calls[0]![2];
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -229,9 +229,9 @@ describe('academic dialog lifecycle and navigation', () => {
         onClose={vi.fn()}
       />,
     );
-    await screen.findByText(/Could not prepare Reading Mode/);
+    await screen.findByText(/Could not open reading mode/);
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
-    await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+    await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     expect(session.destroy).toHaveBeenCalledOnce();
     expect(mocks.open).toHaveBeenCalledTimes(2);
   });
@@ -245,7 +245,7 @@ describe('academic dialog lifecycle and navigation', () => {
           finish = resolve;
         }),
     );
-    fireEvent.click(screen.getByRole('button', { name: 'figure: Tap to zoom' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Figure: Tap to zoom' }));
     const signal = session.renderRegion.mock.calls[0]![4]!;
     fireEvent.click(screen.getByRole('button', { name: 'Inspect layout' }));
     expect(signal.aborted).toBe(true);
@@ -263,7 +263,7 @@ describe('academic dialog lifecycle and navigation', () => {
     vi.spyOn(HTMLCanvasElement.prototype, 'toBlob').mockImplementation((callback) => {
       finish = callback;
     });
-    fireEvent.click(screen.getByRole('button', { name: 'figure: Tap to zoom' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Figure: Tap to zoom' }));
     await waitFor(() => expect(finish).toBeDefined());
     const canvas = session.renderRegion.mock.calls[0]![2];
     result.unmount();
@@ -292,7 +292,7 @@ describe('academic dialog lifecycle and navigation', () => {
     await openReading();
     fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
     fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
-    await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+    await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(1));
     expect(screen.getByRole('dialog')).toBeTruthy();
     expect(window.history.state).not.toEqual(baseState);
@@ -331,7 +331,7 @@ describe('academic dialog lifecycle and navigation', () => {
     await waitFor(() => expect(session.analyze).toHaveBeenCalled());
     const signal = session.analyze.mock.calls[0]![2]!;
     result.rerender(<AcademicReaderDialog file={second} title='Second' onClose={vi.fn()} />);
-    await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+    await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     expect(signal.aborted).toBe(true);
     await act(async () =>
       finish({
@@ -340,7 +340,7 @@ describe('academic dialog lifecycle and navigation', () => {
       }),
     );
     expect(screen.queryByText('Stale first document')).toBeNull();
-    expect(screen.getByRole('button', { name: 'figure: Tap to zoom' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Figure: Tap to zoom' })).toBeTruthy();
   });
 
   it('clears old zoom state when the source file changes', async () => {
@@ -351,7 +351,7 @@ describe('academic dialog lifecycle and navigation', () => {
         onClose={vi.fn()}
       />,
     );
-    await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+    await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     await zoom();
     result.rerender(
       <AcademicReaderDialog
@@ -360,7 +360,7 @@ describe('academic dialog lifecycle and navigation', () => {
         onClose={vi.fn()}
       />,
     );
-    await screen.findByRole('button', { name: 'figure: Tap to zoom' });
+    await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     expect(screen.queryByRole('button', { name: 'Image viewer' })).toBeNull();
     expect(revokeURL).toHaveBeenCalledWith('blob:academic-region');
   });

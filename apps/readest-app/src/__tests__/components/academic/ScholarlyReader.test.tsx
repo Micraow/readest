@@ -129,7 +129,7 @@ describe('continuous academic flow', () => {
     await act(async () => resize());
     expect(renderRegion.mock.calls[1]![4]!.aborted).toBe(true);
     expect(renderRegion.mock.calls[2]![3]).toBe(540);
-    fireEvent.click(screen.getByRole('button', { name: 'figure: Tap to zoom' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Figure: Tap to zoom' }));
     expect(onZoom).toHaveBeenCalledWith(visual);
     result.unmount();
     expect(renderRegion.mock.calls[2]![4]!.aborted).toBe(true);
@@ -145,7 +145,7 @@ describe('continuous academic flow', () => {
       <ScholarlyReader document={documentFor([equation])} session={session} onZoom={onZoom} />,
     );
     await act(async () => intersect(true));
-    const preview = screen.getByRole('button', { name: 'equation: Tap to zoom' });
+    const preview = screen.getByRole('button', { name: 'Equation: Tap to zoom' });
     expect(preview.style.maxWidth).toBe('120px');
     expect(preview.classList.contains('mx-auto')).toBe(true);
     expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(120);
@@ -209,7 +209,7 @@ describe('continuous academic flow', () => {
     await act(async () => intersect(false));
     await act(async () => intersect(true));
     await act(async () => reject(new Error('Cancelled old preview')));
-    expect(screen.queryByText(/Preview unavailable/)).toBeNull();
+    expect(screen.queryByText(/Could not load the image/)).toBeNull();
   });
 
   it('restores scroll locally and flushes the latest position when Reading closes', () => {

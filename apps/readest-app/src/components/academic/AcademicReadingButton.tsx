@@ -54,7 +54,7 @@ export default function AcademicReadingButton({
         aria-pressed={open}
         onClick={() => change(true)}
       >
-        {_('Reading')}
+        {_('Reading mode')}
       </button>
       {open && (
         <Suspense fallback={<LoadingReading onClose={() => change(false)} />}>

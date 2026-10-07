@@ -194,7 +194,9 @@ export default function ZoteroShelf({ onOpen }: ZoteroShelfProps) {
         next.delete(item.key);
         return next;
       });
-      setNotice(_('Local copy cleared. The PDF in Zotero is unchanged'));
+      setNotice(
+        _('Local copy cleared. You can download the PDF again; the file in Zotero is unchanged.'),
+      );
     } catch (error) {
       if (!controller.signal.aborted) setError(zoteroErrorMessage(error));
     } finally {
@@ -393,9 +395,7 @@ export default function ZoteroShelf({ onOpen }: ZoteroShelfProps) {
         </p>
       )}
       <p className='text-base-content/60 text-xs leading-relaxed'>
-        {_(
-          'Read-only access. Opening a paper downloads the first stored PDF by attachment key. Local copies stay outside your Readest book library and cloud sync. Refresh updates metadata; clear a local copy to download changed PDF bytes.',
-        )}
+        {_('Download papers to read them offline.')}
       </p>
     </section>
   );

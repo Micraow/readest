@@ -15,6 +15,7 @@ import ImageViewer from '@/app/reader/components/ImageViewer';
 import LayoutInspector from './LayoutInspector';
 import ScholarlyReader from './ScholarlyReader';
 import { useAcademicHistory } from './useAcademicHistory';
+import { visualRoleLabel } from './labels';
 
 export default function AcademicReaderDialog({
   file,
@@ -142,7 +143,7 @@ export default function AcademicReaderDialog({
     zoomAbort.current = controller;
     setZooming(true);
     setZoomError(false);
-    setZoomRole(block.role ?? _('Visual region'));
+    setZoomRole(_(visualRoleLabel(block.role)));
     const canvas = window.document.createElement('canvas');
     try {
       await session.renderRegion(
@@ -166,9 +167,9 @@ export default function AcademicReaderDialog({
   };
   const labels: Record<AnalysisProgress['stage'], string> = {
     hashing: _('Checking PDF…'),
-    extracting: _('Reading PDF layout…'),
-    layout: _('Preparing reading order…'),
-    cached: _('Loaded saved reading layout'),
+    extracting: _('Reading PDF…'),
+    layout: _('Preparing reading mode…'),
+    cached: _('Ready to read'),
   };
   return (
     <ModalPortal showOverlay={false}>
@@ -200,7 +201,7 @@ export default function AcademicReaderDialog({
               className='btn btn-contrast btn-sm join-item min-h-10'
               aria-pressed='true'
             >
-              {_('Reading')}
+              {_('Reading mode')}
             </button>
           </div>
           <span className='min-w-0 flex-1 truncate text-sm font-medium'>{title}</span>
@@ -229,8 +230,8 @@ export default function AcademicReaderDialog({
           <div className='space-y-4 p-6'>
             <p role='alert'>
               {error === 'unsupported'
-                ? _('Reading Mode unavailable. This PDF has no usable text layer.')
-                : _('Could not prepare Reading Mode. Original PDF is still available.')}
+                ? _('Reading mode is not available for this PDF. Please use the PDF view.')
+                : _('Could not open reading mode. Try again or return to the PDF.')}
             </p>
             <button
               type='button'
@@ -264,7 +265,7 @@ export default function AcademicReaderDialog({
         )}
         {zooming && (
           <div className='border-base-300 flex items-center gap-3 border-t p-3' role='status'>
-            <span>{_('Rendering high-resolution region…')}</span>
+            <span>{_('Loading a clearer image…')}</span>
             <button
               type='button'
               className='btn btn-sm btn-ghost eink-bordered'
@@ -276,7 +277,7 @@ export default function AcademicReaderDialog({
         )}
         {zoomError && (
           <p role='alert' className='p-3 text-sm'>
-            {_('Could not render this region. Original PDF is still available.')}
+            {_('Could not load the image. Please try again or return to the PDF.')}
           </p>
         )}
         {inspecting && document && session && (
