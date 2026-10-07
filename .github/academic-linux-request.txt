@@ -1,0 +1,3 @@
+academic-12: monospace fidelity acceptance build, 2026-10-07
+Application source: 73675d4d2cecfe5a4585ce2282606de057bd8e05
+Local full regression: 13191 passed, 16 skipped; native visual acceptance pending.
