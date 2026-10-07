@@ -41,8 +41,38 @@ count; small boundary adjustments and improved inline-fraction associations were
 reviewed against the original crops. Source coverage is a supplementary check,
 not evidence of visual reading quality by itself.
 
-Production build, type checks and fresh native acceptance are still required for
-this checkpoint. The separate Android emulator attempt
+## Build and runtime checkpoint, 2026-10-07 17:25 UTC
+
+The exact application source is
+[8b958610](https://github.com/Micraow/readest/commit/8b95861016dec96365fe99db8de58af42504c190).
+The [Linux build](https://github.com/Micraow/readest/actions/runs/37651083824)
+and [unsigned Android build](https://github.com/Micraow/readest/actions/runs/37651083868)
+both completed successfully, including production frontend compilation, academic
+tests, type checks and source-integrity gates. These are build results, not
+Android runtime acceptance.
+
+The Linux candidate was exercised in the native CEF application before the test
+workspace was reset. The reported author ordering, deferred corresponding-author
+note, equation/prose boundary and complete following sentence were visibly
+correct. Displayed and inline mathematics followed the selected dark reading
+theme; ordinary color figures and original-image zoom retained their source
+colors. Citation [34] and footnote 5 in the second two-column sample navigated
+to the correct targets and returned to the clicked body context.
+
+That reset removed the local screenshots, test profile and unfinished package.
+These observations are recorded as prior native checks, not as a surviving
+screenshot deliverable. The final two-paper regression and fresh package launch
+remain pending. Source, Linux executable and the reported PDF have since been
+recovered and verified without recompiling. See the
+[recovery checkpoint](academic-13-recovery.md) for the exact build inputs and
+remaining acceptance work.
+
+The Android signing key and the locally signed, unpublished revision-13 APK
+were also lost. The CI artifact is unsigned. It cannot be presented as an
+installable update to the previously delivered test app, and a different key
+cannot preserve that app's signature compatibility.
+
+The separate Android emulator attempt
 [37647760482](https://github.com/Micraow/readest/actions/runs/37647760482) stopped
 at its initial KVM access gate before downloads or app launch. It provides no
-Android runtime or dark-theme acceptance evidence. No KVM permissions were changed.
+Android runtime or system-theme acceptance evidence. No KVM permissions were changed.
