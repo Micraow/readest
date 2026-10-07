@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import type { ViewSettings } from '@/types/book';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settingsStore';
@@ -7,6 +7,7 @@ import type { ScholarlyBlock, ScholarlyDocument, SourceSpan } from '@/services/a
 import { visualRoleLabel } from './labels';
 import InlineContent from './InlineContent';
 import { useMathCanvasStyle } from './useMathCanvasStyle';
+import { useAcademicPosition, type AcademicPositionControl } from './useAcademicPosition';
 import {
   ReferenceHistoryLayer,
   useAcademicReferences,
@@ -142,7 +143,10 @@ function VisualRegion({
   if (!source || !box) return null;
   const label = `${_(visualRoleLabel(block.role))}: ${_('Tap to zoom')}`;
   return (
-    <figure className='mx-auto my-6' style={{ maxWidth: maximumWidth }}>
+    <figure
+      className='mx-auto my-6' style={{ maxWidth: maximumWidth }}
+      data-block-id={block.id} data-source-page={source.page} data-academic-visual
+    >
       <button
         type='button'
         ref={host}
@@ -197,18 +201,21 @@ export default function ScholarlyReader({
   viewSettings,
   scrollRef,
   referenceControl,
+  positionControl,
 }: {
   document: ScholarlyDocument;
   viewSettings?: Partial<ViewSettings>;
   scrollRef?: RefObject<HTMLDivElement | null>;
   referenceControl?: RefObject<AcademicReferenceControl | null>;
+  positionControl?: RefObject<AcademicPositionControl | null>;
   session: AcademicPdfSession;
   onZoom: (block: ScholarlyBlock) => void;
 }) {
   const localRoot = useRef<HTMLDivElement>(null);
   const root = scrollRef ?? localRoot;
   const _ = useTranslation();
-  const navigation = useAcademicReferences(scholarly, root, referenceControl);
+  const position = useAcademicPosition(root, scholarly.fingerprint, positionControl);
+  const navigation = useAcademicReferences(scholarly, root, referenceControl, position.remember);
   const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
   const settings = { ...globalSettings, ...viewSettings };
   const fontSize = Math.max(16, settings.defaultFontSize || 18);
@@ -221,40 +228,6 @@ export default function ScholarlyReader({
       return [page.page, sizes[Math.floor(sizes.length / 2)]];
     }),
   );
-  const storageKey = `readest:academic-position:${scholarly.fingerprint}`;
-  useLayoutEffect(() => {
-    const element = root.current;
-    if (!element) return;
-    try {
-      const saved = Number(localStorage.getItem(storageKey));
-      if (Number.isFinite(saved) && saved > 0) element.scrollTop = saved;
-    } catch {
-      /* Device-local persistence is optional. */
-    }
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const save = () => {
-      try {
-        localStorage.setItem(storageKey, String(element.scrollTop));
-      } catch {
-        /* Full storage. */
-      }
-    };
-    const onScroll = () => {
-      if (timer) return;
-      timer = setTimeout(() => {
-        timer = undefined;
-        save();
-      }, 250);
-    };
-    element.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('pagehide', save);
-    return () => {
-      if (timer) clearTimeout(timer);
-      save();
-      element.removeEventListener('scroll', onScroll);
-      window.removeEventListener('pagehide', save);
-    };
-  }, [storageKey]);
   const font = settings.defaultFont === 'Sans-serif' ? settings.sansSerifFont : settings.serifFont;
   return (
     <>
@@ -280,6 +253,7 @@ export default function ScholarlyReader({
       <div
         ref={root}
         className='min-h-0 flex-1 overflow-y-auto overscroll-contain'
+        style={{ overflowAnchor: 'none' }}
         data-testid='scholarly-scroll'
       >
         <article

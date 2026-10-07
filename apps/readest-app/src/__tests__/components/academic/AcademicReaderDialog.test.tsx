@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AcademicReaderDialog from '@/components/academic/AcademicReaderDialog';
 import type { ScholarlyDocument } from '@/services/academic/types';
+import { mockReadingLayout } from './position-test-layout';
 
 const mocks = vi.hoisted(() => ({
   open: vi.fn(),
@@ -214,6 +215,31 @@ describe('manual academic reading session', () => {
       target: { value: '24' },
     });
     expect(scroll.scrollTop).toBe(520);
+  });
+
+  it('keeps the visible character inside a long block after a font change', async () => {
+    const text = '0123456789'.repeat(30);
+    mocks.analyze.mockResolvedValue({
+      ...scholarly,
+      blocks: [{ ...scholarly.blocks[0], text }],
+    });
+    render(
+      <AcademicReaderDialog file={new File(['%PDF-'], 'long.pdf')} title='Long' onClose={vi.fn()} />,
+    );
+    const paragraph = await screen.findByText(text);
+    const scroll = screen.getByTestId('scholarly-scroll');
+    scroll.scrollTop = 400;
+    const { characterY } = mockReadingLayout(scroll, paragraph, () =>
+      paragraph.closest('article')?.style.fontSize === '24px' ? 30 : 20,
+    );
+    expect(characterY(200)).toBe(60);
+    fireEvent.scroll(scroll);
+    fireEvent.click(screen.getByRole('button', { name: 'Reading appearance' }));
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Font Size' }), {
+      target: { value: '24' },
+    });
+    expect(scroll.scrollTop).toBe(600);
+    expect(characterY(200)).toBe(60);
   });
 
   it('renders a continuous flow and releases the parser on dismissal', async () => {

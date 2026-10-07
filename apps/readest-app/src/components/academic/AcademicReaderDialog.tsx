@@ -45,7 +45,7 @@ export default function AcademicReaderDialog({
   const appearanceButton = useRef<HTMLButtonElement>(null);
   const appearanceId = useId();
   const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
-  const { overrides, updateAppearance, scrollRef } = useAcademicAppearance(document?.fingerprint);
+  const { overrides, updateAppearance, scrollRef, positionControl } = useAcademicAppearance(document?.fingerprint);
   const readingSettings = { ...globalSettings, ...viewSettings, ...overrides };
   const [zoomUrl, setZoomUrl] = useState<string | null>(null);
   const [zoomRole, setZoomRole] = useState('');
@@ -303,6 +303,7 @@ export default function AcademicReaderDialog({
             session={session}
             viewSettings={readingSettings}
             scrollRef={scrollRef}
+            positionControl={positionControl}
             onZoom={(block) => void zoom(block)}
           />
         ) : (

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ViewSettings } from '@/types/book';
+import type { AcademicPositionControl } from './useAcademicPosition';
 
 export type AcademicAppearance = Pick<ViewSettings, 'defaultFontSize' | 'lineHeight'>;
 export const appearanceLimits = {
@@ -34,28 +35,15 @@ export function useAcademicAppearance(fingerprint?: string) {
   } | null>(null);
   const overrides = edited?.storageKey === storageKey ? edited.values : saved;
   const scrollRef = useRef<HTMLDivElement>(null);
-  const anchor = useRef<{ block: HTMLElement; offset: number } | null>(null);
+  const positionControl = useRef<AcademicPositionControl | null>(null);
 
   useLayoutEffect(() => {
-    const scroll = scrollRef.current;
-    if (scroll && anchor.current) {
-      const { block, offset } = anchor.current;
-      scroll.scrollTop +=
-        block.getBoundingClientRect().top - scroll.getBoundingClientRect().top - offset;
-    }
-    anchor.current = null;
+    positionControl.current?.restore();
   }, [overrides]);
 
   const updateAppearance = (values: Partial<AcademicAppearance>) => {
     if (!storageKey) return;
-    const scroll = scrollRef.current;
-    if (scroll) {
-      const top = scroll.getBoundingClientRect().top;
-      const block = Array.from(scroll.querySelectorAll<HTMLElement>('[data-block-id]')).find(
-        (element) => element.getBoundingClientRect().bottom > top,
-      );
-      if (block) anchor.current = { block, offset: block.getBoundingClientRect().top - top };
-    }
+    positionControl.current?.prepare();
     setEdited({ storageKey, values });
     try {
       if (Object.keys(values).length) localStorage.setItem(storageKey, JSON.stringify(values));
@@ -64,5 +52,5 @@ export function useAcademicAppearance(fingerprint?: string) {
       // Keep the change for this session even when it cannot be saved.
     }
   };
-  return { overrides, updateAppearance, scrollRef };
+  return { overrides, updateAppearance, scrollRef, positionControl };
 }

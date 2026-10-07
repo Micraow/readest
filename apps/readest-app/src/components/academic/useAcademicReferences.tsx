@@ -36,6 +36,7 @@ export function useAcademicReferences(
   document: ScholarlyDocument,
   root: RefObject<HTMLDivElement | null>,
   control?: RefObject<AcademicReferenceControl | null>,
+  onPositionChange?: () => void,
 ) {
   const prefix = useId();
   const index = useMemo(() => buildAcademicNavigation(document), [document]);
@@ -76,7 +77,8 @@ export function useAcademicReferences(
       anchor.getBoundingClientRect().top - scroller.getBoundingClientRect().top - placement.offset;
     const focus = placement.focus?.isConnected ? placement.focus : anchor;
     focus.focus({ preventScroll: true });
-  }, [saved, root]);
+    onPositionChange?.(); // Explicit navigation supersedes the pre-layout reading anchor.
+  }, [saved, root, onPositionChange]);
 
   const navigate = (link: AcademicLink, anchor: HTMLAnchorElement) => {
     const scroller = root.current;

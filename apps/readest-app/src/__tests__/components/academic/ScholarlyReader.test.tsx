@@ -4,6 +4,7 @@ import ScholarlyReader from '@/components/academic/ScholarlyReader';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument } from '@/services/academic/types';
 import { useThemeStore } from '@/store/themeStore';
+import { mockReadingLayout } from './position-test-layout';
 
 vi.mock('@/hooks/useTranslation', () => ({ useTranslation: () => (key: string) => key }));
 vi.mock('@/store/themeStore', async () => {
@@ -363,7 +364,7 @@ describe('continuous academic flow', () => {
     result.unmount();
     expect(renderRegion.mock.calls[2]![4]!.aborted).toBe(true);
     expect(canvas.width).toBe(0);
-    expect(disconnect).toHaveBeenCalledTimes(2);
+    expect(disconnect).toHaveBeenCalledTimes(3); // visibility, preview size, reading-position size
   });
 
   it('keeps short equations at reading font scale, centered and zoomable', async () => {
@@ -458,6 +459,62 @@ describe('continuous academic flow', () => {
     render(<ScholarlyReader document={document} session={session} onZoom={vi.fn()} />);
     expect(screen.getByTestId('scholarly-scroll').scrollTop).toBe(725);
     expect(localStorage.length).toBe(1);
+  });
+
+  it('keeps the visible character when a resize emits scroll before observation', () => {
+    let notifyResize = () => {};
+    vi.stubGlobal('ResizeObserver', class {
+      constructor(callback: () => void) { notifyResize = callback; }
+      observe() {}
+      disconnect() {}
+    });
+    const text = '0123456789'.repeat(30);
+    render(<ScholarlyReader
+      document={documentFor([{ ...block('long', 1, 'paragraph'), text }])}
+      session={session} onZoom={vi.fn()}
+    />);
+    const scroller = screen.getByTestId('scholarly-scroll');
+    const paragraph = screen.getByText(text);
+    const { characterY } = mockReadingLayout(scroller, paragraph, () => width < 300 ? 30 : 20);
+    scroller.scrollTop = 400;
+    fireEvent.scroll(scroller);
+    expect(characterY(200)).toBe(60);
+    width = 240;
+    fireEvent.scroll(scroller);
+    act(notifyResize);
+    expect(scroller.scrollTop).toBe(600);
+    expect(characterY(200)).toBe(60);
+  });
+
+  it('does not recapture an earlier line start during repeated width changes', () => {
+    let notifyResize = () => {};
+    vi.stubGlobal('ResizeObserver', class {
+      constructor(callback: () => void) { notifyResize = callback; }
+      observe() {}
+      disconnect() {}
+    });
+    const text = '0123456789'.repeat(30);
+    const result = render(<ScholarlyReader
+      document={documentFor([{ ...block('long', 1, 'paragraph'), text }])}
+      session={session} onZoom={vi.fn()}
+    />);
+    const scroller = screen.getByTestId('scholarly-scroll');
+    const { characterY } = mockReadingLayout(scroller, screen.getByText(text), () => 20, () => width < 300 ? 7 : 10);
+    scroller.scrollTop = 400;
+    fireEvent.scroll(scroller);
+    for (let pass = 0; pass < 3; pass++) {
+      width = 240;
+      act(notifyResize);
+      fireEvent.scroll(scroller); // programmatic restore dispatches a scroll event too
+      expect(characterY(200)).toBe(60);
+      width = 360;
+      act(notifyResize);
+      fireEvent.scroll(scroller);
+      expect(characterY(200)).toBe(60);
+    }
+    result.unmount();
+    const saved = JSON.parse(localStorage.getItem('readest:academic-position:continuous-paper')!);
+    expect(saved.anchor.textOffset).toBe(200);
   });
 
   it('preserves the first number when a numbered list continues after a visual region', () => {
