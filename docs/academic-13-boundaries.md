@@ -61,9 +61,9 @@ to the correct targets and returned to the clicked body context.
 
 That reset removed the local screenshots, test profile and unfinished package.
 These observations are recorded as prior native checks, not as a surviving
-screenshot deliverable. The final two-paper regression and fresh package launch
-remain pending. Source, Linux executable and the reported PDF have since been
-recovered and verified without recompiling. See the
+screenshot deliverable. Source, Linux executable and the reported PDF were recovered and verified
+without recompiling. A fresh package launch and focused acceptance have since
+completed, as recorded below. The final two-paper regression remains pending. See the
 [recovery checkpoint](academic-13-recovery.md) for the exact build inputs and
 remaining acceptance work.
 
@@ -76,3 +76,26 @@ The separate Android emulator attempt
 [37647760482](https://github.com/Micraow/readest/actions/runs/37647760482) stopped
 at its initial KVM access gate before downloads or app launch. It provides no
 Android runtime or system-theme acceptance evidence. No KVM permissions were changed.
+
+## Recovered Linux delivery, 2026-10-07 17:44 UTC
+
+The recovered portable package was launched in the native CEF application and
+saved as a new versioned deliverable. Its 243 packaged files were individually
+checked for content hashes and executable permissions. The archive is
+208303552 bytes, SHA-256
+`135d441303f8dabd7f679a912cc58c5075e94701dd44a98b47a87e2833ac1cd2`.
+It contains the original successful build from source `8b958610`, with the
+allocated ELF sections and loadable segments preserved when stripping.
+
+Eight new screenshots were saved separately from the application package.
+Fresh checks on the reported paper confirmed author/body order, the deferred
+author note, the complete paragraph following equation 1, citation [11] navigation
+and return, 22-point reading size with 1.6 line height, original-equation zoom
+and return, and mathematics on the dark reading surface. The screenshots and
+private source PDF are not published in this repository.
+
+This is a focused Linux acceptance result. The earlier MP citation/footnote
+checks were observed before the reset; the other two papers' remaining short
+regression and the requested new Scholaread comparison are not claimed complete.
+No installable revision-13 Android update or Android runtime acceptance has
+been delivered by this checkpoint.

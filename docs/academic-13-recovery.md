@@ -75,3 +75,14 @@ update. No private key belongs in this repository or ordinary build artifacts.
 The earlier Android emulator run stopped at its KVM access gate. Linux screenshots
 must not be described as Android device acceptance. System-driven Android theme
 changes still require an actual Android runtime check.
+
+## Recovery result, 2026-10-07 17:44 UTC
+
+Steps 1, 2, 3 and 5 above completed for the reported paper. The recovered native
+application passed the focused checks documented in
+[the delivery checkpoint](academic-13-boundaries.md#recovered-linux-delivery-2026-10-07-1744-utc).
+The portable archive and eight new screenshots were saved as separate versioned
+deliverables. Its archive SHA-256 is
+`135d441303f8dabd7f679a912cc58c5075e94701dd44a98b47a87e2833ac1cd2`.
+Step 4 remains follow-on regression work; this record does not imply that lost
+profiles or screenshots were recovered, or that an Android signing key exists.
