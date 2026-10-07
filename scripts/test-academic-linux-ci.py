@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -15,6 +16,59 @@ spec.loader.exec_module(ci)
 
 
 class ArtifactTests(unittest.TestCase):
+    def test_native_prerequisites_are_bounded_and_use_official_sources(self):
+        workflow = Path(__file__).parents[1] / ".github/workflows/academic-linux.yml"
+        step = workflow.read_text().split("      - name: Install native prerequisites\n", 1)[1].split("      - uses:", 1)[0]
+        self.assertIn("timeout-minutes: 25", step)
+        self.assertIn("https://archive.ubuntu.com/ubuntu", step)
+        self.assertIn("https://security.ubuntu.com/ubuntu", step)
+        self.assertIn("signed-by=/usr/share/keyrings/ubuntu-archive-keyring.gpg", step)
+        self.assertIn('Dir::Etc::sourceparts=-', step)
+        self.assertIn('Acquire::https::Timeout=30', step)
+        self.assertIn('Acquire::Retries=2', step)
+        self.assertIn('timeout --kill-after=30s 5m apt-get', step)
+        self.assertIn('--error-on=any update', step)
+        self.assertIn('timeout --kill-after=30s 10m apt-get', step)
+        self.assertIn('timeout --kill-after=30s 3m rustup toolchain install', step)
+        self.assertIn('for attempt in 1 2', step)
+        self.assertIn('[ "$attempt" = 2 ] && exit 1', step)
+        shell = "\n".join(line.removeprefix("          ") for line in step.split("        run: |\n", 1)[1].splitlines())
+        subprocess.run(["bash", "-n"], input=shell, text=True, check=True)
+
+        # Run the actual workflow shell with harmless command shims. Never use apt
+        # or sudo on the test host, and prove exhausted retries stop the build.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shims = {
+                "sudo": '#!/bin/bash\nexec "$@"\n',
+                "sleep": "#!/bin/bash\nexit 0\n",
+                "rustup": '#!/bin/bash\necho rustup >> "$RUNNER_TEMP/calls"\n',
+                "timeout": '''#!/usr/bin/env python3
+import os
+from pathlib import Path
+import sys
+root = Path(os.environ["RUNNER_TEMP"])
+calls = root / "calls"
+previous = calls.read_text() if calls.exists() else ""
+kind = "update" if "update" in sys.argv else "install"
+calls.write_text(previous + kind + "\\n")
+if kind == "update" and previous.count("update\\n") < int(os.environ["FAIL_UPDATES"]):
+    sys.exit(100)
+''',
+            }
+            for name, content in shims.items():
+                (root / name).write_text(content)
+                (root / name).chmod(0o755)
+            for failures in [0, 1, 2]:
+                (root / "calls").write_text("")
+                env = dict(os.environ, RUNNER_TEMP=tmp, PATH=tmp + ":" + os.environ["PATH"], FAIL_UPDATES=str(failures))
+                result = subprocess.run(["bash", "-e"], input=shell, text=True, env=env, capture_output=True)
+                calls = (root / "calls").read_text().splitlines()
+                self.assertEqual(calls.count("update"), min(failures + 1, 2))
+                self.assertEqual(result.returncode == 0, failures < 2, result.stderr)
+                self.assertEqual("install" in calls, failures < 2)
+                self.assertEqual("rustup" in calls, failures < 2)
+
     def test_generated_outputs_do_not_allow_source_or_pin_changes(self):
         def commands(*args, **kwargs):
             if "--cached" in args:
