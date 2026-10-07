@@ -463,19 +463,27 @@ describe('continuous academic flow', () => {
 
   it('keeps the visible character when a resize emits scroll before observation', () => {
     let notifyResize = () => {};
-    vi.stubGlobal('ResizeObserver', class {
-      constructor(callback: () => void) { notifyResize = callback; }
-      observe() {}
-      disconnect() {}
-    });
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => void) {
+          notifyResize = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
     const text = '0123456789'.repeat(30);
-    render(<ScholarlyReader
-      document={documentFor([{ ...block('long', 1, 'paragraph'), text }])}
-      session={session} onZoom={vi.fn()}
-    />);
+    render(
+      <ScholarlyReader
+        document={documentFor([{ ...block('long', 1, 'paragraph'), text }])}
+        session={session}
+        onZoom={vi.fn()}
+      />,
+    );
     const scroller = screen.getByTestId('scholarly-scroll');
     const paragraph = screen.getByText(text);
-    const { characterY } = mockReadingLayout(scroller, paragraph, () => width < 300 ? 30 : 20);
+    const { characterY } = mockReadingLayout(scroller, paragraph, () => (width < 300 ? 30 : 20));
     scroller.scrollTop = 400;
     fireEvent.scroll(scroller);
     expect(characterY(200)).toBe(60);
@@ -488,18 +496,31 @@ describe('continuous academic flow', () => {
 
   it('does not recapture an earlier line start during repeated width changes', () => {
     let notifyResize = () => {};
-    vi.stubGlobal('ResizeObserver', class {
-      constructor(callback: () => void) { notifyResize = callback; }
-      observe() {}
-      disconnect() {}
-    });
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => void) {
+          notifyResize = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
     const text = '0123456789'.repeat(30);
-    const result = render(<ScholarlyReader
-      document={documentFor([{ ...block('long', 1, 'paragraph'), text }])}
-      session={session} onZoom={vi.fn()}
-    />);
+    const result = render(
+      <ScholarlyReader
+        document={documentFor([{ ...block('long', 1, 'paragraph'), text }])}
+        session={session}
+        onZoom={vi.fn()}
+      />,
+    );
     const scroller = screen.getByTestId('scholarly-scroll');
-    const { characterY } = mockReadingLayout(scroller, screen.getByText(text), () => 20, () => width < 300 ? 7 : 10);
+    const { characterY } = mockReadingLayout(
+      scroller,
+      screen.getByText(text),
+      () => 20,
+      () => (width < 300 ? 7 : 10),
+    );
     scroller.scrollTop = 400;
     fireEvent.scroll(scroller);
     for (let pass = 0; pass < 3; pass++) {

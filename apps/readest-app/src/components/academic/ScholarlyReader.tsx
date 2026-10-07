@@ -144,8 +144,11 @@ function VisualRegion({
   const label = `${_(visualRoleLabel(block.role))}: ${_('Tap to zoom')}`;
   return (
     <figure
-      className='mx-auto my-6' style={{ maxWidth: maximumWidth }}
-      data-block-id={block.id} data-source-page={source.page} data-academic-visual
+      className='mx-auto my-6'
+      style={{ maxWidth: maximumWidth }}
+      data-block-id={block.id}
+      data-source-page={source.page}
+      data-academic-visual
     >
       <button
         type='button'

@@ -1,5 +1,10 @@
 import { useCallback, useImperativeHandle, useLayoutEffect, useRef, type RefObject } from 'react';
-import { captureReadingAnchor, isReadingAnchor, restoreReadingAnchor, type ReadingAnchor } from './readingAnchor';
+import {
+  captureReadingAnchor,
+  isReadingAnchor,
+  restoreReadingAnchor,
+  type ReadingAnchor,
+} from './readingAnchor';
 
 export interface AcademicPositionControl {
   prepare: () => void;
@@ -7,16 +12,21 @@ export interface AcademicPositionControl {
 }
 
 export function useAcademicPosition(
-  root: RefObject<HTMLDivElement | null>, fingerprint: string,
+  root: RefObject<HTMLDivElement | null>,
+  fingerprint: string,
   control?: RefObject<AcademicPositionControl | null>,
 ) {
   const rememberRef = useRef<() => void>(() => {});
   const commands = useRef<AcademicPositionControl | null>(null);
   const remember = useCallback(() => rememberRef.current(), []);
-  useImperativeHandle(control, () => ({
-    prepare: () => commands.current?.prepare(),
-    restore: () => commands.current?.restore(),
-  }), []);
+  useImperativeHandle(
+    control,
+    () => ({
+      prepare: () => commands.current?.prepare(),
+      restore: () => commands.current?.restore(),
+    }),
+    [],
+  );
   useLayoutEffect(() => {
     const element = root.current;
     const article = element?.querySelector('article');
@@ -30,10 +40,16 @@ export function useAcademicPosition(
       } else if (saved && typeof saved === 'object' && 'scrollTop' in saved) {
         if (typeof saved.scrollTop === 'number' && Number.isFinite(saved.scrollTop))
           element.scrollTop = Math.max(0, saved.scrollTop);
-        if ('anchor' in saved && isReadingAnchor(saved.anchor) && restoreReadingAnchor(element, saved.anchor))
+        if (
+          'anchor' in saved &&
+          isReadingAnchor(saved.anchor) &&
+          restoreReadingAnchor(element, saved.anchor)
+        )
           anchor = saved.anchor;
       }
-    } catch { /* Missing or old device-local state is optional. */ }
+    } catch {
+      /* Missing or old device-local state is optional. */
+    }
     const dimensions = () => [element.clientWidth, article.getBoundingClientRect().height];
     let [width, height] = dimensions();
     let lastScrollTop = element.scrollTop;
@@ -66,15 +82,24 @@ export function useAcademicPosition(
     const save = () => {
       if (!changed() && moved()) rememberNow(); // close/pagehide can precede a pending scroll event
       try {
-        localStorage.setItem(key, anchor
-          ? JSON.stringify({ version: 1, anchor, scrollTop: element.scrollTop })
-          : String(element.scrollTop));
-      } catch { /* Full device storage does not block reading. */ }
+        localStorage.setItem(
+          key,
+          anchor
+            ? JSON.stringify({ version: 1, anchor, scrollTop: element.scrollTop })
+            : String(element.scrollTop),
+        );
+      } catch {
+        /* Full device storage does not block reading. */
+      }
     };
     const onScroll = () => {
       // A resize can emit scroll before ResizeObserver. Keep the pre-layout anchor.
       if (!changed() && moved()) rememberNow();
-      if (!timer) timer = setTimeout(() => { timer = undefined; save(); }, 250);
+      if (!timer)
+        timer = setTimeout(() => {
+          timer = undefined;
+          save();
+        }, 250);
     };
     const onResize = () => {
       if (!changed()) return;

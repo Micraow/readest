@@ -6,12 +6,17 @@ export function mockReadingLayout(
   block: HTMLElement,
   lineHeight: () => number,
   charactersPerLine: () => number = () => 10,
+  contentTop: () => number = () => 0,
 ) {
   const rect = (top: number, height: number) => new DOMRect(20, top, 400, height);
-  const characterY = (offset: number) => 60 + Math.floor(offset / charactersPerLine()) * lineHeight() - root.scrollTop;
+  const characterY = (offset: number) =>
+    60 + contentTop() + Math.floor(offset / charactersPerLine()) * lineHeight() - root.scrollTop;
   vi.spyOn(root, 'getBoundingClientRect').mockImplementation(() => rect(60, 740));
   vi.spyOn(block, 'getBoundingClientRect').mockImplementation(() =>
-    rect(60 - root.scrollTop, Math.ceil((block.textContent?.length ?? 0) / charactersPerLine()) * lineHeight()),
+    rect(
+      60 + contentTop() - root.scrollTop,
+      Math.ceil((block.textContent?.length ?? 0) / charactersPerLine()) * lineHeight(),
+    ),
   );
   const nativeRange = document.createRange.bind(document);
   const textOffset = (target: Node, offset: number) => {

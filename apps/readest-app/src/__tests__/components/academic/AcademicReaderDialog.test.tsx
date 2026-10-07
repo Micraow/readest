@@ -224,7 +224,11 @@ describe('manual academic reading session', () => {
       blocks: [{ ...scholarly.blocks[0], text }],
     });
     render(
-      <AcademicReaderDialog file={new File(['%PDF-'], 'long.pdf')} title='Long' onClose={vi.fn()} />,
+      <AcademicReaderDialog
+        file={new File(['%PDF-'], 'long.pdf')}
+        title='Long'
+        onClose={vi.fn()}
+      />,
     );
     const paragraph = await screen.findByText(text);
     const scroll = screen.getByTestId('scholarly-scroll');

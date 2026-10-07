@@ -13,7 +13,8 @@ export function isReadingAnchor(value: unknown): value is ReadingAnchor {
     typeof anchor.blockId === 'string' &&
     Number.isFinite(anchor.viewportY) &&
     Number.isFinite(anchor.blockRatio) &&
-    anchor.blockRatio! >= 0 && anchor.blockRatio! <= 1 &&
+    anchor.blockRatio! >= 0 &&
+    anchor.blockRatio! <= 1 &&
     (anchor.textOffset === undefined ||
       (Number.isSafeInteger(anchor.textOffset) && anchor.textOffset >= 0))
   );
@@ -41,13 +42,18 @@ export function captureReadingAnchor(root: HTMLElement): ReadingAnchor | null {
     if (rect.bottom <= viewport.top || rect.top >= bottom || rect.bottom <= rect.top) continue;
     const point = Math.max(viewport.top, rect.top);
     const fallback: ReadingAnchor = {
-      blockId: block.dataset.blockId!,
+      blockId: block.dataset['blockId']!,
       viewportY: point - viewport.top,
       blockRatio: ratio(point, rect.top, rect.bottom - rect.top),
     };
-    const picture = block.hasAttribute('data-academic-visual') ? block.querySelector('button') : null;
-    if (block.hasAttribute('data-academic-visual') &&
-      (!picture || picture.getBoundingClientRect().bottom > viewport.top)) return fallback;
+    const picture = block.hasAttribute('data-academic-visual')
+      ? block.querySelector('button')
+      : null;
+    if (
+      block.hasAttribute('data-academic-visual') &&
+      (!picture || picture.getBoundingClientRect().bottom > viewport.top)
+    )
+      return fallback;
     const range = block.ownerDocument.createRange();
     if (typeof range.getBoundingClientRect !== 'function') return fallback;
     let offset = 0;
@@ -56,7 +62,8 @@ export function captureReadingAnchor(root: HTMLElement): ReadingAnchor | null {
       const bounds = range.getBoundingClientRect();
       if (bounds.bottom > viewport.top + 1 && bounds.top < bottom && bounds.height > 0) {
         // Prefix bounds are monotone across wrapped lines, including styled spans.
-        let low = 0, high = node.length - 1;
+        let low = 0,
+          high = node.length - 1;
         while (low < high) {
           const mid = Math.floor((low + high) / 2);
           range.setEnd(node, mid + 1);
@@ -81,8 +88,9 @@ export function captureReadingAnchor(root: HTMLElement): ReadingAnchor | null {
 }
 
 export function restoreReadingAnchor(root: HTMLElement, anchor: ReadingAnchor): boolean {
-  const block = Array.from(root.querySelectorAll<HTMLElement>('[data-block-id]'))
-    .find((node) => node.dataset.blockId === anchor.blockId);
+  const block = Array.from(root.querySelectorAll<HTMLElement>('[data-block-id]')).find(
+    (node) => node.dataset['blockId'] === anchor.blockId,
+  );
   if (!block) return false;
   const rect = block.getBoundingClientRect();
   let y = rect.top + anchor.blockRatio * (rect.bottom - rect.top);
