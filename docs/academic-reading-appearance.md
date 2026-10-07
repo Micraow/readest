@@ -16,9 +16,27 @@ record font size, line spacing and window width. Caption completeness must be
 checked against the original PDF, not inferred from another reader's longer
 caption: body continuation can be incorrectly absorbed into captions.
 
-This is a UI checkpoint. Focused interaction tests cover per-document persistence,
-reset, history/keyboard navigation, paragraph position and image fit. Production
-build and native visual acceptance must still verify the initial viewer with
-controls visible, narrow-window reading and appearance changes before a new
-package is described as validated. Compilation alone does not establish Android
-device reading quality.
+## Acceptance on 2026-10-07
+
+Source `dca7a24b17c69d47ef9fb8640c80ff9e6e396392` passed 195 focused tests
+across 18 files, complete TypeScript/lint checks and production builds in the
+dedicated [Linux](https://github.com/Micraow/readest/actions/runs/37639961974)
+and [Android](https://github.com/Micraow/readest/actions/runs/37639962100) jobs.
+Eight CI helper tests passed locally; each job also ran its applicable helpers.
+
+The packaged Linux app was checked with actual PDFs. The initial Algorithm 2
+viewer showed all 17 lines with controls visible; hiding/restoring the controls
+kept the image area pixel-identical. Zoom, pan and return worked. Font size and
+line spacing changed from 16/1.4 to 18/1.5 and 20/1.6 while retaining the current
+paragraph. Restart retained that PDF's choices, another PDF kept its own
+defaults, and reset restored 16/1.4. All 25 existing parse cache files retained
+their bytes and timestamps.
+
+At a 527px window width the appearance panel and visible body text remained
+usable. A horizontal scrollbar was observed at 20px text: long unbroken content
+can still require horizontal reading. Resizing the whole window also retains an
+absolute scroll position rather than the same paragraph. These are remaining
+limitations, not part of the verified font-change position preservation.
+
+Android compilation and static APK checks do not establish real-device reading
+quality. No Android hardware/emulator acceptance is claimed for this build.

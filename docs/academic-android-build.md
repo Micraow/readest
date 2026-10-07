@@ -53,3 +53,24 @@ No PDF, paper extraction, account profile, keystore, password, or deployment
 credential belongs in these source or build artifacts. Do not publish the
 unsigned candidate as an installable release or upload a private key as a normal
 workflow artifact.
+
+## Verified candidate on 2026-10-07
+
+The recovery [run 37639962100](https://github.com/Micraow/readest/actions/runs/37639962100)
+succeeded for source `dca7a24b17c69d47ef9fb8640c80ff9e6e396392`. The unsigned APK
+was independently recovered from checksummed artifact parts and checked again
+with official Android Build Tools 36.0.0. It contains only compressed arm64
+libraries, passes 16 KiB alignment, and uses the separate academic app/provider
+identity with the original MainActivity namespace. Its version is 0.12.12 / 12012,
+minimum Android API 26 and target API 36.
+
+Local signing used the explicitly approved dedicated test identity. The final
+APK is 36,565,458 bytes, SHA-256
+`d901232e91db1f70254ec72bd6ed7a3f030bf1682f059fe60aec57a44f2828e6`.
+APK Signature Scheme v2 and v3 verification and post-signing alignment passed.
+Its public certificate SHA-256 is
+`c69930d562568bbbf8e4317f38d3847dbb44ba8c99f29b49a62a0b6b35729432`.
+The private key was not uploaded to CI, source control or ordinary artifacts;
+secure user-controlled backup remains pending. Do not overwrite that key when
+preparing future updates. Android device/emulator reading acceptance remains
+pending; the corresponding reading UI was visually checked in the Linux build.
