@@ -19,6 +19,8 @@ permissions:
 
 jobs:
   upload-to-r2:
+    # Also guard direct manual/reusable calls, independently of the caller.
+    if: vars.ENABLE_AUTOMATED_PUBLISHING == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

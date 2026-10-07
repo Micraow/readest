@@ -9,6 +9,9 @@ permissions: read-all
 
 jobs:
   get-release:
+    # Publishing an already verified download must not implicitly start the
+    # upstream platform matrix, rewrite its release, or upload to external R2.
+    if: vars.ENABLE_AUTOMATED_PUBLISHING == 'true'
     permissions:
       contents: read
     runs-on: ubuntu-latest
