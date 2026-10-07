@@ -31,6 +31,31 @@ const baseItems = (items: PdfTextItem[], font: number) =>
   items.filter((item) => item.fontSize >= font * 0.94);
 const compact = (item: PdfTextItem, font: number) =>
   item.text.length <= 40 && (item.fontSize < font * 0.92 || /^\S{1,8}$/.test(item.text));
+const unmapped = (item: PdfTextItem) => /[\p{Cc}\p{Co}\uFFFD]/u.test(item.text.trim());
+
+/** Broken font mappings can also report a raised baseline for an ordinary-size operator. */
+export function unmappedGlyphAnchors(items: PdfTextItem[]): Map<number, PdfTextItem> {
+  const anchors = new Map<number, PdfTextItem>();
+  for (const glyph of items.filter(unmapped)) {
+    const nearby = items.filter((item) => {
+      const gap =
+        item.index < glyph.index ? glyph.box.x - right(item.box) : item.box.x - right(glyph.box);
+      return (
+        item.text.trim() &&
+        !unmapped(item) &&
+        item.fontSize >= glyph.fontSize * 0.94 &&
+        item.fontSize <= glyph.fontSize * 1.2 &&
+        Math.abs(item.baseline - glyph.baseline) <= item.fontSize &&
+        gap >= -item.fontSize * 0.1 &&
+        gap <= item.fontSize * 1.5
+      );
+    });
+    // Source adjacency disambiguates two physical rows equally near a raised glyph.
+    nearby.sort((a, b) => Math.abs(a.index - glyph.index) - Math.abs(b.index - glyph.index));
+    if (nearby[0]) anchors.set(glyph.index, nearby[0]);
+  }
+  return anchors;
+}
 
 type Crop = {
   items: PdfTextItem[];
@@ -39,7 +64,93 @@ type Crop = {
   baseline: number;
   trimBelow?: number;
   axis?: number;
+  anchorIndex?: number;
 };
+
+function unmappedCrops(page: PageGeometry, items: PdfTextItem[], occupied: Set<number>): Crop[] {
+  const anchors = unmappedGlyphAnchors(items);
+  const crops: Crop[] = [];
+  for (const glyph of items.filter((item) => unmapped(item) && !occupied.has(item.index))) {
+    const anchor = anchors.get(glyph.index) ?? glyph;
+    const font = anchor.fontSize;
+    const ordinary = items.filter((item) => !unmapped(item) && item.fontSize >= font * 0.87);
+    const before = Math.max(
+      -Infinity,
+      ...ordinary.filter((item) => item.index < glyph.index).map((item) => item.index),
+    );
+    const after = Math.min(
+      Infinity,
+      ...ordinary.filter((item) => item.index > glyph.index).map((item) => item.index),
+    );
+    const members = items.filter((item) => {
+      if (item === glyph) return true;
+      return (
+        !occupied.has(item.index) &&
+        !unmapped(item) &&
+        item.index > before &&
+        item.index < after &&
+        item.fontSize < font * 0.87 &&
+        /^\S{1,8}$/.test(item.text) &&
+        item.baseline >= anchor.baseline - font * 1.3 &&
+        item.baseline <= anchor.baseline + font * 0.8 &&
+        (overlap(item.box, glyph.box) > Math.min(item.box.width, glyph.box.width) * 0.4 ||
+          (item.box.x >= glyph.box.x && item.box.x - right(glyph.box) <= font * 0.25))
+      );
+    });
+    // Nominal font ascent can miss the actual ink of an unmapped operator.
+    // Include its surrounding text band, then stop at neighboring rows' ink boxes.
+    const area = bounds([
+      ...members.map((item) => item.box),
+      {
+        x: glyph.box.x,
+        y: anchor.baseline - font * 0.8,
+        width: glyph.box.width,
+        height: font * 1.1,
+      },
+    ]);
+    const pad = font * 0.06;
+    const x = Math.max(0, area.x - pad);
+    const box = {
+      x,
+      y: Math.max(0, area.y - pad),
+      width: Math.min(page.width, right(area) + pad) - x,
+      height: 0,
+    };
+    let end = Math.min(page.height, bottom(area) + pad);
+    const outside = page.items.filter(
+      (item) => item.text.trim() && !members.includes(item) && overlap(item.box, box) > 0,
+    );
+    for (const item of outside) {
+      if (item.baseline < anchor.baseline - font * 0.5 && bottom(item.box) <= anchor.baseline)
+        box.y = Math.max(box.y, bottom(item.box) + pad);
+      else if (item.baseline > anchor.baseline + font * 0.5 && item.box.y > anchor.baseline)
+        end = Math.min(end, item.box.y - pad);
+    }
+    box.height = end - box.y;
+    if (
+      box.height <= 0 ||
+      box.height > font * 3 ||
+      box.width > font * 5 ||
+      members.some((item) => item !== glyph && (item.box.y < box.y || bottom(item.box) > end)) ||
+      outside.some(
+        (item) =>
+          overlap(item.box, box) > Math.min(item.box.width, box.width) * 0.4 &&
+          item.box.y + item.box.height / 2 > box.y &&
+          item.box.y + item.box.height / 2 < end,
+      )
+    )
+      continue;
+    members.forEach((item) => occupied.add(item.index));
+    crops.push({
+      items: members,
+      box,
+      fontSize: font,
+      baseline: anchor.baseline,
+      anchorIndex: anchor.index,
+    });
+  }
+  return crops;
+}
 
 /** Only accept a crop when every visible glyph inside it belongs to this block. */
 function makeCrop(
@@ -148,7 +259,14 @@ function sourceCrops(page: PageGeometry, items: PdfTextItem[]): Crop[] {
   }
   // A real bar bounds the complete numerator/denominator. Mere vertical overlap
   // also occurs between scripts on successive prose rows and cannot establish a fraction.
-  return crops;
+  return [
+    ...crops,
+    ...unmappedCrops(
+      page,
+      items,
+      new Set(crops.flatMap((crop) => crop.items.map((item) => item.index))),
+    ),
+  ];
 }
 
 function styleFor(item: PdfTextItem, font: number, baseline: number): InlineTextStyle | undefined {
@@ -159,7 +277,7 @@ function styleFor(item: PdfTextItem, font: number, baseline: number): InlineText
   const delta = item.baseline - baseline;
   if (
     item.fontSize < font * 0.87 &&
-    /^\S{1,4}$/.test(item.text) &&
+    /^\S{1,4}$/.test(item.text.trim()) &&
     Math.abs(delta) >= font * 0.12 &&
     Math.abs(delta) < font * 0.7
   )
@@ -203,6 +321,10 @@ export function buildInlineRuns(page: PageGeometry, lines: LayoutLine[]): Inline
   const detected = sourceCrops(page, items);
   const cropIds = new Set(detected.flatMap((crop) => crop.items.map((item) => item.index)));
   const anchored = detected.flatMap((crop) => {
+    if (crop.anchorIndex !== undefined) {
+      const anchor = lines.find((line) => line.itemIndices.includes(crop.anchorIndex!));
+      return anchor ? [{ crop, anchor }] : [];
+    }
     const expected = (crop.axis ?? crop.baseline - crop.fontSize * 0.25) + crop.fontSize * 0.25;
     const candidates = lines.flatMap((line) => {
       const ordinary = items.filter(

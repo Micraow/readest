@@ -331,17 +331,22 @@ export default function ScholarlyReader({
               </ul>
             );
           }
+          if (block.type === 'footnote')
+            return (
+              <aside
+                key={block.id}
+                {...props}
+                role='note'
+                className='mb-4 border-s-2 border-base-300 ps-3 text-[0.9em] [&>sup:first-child]:me-1'
+              >
+                {content}
+              </aside>
+            );
           return (
             <p
               key={block.id}
               {...props}
-              className={
-                block.type === 'footnote'
-                  ? 'mb-4 text-[0.9em]'
-                  : block.type === 'reference'
-                    ? 'mb-3 pl-6 -indent-6 text-[0.95em]'
-                    : 'mb-4'
-              }
+              className={block.type === 'reference' ? 'mb-3 pl-6 -indent-6 text-[0.95em]' : 'mb-4'}
             >
               {content}
             </p>

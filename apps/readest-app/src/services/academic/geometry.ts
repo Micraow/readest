@@ -262,15 +262,22 @@ export async function extractPageGeometry(
         : '';
     // Embedded fonts may omit boolean flags while retaining their PostScript
     // name. Recognize explicit style names and established TeX font suffixes.
+    // CM-Super uses documented two-letter shapes rather than the word "Bold".
+    // https://ctan.org/tex-archive/fonts/ps-type1/cm-super
+    const cmSuperShape = /^sf([a-z]{2})\d+$/i.exec(name)?.[1]?.toLowerCase() ?? '';
     const italic =
       ('italic' in metadata && metadata.italic === true) ||
       /italic|oblique/i.test(name) ||
       /^(?:LinLibertine|LinBiolinum)T?B?I\d*$/.test(name) ||
-      /^(?:cm|lm|tx|rtx|ntx)mi\d*$/.test(name);
+      /^(?:cm|lm|tx|rtx|ntx)mi\d*$/.test(name) ||
+      ['sl', 'ti', 'sc', 'ci', 'bl', 'bi', 'oc', 'si', 'so', 'st', 'it', 'vi', 'fs', 'fi'].includes(
+        cmSuperShape,
+      );
     const bold =
       ('bold' in metadata && metadata.bold === true) ||
       /bold|demibold|semibold/i.test(name) ||
-      /^(?:LinLibertine|LinBiolinum)T?BI?\d*$/.test(name);
+      /^(?:LinLibertine|LinBiolinum)T?BI?\d*$/.test(name) ||
+      ['bx', 'bl', 'bi', 'xc', 'oc', 'rb', 'bm', 'sx', 'so'].includes(cmSuperShape);
     styles[fontName] = {
       ...style,
       ...(italic ? { fontStyle: 'italic' as const } : {}),

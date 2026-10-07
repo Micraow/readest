@@ -13,11 +13,11 @@ import type {
   VisualCaption,
   VisualRole,
 } from './types';
-import { buildInlineRuns, joinInlineRuns } from './inline.ts';
+import { buildInlineRuns, joinInlineRuns, unmappedGlyphAnchors } from './inline.ts';
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-10';
+export const PARSER_VERSION = 'academic-11';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -84,6 +84,8 @@ function lineText(items: PdfTextItem[]): string {
 export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set()): LayoutLine[] {
   const items = page.items.filter((i) => i.text.trim() && !excluded.has(i.index));
   const font = bodyFont(items);
+  const glyphAnchors = unmappedGlyphAnchors(items);
+  const baselineOf = (item: PdfTextItem) => glyphAnchors.get(item.index)?.baseline ?? item.baseline;
   const dropCaps = new Map<PdfTextItem, PdfTextItem>();
   for (const initial of items) {
     if (!/^\p{Lu}$/u.test(initial.text) || initial.fontSize < font * 1.7) continue;
@@ -105,14 +107,14 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
     .sort(
       (a, b) =>
         b.fontSize - a.fontSize ||
-        a.baseline - b.baseline ||
+        baselineOf(a) - baselineOf(b) ||
         a.box.x - b.box.x ||
         a.index - b.index,
     )) {
     let closest: (typeof rows)[number] | undefined;
     let distance = Infinity;
     for (const row of rows) {
-      const delta = Math.abs(row.baseline - item.baseline);
+      const delta = Math.abs(row.baseline - baselineOf(item));
       const tolerance =
         item.fontSize < row.size * 0.82 ? row.size * 0.65 : Math.max(1.6, row.size * 0.25);
       // Superscripts attach only to a nearby run, not a different column on the same row.
@@ -127,7 +129,7 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
       }
     }
     if (closest) closest.items.push(item);
-    else rows.push({ baseline: item.baseline, size: item.fontSize, items: [item] });
+    else rows.push({ baseline: baselineOf(item), size: item.fontSize, items: [item] });
   }
   // A dropped capital spans several baselines. Attach it only after ordinary
   // rows exist, so its larger font cannot merge those rows into one x-sorted line.
@@ -1017,6 +1019,32 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
       .filter((item) => item.text.trim().length > 8);
     return runs.length ? median(runs.map((item) => item.fontSize)) : line.fontSize;
   };
+  const numberedParagraphLead = (line: LayoutLine) => {
+    if (!/^\d+[.)]\s/.test(line.text)) return false;
+    const runs = line.itemIndices.map((id) => items.get(id)!).filter((item) => item.text.trim());
+    const colon = runs.findIndex((item) => /:$/.test(item.text.trim()));
+    const emphasized = (item: PdfTextItem) =>
+      !!(
+        item.fontStyle ||
+        item.fontWeight ||
+        /italic|oblique|bold|semibold|demibold/i.test(`${item.fontName} ${item.fontFamily}`)
+      );
+    return (
+      colon >= 0 &&
+      runs.slice(0, colon + 1).every(emphasized) &&
+      runs.slice(colon + 1).some((item) => !emphasized(item) && /\p{L}{2,}/u.test(item.text))
+    );
+  };
+  const boldParagraphLead = (line: LayoutLine) => {
+    const runs = line.itemIndices.map((id) => items.get(id)!).filter((item) => item.text.trim());
+    const firstOrdinary = runs.findIndex((item) => item.fontWeight !== 'bold');
+    if (firstOrdinary <= 0) return false;
+    const label = runs
+      .slice(0, firstOrdinary)
+      .map((item) => item.text)
+      .join('');
+    return label.length < 100 && /^\p{L}/u.test(label) && /[.:]$/.test(label.trim());
+  };
   const typefaces = new Map<string, number>();
   for (const item of page.items) {
     if (Math.abs(item.fontSize - font) > font * 0.06) continue;
@@ -1122,7 +1150,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
           ? 'heading'
           : /^\[\d+\]/.test(line.text) || references
             ? 'reference'
-            : listStart(line.text)
+            : listStart(line.text) && !numberedParagraphLead(line)
               ? 'list'
               : 'paragraph';
       const droppedInitial = previous?.itemIndices.some((id) => {
@@ -1201,6 +1229,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
         previous &&
         type === 'paragraph' &&
         (gap > font * 0.85 ||
+          (boldParagraphLead(line) && /[.!?][”"')\]]?$/.test(previous.text)) ||
           (gap > Math.max(font * 0.35, normalGap + font * 0.18) &&
             /[.!?][”"')\]]?$/.test(previous.text)) ||
           (indent > font * 0.85 && /[.!?][”"')\]]?$/.test(previous.text)) ||

@@ -38,6 +38,42 @@ const page = (items: PdfTextItem[], pageNumber = 1): PageGeometry => ({
 const doc = (pages: PageGeometry[]) => analyzeDocument(pages, 'a'.repeat(64), '6.2.108');
 
 describe('deterministic academic layout', () => {
+  it('keeps consecutive bold run-in paragraph labels separate at ordinary line spacing', () => {
+    const p = page([
+      { ...item(0, 'Environment.', 40, 100, 70), fontWeight: 'bold' },
+      item(1, 'We model a network with several devices.', 113, 100, 300),
+      item(2, 'The configuration remains unchanged.', 40, 112, 280),
+      { ...item(3, 'Traffic.', 40, 124, 40), fontWeight: 'bold' },
+      item(4, 'We replay a measured workload.', 83, 124, 250),
+      item(5, 'The complete trace is retained.', 40, 136, 250),
+    ]);
+    const d = doc([p]);
+    expect(d.blocks.map((block) => block.type)).toEqual(['paragraph', 'paragraph']);
+    expect(d.blocks[0]?.text).toContain('configuration remains unchanged.');
+    expect(d.blocks[1]?.text).toMatch(/^Traffic\. We replay/);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('clusters unmapped raised operators with their own prose row without changing source geometry', () => {
+    const operator = item(2, '\u0002', 95, 105, 8);
+    const p = page([
+      item(0, 'The preceding sentence continues here.', 40, 100),
+      item(1, 'Value =', 40, 112, 50),
+      operator,
+      item(3, 'x is bounded.', 106, 112, 85),
+      item(4, 'The following sentence continues here.', 40, 124),
+    ]);
+    const before = structuredClone(p.items);
+    const lines = clusterLines(p);
+    expect(lines).toHaveLength(3);
+    expect(lines[1]?.itemIndices).toEqual([1, 2, 3]);
+    expect(p.items).toEqual(before);
+    const d = doc([p]);
+    expect(validateSourceCoverage(d)).toEqual([]);
+    expect(
+      d.blocks.flatMap((block) => block.inlineRuns ?? []).find((run) => run.kind === 'source'),
+    ).toMatchObject({ baseline: 120, source: { itemIndices: [2] } });
+  });
+
   it('rejects missing inline glyphs even when the containing block owns every source item', () => {
     const d = doc([page([item(0, 'A complete source paragraph.', 40, 100)])]);
     d.blocks[0]!.inlineRuns = [];
@@ -522,6 +558,34 @@ describe('deterministic academic layout', () => {
       '3.2.1 Device behavior. The rest of this line is ordinary paragraph prose.',
     );
     expect(d.blocks[1]?.source[0]?.itemIndices).toEqual([1, 2, 3]);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('keeps an emphasized numbered paragraph lead and its unindented continuation together', () => {
+    const p = page([
+      item(0, 'Ordinary body prose establishes the document typeface.', 40, 100, 420),
+      { ...item(1, '1) Tracking', 50, 140, 49), fontStyle: 'italic' as const },
+      { ...item(2, 'received data:', 103, 140, 66), fontStyle: 'italic' as const },
+      item(3, 'The receiver', 173, 140, 65),
+      item(4, 'records each arrival in a compact data structure.', 40, 154, 420),
+      item(5, '1) Ordinary item: the first instruction.', 40, 190, 250),
+      item(6, '2) Another item: the second instruction.', 40, 204, 250),
+    ]);
+    const d = doc([p]);
+    const paragraph = d.blocks.find((block) =>
+      block.source.some((span) => span.itemIndices.includes(1)),
+    )!;
+    expect(paragraph.type).toBe('paragraph');
+    expect(paragraph.text).toBe(
+      '1) Tracking received data: The receiver records each arrival in a compact data structure.',
+    );
+    expect(paragraph.source[0]!.itemIndices).toEqual([1, 2, 3, 4]);
+    expect(paragraph.inlineRuns?.find((run) => run.text === '1) Tracking')).toMatchObject({
+      style: { fontStyle: 'italic' },
+    });
+    expect(d.blocks.find((block) => block.type === 'list')?.listItems).toEqual([
+      '1) Ordinary item: the first instruction.',
+      '2) Another item: the second instruction.',
+    ]);
     expect(validateSourceCoverage(d)).toEqual([]);
   });
   it('retains display math as a visual region', () => {

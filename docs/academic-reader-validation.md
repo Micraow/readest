@@ -9,7 +9,7 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
-## Structured inline content and source-order figures: academic-10 (in validation)
+## Structured inline content and source-order figures: academic-11 (in validation)
 
 Same-file native comparison exposed issues remaining in academic-8: an inline
 fraction became scrambled text, citation-based float movement reversed two
@@ -21,7 +21,7 @@ small visuals relative to source text, and keeps adjacent source-row plots toget
 Inline runs preserve explicit font styles and scripts; actual fraction bars bound
 local source crops with their complete numerator and denominator. Geometric
 overlap alone cannot turn scripts on adjacent prose rows into a fraction.
-The full source crop remains available in the image viewer. Parser `academic-10`
+The full source crop remains available in the image viewer. Parser `academic-11`
 invalidates earlier analysis without deleting it.
 
 The academic-9 native candidate was withheld: a numerator on an earlier physical
@@ -44,7 +44,19 @@ Synthetic regressions were observed failing before their fixes. Four local PDF
 copies pass source mapping, figure order, paragraph continuity, inline fraction,
 font metadata and cache round-trip assertions. Independent review also checked
 fraction crop closure and caption ownership. These are pre-build checks;
-academic-10 native same-page comparison and final build results are still pending here.
+academic-11 native same-page comparison and final build results are still pending here.
+The academic-10 native candidate corrected fraction placement and the lower crop edge,
+but was withheld after a user screenshot exposed misdecoded summation glyphs. PDF.js
+reported these symbols as control characters with a displaced baseline, splitting
+notation from its surrounding prose. The next correction preserves undecodable
+glyphs as local source visuals and uses nearby ordinary text only for grouping;
+original source geometry remains intact. This does not guess replacement symbols.
+CM-Super's documented short font names now preserve bold and slanted styles;
+bold run-in labels retain paragraph boundaries. Numbered emphasized leads stay
+with their ordinary-text continuation, while footnote markers retain superscripts
+and notes have a distinct, noninteractive presentation. Citation and footnote
+navigation is not synthesized where the original PDF has no link destination.
+
 The academic-8 and UI-1 delivered artifacts remain separate historical versions.
 
 ## Continuous reading and local caption repair: academic-8 (2026-10-07)

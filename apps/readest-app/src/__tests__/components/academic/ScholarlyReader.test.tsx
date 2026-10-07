@@ -82,6 +82,20 @@ afterEach(() => {
 });
 
 describe('continuous academic flow', () => {
+  it('identifies a footnote as a separate note without suggesting a clickable destination', () => {
+    const note = block('note', 1, 'footnote');
+    note.text = '7An additional detail.';
+    note.inlineRuns = [
+      { kind: 'text', text: '7', source: note.source[0]!, style: { verticalAlign: 'super' } },
+      { kind: 'text', text: 'An additional detail.', source: note.source[0]! },
+    ];
+    render(<ScholarlyReader document={documentFor([note])} session={session} onZoom={vi.fn()} />);
+    const rendered = screen.getByRole('note');
+    expect(rendered.textContent).toBe('7An additional detail.');
+    expect(rendered.querySelector('sup')?.textContent).toBe('7');
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.queryByRole('button')).toBeNull();
+  });
   it('keeps adjacent source-row plots together while retaining both selectable captions', () => {
     const figures = [0, 1].map((index) => {
       const figure = block(`figure-${index}`, 2, 'visual-region');

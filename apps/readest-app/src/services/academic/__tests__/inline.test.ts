@@ -39,6 +39,85 @@ const line = (items: PdfTextItem[]): LayoutLine => ({
 });
 
 describe('source-preserving inline content', () => {
+  it('preserves an unmapped operator on its prose baseline without taking the preceding row', () => {
+    const earlier = item(0, 'Earlier prose continues here.', 10, 88, 10, 150);
+    const prefix = item(1, 'Value =', 10, 100, 10, 40);
+    const operator = item(2, '\u0002', 54, 93, 10, 8);
+    const suffix = item(3, 'x.', 66, 100);
+    const runs = buildInlineRuns(page([earlier, prefix, operator, suffix]), [
+      line([earlier]),
+      line([operator]),
+      line([prefix, suffix]),
+    ]);
+    const crop = runs.find((run) => run.kind === 'source');
+    expect(crop).toMatchObject({ text: '\u0002', baseline: 100, source: { itemIndices: [2] } });
+    expect(crop!.source.boxes[0]!.y).toBeGreaterThanOrEqual(90);
+    expect(crop!.source.boxes[0]!.y + crop!.source.boxes[0]!.height).toBeGreaterThanOrEqual(102);
+    expect(runs.map((run) => (run.kind === 'source' ? '[operator]' : run.text)).join('')).toBe(
+      'Earlier prose continues here. Value = [operator] x.',
+    );
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([0, 1, 2, 3]);
+    expect(operator.baseline).toBe(93);
+  });
+
+  it('keeps attached upper and lower limits inside an unmapped operator crop', () => {
+    const items = [
+      item(0, 'Value =', 10, 100, 10, 40),
+      item(1, 'n', 56, 88, 6),
+      item(2, '\u0003', 54, 93, 10, 8),
+      item(3, 'j=1', 53, 107, 6, 12),
+      item(4, 'x.', 69, 100),
+    ];
+    const runs = buildInlineRuns(page(items), [line(items)]);
+    expect(runs.filter((run) => run.kind === 'source')).toMatchObject([
+      { baseline: 100, source: { itemIndices: [1, 2, 3] } },
+    ]);
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it('keeps the preceding prose row subscript out of an unmapped operator crop', () => {
+    const earlier = [item(0, 'Earlier x', 10, 88, 10, 43), item(1, 'j', 55, 91, 6)];
+    const current = [
+      item(2, 'Value =', 10, 100, 10, 40),
+      item(3, '\u0002', 54, 93, 10, 8),
+      item(4, 'x.', 66),
+    ];
+    const runs = buildInlineRuns(page([...earlier, ...current]), [line(earlier), line(current)]);
+    expect(runs.filter((run) => run.kind === 'source')).toMatchObject([
+      { baseline: 100, source: { itemIndices: [3] } },
+    ]);
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it('preserves an unmapped operator beside a fraction with separate source ownership', () => {
+    const items = [
+      item(0, 'Value =', 10, 100, 10, 40),
+      item(1, '\u0002', 54, 93, 10, 8),
+      item(2, 'a', 64, 96, 7, 12),
+      item(3, 'b', 64, 104, 7, 12),
+      item(4, 'is bounded.', 82, 100),
+    ];
+    const geometry = page(items);
+    geometry.graphics.push({ kind: 'rule', box: { x: 63, y: 98.5, width: 14, height: 0.4 } });
+    const runs = buildInlineRuns(geometry, [line(items)]);
+    expect(
+      runs.filter((run) => run.kind === 'source').map((run) => run.source.itemIndices),
+    ).toEqual([[1], [2, 3]]);
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it('does not take an unowned limit into an unmapped operator crop', () => {
+    const own = [item(0, 'Value =', 10, 100, 10, 40), item(1, '\u0002', 54, 93, 10, 8)];
+    const foreign = item(2, 'j=1', 53, 105, 6, 12);
+    const runs = buildInlineRuns(page([...own, foreign]), [line(own)]);
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([0, 1]);
+    expect(
+      runs
+        .filter((run) => run.kind === 'source')
+        .every((run) => !run.source.itemIndices.includes(2)),
+    ).toBe(true);
+  });
+
   it('anchors adjacent body-size fractions to prose rather than to each other', () => {
     const body = item(0, 'A ratio is', 10, 112, 10, 45);
     const numerator = [
@@ -160,6 +239,16 @@ describe('source-preserving inline content', () => {
       style: { verticalAlign: 'super' },
     });
     expect(runs.every((run) => run.kind === 'text')).toBe(true);
+  });
+
+  it('recognizes a raised footnote marker with trailing PDF whitespace', () => {
+    const items = [item(0, 'A statement', 10), item(1, '5 ', 66, 96, 7), item(2, 'continues.', 75)];
+    const runs = buildInlineRuns(page(items), [line(items)]);
+    expect(runs.find((run) => run.source.itemIndices.includes(1))).toMatchObject({
+      kind: 'text',
+      text: '5 ',
+      style: { verticalAlign: 'super' },
+    });
   });
 
   it('does not invent a fraction from ambiguous overlap without a source bar', () => {
