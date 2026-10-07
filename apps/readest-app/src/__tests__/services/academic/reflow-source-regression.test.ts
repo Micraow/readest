@@ -42,26 +42,25 @@ for (const input of fixture.documents) {
       expect(validateSourceCoverage(d)).toEqual([]);
     });
     for (const body of input.expect.columnBody) {
-      it(`page ${body.page} keeps lines and prose blocks inside their source column`, () => {
+      it(`page ${body.page} keeps individual lines inside their source column`, () => {
         const p = input.pages.find((p) => p.page === body.page)!;
         const left = new Set(body.leftIndices),
           right = new Set(body.rightIndices);
         const mixes = (ids: number[]) =>
           ids.some((i) => left.has(i)) && ids.some((i) => right.has(i));
         expect(clusterLines(p).filter((line) => mixes(line.itemIndices))).toEqual([]);
-        expect(
-          d.blocks.filter(
-            (b) =>
-              b.type !== 'visual-region' &&
-              b.source.some((s) => s.page === body.page && mixes(s.itemIndices)),
-          ),
-        ).toEqual([]);
       });
       it(`page ${body.page} finishes left-column prose before right-column prose`, () => {
-        const order = (ids: number[]) =>
-          ids.flatMap((id) => owners(d, body.page, id).map((b) => b.order));
-        const left = order(body.leftIndices),
-          right = order(body.rightIndices);
+        // A continuous paragraph may legitimately cross a column boundary. Check
+        // the item sequence itself so merging paragraphs cannot hide interleaving.
+        const sequence = d.blocks
+          .filter((b) => b.type !== 'visual-region')
+          .flatMap((b) =>
+            b.source.filter((s) => s.page === body.page).flatMap((s) => s.itemIndices),
+          );
+        const left = body.leftIndices.map((id) => sequence.indexOf(id));
+        const right = body.rightIndices.map((id) => sequence.indexOf(id));
+        expect([...left, ...right].every((index) => index >= 0)).toBe(true);
         expect(left.length).toBeGreaterThan(0);
         expect(right.length).toBeGreaterThan(0);
         expect(Math.max(...left)).toBeLessThan(Math.min(...right));

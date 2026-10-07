@@ -14,7 +14,7 @@ import type {
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-4';
+export const PARSER_VERSION = 'academic-5';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -892,6 +892,21 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
       ]
     : [lines];
   for (const group of groups) {
+    const orderedLines = [...group].sort((a, b) => a.box.y - b.box.y || a.box.x - b.box.x);
+    const rowGaps = orderedLines
+      .slice(1)
+      .flatMap((line, index) => {
+        const previous = orderedLines[index]!;
+        const gap = line.box.y - bottom(previous.box);
+        return gap >= 0 &&
+          gap < font * 1.2 &&
+          Math.abs(line.fontSize - font) < font * 0.1 &&
+          Math.abs(previous.fontSize - font) < font * 0.1
+          ? [gap]
+          : [];
+      })
+      .sort((a, b) => a - b);
+    const normalGap = rowGaps[Math.floor((rowGaps.length - 1) / 2)] ?? font * 0.25;
     let pending: LayoutLine[] = [],
       pendingType: ScholarlyBlock['type'] = 'paragraph';
     let references = false;
@@ -917,7 +932,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
       blocks.push(block);
       pending = [];
     };
-    for (const line of [...group].sort((a, b) => a.box.y - b.box.y || a.box.x - b.box.x)) {
+    for (const [lineIndex, line] of orderedLines.entries()) {
       const isHeading = heading(line, font, bodyTypeface, items);
       const footnoteRule = page.graphics.some(
         (g) =>
@@ -954,6 +969,27 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
         : 0;
       const gap = previous ? line.box.y - previousBottom : Infinity;
       const indent = previous ? line.box.x - previous.box.x : 0;
+      // A wrapped explanatory dash continues its unfinished sentence. It is not
+      // a new bullet just because PDF line wrapping put the dash at the margin.
+      if (
+        type === 'list' &&
+        /^–\s/.test(line.text) &&
+        !/^–\s/.test(
+          orderedLines
+            .slice(lineIndex + 1)
+            .find(
+              (next) =>
+                next.box.x <= line.box.x + font * 0.4 && next.box.y - line.box.y < font * 12,
+            )?.text ?? '',
+        ) &&
+        pendingType === 'paragraph' &&
+        previous &&
+        !/[.!?:;][”\"')\]]?$/.test(previous.text) &&
+        gap >= -font * 0.4 &&
+        gap < font * 0.8 &&
+        Math.abs(line.fontSize - previous.fontSize) < font * 0.12
+      )
+        type = 'paragraph';
       if (
         type === 'paragraph' &&
         pendingType === 'list' &&
@@ -968,6 +1004,8 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
         previous &&
         type === 'paragraph' &&
         (gap > font * 0.85 ||
+          (gap > Math.max(font * 0.35, normalGap + font * 0.18) &&
+            /[.!?][”"')\]]?$/.test(previous.text)) ||
           (indent > font * 0.85 && /[.!?][”"')\]]?$/.test(previous.text)) ||
           Math.abs(line.fontSize - previous.fontSize) > font * 0.2);
       const wrappedTitle =
@@ -1119,37 +1157,149 @@ function analyzePage(
   };
 }
 
-function mergeAcrossPages(blocks: ScholarlyBlock[], pages: PageAnalysis[]): ScholarlyBlock[] {
+const isFloat = (block: ScholarlyBlock) =>
+  block.type === 'visual-region' && (block.role === 'figure' || block.role === 'table');
+
+function sourceColumn(page: PageAnalysis, box: Rect): { box: Rect; index: number } | undefined {
+  const candidates = page.columns.map((column, index) => ({ ...column, index }));
+  return candidates.sort(
+    (a, b) => horizontalOverlap(b.box, box) - horizontalOverlap(a.box, box),
+  )[0];
+}
+
+function continuesProse(
+  previous: ScholarlyBlock,
+  next: ScholarlyBlock,
+  pages: PageAnalysis[],
+  floats: ScholarlyBlock[],
+): boolean {
+  if (
+    previous.type !== 'paragraph' ||
+    next.type !== 'paragraph' ||
+    /[.!?:;][”"')\]]?$/.test(previous.text) ||
+    !/^[a-z]/.test(next.text)
+  )
+    return false;
+  const prevSpan = previous.source.at(-1),
+    nextSpan = next.source[0];
+  if (!prevSpan || !nextSpan) return false;
+  const prevPage = pages.find((p) => p.page === prevSpan.page);
+  const nextPage = pages.find((p) => p.page === nextSpan.page);
+  const prevBox = prevSpan.boxes.at(-1),
+    nextBox = nextSpan.boxes[0];
+  if (!prevPage || !nextPage || !prevBox || !nextBox) return false;
+  const prevColumn = sourceColumn(prevPage, prevBox),
+    nextColumn = sourceColumn(nextPage, nextBox);
+  const font = previous.fontStats.median;
+  if (
+    !prevColumn ||
+    !nextColumn ||
+    Math.abs(font - next.fontStats.median) >= font * 0.12 ||
+    nextBox.x > nextColumn.box.x + font * 0.75 ||
+    Math.abs(prevColumn.box.width - nextColumn.box.width) >= prevPage.width * 0.15
+  )
+    return false;
+  const nextPageFlow =
+    nextSpan.page === prevSpan.page + 1 &&
+    prevColumn.index === prevPage.columns.length - 1 &&
+    nextColumn.index === 0;
+  const nextColumnFlow =
+    nextSpan.page === prevSpan.page && nextColumn.index === prevColumn.index + 1;
+  if (nextPageFlow || nextColumnFlow) {
+    // The top of the *body column* can be far below the page top because of a float.
+    return (
+      bottom(prevBox) >= bottom(prevColumn.box) - font * 1.5 &&
+      nextBox.y <= nextColumn.box.y + font * 0.75
+    );
+  }
+  return (
+    floats.length > 0 &&
+    nextSpan.page === prevSpan.page &&
+    nextColumn.index === prevColumn.index &&
+    nextBox.y > bottom(prevBox) &&
+    floats.every((block) => block.source.every((span) => span.page === nextSpan.page))
+  );
+}
+
+function mergeAcrossFlow(blocks: ScholarlyBlock[], pages: PageAnalysis[]): ScholarlyBlock[] {
   const result: ScholarlyBlock[] = [];
   for (const block of blocks) {
-    const previous = result[result.length - 1];
-    const prevSpan = previous?.source[previous.source.length - 1],
-      nextSpan = block.source[0];
-    const prevPage = pages.find((p) => p.page === prevSpan?.page),
-      nextPage = pages.find((p) => p.page === nextSpan?.page);
-    if (
-      previous?.type === 'paragraph' &&
-      block.type === 'paragraph' &&
-      prevSpan &&
-      nextSpan &&
-      nextSpan.page === prevSpan.page + 1 &&
-      prevPage &&
-      nextPage &&
-      !/[.!?:;][”"')\]]?$/.test(previous.text) &&
-      /^[a-z]/.test(block.text) &&
-      Math.abs(previous.fontStats.median - block.fontStats.median) <
-        previous.fontStats.median * 0.12 &&
-      bottom(unionBoxes(prevSpan.boxes)) > prevPage.height * 0.78 &&
-      unionBoxes(nextSpan.boxes).y < nextPage.height * 0.22 &&
-      Math.abs(unionBoxes(prevSpan.boxes).width - unionBoxes(nextSpan.boxes).width) <
-        prevPage.width * 0.12
-    ) {
+    let index = result.length - 1;
+    while (index >= 0 && isFloat(result[index]!)) index--;
+    const previous = result[index];
+    if (previous && continuesProse(previous, block, pages, result.slice(index + 1))) {
       previous.text = joinLines([previous.text, block.text]);
-      previous.source.push(...block.source);
+      for (const span of block.source) {
+        const existing = previous.source.find((s) => s.page === span.page);
+        if (existing) {
+          existing.boxes.push(...span.boxes);
+          existing.itemIndices.push(...span.itemIndices);
+        } else previous.source.push(span);
+      }
       previous.confidence = Math.min(previous.confidence, block.confidence, 0.82);
     } else result.push(block);
   }
   return result;
+}
+
+function mentionsFloat(text: string, role: VisualRole, label: string): boolean {
+  const prefix = role === 'figure' ? /\b(?:Figures?|Figs?\.?)\s*/gi : /\bTables?\s*/gi;
+  const token =
+    role === 'figure' ? /^(\d+)[a-z]?(?![a-z0-9]|\.\d)/i : /^(\d+|[IVX]+)(?![a-z0-9]|\.\d)/i;
+  for (const match of text.matchAll(prefix)) {
+    let rest = text.slice(match.index + match[0].length);
+    for (let count = 0; count < 20; count++) {
+      const start = rest.match(token);
+      if (!start) break;
+      if (start[1]!.toUpperCase() === label.toUpperCase()) return true;
+      rest = rest.slice(start[0].length).trimStart();
+      const range = rest.match(/^[-–]\s*/);
+      if (range) {
+        rest = rest.slice(range[0].length);
+        const end = rest.match(token);
+        if (!end) break;
+        if (
+          end[1]!.toUpperCase() === label.toUpperCase() ||
+          (Number(start[1]) <= Number(label) && Number(label) <= Number(end[1]))
+        )
+          return true;
+        rest = rest.slice(end[0].length).trimStart();
+      }
+      const separator = rest.match(/^(?:,\s*(?:and\s+)?|and\s+|&\s*)/i);
+      if (!separator) break;
+      rest = rest.slice(separator[0].length);
+    }
+  }
+  return false;
+}
+
+function anchorFloats(blocks: ScholarlyBlock[], pages: PageAnalysis[]): ScholarlyBlock[] {
+  const after = new Map<ScholarlyBlock, ScholarlyBlock[]>();
+  const moved = new Set<ScholarlyBlock>();
+  for (const block of blocks.filter(isFloat)) {
+    const span = block.source[0];
+    const page = pages.find((p) => p.page === span?.page);
+    if (!span || !page) continue;
+    const owned = new Set(span.itemIndices);
+    const caption = page.lines.find(
+      (line) =>
+        captionRole(line.text) === block.role && line.itemIndices.every((id) => owned.has(id)),
+    );
+    const label = caption?.text.match(/^\s*(Figure|Fig\.|Table)\s*(\d+|[IVX]+)(?:[.:\s]|$)/i);
+    if (!label) continue;
+    const anchor = blocks.find(
+      (candidate) =>
+        (candidate.type === 'paragraph' || candidate.type === 'list') &&
+        mentionsFloat(candidate.text, block.role!, label[2]!) &&
+        candidate.source.some((source) => Math.abs(source.page - span.page) <= 1),
+    );
+    if (!anchor) continue;
+    const floats = after.get(anchor) ?? [];
+    floats.push(block);
+    after.set(anchor, floats);
+    moved.add(block);
+  }
+  return blocks.flatMap((block) => (moved.has(block) ? [] : [block, ...(after.get(block) ?? [])]));
 }
 function finalize(
   results: Array<{ page: PageAnalysis; blocks: ScholarlyBlock[] }>,
@@ -1163,7 +1313,7 @@ function finalize(
     if (block.type === 'heading') references = /^(?:references|bibliography)\b/i.test(block.text);
     else if (references && block.type === 'paragraph') block.type = 'reference';
   }
-  const blocks = mergeAcrossPages(ordered, pages);
+  const blocks = anchorFloats(mergeAcrossFlow(ordered, pages), pages);
   const sourceMap: Record<string, SourceSpan[]> = {};
   for (let order = 0; order < blocks.length; order++) {
     const block = blocks[order]!;
