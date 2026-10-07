@@ -36,6 +36,59 @@ const floatingPage = (pageNumber = 2) => {
 const analyze = (pages: PageGeometry[]) => analyzeDocument(pages, 'synthetic-flow', 'test');
 
 describe('continuous prose around floating figures', () => {
+  it.each([
+    ['Packets with a higher', 'cost are rerouted.'],
+    [
+      'Packets below QueueCost leave directly, while packets with a higher',
+      'QueueCost are rerouted.',
+    ],
+  ])('joins a cross-page sentence around a floating algorithm: %s', (before, after) => {
+    const first = page(1, [item(0, before, 40, 700)]);
+    const next = page(2, [
+      item(0, 'Algorithm 1: Synthetic forwarding procedure.', 40, 70),
+      item(1, '1. Inspect the queue and forward the packet.', 40, 100),
+      item(2, after, 40, 205),
+      item(3, 'The next paragraph explains the result.', 50, 235),
+    ]);
+    next.graphics.push(
+      ...[65, 160].map((y) => ({
+        kind: 'rule' as const,
+        box: { x: 40, y, width: 220, height: 0.5 },
+      })),
+    );
+    const d = analyze([first, next]);
+    const joined = d.blocks.find((b) => b.text === `${before} ${after}`);
+    expect(joined).toBeDefined();
+    expect(joined?.source.map((s) => s.page)).toEqual([1, 2]);
+    const algorithm = d.blocks.find((b) => b.role === 'algorithm');
+    expect(algorithm).toBeDefined();
+    expect(d.blocks.indexOf(algorithm!)).toBeGreaterThan(d.blocks.indexOf(joined!));
+    expect(algorithm?.source[0]?.itemIndices).toContain(0);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('keeps a same-column algorithm as a boundary even beside a floating figure', () => {
+    const p = page(1, [
+      item(0, 'This introduction ends with', 40, 100),
+      item(1, 'Algorithm 1: Synthetic procedure.', 40, 150),
+      item(2, 'Figure 1: Synthetic result.', 40, 290),
+      item(3, 'a separate continuation below the procedure.', 40, 330),
+    ]);
+    p.graphics.push(
+      { kind: 'image', box: { x: 40, y: 120, width: 220, height: 20 } },
+      { kind: 'image', box: { x: 40, y: 210, width: 220, height: 70 } },
+      ...[145, 195].map((y) => ({
+        kind: 'rule' as const,
+        box: { x: 40, y, width: 220, height: 0.5 },
+      })),
+    );
+    const d = analyze([p]);
+    expect(d.blocks.filter((b) => b.type === 'paragraph').map((b) => b.text)).toEqual([
+      'This introduction ends with',
+      'a separate continuation below the procedure.',
+    ]);
+    expect(d.blocks.some((b) => b.role === 'algorithm')).toBe(true);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
   it('joins a cross-page sentence before placing its float after the first referring paragraph', () => {
     const first = page(1, [item(0, 'A deployment group, which', 40, 700)]);
     const d = analyze([first, floatingPage()]);

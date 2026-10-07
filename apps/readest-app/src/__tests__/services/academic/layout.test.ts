@@ -317,6 +317,124 @@ describe('deterministic academic layout', () => {
     expect(joinLines(['Use GPU-', 'Based design.'])).toBe('Use GPU-Based design.');
     expect(joinLines(['A soft\u00ad', 'hyphen.'])).toBe('A softhyphen.');
   });
+  it('removes inset alternating running headers before joining continued paragraphs', () => {
+    const pages = [1, 2, 3, 4].map((n) =>
+      page(
+        [
+          item(0, n % 2 ? 'Synthetic journal title' : 'Example contributors', 170, 96, 250, 9),
+          item(1, `${n}`, n % 2 ? 550 : 40, 96, 8, 9),
+          item(
+            2,
+            n === 1 ? 'An unfinished sentence, which' : 'continues on this page.',
+            40,
+            n === 1 ? 700 : 180,
+            500,
+          ),
+          item(3, '8', 60, 130, 6, 7),
+        ],
+        n,
+      ),
+    );
+    // The header is separated from the plot; the unrelated number inside the
+    // plot must remain. Text immediately adjacent to a plot is tested below.
+    pages.forEach((p) =>
+      p.graphics.push({ kind: 'image', box: { x: 40, y: 125, width: 500, height: 35 } }),
+    );
+    const d = doc(pages);
+    expect(
+      d.pages.every(
+        (p) => p.suppressedItemIndices.includes(0) && p.suppressedItemIndices.includes(1),
+      ),
+    ).toBe(true);
+    expect(d.pages.every((p) => !p.suppressedItemIndices.includes(3))).toBe(true);
+    expect(d.blocks.some((b) => b.text.includes('which continues on this page.'))).toBe(true);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+  it('preserves repeated plot text and a larger first-page title in the inset band', () => {
+    const pages = [1, 2, 3].map((n) =>
+      page(
+        [
+          item(0, 'Repeated plot label', 90, 96, 250, 9),
+          item(1, 'A complete body paragraph.', 40, 240, 500),
+        ],
+        n,
+      ),
+    );
+    pages.forEach((p) =>
+      p.graphics.push({ kind: 'image', box: { x: 60, y: 90, width: 440, height: 100 } }),
+    );
+    const first = page(
+      [
+        item(0, 'Repeated plot label', 70, 96, 450, 20),
+        item(1, 'Ordinary article text.', 40, 240, 500),
+      ],
+      4,
+    );
+    const d = doc([...pages, first]);
+    expect(d.pages.every((p) => !p.suppressedItemIndices.includes(0))).toBe(true);
+  });
+  it('keeps a wrapped numeric assignment in prose while preserving numbered lists', () => {
+    const d = doc([
+      page([
+        item(0, 'In this experiment we set the selected retry count =', 40, 200, 450),
+        item(1, '5. We compare the two methods.', 40, 214, 450),
+        item(2, 'The following steps are required:', 40, 250, 450),
+        item(3, '1. Prepare the input.', 40, 270, 450),
+        item(4, '2. Check the result.', 40, 284, 450),
+      ]),
+    ]);
+    expect(d.blocks[0]?.type).toBe('paragraph');
+    expect(d.blocks[0]?.text).toBe(
+      'In this experiment we set the selected retry count = 5. We compare the two methods.',
+    );
+    expect(d.blocks.find((b) => b.type === 'list')?.listItems).toEqual([
+      '1. Prepare the input.',
+      '2. Check the result.',
+    ]);
+  });
+  it('retains a repeated shared legend immediately above paired plots', () => {
+    const pages = [1, 2, 3].map((n) => {
+      const p = page(
+        [
+          item(0, 'Control and treatment', 275, 96, 150, 9),
+          item(1, `Figure ${n * 2 - 1}: First measurement.`, 80, 220, 265, 11),
+          item(2, `Figure ${n * 2}: Second measurement.`, 353, 220, 265, 11),
+          item(3, 'The body explains these results.', 70, 260, 560, 11),
+        ],
+        n,
+      );
+      p.width = 700;
+      p.graphics.push(
+        ...[80, 353].map((x) => ({
+          kind: 'path' as const,
+          box: { x, y: 114, width: 265, height: 86 },
+        })),
+      );
+      return p;
+    });
+    const d = doc(pages);
+    expect(d.pages.every((p) => !p.suppressedItemIndices.includes(0))).toBe(true);
+    expect(d.blocks.filter((b) => b.role === 'figure')).toHaveLength(3);
+    expect(
+      d.blocks
+        .filter((b) => b.role === 'figure')
+        .every((b) => b.source[0]?.itemIndices.includes(0)),
+    ).toBe(true);
+  });
+  it('does not remove repeated first body lines with normal line spacing', () => {
+    const d = doc(
+      [1, 2, 3].map((n) =>
+        page(
+          [
+            item(0, 'The experiment begins with identical conditions', 40, 96, 500),
+            item(1, 'and measures a different response each time.', 40, 110, 500),
+          ],
+          n,
+        ),
+      ),
+    );
+    expect(d.pages.every((p) => !p.suppressedItemIndices.includes(0))).toBe(true);
+  });
   it('classifies headings, lists, references and footnotes without dropping raw items', () => {
     const p = page([
       item(0, '1 Introduction', 40, 100, 300, 16),

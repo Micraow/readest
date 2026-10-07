@@ -9,6 +9,82 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
+## Continuous reading and local caption repair: academic-8 (2026-10-07)
+
+This checkpoint supersedes the academic-4 delivery and reading-quality conclusions
+below. Native reading exposed further failures that item-coverage totals had not
+caught: page-top floats interrupted sentences, single-column captions could share
+incorrect crops, and running heads or notes could enter continued body paragraphs.
+
+The PDF parsing and reflow pipeline is entirely local. See
+[the local pipeline contract](./academic-reader-local-pipeline.md). No remote
+layout service, PDF upload for parsing, OCR, or AI was added.
+
+The repair now:
+
+- Joins supported cross-page and cross-column continuations before placing nearby
+  figures after complete referring paragraphs; grouped references retain source order.
+- Separates adjacent captions independently of body column count. Shared legends
+  stay with a combined visual and both explicit caption identities. Crop bounds
+  exclude following body prose.
+- Removes repeated inset running heads using stable position and spacing, while
+  protecting shared legends and ordinary body lines. Wrapped numeric assignments
+  remain prose rather than becoming numbered lists.
+- Keeps recognized publication notes and superscript-marked footnotes separate
+  from a continued paragraph. Page-top algorithms no longer split supported
+  continuations; same-column algorithm boundaries remain conservative.
+- Uses parser version `academic-8`, preserving older cache files without reusing
+  their layout results. Caption ownership survives cache validation and reopening.
+
+Validation uses four local PDF copies (61 pages): public HPCC and MP-RDMA author
+copies, the supplied HPCC copy, and a supplied single-column manuscript. Private
+PDFs, extracted prose, screenshots, geometry and paper-specific assertions remain
+outside the public repository. Committed tests use synthetic or public-source cases.
+
+The Linux candidate uses a production frontend with the existing debug/unoptimized
+CEF native profile. Its unstripped ELF is 226,752,224 bytes, SHA-256
+`08439924accc508eaba5ef3ee597fd0e8ddc0a7e5961cc60702df8a1a14d32b4`.
+The frozen application build source is `dd10a8bde889783c3a63c335805310d22f561eca`;
+subsequent validation-document changes do not alter the application blobs.
+
+Known limitations remain: complex inline fractions can flatten into imperfect
+text order; a footnote after a completed paragraph can still precede a display
+formula introduced by that paragraph. The Original PDF view preserves the source
+presentation. The checks below cover the reported cases and representative native
+reading flows, not exhaustive semantic reconstruction of every page.
+
+Completed checks for this source: TypeScript/Biome, 152 focused academic tests,
+and the offline-compatible aggregate: **13,118 passed, 16 skipped**, **1,119 test
+files passed, 4 skipped**. Only the existing external-network
+`src/__tests__/services/novel/novel-import.test.ts` exclusion remains. A platform
+interruption stopped an incomplete shard; only that and subsequent shards were
+resumed, with the same frozen source. No interrupted shard is counted as passed.
+The production frontend exported all 25 HTML pages and five academic-8 chunks;
+the native build and portable ELF/dependency checks passed.
+
+Final Linux native acceptance used the independent portable candidate and the
+same preserved profile:
+
+- HPCC's two reported interrupted paragraphs are continuous; Figures 1, 2 and 3
+  follow their complete referring paragraphs, and the full Figure 3 caption remains.
+- MP-RDMA's introduction and a later cross-column paragraph remain continuous
+  around publication details and a superscript-marked note; note text is retained.
+- The single-column manuscript keeps independent adjacent diagrams, combined
+  figures with shared legends and both captions, complete display equations and
+  algorithms, and continuous body text across page-top floats.
+- A 526-pixel window wraps the body fully. Figure zoom from 44% to 53%, panning,
+  closing and PDF/Reading reopening return to the same position. Scrolling away
+  and returning reloads visual regions.
+- New academic-8 caches were generated. Their completed cached reopen preserved
+  hashes and modification times; ten older academic-4/5/6/7 caches were unchanged.
+
+These are actual native reading and interaction results, supplemented by parsing
+and ownership assertions. They are not inferred from unit-test totals. GitHub
+Actions had not created runs/check-runs for the preceding main checkpoints; no
+remote CI pass is claimed. This follow-up delivers Linux only. The earlier Android
+development signing key was unavailable after the workspace reset, so no
+same-certificate Android update is claimed.
+
 ## Reflow quality correction: academic-4 (2026-10-06)
 
 The academic-2 source-coverage and build gates below did not establish reading

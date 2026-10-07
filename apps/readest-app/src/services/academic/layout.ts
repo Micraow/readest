@@ -15,7 +15,7 @@ import type {
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-6';
+export const PARSER_VERSION = 'academic-8';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -789,23 +789,70 @@ function detectVisualRegions(
 function marginKey(text: string): string {
   return text.toLowerCase().replace(/\d+/g, '#').replace(/\s+/g, ' ').trim();
 }
+// Some proceedings put running heads below the usual margin band. Only
+// consider the first text row, at body size or smaller, outside plot graphics.
+function insetHeaderRow(page: PageGeometry, lines: LayoutLine[]): LayoutLine[] {
+  const firstY = Math.min(...lines.map((line) => line.box.y));
+  const font = bodyFont(page.items);
+  const nextY = Math.min(
+    ...lines.filter((line) => line.box.y > firstY + font * 0.4).map((line) => line.box.y),
+  );
+  return lines.filter(
+    (line) =>
+      line.box.y >= page.height * 0.105 &&
+      line.box.y <= page.height * 0.16 &&
+      Math.abs(line.box.y - firstY) < font * 0.4 &&
+      line.fontSize <= font * 1.1 &&
+      nextY - bottom(line.box) > font * 0.6 &&
+      !page.graphics.some(
+        (graphic) =>
+          graphic.kind !== 'rule' &&
+          horizontalOverlap(graphic.box, line.box) > 0 &&
+          (verticalOverlap(graphic.box, line.box) > 0 ||
+            (graphic.box.y >= bottom(line.box) &&
+              graphic.box.y - bottom(line.box) < line.fontSize * 1.25)),
+      ),
+  );
+}
 function repeatedMargins(pages: PageGeometry[], linePages: LayoutLine[][]): Set<string> {
   const counts = new Map<string, Set<number>>();
+  const insetPositions = new Map<string, number[]>();
   for (let i = 0; i < pages.length; i++) {
+    const inset = new Set(insetHeaderRow(pages[i]!, linePages[i]!));
     for (const line of linePages[i]!) {
-      if (line.box.y > pages[i]!.height * 0.105 && bottom(line.box) < pages[i]!.height * 0.92)
+      if (
+        !inset.has(line) &&
+        line.box.y > pages[i]!.height * 0.105 &&
+        bottom(line.box) < pages[i]!.height * 0.92
+      )
         continue;
-      const key = `${line.box.y < pages[i]!.height / 2 ? 'top' : 'bottom'}:${marginKey(line.text)}`;
+      const side = inset.has(line)
+        ? 'inset-top'
+        : line.box.y < pages[i]!.height / 2
+          ? 'top'
+          : 'bottom';
+      const key = `${side}:${marginKey(line.text)}`;
       if (line.text.length > 2) {
         const seen = counts.get(key) ?? new Set();
         seen.add(i);
         counts.set(key, seen);
+        if (inset.has(line)) {
+          const positions = insetPositions.get(key) ?? [];
+          positions.push(line.box.y / pages[i]!.height);
+          insetPositions.set(key, positions);
+        }
       }
     }
   }
   return new Set(
     [...counts]
-      .filter(([, seen]) => seen.size >= Math.max(2, Math.ceil(pages.length * 0.4)))
+      .filter(([key, seen]) => {
+        const positions = insetPositions.get(key);
+        return (
+          seen.size >= Math.max(2, Math.ceil(pages.length * 0.4)) &&
+          (!positions || Math.max(...positions) - Math.min(...positions) < 0.006)
+        );
+      })
       .map(([key]) => key),
   );
 }
@@ -815,10 +862,22 @@ function suppressedItems(
   repeated: Set<string>,
 ): Set<number> {
   const suppressed = new Set(page.items.filter((i) => !i.text.trim()).map((i) => i.index));
+  const inset = insetHeaderRow(page, lines);
+  const runningHeads = inset.filter((line) => repeated.has(`inset-top:${marginKey(line.text)}`));
   for (const line of lines) {
     const margin = line.box.y < page.height * 0.105 || bottom(line.box) > page.height * 0.92;
     const key = `${line.box.y < page.height / 2 ? 'top' : 'bottom'}:${marginKey(line.text)}`;
-    if (margin && (repeated.has(key) || /^[-–—]?\s*\d{1,4}\s*[-–—]?$/.test(line.text)))
+    const pageNumber = /^[-–—]?\s*\d{1,4}\s*[-–—]?$/.test(line.text);
+    const insetMargin =
+      runningHeads.includes(line) ||
+      (pageNumber &&
+        inset.includes(line) &&
+        runningHeads.some(
+          (head) =>
+            Math.abs(head.box.y - line.box.y) < head.fontSize * 0.4 &&
+            Math.abs(head.fontSize - line.fontSize) < head.fontSize * 0.2,
+        ));
+    if (insetMargin || (margin && (repeated.has(key) || pageNumber)))
       line.itemIndices.forEach((id) => suppressed.add(id));
   }
   return suppressed;
@@ -1006,7 +1065,13 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
       pending = [];
     };
     for (const [lineIndex, line] of orderedLines.entries()) {
+      const previous = pending[pending.length - 1];
       const isHeading = heading(line, font, bodyTypeface, items);
+      const firstItem = items.get(line.itemIndices[0]!);
+      const superscriptNoteMarker =
+        firstItem &&
+        /^\d{1,3}$/.test(firstItem.text.trim()) &&
+        firstItem.fontSize < line.fontSize * 0.85;
       const footnoteRule = page.graphics.some(
         (g) =>
           g.kind === 'rule' &&
@@ -1015,10 +1080,26 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
           line.box.y - g.box.y < font * 10 &&
           horizontalOverlap(g.box, line.box) > 0,
       );
-      const isFootnote =
-        line.fontSize < font * 0.87 &&
-        line.box.y > page.height * 0.72 &&
-        (footnoteRule || /^\d+\s/.test(line.text));
+      const isFootnote: boolean =
+        (line.fontSize < font * 0.87 &&
+          line.box.y > page.height * 0.72 &&
+          (footnoteRule || /^\d+\s/.test(line.text) || !!superscriptNoteMarker)) ||
+        // First-page publication notes may start halfway down the column
+        // without a rule. Compare with local body size, since the abstract can
+        // lower the page median. Author initials in this run are not list markers.
+        (page.page === 1 &&
+          line.box.y > page.height * 0.5 &&
+          /^Manuscript received\b/i.test(line.text) &&
+          pendingType === 'paragraph' &&
+          previous !== undefined &&
+          line.fontSize < previous.fontSize * 0.87) ||
+        (pendingType === 'footnote' &&
+          previous !== undefined &&
+          line.fontSize < font * 0.94 &&
+          line.box.y - bottom(previous.box) >= -font * 0.4 &&
+          line.box.y - bottom(previous.box) < font * 1.2 &&
+          Math.abs(line.fontSize - previous.fontSize) < previous.fontSize * 0.06 &&
+          horizontalOverlap(line.box, previous.box) > 0);
       if (/^(?:references|bibliography)\b/i.test(line.text)) references = true;
       let type: ScholarlyBlock['type'] = isFootnote
         ? 'footnote'
@@ -1029,7 +1110,6 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
             : listStart(line.text)
               ? 'list'
               : 'paragraph';
-      const previous = pending[pending.length - 1];
       const droppedInitial = previous?.itemIndices.some((id) => {
         const item = items.get(id)!;
         return /^\p{Lu}$/u.test(item.text) && item.fontSize > previous.fontSize * 1.7;
@@ -1042,6 +1122,20 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
         : 0;
       const gap = previous ? line.box.y - previousBottom : Infinity;
       const indent = previous ? line.box.x - previous.box.x : 0;
+      // A numeric value wrapped after an assignment is prose, even when a
+      // sentence-ending period makes it resemble the start of a numbered list.
+      if (
+        type === 'list' &&
+        /^\d+\.\s/.test(line.text) &&
+        pendingType === 'paragraph' &&
+        previous &&
+        /=\s*$/.test(previous.text) &&
+        gap >= -font * 0.4 &&
+        gap < font * 0.8 &&
+        Math.abs(indent) < font * 0.5 &&
+        Math.abs(line.fontSize - previous.fontSize) < font * 0.12
+      )
+        type = 'paragraph';
       // A wrapped explanatory dash continues its unfinished sentence. It is not
       // a new bullet just because PDF line wrapping put the dash at the margin.
       if (
@@ -1272,13 +1366,20 @@ function continuesProse(
   previous: ScholarlyBlock,
   next: ScholarlyBlock,
   pages: PageAnalysis[],
-  floats: ScholarlyBlock[],
+  interruptions: ScholarlyBlock[],
+  blocks: ScholarlyBlock[],
 ): boolean {
+  // A repeated mixed-case variable can start the next column without starting
+  // a new sentence. Ordinary capitalized words still form a conservative break.
+  const leadingIdentifier = next.text.match(/^([A-Z][a-z0-9]+[A-Z]\w*)\b/)?.[1];
+  const repeatedIdentifier =
+    leadingIdentifier &&
+    previous.text.match(/\b[A-Za-z][A-Za-z0-9_]*\b/g)?.some((word) => word === leadingIdentifier);
   if (
     previous.type !== 'paragraph' ||
     next.type !== 'paragraph' ||
     /[.!?:;][”"')\]]?$/.test(previous.text) ||
-    !/^[a-z]/.test(next.text)
+    (!/^[a-z]/.test(next.text) && !repeatedIdentifier)
   )
     return false;
   const prevSpan = previous.source.at(-1),
@@ -1307,18 +1408,34 @@ function continuesProse(
   const nextColumnFlow =
     nextSpan.page === prevSpan.page && nextColumn.index === prevColumn.index + 1;
   if (nextPageFlow || nextColumnFlow) {
+    // Notes occupy source-column space but remain separate reading-flow blocks.
+    // Use text source boxes to retain real body/list barriers and ignore spanning
+    // footer text, which was never part of the detected body column.
+    const columnBottom = interruptions.some((block) => block.type === 'footnote')
+      ? Math.max(
+          bottom(prevBox),
+          ...blocks
+            .filter((block) => block.type !== 'footnote' && block.type !== 'visual-region')
+            .flatMap((block) => block.source.filter((span) => span.page === prevSpan.page))
+            .flatMap((span) => span.boxes)
+            .filter(
+              (box) => box.x >= prevColumn.box.x - 2 && right(box) <= right(prevColumn.box) + 2,
+            )
+            .map(bottom),
+        )
+      : bottom(prevColumn.box);
     // The top of the *body column* can be far below the page top because of a float.
     return (
-      bottom(prevBox) >= bottom(prevColumn.box) - font * 1.5 &&
-      nextBox.y <= nextColumn.box.y + font * 0.75
+      bottom(prevBox) >= columnBottom - font * 1.5 && nextBox.y <= nextColumn.box.y + font * 0.75
     );
   }
   return (
-    floats.length > 0 &&
+    interruptions.some(isFloat) &&
+    !interruptions.some((block) => block.role === 'algorithm') &&
     nextSpan.page === prevSpan.page &&
     nextColumn.index === prevColumn.index &&
     nextBox.y > bottom(prevBox) &&
-    floats.every((block) => block.source.every((span) => span.page === nextSpan.page))
+    interruptions.every((block) => block.source.every((span) => span.page === nextSpan.page))
   );
 }
 
@@ -1326,9 +1443,15 @@ function mergeAcrossFlow(blocks: ScholarlyBlock[], pages: PageAnalysis[]): Schol
   const result: ScholarlyBlock[] = [];
   for (const block of blocks) {
     let index = result.length - 1;
-    while (index >= 0 && isFloat(result[index]!)) index--;
+    while (
+      index >= 0 &&
+      (isFloat(result[index]!) ||
+        result[index]!.type === 'footnote' ||
+        result[index]!.role === 'algorithm')
+    )
+      index--;
     const previous = result[index];
-    if (previous && continuesProse(previous, block, pages, result.slice(index + 1))) {
+    if (previous && continuesProse(previous, block, pages, result.slice(index + 1), blocks)) {
       previous.text = joinLines([previous.text, block.text]);
       for (const span of block.source) {
         const existing = previous.source.find((s) => s.page === span.page);
