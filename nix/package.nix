@@ -134,7 +134,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   };
 
   cargoRoot = "../..";
-  cargoHash = "sha256-LvR/nTl4LI/hrh08GbqVRbZrdKm3GTwpd5VcEeMJBnU=";
+  # fetchCargoVendor uses Cargo.cef.lock from the prepared source above.
+  # Recompute after lockfile or pinned nixpkgs fetcher changes; registry
+  # archives remain checked against the individual lockfile checksums.
+  cargoHash = "sha256-Vh6fhop1TiWh7lZ3IWVtipvqQOoy32t3mDCj73eEXpE=";
 
   buildAndTestSubdir = "src-tauri";
 
