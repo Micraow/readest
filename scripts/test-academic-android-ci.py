@@ -56,6 +56,39 @@ class AndroidTests(unittest.TestCase):
         self.assertTrue(any("package" in error for error in ci.manifest_errors(root)))
         self.assertTrue(any("debuggable" in error for error in ci.manifest_errors(root)))
 
+    def test_preflight_environment_lookup_stays_inside_its_temporary_app(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            app = Path(tmp) / "source-app"
+            android = app / "src-tauri/gen/android"
+            (android / "app/src/main/res").mkdir(parents=True)
+            (android / "app/src/academic").mkdir()
+            (app / ".env").write_text("SENTRY_DSN=\n")
+            (android / "build.gradle.kts").write_text("// generated root build\n")
+            (android / "gradle.properties").write_text("org.gradle.workers.max=2\n")
+            (android / "app/build.gradle.kts").write_text(
+                (self.repo / ci.ANDROID / "app/build.gradle.kts").read_text())
+            (android / "app/src/academic/AndroidManifest.xml").write_text(ci.academic_manifest(self.base))
+            observed = []
+
+            def gradle(args, **kwargs):
+                probe = Path(args[args.index("-p") + 1])
+                environment = (probe / "../../../.env").resolve()
+                self.assertEqual(environment, probe.parents[2] / ".env")
+                self.assertEqual(environment.read_text(), "SENTRY_DSN=\n")
+                self.assertNotEqual(environment.parent, Path("/"))
+                observed.append(probe)
+                merged = probe / "app/build/intermediates/merged_manifests/release/AndroidManifest.xml"
+                merged.parent.mkdir(parents=True)
+                root = ET.fromstring(ci.academic_manifest(self.base).replace("${applicationId}", ci.APP_ID))
+                root.set("package", ci.APP_ID)
+                merged.write_text(ET.tostring(root, encoding="unicode"))
+
+            with patch.object(ci, "APP", app), patch.object(ci, "ANDROID", android), \
+                    patch.object(ci.subprocess, "run", side_effect=gradle), patch("builtins.print"):
+                ci.preflight()
+            self.assertEqual(len(observed), 1)
+            self.assertFalse(observed[0].exists())
+
     def test_native_libraries_require_arm64_and_16k_load_alignment(self):
         with tempfile.TemporaryDirectory() as tmp:
             apk = Path(tmp) / "test.apk"

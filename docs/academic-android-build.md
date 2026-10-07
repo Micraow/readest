@@ -25,6 +25,13 @@ Build Tools 36.0.0 and NDK 28.2.13676358. The npm mobile CLI's generated AGP
 AndroidX dependencies. A small Gradle/Kotlin/manifest probe runs before expensive
 Rust compilation. The full build then verifies native plugin integration.
 
+The first run (37633805686) failed in this cheap probe, before frontend or Rust
+compilation: its temporary directory did not retain the app-relative `.env`
+location. The probe now preserves the `readest-app/src-tauri/gen/android`
+structure and copies only the tracked public `.env`. Gradle accepts regular
+files rather than any existing path. A regression test verifies the temporary
+lookup stays inside that app directory.
+
 No private signing material is sent to this workflow. Its release APK is
 **unsigned and not installable** until separately signed with the approved
 dedicated test identity. It must not silently use a fresh debug certificate for

@@ -179,13 +179,16 @@ export default function ScholarlyReader({
   session,
   onZoom,
   viewSettings,
+  scrollRef,
 }: {
   document: ScholarlyDocument;
   viewSettings?: Partial<ViewSettings>;
+  scrollRef?: RefObject<HTMLDivElement | null>;
   session: AcademicPdfSession;
   onZoom: (block: ScholarlyBlock) => void;
 }) {
-  const root = useRef<HTMLDivElement>(null);
+  const localRoot = useRef<HTMLDivElement>(null);
+  const root = scrollRef ?? localRoot;
   const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
   const settings = { ...globalSettings, ...viewSettings };
   const fontSize = Math.max(16, settings.defaultFontSize || 18);

@@ -2603,5 +2603,8 @@
   "Zotero returned an unsafe file redirect": "无法安全下载这份 PDF，请在 Zotero 中检查附件",
   "Zotero returned invalid library data": "Zotero 文献资料暂时无法读取，请刷新后重试",
   "Open Zotero Library": "打开 Zotero 文献库",
-  "Read-only Personal Library": "个人文献库（只读）"
+  "Read-only Personal Library": "个人文献库（只读）",
+  "Reading appearance": "阅读排版",
+  "Only this document": "仅用于当前文档",
+  "Reset reading appearance": "重置阅读排版"
 }

@@ -28,6 +28,120 @@ afterEach(cleanup);
 const gridInsets = { top: 0, right: 0, bottom: 0, left: 0 };
 
 describe('ImageViewer', () => {
+  describe('academic image fit', () => {
+    const renderAcademicViewer = () => {
+      let resize = () => {};
+      const disconnect = vi.fn();
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          constructor(callback: () => void) {
+            resize = callback;
+          }
+          observe() {}
+          disconnect = disconnect;
+        },
+      );
+      Object.defineProperty(window, 'devicePixelRatio', { value: 2, configurable: true });
+      const props = {
+        src: 'blob:algorithm',
+        caption: 'Algorithm 2',
+        reserveChromeSpace: true,
+        gridInsets: { top: 24, right: 0, bottom: 20, left: 0 },
+        onClose: vi.fn(),
+      };
+      const view = render(<ImageViewer {...props} />);
+      const img = view.container.querySelector('img')!;
+      Object.defineProperty(img, 'naturalWidth', { value: 1200, configurable: true });
+      Object.defineProperty(img, 'naturalHeight', { value: 800, configurable: true });
+      const viewer = view.getByLabelText('Image viewer');
+      viewer.getBoundingClientRect = () => new DOMRect(0, 0, 600, 424);
+      // The header, safe-area padding and caption leave this image viewport.
+      // jsdom has no layout, so supply the resulting rectangle directly.
+      const viewport = img.parentElement!;
+      viewport.getBoundingClientRect = () => new DOMRect(16, 80, 568, 280);
+      fireEvent.load(img);
+      return { ...view, img, viewport, props, resize: () => act(resize), disconnect };
+    };
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      vi.useRealTimers();
+    });
+
+    it('fits all image lines inside the space left by visible controls and caption', () => {
+      const { container, img, viewport } = renderAcademicViewer();
+
+      expect(img.style.width).toBe('420px');
+      expect(img.style.height).toBe('280px');
+      expect(zoomPercent(container)).toBe(70);
+      expect(viewport.className).toContain('flex-1');
+      expect(container.querySelector('.image-caption')?.className).not.toContain('absolute');
+      expect(container.querySelector('[data-testid="zoom-controls"]')).toBeTruthy();
+    });
+
+    it('refits when wrapping a caption or resizing changes the available viewport', () => {
+      const { img, viewport, resize, unmount, disconnect } = renderAcademicViewer();
+      viewport.getBoundingClientRect = () => new DOMRect(16, 80, 568, 200);
+
+      resize();
+
+      expect(img.style.width).toBe('300px');
+      expect(img.style.height).toBe('200px');
+      unmount();
+      expect(disconnect).toHaveBeenCalled();
+    });
+
+    it('keeps fit geometry stable when chrome is hidden and restores it with one tap', () => {
+      const { img, container, resize } = renderAcademicViewer();
+      fireEvent.click(img);
+      resize();
+      expect(img.style.height).toBe('280px');
+      expect((container.querySelector('.image-caption') as HTMLElement).style.visibility).toBe(
+        'hidden',
+      );
+
+      fireEvent.click(img);
+      expect(img.style.height).toBe('280px');
+      expect((container.querySelector('.image-caption') as HTMLElement).style.visibility).toBe(
+        'visible',
+      );
+    });
+
+    it('anchors 1:1 zoom to the image viewport and resets fit for a new source', () => {
+      vi.useFakeTimers();
+      const { img, container, rerender, props } = renderAcademicViewer();
+      // The viewport center differs from the full-screen center. Zooming here
+      // must keep the image centered instead of introducing an offset.
+      fireEvent.doubleClick(img, { clientX: 300, clientY: 220 });
+      expect(zoomPercent(container)).toBe(100);
+      expect(img.style.transform).toContain('translate(0px, 0px)');
+      act(() => vi.advanceTimersByTime(500));
+      expect(img.style.width).toBe('600px');
+      expect(img.style.height).toBe('400px');
+      expect(img.style.transform).toBe('scale(1) translate(0px, 0px)');
+
+      Object.defineProperty(img, 'naturalWidth', { value: 600, configurable: true });
+      Object.defineProperty(img, 'naturalHeight', { value: 1200, configurable: true });
+      rerender(<ImageViewer {...props} src='blob:next-algorithm' caption='Algorithm 3' />);
+      fireEvent.load(img);
+
+      expect(img.style.width).toBe('140px');
+      expect(img.style.height).toBe('280px');
+      expect(img.style.transform).toBe('scale(1) translate(0px, 0px)');
+      expect(zoomPercent(container)).toBe(47);
+    });
+
+    it('keeps the caption interactive and closes from the surrounding backdrop', () => {
+      const { container, props } = renderAcademicViewer();
+      fireEvent.click(container.querySelector('.image-caption')!);
+      expect(props.onClose).not.toHaveBeenCalled();
+
+      fireEvent.click(container.querySelector('.image-viewer-overlay')!);
+      expect(props.onClose).toHaveBeenCalledOnce();
+    });
+  });
+
   it('cancels the initial zoom-label timer when closed immediately', () => {
     vi.useFakeTimers();
     try {

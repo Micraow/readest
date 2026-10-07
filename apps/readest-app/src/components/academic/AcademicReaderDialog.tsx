@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { ViewSettings } from '@/types/book';
 import { useEnv } from '@/context/EnvContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useThemeStore } from '@/store/themeStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import { useKeyDownActions } from '@/hooks/useKeyDownActions';
 import { openAcademicPdf, type AcademicPdfSession } from '@/services/academic/runtime';
 import type {
@@ -16,6 +17,8 @@ import LayoutInspector from './LayoutInspector';
 import ScholarlyReader from './ScholarlyReader';
 import { useAcademicHistory } from './useAcademicHistory';
 import { visualRoleLabel } from './labels';
+import AcademicAppearancePanel from './AcademicAppearancePanel';
+import { useAcademicAppearance } from './useAcademicAppearance';
 
 export default function AcademicReaderDialog({
   file,
@@ -37,6 +40,12 @@ export default function AcademicReaderDialog({
   const [error, setError] = useState<'' | 'unsupported' | 'failed'>('');
   const [attempt, setAttempt] = useState(0);
   const [inspecting, setInspecting] = useState(false);
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const appearanceButton = useRef<HTMLButtonElement>(null);
+  const appearanceId = useId();
+  const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
+  const { overrides, updateAppearance, scrollRef } = useAcademicAppearance(document?.fingerprint);
+  const readingSettings = { ...globalSettings, ...viewSettings, ...overrides };
   const [zoomUrl, setZoomUrl] = useState<string | null>(null);
   const [zoomRole, setZoomRole] = useState('');
   const [zooming, setZooming] = useState(false);
@@ -48,9 +57,14 @@ export default function AcademicReaderDialog({
     setZooming(false);
     setZoomUrl(null);
   };
+  const closeAppearance = () => {
+    setAppearanceOpen(false);
+    appearanceButton.current?.focus();
+  };
   const closeTop = () => {
     if (zoomUrl || zooming) closeZoom();
     else if (inspecting) setInspecting(false);
+    else if (appearanceOpen) closeAppearance();
     else onClose();
   };
   const closeRef = useRef(closeTop);
@@ -58,6 +72,7 @@ export default function AcademicReaderDialog({
   useKeyDownActions({ onCancel: closeTop });
   useAcademicHistory(inspecting, () => setInspecting(false));
   useAcademicHistory(zooming || !!zoomUrl, closeZoom);
+  useAcademicHistory(appearanceOpen, closeAppearance);
 
   useEffect(() => {
     const previous = window.document.activeElement as HTMLElement | null;
@@ -101,6 +116,7 @@ export default function AcademicReaderDialog({
     setError('');
     setProgress(null);
     setInspecting(false);
+    setAppearanceOpen(false);
     setZooming(false);
     setZoomUrl(null);
     setZoomError(false);
@@ -183,7 +199,7 @@ export default function AcademicReaderDialog({
         className='bg-base-100 text-base-content flex h-full w-full flex-col outline-none'
         style={{ paddingTop: insets?.top ?? 0, paddingBottom: insets?.bottom ?? 0 }}
       >
-        <header className='border-base-300 flex min-h-14 flex-wrap items-center gap-2 border-b px-3 py-2'>
+        <header className='border-base-300 relative flex min-h-14 shrink-0 flex-wrap items-center gap-2 border-b px-3 py-2'>
           <div
             className='join eink-bordered border-base-300 rounded-lg border'
             role='group'
@@ -206,12 +222,35 @@ export default function AcademicReaderDialog({
             </button>
           </div>
           <span className='min-w-0 flex-1 truncate text-sm font-medium'>{title}</span>
+          {document && (
+            <button
+              ref={appearanceButton}
+              type='button'
+              className='btn btn-ghost btn-sm eink-bordered min-h-10'
+              aria-label={_('Reading appearance')}
+              aria-expanded={appearanceOpen}
+              aria-controls={appearanceId}
+              onClick={() => {
+                if (appearanceOpen) closeAppearance();
+                else {
+                  closeZoom();
+                  setInspecting(false);
+                  setAppearanceOpen(true);
+                }
+              }}
+            >
+              <span aria-hidden='true' className='text-base'>
+                Aa
+              </span>
+            </button>
+          )}
           {process.env.NODE_ENV !== 'production' && document && (
             <button
               type='button'
               className='btn btn-ghost btn-sm eink-bordered'
               onClick={() => {
                 closeZoom();
+                setAppearanceOpen(false);
                 setInspecting(true);
               }}
             >
@@ -226,6 +265,18 @@ export default function AcademicReaderDialog({
           >
             ×
           </button>
+          {appearanceOpen && (
+            <AcademicAppearancePanel
+              id={appearanceId}
+              values={{
+                defaultFontSize: Math.max(16, readingSettings.defaultFontSize || 18),
+                lineHeight: Math.max(1.35, readingSettings.lineHeight || 1.6),
+              }}
+              onChange={(key, value) => updateAppearance({ ...overrides, [key]: value })}
+              onReset={() => updateAppearance({})}
+              onClose={closeAppearance}
+            />
+          )}
         </header>
         {error ? (
           <div className='space-y-4 p-6'>
@@ -246,7 +297,8 @@ export default function AcademicReaderDialog({
           <ScholarlyReader
             document={document}
             session={session}
-            viewSettings={viewSettings}
+            viewSettings={readingSettings}
+            scrollRef={scrollRef}
             onZoom={(block) => void zoom(block)}
           />
         ) : (
@@ -290,6 +342,7 @@ export default function AcademicReaderDialog({
         )}
         {zoomUrl && (
           <ImageViewer
+            reserveChromeSpace
             src={zoomUrl}
             caption={zoomRole}
             gridInsets={insets ?? { top: 0, right: 0, bottom: 0, left: 0 }}

@@ -107,8 +107,12 @@ def preflight():
     # the academic identity DSL, app Maven dependencies, AAR requirements, and
     # Kotlin metadata. Native plugin integration is checked by the real build.
     with tempfile.TemporaryDirectory(prefix="academic-android-preflight-") as tmp:
-        probe = Path(tmp)
+        # Preserve the real rootProject -> ../../../.env relationship. A probe
+        # directly beneath /tmp would otherwise inspect environment paths at /.
+        app_root = Path(tmp) / "readest-app"
+        probe = app_root / "src-tauri/gen/android"
         (probe / "app/src/main/java").mkdir(parents=True)
+        shutil.copyfile(APP / ".env", app_root / ".env")
         (probe / "settings.gradle").write_text("include ':app'\n")
         shutil.copyfile(ANDROID / "build.gradle.kts", probe / "build.gradle.kts")
         shutil.copyfile(ANDROID / "gradle.properties", probe / "gradle.properties")

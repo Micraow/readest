@@ -1,4 +1,4 @@
-academic-12: monospace fidelity acceptance build, 2026-10-07
-Application source: 73675d4d2cecfe5a4585ce2282606de057bd8e05
-Local full regression: 13191 passed, 16 skipped; native visual acceptance pending.
-Recovery: preserve successful compile plus source-change evidence before the final integrity gate.
+academic-12-ui-2: document appearance controls and unobscured image fit, 2026-10-07
+Parser and document cache version remain academic-12.
+Native acceptance must check initial visible controls, narrow windows, appearance persistence and reset.
+This deliberate build accompanies the Android preflight recovery; prior delivered academic-12 stays available.

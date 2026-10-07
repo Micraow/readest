@@ -42,7 +42,7 @@ android {
         manifestPlaceholders["sentryDsn"] = System.getenv("SENTRY_DSN")?.takeIf { it.isNotBlank() }
             ?: listOf("../../../.env.local", "../../../.env")
                 .map { rootProject.file(it) }
-                .filter { it.exists() }
+                .filter { it.isFile }
                 .firstNotNullOfOrNull { f ->
                     f.readLines()
                         .map { it.trim() }

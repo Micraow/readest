@@ -18,6 +18,8 @@ interface ImageViewerProps {
   // The image's description (its `alt` text), shown over the zoomed image when
   // the book provides one (#5232).
   caption?: string;
+  // Academic figures must fit in full while their controls and caption are visible.
+  reserveChromeSpace?: boolean;
   onClose: () => void;
   onPrevious?: () => void;
   onNext?: () => void;
@@ -41,6 +43,7 @@ const MAX_COMMIT_RASTER_DIM = 4096;
 const ImageViewer: React.FC<ImageViewerProps> = ({
   src,
   caption,
+  reserveChromeSpace = false,
   onClose,
   onPrevious,
   onNext,
@@ -86,6 +89,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
   const dragStart = useRef({ x: 0, y: 0 });
   const wasDragging = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const zoomLabelTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wheelZoomEndTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,7 +107,9 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
     // zoom is committed the laid-out size is no longer the fit size. Replicates
     // the pre-measure CSS fit (`width/height: auto` capped by `maxWidth/
     // maxHeight: 100%`): shrink to the container, never upscale.
-    const containerRect = containerRef.current?.getBoundingClientRect();
+    const containerRect = (
+      reserveChromeSpace ? viewportRef.current : containerRef.current
+    )?.getBoundingClientRect();
     if (!img?.naturalWidth || !img.naturalHeight) return;
     if (!containerRect?.width || !containerRect.height) return;
     const fitRatio = Math.min(
@@ -115,7 +121,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
     const dpr = window.devicePixelRatio || 1;
     setFitSize({ width: fitWidth, height: img.naturalHeight * fitRatio });
     setPixelPerfectScale(img.naturalWidth / (fitWidth * dpr));
-  }, []);
+  }, [reserveChromeSpace]);
 
   // A cached image can already be decoded before the load event would fire, and
   // rotating the device or resizing the window changes the fit size.
@@ -123,10 +129,23 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
     setPixelPerfectScale(null);
     setFitSize(null);
     setRenderScale(1);
+    if (reserveChromeSpace) {
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+      setShowChrome(true);
+      setShowZoomLabel(true);
+    }
     measureFit();
+    // Caption wrapping and safe-area changes can resize the available image
+    // area without a window resize. The viewport already excludes both rows.
+    const observer = reserveChromeSpace ? new ResizeObserver(measureFit) : null;
+    if (viewportRef.current) observer?.observe(viewportRef.current);
     window.addEventListener('resize', measureFit);
-    return () => window.removeEventListener('resize', measureFit);
-  }, [src, measureFit]);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', measureFit);
+    };
+  }, [src, measureFit, reserveChromeSpace]);
 
   // Commit a settled zoom into the layout size (see the `fitSize` note). The
   // commit is clamped to 1:1 with the image's resolution — beyond that the
@@ -301,7 +320,9 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
 
     e.preventDefault();
 
-    const rect = containerRef.current?.getBoundingClientRect();
+    const rect = (
+      reserveChromeSpace ? viewportRef.current : containerRef.current
+    )?.getBoundingClientRect();
     if (!rect) return;
 
     markWheelZooming();
@@ -411,7 +432,9 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
     } else if (touches.length === 2) {
       // Pinch
       wasDragging.current = true;
-      const rect = containerRef.current?.getBoundingClientRect();
+      const rect = (
+        reserveChromeSpace ? viewportRef.current : containerRef.current
+      )?.getBoundingClientRect();
       if (!rect) return;
 
       const touch1 = touches[0];
@@ -532,7 +555,9 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    const rect = containerRef.current?.getBoundingClientRect();
+    const rect = (
+      reserveChromeSpace ? viewportRef.current : containerRef.current
+    )?.getBoundingClientRect();
     if (!rect) return;
 
     if (scale === 1) {
@@ -587,6 +612,36 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
     setMenuPosition({ x: e.clientX, y: e.clientY });
   };
 
+  const controls = (
+    <ZoomControls
+      gridInsets={gridInsets}
+      canShare={canShare}
+      onClose={onClose}
+      onSave={handleSaveImage}
+      onZoomIn={handleZoomIn}
+      onZoomOut={handleZoomOut}
+      onReset={handleReset}
+    />
+  );
+  const zoomLabel = (
+    <div
+      aria-label={_('Zoom level')}
+      className={clsx(
+        'zoom-level-label eink-bordered not-eink:text-white not-eink:bg-black/50 pointer-events-none rounded-full px-3 py-1 text-sm transition-opacity duration-300',
+        reserveChromeSpace
+          ? 'mb-1 min-w-16 shrink-0 text-center'
+          : 'absolute left-1/2 top-12 -translate-x-1/2',
+      )}
+      style={
+        reserveChromeSpace
+          ? { visibility: showChrome && showZoomLabel ? 'visible' : 'hidden' }
+          : undefined
+      }
+    >
+      {zoomPercent}%
+    </div>
+  );
+
   return (
     <>
       {/* `no-context-menu` suppresses the WebView's native long-press image
@@ -598,7 +653,20 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
         tabIndex={-1}
         role='button'
         aria-label={_('Image viewer')}
-        className='no-context-menu fixed inset-0 z-50 flex items-center justify-center outline-hidden'
+        className={clsx(
+          'no-context-menu fixed inset-0 z-50 flex items-center justify-center outline-hidden',
+          reserveChromeSpace && 'flex-col gap-2',
+        )}
+        style={
+          reserveChromeSpace
+            ? {
+                paddingTop: 8,
+                paddingBottom: 16 + gridInsets.bottom,
+                paddingLeft: 16 + gridInsets.left,
+                paddingRight: 16 + gridInsets.right,
+              }
+            : undefined
+        }
         onKeyDown={handleKeyDown}
         onWheel={handleWheel}
         onTouchMove={onTouchMove}
@@ -609,22 +677,25 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
           role='button'
           tabIndex={0}
           className='image-viewer-overlay not-eink:bg-black/50 eink:bg-base-100 not-eink:backdrop-blur-md absolute inset-0'
+          onClick={reserveChromeSpace ? handleContainerClick : undefined}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               onClose();
             }
           }}
         />
-        {showChrome && (
-          <ZoomControls
-            gridInsets={gridInsets}
-            canShare={canShare}
-            onClose={onClose}
-            onSave={handleSaveImage}
-            onZoomIn={handleZoomIn}
-            onZoomOut={handleZoomOut}
-            onReset={handleReset}
-          />
+        {reserveChromeSpace ? (
+          // Keep the rows laid out when hidden so a tap never changes zoom or
+          // shifts the image. Controls use a compact row above academic figures.
+          <div
+            className='relative z-10 flex w-full shrink-0 flex-wrap items-end justify-between gap-2'
+            style={{ visibility: showChrome ? 'visible' : 'hidden' }}
+          >
+            {zoomLabel}
+            <div className='[&>div]:static [&>div]:grid-cols-5 [&>div]:gap-2'>{controls}</div>
+          </div>
+        ) : (
+          showChrome && controls
         )}
 
         {onPrevious && showZoomLabel && (
@@ -660,9 +731,11 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
         )}
 
         <div
+          ref={viewportRef}
           role='none'
           className={clsx(
-            'relative flex h-full w-full items-center justify-center overflow-hidden',
+            'relative flex w-full items-center justify-center overflow-hidden',
+            reserveChromeSpace ? 'min-h-0 flex-1' : 'h-full',
           )}
           onClick={handleContainerClick}
         >
@@ -716,26 +789,28 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
 
         {/* Sibling of the click-to-close container above, so reading (or
           scrolling) the description never dismisses the viewer. */}
-        {caption && showChrome && (
+        {caption && (showChrome || reserveChromeSpace) && (
           <div
             // The description comes from the book, whose language need not match
             // the UI's, so let the text pick its own direction.
             dir='auto'
-            className='image-caption eink-bordered not-eink:text-white not-eink:bg-black/50 absolute bottom-4 left-1/2 z-10 max-h-[30%] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 overflow-y-auto rounded-lg px-4 py-2 text-center text-sm'
-            style={{ marginBottom: `${gridInsets.bottom}px` }}
+            className={clsx(
+              'image-caption eink-bordered not-eink:text-white not-eink:bg-black/50 z-10 max-h-[30%] max-w-2xl overflow-y-auto rounded-lg px-4 py-2 text-center text-sm',
+              reserveChromeSpace
+                ? 'relative w-full shrink-0'
+                : 'absolute bottom-4 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2',
+            )}
+            style={
+              reserveChromeSpace
+                ? { visibility: showChrome ? 'visible' : 'hidden' }
+                : { marginBottom: `${gridInsets.bottom}px` }
+            }
           >
             {caption}
           </div>
         )}
 
-        {showZoomLabel && (
-          <div
-            aria-label={_('Zoom level')}
-            className='zoom-level-label eink-bordered not-eink:text-white not-eink:bg-black/50 pointer-events-none absolute left-1/2 top-12 -translate-x-1/2 rounded-full px-3 py-1 text-sm transition-opacity duration-300'
-          >
-            {zoomPercent}%
-          </div>
-        )}
+        {!reserveChromeSpace && showZoomLabel && zoomLabel}
       </div>
       {/* Outside the viewer, so its clicks never reach the click-to-close
         container. */}
