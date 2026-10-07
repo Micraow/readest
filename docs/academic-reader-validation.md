@@ -22,8 +22,24 @@ Synthetic regressions, cache round-trip and four-file (61-page) source compariso
 pass. The supplied single-column document changes only in confirmed font metadata
 and inline family; both HPCC variants and MP-RDMA remain structurally and textually
 unchanged. Parser `academic-12` requires fresh analysis while keeping older caches.
-Final native comparison and the aggregate suite are pending for this checkpoint.
-The academic-11 package and acceptance below remain immutable.
+The aggregate completed with **13,191 passed, 16 skipped**, **1,126 test files
+passed, 4 skipped**, using the same explicit external-network test exclusion as
+academic-11. TypeScript/Biome and 93 focused font, rendering and cache tests pass.
+
+There is no academic-12 native artifact yet. Local production builds exhausted
+the available memory budget: Turbopack with 2048/1536 MiB V8 heaps exited 137;
+Webpack hit its 2048 MiB V8 limit, then received SIGKILL with a 2560 MiB heap.
+Next's optional memory optimizations/build worker and the supported escalated
+execution route also received SIGKILL. The unsuccessful optional build-config
+experiment was reverted; no type checks were disabled and no system settings
+were changed. Earlier successful builds exceeded four GiB RSS, so this is not
+reported as a verified fixed per-process limit.
+
+The user authorized one on-demand Linux GitHub Actions build after these local
+failures. That route will use pinned dependencies and bounded caches, with no
+release publishing or platform matrix. Its artifact must still pass actual local
+PDF reading and font checks before delivery. The academic-11 package and its
+acceptance below remain immutable and available while this work continues.
 
 ## Structured inline content and source-order figures: academic-11 (2026-10-07)
 
