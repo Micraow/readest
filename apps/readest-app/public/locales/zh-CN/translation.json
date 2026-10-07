@@ -2606,5 +2606,8 @@
   "Read-only Personal Library": "个人文献库（只读）",
   "Reading appearance": "阅读排版",
   "Only this document": "仅用于当前文档",
-  "Reset reading appearance": "重置阅读排版"
+  "Reset reading appearance": "重置阅读排版",
+  "Back to reading": "返回正文",
+  "Reference {{number}}": "参考文献 {{number}}",
+  "Footnote {{number}}": "脚注 {{number}}"
 }

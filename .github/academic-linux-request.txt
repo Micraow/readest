@@ -1,4 +1,4 @@
-academic-12-ui-2: document appearance controls and unobscured image fit, 2026-10-07
-Parser and document cache version remain academic-12.
-Native acceptance must check initial visible controls, narrow windows, appearance persistence and reset.
-This deliberate build accompanies the Android preflight recovery; prior delivered academic-12 stays available.
+academic-13: prose boundaries, dark math and local reference navigation, 2026-10-07
+Parser/cache version advances to academic-13 for geometry classification changes.
+306 focused tests passed locally; exact new PDF content/crops reproduced and checked outside the repository.
+Native acceptance must verify new prose/footnote boundaries, dark equations and citation/footnote return, plus prior papers.

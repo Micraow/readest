@@ -17,7 +17,7 @@ import { buildInlineRuns, joinInlineRuns, unmappedGlyphAnchors } from './inline.
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-12';
+export const PARSER_VERSION = 'academic-13';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -115,15 +115,34 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
     let distance = Infinity;
     for (const row of rows) {
       const delta = Math.abs(row.baseline - baselineOf(item));
+      const raisedNoteMarker =
+        /^[*∗†‡§]$/.test(item.text.trim()) && baselineOf(item) < row.baseline;
       const tolerance =
-        item.fontSize < row.size * 0.82 ? row.size * 0.65 : Math.max(1.6, row.size * 0.25);
+        item.fontSize < row.size * 0.82
+          ? row.size * (raisedNoteMarker ? 0.85 : 0.65)
+          : Math.max(1.6, row.size * 0.25);
+      if (delta > tolerance || delta >= distance) continue;
       // Superscripts attach only to a nearby run, not a different column on the same row.
       const nearby =
         item.fontSize >= row.size * 0.82 ||
         row.items.some(
           (i) => item.box.x < right(i.box) + row.size && right(item.box) > i.box.x - row.size,
+        ) ||
+        page.graphics.some(
+          (graphic) =>
+            graphic.kind === 'rule' &&
+            graphic.box.height <= 1.5 &&
+            graphic.box.width >= 5 &&
+            graphic.box.width <= row.size * 12 &&
+            item.box.y < graphic.box.y &&
+            bottom(item.box) <= graphic.box.y + item.fontSize * 0.4 &&
+            horizontalOverlap(item.box, graphic.box) > item.box.width * 0.6 &&
+            row.items.some(
+              (i) =>
+                graphic.box.x < right(i.box) + row.size && right(graphic.box) > i.box.x - row.size,
+            ),
         );
-      if (delta <= tolerance && delta < distance && nearby) {
+      if (nearby) {
         closest = row;
         distance = delta;
       }
@@ -195,7 +214,10 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
         previous &&
         ((captionRole(lineText(group)) && captionRole(lineText(ordered.slice(index)))) ||
           item.box.x - right(previous.box) > Math.max(18, row.size * 1.8) ||
-          (gutter !== undefined && right(previous.box) <= gutter && item.box.x >= gutter))
+          (gutter !== undefined &&
+            right(previous.box) <= gutter &&
+            item.box.x >= gutter &&
+            item.box.x - right(previous.box) > Math.min(previous.fontSize, item.fontSize) * 0.5))
       )
         flush();
       group.push(item);
@@ -650,7 +672,7 @@ function detectVisualRegions(
       const words = (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length;
       const connectiveWords = (
         line.text.match(
-          /\b(?:the|a|an|we|is|are|be|for|to|from|with|where|since|thus|and|of|by|as|at)\b/gi,
+          /\b(?:the|a|an|we|is|are|be|for|to|from|with|where|since|thus|and|of|by|as|at|according)\b/gi,
         ) ?? []
       ).length;
       return (
@@ -662,6 +684,25 @@ function detectVisualRegions(
             (!mathSymbol.test(line.text) && /\b[a-zA-Z]{3,}\b/.test(line.text))))
       );
     });
+    // A hyphenated prose continuation can contain mostly variables. Its
+    // neighboring sentence establishes its role even when word counts do not.
+    const vertical = [...columnLines].sort((a, b) => a.box.y - b.box.y);
+    for (const [index, line] of vertical.entries()) {
+      const previous = vertical[index - 1];
+      if (
+        !prose.includes(line) &&
+        !hasNumber(line) &&
+        previous &&
+        prose.includes(previous) &&
+        /[-\u00ad]$/.test(previous.text) &&
+        /^[a-z]{2}/.test(line.text) &&
+        line.box.x < column.x + font * 0.75 &&
+        line.box.y - bottom(previous.box) >= -font * 0.3 &&
+        line.box.y - bottom(previous.box) < font &&
+        Math.abs(line.fontSize - previous.fontSize) < font * 0.15
+      )
+        prose.push(line);
+    }
     const midline = (line: LayoutLine) => line.box.y + line.box.height / 2;
     const inlineRows = prose.filter((text) =>
       columnLines.some(
@@ -743,8 +784,19 @@ function detectVisualRegions(
           .map((line) => bottom(line.box) + 0.5),
       );
       const cropTop = Math.max(crop.y, Math.min(precedingBottom, ...group.map(midline)));
+      // Some stretchy font glyphs have nominal descenders well below their
+      // painted ink. The next prose row is a hard boundary, not equation ink.
+      const lastBaseline = Math.max(
+        ...group.flatMap((line) => line.itemIndices.map((id) => itemByIndex.get(id)!.baseline)),
+      );
+      const followingTop = Math.min(
+        bottom(crop),
+        ...prose
+          .filter((line) => line.box.y > lastBaseline && horizontalOverlap(line.box, crop) > 0)
+          .map((line) => line.box.y - 0.5),
+      );
       regions.push({
-        box: { ...crop, y: cropTop, height: bottom(crop) - cropTop },
+        box: { ...crop, y: cropTop, height: Math.max(0, followingTop - cropTop) },
         role: 'equation',
         confidence: numbered ? 0.9 : 0.75,
         reason: 'Display mathematics retained in original layout',

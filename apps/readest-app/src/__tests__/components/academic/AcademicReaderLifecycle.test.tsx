@@ -138,7 +138,7 @@ const openReading = async () => {
   );
   expect(mocks.open).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
-  await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
+  await screen.findByRole('button', { name: 'Figure: Tap to zoom' }, { timeout: 5000 });
   return { ...result, onOpenChange };
 };
 const zoom = async () => {
@@ -151,6 +151,101 @@ const nativeBack = () =>
   });
 
 describe('academic dialog lifecycle and navigation', () => {
+  const withReferences = () => {
+    const paragraph = {
+      ...scholarly.blocks[0]!,
+      type: 'paragraph' as const,
+      role: undefined,
+      id: 'body',
+      text: 'See [34].',
+    };
+    const reference = {
+      ...paragraph,
+      type: 'reference' as const,
+      id: 'reference',
+      text: '[34] A study with [35].',
+    };
+    const second = { ...reference, id: 'reference-35', text: '[35] Another study.' };
+    session.analyze.mockResolvedValue({
+      ...scholarly,
+      blocks: [paragraph, reference, second, ...scholarly.blocks],
+    });
+  };
+
+  it('closes zoom and appearance before returning references, then closes Reading on native Back', async () => {
+    withReferences();
+    await openReading();
+    const link = screen.getAllByRole('link')[0]!;
+    link.focus();
+    fireEvent.click(link);
+    expect(screen.getByRole('button', { name: 'Back to reading' })).toBeTruthy();
+    await zoom();
+    nativeBack();
+    expect(screen.queryByRole('button', { name: 'Image viewer' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Back to reading' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Reading appearance' }));
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(
+      screen.getByRole('button', { name: 'Reading appearance' }).getAttribute('aria-expanded'),
+    ).toBe('false');
+    expect(screen.getByRole('button', { name: 'Back to reading' })).toBeTruthy();
+    nativeBack();
+    expect(screen.queryByRole('button', { name: 'Back to reading' })).toBeNull();
+    expect(window.document.activeElement).toBe(link);
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    nativeBack();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('supports immediate Return/rejump, nested browser Back, obsolete Forward and reopening', async () => {
+    withReferences();
+    const baseState = window.history.state;
+    await openReading();
+    const link = screen.getAllByRole('link')[0]!;
+    fireEvent.click(link);
+    fireEvent.click(screen.getByRole('button', { name: 'Back to reading' }));
+    fireEvent.click(link);
+    await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(2));
+    fireEvent.click(screen.getAllByRole('link')[1]!);
+    await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(3));
+    await act(async () => window.history.back());
+    await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(2));
+    expect(screen.getByRole('button', { name: 'Back to reading' })).toBeTruthy();
+    await act(async () => window.history.back());
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: 'Back to reading' })).toBeNull(),
+    );
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    await act(async () => window.history.forward());
+    await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(1));
+    expect(screen.queryByRole('button', { name: 'Back to reading' })).toBeNull();
+    fireEvent.click(link);
+    fireEvent.click(screen.getByRole('button', { name: 'Close Reading Mode' }));
+    await waitFor(() => expect(window.history.state).toEqual(baseState));
+    fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
+    await screen.findAllByRole('link');
+    expect(screen.queryByRole('button', { name: 'Back to reading' })).toBeNull();
+    expect(session.analyze).toHaveBeenCalledTimes(2);
+  });
+
+  it('includes reference links in the dialog keyboard focus loop', async () => {
+    withReferences();
+    await openReading();
+    vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([
+      { width: 10 },
+    ] as unknown as DOMRectList);
+    // Disable the trailing figure so a reference is the last keyboard stop.
+    const first = screen.getByRole('button', { name: 'Original PDF' });
+    const links = screen.getAllByRole('link');
+    const figure = screen.getByRole('button', { name: 'Figure: Tap to zoom' });
+    (figure as HTMLButtonElement).disabled = true;
+    links.at(-1)!.focus();
+    fireEvent.keyDown(window, { key: 'Tab' });
+    expect(window.document.activeElement).toBe(first);
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
+    expect(window.document.activeElement).toBe(links.at(-1));
+  });
+
   it('opens only on request and repeatedly releases each parser session', async () => {
     const { onOpenChange } = await openReading();
     expect(mocks.open).toHaveBeenCalledTimes(1);

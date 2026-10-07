@@ -18,6 +18,8 @@ val tauriProperties = Properties().apply {
 // Only the separate academic CI lane opts in. Keep the Java/JNI namespace
 // unchanged; applicationId gives this APK its own install and data directory.
 val academicBuild = providers.gradleProperty("academicBuild").orNull == "true"
+// Increment for delivered academic updates; the first parallel build used revision 12.
+val academicRevision = 13
 
 android {
     compileSdk = 36
@@ -56,8 +58,10 @@ android {
         if (academicBuild) {
             ndk { abiFilters += "arm64-v8a" }
         }
-        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
-        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
+        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt() +
+            if (academicBuild) academicRevision - 12 else 0
+        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0") +
+            if (academicBuild) "-academic.$academicRevision" else ""
         val storeFlavor = project.findProperty("storeFlavor")?.toString() ?: "foss"
         missingDimensionStrategy("store", storeFlavor)
         // Android Auto ships to the FOSS/GitHub builds only. Play's Auto

@@ -57,7 +57,7 @@ jobs:
           pnpm --filter @readest/readest-app setup-vendors
       - name: Check academic code and types
         run: |
-          pnpm --filter @readest/readest-app test run src/__tests__/services/academic src/__tests__/components/academic src/components/academic/__tests__ src/__tests__/components/ImageViewer.test.tsx --maxWorkers=2
+          pnpm --filter @readest/readest-app test run src/__tests__/services/academic src/services/academic/__tests__ src/__tests__/components/academic src/components/academic/__tests__ src/__tests__/components/ImageViewer.test.tsx --maxWorkers=2
           pnpm --filter @readest/readest-app lint
       - name: Install native prerequisites
         run: |

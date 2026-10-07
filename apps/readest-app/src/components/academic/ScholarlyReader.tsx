@@ -6,6 +6,12 @@ import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument, SourceSpan } from '@/services/academic/types';
 import { visualRoleLabel } from './labels';
 import InlineContent from './InlineContent';
+import { useMathCanvasStyle } from './useMathCanvasStyle';
+import {
+  ReferenceHistoryLayer,
+  useAcademicReferences,
+  type AcademicReferenceControl,
+} from './useAcademicReferences';
 
 const inlineZoomBlock = (
   block: ScholarlyBlock,
@@ -66,6 +72,8 @@ function VisualRegion({
   onZoom: (block: ScholarlyBlock) => void;
 }) {
   const _ = useTranslation();
+  const mathCanvasStyle = useMathCanvasStyle();
+  const isEquation = block.role === 'equation';
   const host = useRef<HTMLButtonElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(false);
@@ -138,14 +146,22 @@ function VisualRegion({
       <button
         type='button'
         ref={host}
-        className='eink-bordered border-base-300 relative mx-auto block w-full overflow-hidden rounded border bg-white'
+        className={`eink-bordered border-base-300 relative mx-auto block w-full overflow-hidden rounded border ${isEquation ? 'bg-base-100 text-base-content' : 'bg-white'}`}
         style={{ aspectRatio: `${box.width} / ${box.height}`, maxWidth: maximumWidth }}
         onClick={() => onZoom(block)}
         aria-label={label}
       >
-        <canvas ref={canvas} className='block max-w-full' role='img' aria-label={label} />
+        <canvas
+          ref={canvas}
+          className='block max-w-full'
+          style={isEquation ? mathCanvasStyle : undefined}
+          role='img'
+          aria-label={label}
+        />
         {failed && (
-          <span className='absolute inset-0 flex items-center justify-center bg-white p-4 text-sm text-black'>
+          <span
+            className={`absolute inset-0 flex items-center justify-center p-4 text-sm ${isEquation ? 'bg-base-100 text-base-content' : 'bg-white text-black'}`}
+          >
             {_('Could not load the image. Tap to try again.')}
           </span>
         )}
@@ -180,15 +196,19 @@ export default function ScholarlyReader({
   onZoom,
   viewSettings,
   scrollRef,
+  referenceControl,
 }: {
   document: ScholarlyDocument;
   viewSettings?: Partial<ViewSettings>;
   scrollRef?: RefObject<HTMLDivElement | null>;
+  referenceControl?: RefObject<AcademicReferenceControl | null>;
   session: AcademicPdfSession;
   onZoom: (block: ScholarlyBlock) => void;
 }) {
   const localRoot = useRef<HTMLDivElement>(null);
   const root = scrollRef ?? localRoot;
+  const _ = useTranslation();
+  const navigation = useAcademicReferences(scholarly, root, referenceControl);
   const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
   const settings = { ...globalSettings, ...viewSettings };
   const fontSize = Math.max(16, settings.defaultFontSize || 18);
@@ -237,125 +257,153 @@ export default function ScholarlyReader({
   }, [storageKey]);
   const font = settings.defaultFont === 'Sans-serif' ? settings.sansSerifFont : settings.serifFont;
   return (
-    <div
-      ref={root}
-      className='min-h-0 flex-1 overflow-y-auto overscroll-contain'
-      data-testid='scholarly-scroll'
-    >
-      <article
-        className='mx-auto max-w-3xl select-text px-5 py-6 sm:px-10'
-        style={{
-          fontSize,
-          lineHeight: Math.max(1.35, settings.lineHeight || 1.6),
-          fontFamily: font ? `"${font}", serif` : 'serif',
-        }}
+    <>
+      {navigation.entries.map((entry) => (
+        <ReferenceHistoryLayer
+          key={entry.id}
+          onReturn={() => {
+            navigation.returnToReading(entry.id);
+          }}
+        />
+      ))}
+      {navigation.entries.length > 0 && (
+        <div className='border-base-300 shrink-0 border-b px-3 py-2'>
+          <button
+            type='button'
+            className='btn btn-ghost btn-sm eink-bordered min-h-10'
+            onClick={() => navigation.returnToReading()}
+          >
+            {_('Back to reading')}
+          </button>
+        </div>
+      )}
+      <div
+        ref={root}
+        className='min-h-0 flex-1 overflow-y-auto overscroll-contain'
+        data-testid='scholarly-scroll'
       >
-        {sourceVisualRows(scholarly.blocks).map((row) => {
-          const block = row[0]!;
-          const props = {
-            'data-block-id': block.id,
-            'data-source-page': block.source[0]?.page,
-          };
-          const content = (
-            <InlineContent
-              runs={block.inlineRuns}
-              text={block.text}
-              session={session}
-              fontSize={fontSize}
-              root={root}
-              onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
-            />
-          );
-          if (block.type === 'visual-region') {
-            const visuals = row.map((visual) => (
-              <VisualRegion
-                key={visual.id}
-                block={visual}
-                fontSize={fontSize}
-                sourceFontSize={
-                  visual.role === 'equation'
-                    ? undefined
-                    : sourceFonts.get(visual.source[0]?.page ?? 0)
-                }
+        <article
+          className='mx-auto max-w-3xl select-text px-5 py-6 [overflow-wrap:anywhere] sm:px-10'
+          style={{
+            fontSize,
+            lineHeight: Math.max(1.35, settings.lineHeight || 1.6),
+            fontFamily: font ? `"${font}", serif` : 'serif',
+          }}
+        >
+          {sourceVisualRows(scholarly.blocks).map((row) => {
+            const block = row[0]!;
+            const props = {
+              ...navigation.targetProps(block.id),
+              'data-block-id': block.id,
+              'data-source-page': block.source[0]?.page,
+            };
+            const content = (
+              <InlineContent
+                runs={block.inlineRuns}
+                references={navigation.references(block.id)}
+                text={block.text}
                 session={session}
+                fontSize={fontSize}
                 root={root}
-                onZoom={onZoom}
+                onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
               />
-            ));
-            return row.length === 1 ? (
-              visuals[0]
-            ) : (
-              <div
-                key={block.id}
-                className={`grid items-start gap-x-6 ${row.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}
-              >
-                {visuals}
-              </div>
             );
-          }
-          if (block.type === 'heading')
-            return block.level === 1 ? (
-              <h1 key={block.id} {...props} className='mb-4 mt-8 text-[1.5em] font-semibold'>
-                {content}
-              </h1>
-            ) : (
-              <h2 key={block.id} {...props} className='mb-3 mt-7 text-[1.2em] font-semibold'>
-                {content}
-              </h2>
-            );
-          if (block.type === 'list') {
-            const items = block.listItems ?? [block.text];
-            const numbered = items.every((item) => /^\s*\d+[.)]/.test(item));
-            const children = items.map((item, index) => (
-              <li key={`${block.id}-${index}`}>
-                <InlineContent
-                  runs={block.listInlineRuns?.[index]}
-                  omitListMarker
-                  text={item.replace(/^\s*(?:[•●▪◦*–-]|\d+[.)])\s+/, '')}
-                  session={session}
+            if (block.type === 'visual-region') {
+              const visuals = row.map((visual) => (
+                <VisualRegion
+                  key={visual.id}
+                  block={visual}
                   fontSize={fontSize}
+                  sourceFontSize={
+                    visual.role === 'equation'
+                      ? undefined
+                      : sourceFonts.get(visual.source[0]?.page ?? 0)
+                  }
+                  session={session}
                   root={root}
-                  onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
+                  onZoom={onZoom}
                 />
-              </li>
-            ));
-            return numbered ? (
-              <ol
-                key={block.id}
-                {...props}
-                start={Number(/^\s*(\d+)/.exec(items[0] ?? '')?.[1] ?? 1)}
-                className='mb-4 list-decimal space-y-1 pl-6'
-              >
-                {children}
-              </ol>
-            ) : (
-              <ul key={block.id} {...props} className='mb-4 list-disc space-y-1 pl-6'>
-                {children}
-              </ul>
-            );
-          }
-          if (block.type === 'footnote')
+              ));
+              return row.length === 1 ? (
+                visuals[0]
+              ) : (
+                <div
+                  key={block.id}
+                  className={`grid items-start gap-x-6 ${row.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}
+                >
+                  {visuals}
+                </div>
+              );
+            }
+            if (block.type === 'heading')
+              return block.level === 1 ? (
+                <h1 key={block.id} {...props} className='mb-4 mt-8 text-[1.5em] font-semibold'>
+                  {content}
+                </h1>
+              ) : (
+                <h2 key={block.id} {...props} className='mb-3 mt-7 text-[1.2em] font-semibold'>
+                  {content}
+                </h2>
+              );
+            if (block.type === 'list') {
+              const items = block.listItems ?? [block.text];
+              const numbered = items.every((item) => /^\s*\d+[.)]/.test(item));
+              const children = items.map((item, index) => (
+                <li key={`${block.id}-${index}`} {...navigation.targetProps(block.id, index)}>
+                  <InlineContent
+                    runs={block.listInlineRuns?.[index]}
+                    references={navigation.references(block.id, index)}
+                    omitListMarker
+                    text={item}
+                    session={session}
+                    fontSize={fontSize}
+                    root={root}
+                    onZoom={(source, trimBelow) =>
+                      onZoom(inlineZoomBlock(block, source, trimBelow))
+                    }
+                  />
+                </li>
+              ));
+              return numbered ? (
+                <ol
+                  key={block.id}
+                  {...props}
+                  start={Number(/^\s*(\d+)/.exec(items[0] ?? '')?.[1] ?? 1)}
+                  className='mb-4 list-decimal space-y-1 pl-6'
+                >
+                  {children}
+                </ol>
+              ) : (
+                <ul key={block.id} {...props} className='mb-4 list-disc space-y-1 pl-6'>
+                  {children}
+                </ul>
+              );
+            }
+            if (block.type === 'footnote')
+              return (
+                <aside
+                  key={block.id}
+                  {...props}
+                  role='note'
+                  className='mb-4 border-s-2 border-base-300 ps-3 text-[0.9em] [&>sup:first-child]:me-1'
+                >
+                  {content}
+                </aside>
+              );
             return (
-              <aside
+              <p
                 key={block.id}
                 {...props}
-                role='note'
-                className='mb-4 border-s-2 border-base-300 ps-3 text-[0.9em] [&>sup:first-child]:me-1'
+                className={
+                  block.type === 'reference' ? 'mb-3 pl-6 -indent-6 text-[0.95em]' : 'mb-4'
+                }
               >
                 {content}
-              </aside>
+              </p>
             );
-          return (
-            <p
-              key={block.id}
-              {...props}
-              className={block.type === 'reference' ? 'mb-3 pl-6 -indent-6 text-[0.95em]' : 'mb-4'}
-            >
-              {content}
-            </p>
-          );
-        })}
-      </article>
-    </div>
+          })}
+        </article>
+      </div>
+    </>
   );
 }

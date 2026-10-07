@@ -19,6 +19,7 @@ import { useAcademicHistory } from './useAcademicHistory';
 import { visualRoleLabel } from './labels';
 import AcademicAppearancePanel from './AcademicAppearancePanel';
 import { useAcademicAppearance } from './useAcademicAppearance';
+import type { AcademicReferenceControl } from './useAcademicReferences';
 
 export default function AcademicReaderDialog({
   file,
@@ -52,6 +53,7 @@ export default function AcademicReaderDialog({
   const [zoomError, setZoomError] = useState(false);
   const zoomAbort = useRef<AbortController | null>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const referenceControl = useRef<AcademicReferenceControl>(null);
   const closeZoom = () => {
     zoomAbort.current?.abort();
     setZooming(false);
@@ -65,7 +67,7 @@ export default function AcademicReaderDialog({
     if (zoomUrl || zooming) closeZoom();
     else if (inspecting) setInspecting(false);
     else if (appearanceOpen) closeAppearance();
-    else onClose();
+    else if (!referenceControl.current?.returnToReading()) onClose();
   };
   const closeRef = useRef(closeTop);
   closeRef.current = closeTop;
@@ -86,7 +88,7 @@ export default function AcademicReaderDialog({
       if (event.key === 'Tab' && panel.current) {
         const controls = Array.from(
           panel.current.querySelectorAll<HTMLElement>(
-            'button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"]',
+            ':is(a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"])',
           ),
         ).filter((node) => node.getClientRects().length);
         const first = controls[0],
@@ -295,6 +297,8 @@ export default function AcademicReaderDialog({
           </div>
         ) : document && session ? (
           <ScholarlyReader
+            key={document.fingerprint}
+            referenceControl={referenceControl}
             document={document}
             session={session}
             viewSettings={readingSettings}

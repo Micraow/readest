@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
+import type { AcademicLink } from '@/services/academic/navigation';
+import { navigationElementId } from '@/services/academic/navigation';
 import type { InlineRun, SourceSpan } from '@/services/academic/types';
+import { useMathCanvasStyle } from './useMathCanvasStyle';
 
 type InlineProps = {
   session: AcademicPdfSession;
@@ -18,6 +21,7 @@ function InlineSource({
   onZoom,
 }: InlineProps & { run: Extract<InlineRun, { kind: 'source' }> }) {
   const _ = useTranslation();
+  const mathCanvasStyle = useMathCanvasStyle();
   const host = useRef<HTMLButtonElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(false);
@@ -83,7 +87,7 @@ function InlineSource({
     <button
       ref={host}
       type='button'
-      className='relative inline-block max-w-full overflow-hidden rounded-sm bg-white p-0 text-black focus-visible:outline focus-visible:outline-1'
+      className='bg-base-100 text-base-content relative inline-block max-w-full overflow-hidden rounded-sm p-0 focus-visible:outline focus-visible:outline-1'
       style={{
         width: `${box.width / run.fontSize}em`,
         aspectRatio: `${box.width} / ${box.height}`,
@@ -94,9 +98,14 @@ function InlineSource({
       title={_('Tap to zoom')}
       onClick={() => onZoom(run.source, run.trimBelow)}
     >
-      <canvas ref={canvas} className='block max-w-full' aria-hidden='true' />
+      <canvas
+        ref={canvas}
+        className='block max-w-full'
+        style={mathCanvasStyle}
+        aria-hidden='true'
+      />
       {failed && (
-        <span className='absolute inset-0 overflow-auto bg-white text-[0.75em] leading-tight'>
+        <span className='bg-base-100 absolute inset-0 overflow-auto text-[0.75em] leading-tight'>
           {run.text}
         </span>
       )}
@@ -104,46 +113,97 @@ function InlineSource({
   );
 }
 
+export interface InlineReferences {
+  links: AcademicLink[];
+  prefix: string;
+  onNavigate: (link: AcademicLink, anchor: HTMLAnchorElement) => void;
+}
+
 export default function InlineContent({
   runs,
   text,
   omitListMarker,
+  references,
   ...props
-}: InlineProps & { runs?: InlineRun[]; text: string; omitListMarker?: boolean }) {
-  if (!runs?.length) return text;
-  let prefix = '';
-  if (omitListMarker) {
-    for (const run of runs) {
-      if (run.kind !== 'text') break;
-      prefix += run.text;
-    }
-  }
-  let remove = /^\s*(?:[•●▪◦*–-]|\d+[.)])\s+/.exec(prefix)?.[0].length ?? 0;
-  return runs.map((run, index) => {
-    if (run.kind === 'source') return <InlineSource key={index} run={run} {...props} />;
-    const content = run.text.slice(remove);
-    remove = Math.max(0, remove - run.text.length);
-    const style = {
-      fontFamily: run.style?.fontFamily,
-      fontStyle: run.style?.fontStyle,
-      fontWeight: run.style?.fontWeight,
-    };
-    if (run.style?.verticalAlign === 'sub')
+}: InlineProps & {
+  runs?: InlineRun[];
+  text: string;
+  omitListMarker?: boolean;
+  references?: InlineReferences;
+}) {
+  const _ = useTranslation();
+  const content = runs?.length ? runs.map((run) => run.text).join('') : text;
+  const remove = omitListMarker
+    ? (/^\s*(?:[•●▪◦*–-]|\d+[.)])\s+/.exec(content)?.[0].length ?? 0)
+    : 0;
+  const renderRange = (start: number, end: number): ReactNode => {
+    if (!runs?.length) return content.slice(start, end);
+    let offset = 0;
+    return runs.map((run, index) => {
+      const runStart = offset;
+      offset += run.text.length;
+      if (offset <= start || runStart >= end) return null;
+      if (run.kind === 'source') return <InlineSource key={index} run={run} {...props} />;
+      const value = run.text.slice(Math.max(0, start - runStart), end - runStart);
+      const style = {
+        fontFamily: run.style?.fontFamily,
+        fontStyle: run.style?.fontStyle,
+        fontWeight: run.style?.fontWeight,
+      };
+      if (run.style?.verticalAlign === 'sub')
+        return (
+          <sub key={index} style={style}>
+            {value}
+          </sub>
+        );
+      if (run.style?.verticalAlign === 'super')
+        return (
+          <sup key={index} style={style}>
+            {value}
+          </sup>
+        );
       return (
-        <sub key={index} style={style}>
-          {content}
-        </sub>
+        <span key={index} style={style}>
+          {value}
+        </span>
       );
-    if (run.style?.verticalAlign === 'super')
-      return (
-        <sup key={index} style={style}>
-          {content}
-        </sup>
-      );
-    return (
-      <span key={index} style={style}>
-        {content}
-      </span>
+    });
+  };
+  if (!references?.links.length) return renderRange(remove, content.length);
+  const children: ReactNode[] = [];
+  let offset = remove;
+  for (const link of references.links) {
+    if (link.start < offset || link.end > content.length) continue;
+    // Keep source zoom buttons outside links even if a stale caller supplies an invalid range.
+    let runOffset = 0;
+    const overlapsSource = runs?.some((run) => {
+      const start = runOffset;
+      runOffset += run.text.length;
+      return run.kind === 'source' && runOffset > link.start && start < link.end;
+    });
+    if (overlapsSource) continue;
+    children.push(<span key={`before-${link.id}`}>{renderRange(offset, link.start)}</span>);
+    children.push(
+      <a
+        key={link.id}
+        id={navigationElementId(references.prefix, link.id)}
+        href={`#${encodeURIComponent(navigationElementId(references.prefix, link.target))}`}
+        className='rounded-sm underline decoration-1 underline-offset-2 focus-visible:outline focus-visible:outline-2'
+        aria-label={
+          link.kind === 'reference'
+            ? _('Reference {{number}}', { number: link.number })
+            : _('Footnote {{number}}', { number: link.number })
+        }
+        onClick={(event) => {
+          event.preventDefault();
+          references.onNavigate(link, event.currentTarget);
+        }}
+      >
+        {renderRange(link.start, link.end)}
+      </a>,
     );
-  });
+    offset = link.end;
+  }
+  children.push(<span key='after'>{renderRange(offset, content.length)}</span>);
+  return children;
 }

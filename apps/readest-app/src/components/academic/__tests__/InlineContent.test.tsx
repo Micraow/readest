@@ -3,8 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import InlineContent from '../InlineContent';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { InlineRun } from '@/services/academic/types';
+import { useThemeStore } from '@/store/themeStore';
 
 vi.mock('@/hooks/useTranslation', () => ({ useTranslation: () => (value: string) => value }));
+vi.mock('@/store/themeStore', async () => {
+  const { create } = await import('zustand');
+  return { useThemeStore: create(() => ({ isDarkMode: false })) };
+});
 
 const text: InlineRun = {
   kind: 'text',
@@ -34,8 +39,48 @@ describe('InlineContent', () => {
     vi.restoreAllMocks();
   });
   beforeEach(() => {
+    useThemeStore.setState({ isDarkMode: false });
     renderRegion.mockReset().mockResolvedValue(undefined);
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(60);
+  });
+
+  it('updates only math presentation with the live theme without rendering the PDF again', async () => {
+    const onZoom = vi.fn();
+    const before = JSON.stringify(source);
+    const view = render(
+      <InlineContent
+        runs={[text, source]}
+        text='fallback'
+        fontSize={20}
+        session={session}
+        root={root}
+        onZoom={onZoom}
+      />,
+    );
+    await waitFor(() => expect(renderRegion).toHaveBeenCalledTimes(1));
+    const canvas = view.container.querySelector('canvas')!;
+    const button = screen.getByRole('button');
+    const geometry = [button.style.width, button.style.aspectRatio, button.style.verticalAlign];
+    expect(canvas.style.mixBlendMode).toBe('multiply');
+    expect(canvas.style.filter).toBe('');
+    expect(button.classList.contains('bg-white')).toBe(false);
+    act(() => useThemeStore.setState({ isDarkMode: true }));
+    expect(canvas.style.filter).toBe('invert(100%) hue-rotate(180deg)');
+    expect(canvas.style.mixBlendMode).toBe('screen');
+    expect(view.container.querySelector('canvas')).toBe(canvas);
+    expect([button.style.width, button.style.aspectRatio, button.style.verticalAlign]).toEqual(
+      geometry,
+    );
+    expect(screen.getByText('A selectable sentence').style.filter).toBe('');
+    expect(renderRegion).toHaveBeenCalledTimes(1);
+    expect(session.analyze).not.toHaveBeenCalled();
+    fireEvent.click(button);
+    expect(onZoom).toHaveBeenCalledWith(source.source, 104);
+    act(() => useThemeStore.setState({ isDarkMode: false }));
+    expect(canvas.style.filter).toBe('');
+    expect(canvas.style.mixBlendMode).toBe('multiply');
+    expect(renderRegion).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(source)).toBe(before);
   });
 
   it('keeps ordinary text selectable and renders a bounded local PDF crop with zoom', async () => {
@@ -140,7 +185,99 @@ describe('InlineContent', () => {
     expect(runs[0]?.text).toBe('12.');
   });
 
+  it('links one selectable range across styled runs without nesting a source zoom control', () => {
+    const onNavigate = vi.fn();
+    const runs: InlineRun[] = [
+      { ...text, text: 'See [' },
+      { ...text, text: '3', style: { fontWeight: 'bold' } },
+      { ...text, text: '4', style: { fontStyle: 'italic' } },
+      { ...text, text: ']. ' },
+      source,
+    ];
+    const before = JSON.stringify(runs);
+    const link = {
+      id: 'citation',
+      start: 4,
+      end: 8,
+      target: 'reference',
+      kind: 'reference' as const,
+      number: '34',
+    };
+    const view = render(
+      <InlineContent
+        runs={runs}
+        text='fallback'
+        fontSize={20}
+        session={session}
+        root={root}
+        onZoom={vi.fn()}
+        references={{ links: [link], prefix: 'test', onNavigate }}
+      />,
+    );
+    const anchor = screen.getByRole('link');
+    expect(anchor.textContent).toBe('[34]');
+    expect(anchor.querySelector('[style="font-weight: bold;"]')?.textContent).toBe('3');
+    expect(anchor.querySelector('[style="font-style: italic;"]')?.textContent).toBe('4');
+    expect(anchor.querySelector('button')).toBeNull();
+    expect(view.container.textContent).toBe('See [34]. ');
+    expect(JSON.stringify(runs)).toBe(before);
+    fireEvent.click(anchor);
+    expect(onNavigate).toHaveBeenCalledWith(link, anchor);
+  });
+
+  it('rejects a supplied link range that overlaps a source zoom button', () => {
+    render(
+      <InlineContent
+        runs={[{ ...text, text: 'See [' }, source, { ...text, text: '].' }]}
+        text=''
+        fontSize={20}
+        session={session}
+        root={root}
+        onZoom={vi.fn()}
+        references={{
+          links: [
+            {
+              id: 'invalid',
+              start: 4,
+              end: 11,
+              target: 'reference',
+              kind: 'reference',
+              number: '34',
+            },
+          ],
+          prefix: 'test',
+          onNavigate: vi.fn(),
+        }}
+      />,
+    );
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.getByRole('button').closest('a')).toBeNull();
+  });
+
+  it('keeps fallback list offsets before stripping the marker at render time', () => {
+    render(
+      <InlineContent
+        text='12. See [34].'
+        omitListMarker
+        fontSize={20}
+        session={session}
+        root={root}
+        onZoom={vi.fn()}
+        references={{
+          links: [
+            { id: 'list', start: 8, end: 12, target: 'reference', kind: 'reference', number: '34' },
+          ],
+          prefix: 'test',
+          onNavigate: vi.fn(),
+        }}
+      />,
+    );
+    expect(screen.getByRole('link').textContent).toBe('[34]');
+    expect(document.body.textContent).toBe('See [34].');
+  });
+
   it('retains a readable fallback after a rendering failure and cancels pending work on unmount', async () => {
+    useThemeStore.setState({ isDarkMode: true });
     renderRegion.mockRejectedValueOnce(new Error('decode failed'));
     const view = render(
       <InlineContent
@@ -153,6 +290,10 @@ describe('InlineContent', () => {
       />,
     );
     await waitFor(() => expect(screen.getByRole('button').textContent).toContain(source.text));
+    const fallback = screen.getByText(source.text);
+    expect(fallback.classList.contains('bg-base-100')).toBe(true);
+    expect(fallback.classList.contains('bg-white')).toBe(false);
+    expect(fallback.style.filter).toBe('');
     await act(async () => {
       await Promise.resolve();
     });

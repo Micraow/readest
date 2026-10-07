@@ -1,10 +1,15 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ScholarlyReader from '@/components/academic/ScholarlyReader';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument } from '@/services/academic/types';
+import { useThemeStore } from '@/store/themeStore';
 
 vi.mock('@/hooks/useTranslation', () => ({ useTranslation: () => (key: string) => key }));
+vi.mock('@/store/themeStore', async () => {
+  const { create } = await import('zustand');
+  return { useThemeStore: create(() => ({ isDarkMode: false })) };
+});
 vi.mock('@/store/settingsStore', () => ({
   useSettingsStore: (select: (state: unknown) => unknown) =>
     select({ settings: { globalViewSettings: { defaultFontSize: 18, lineHeight: 1.6 } } }),
@@ -45,6 +50,7 @@ const session: AcademicPdfSession = {
   destroy: vi.fn(),
 };
 beforeEach(() => {
+  useThemeStore.setState({ isDarkMode: false });
   localStorage.clear();
   vi.clearAllMocks();
   width = 360;
@@ -74,14 +80,172 @@ beforeEach(() => {
     canvas.height = targetWidth;
   });
 });
-afterEach(() => {
+afterEach(async () => {
   cleanup();
+  vi.useRealTimers();
+  await waitFor(() => expect(window.history.state?.readestAcademicLayers).toBeUndefined());
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
 describe('continuous academic flow', () => {
+  it('themes equations live while leaving figures, source geometry and zoom unchanged', async () => {
+    vi.stubGlobal('IntersectionObserver', undefined);
+    const equation = { ...block('equation', 1, 'visual-region'), role: 'equation' as const };
+    const figure = block('figure', 2, 'visual-region');
+    const scholarly = documentFor([equation, figure]);
+    const before = JSON.stringify(scholarly);
+    const onZoom = vi.fn();
+    render(<ScholarlyReader document={scholarly} session={session} onZoom={onZoom} />);
+    await waitFor(() => expect(renderRegion).toHaveBeenCalledTimes(2));
+    const formula = screen.getByRole('img', { name: 'Equation: Tap to zoom' });
+    const artwork = screen.getByRole('img', { name: 'Figure: Tap to zoom' });
+    const originalArtwork = artwork.outerHTML;
+    expect(formula.style.mixBlendMode).toBe('multiply');
+    expect(formula.closest('button')?.classList.contains('bg-white')).toBe(false);
+    expect(artwork.closest('button')?.classList.contains('bg-white')).toBe(true);
+    act(() => useThemeStore.setState({ isDarkMode: true }));
+    expect(formula.style.filter).toBe('invert(100%) hue-rotate(180deg)');
+    expect(formula.style.mixBlendMode).toBe('screen');
+    expect(artwork.outerHTML).toBe(originalArtwork);
+    expect(artwork.style.filter).toBe('');
+    expect(artwork.style.mixBlendMode).toBe('');
+    expect(renderRegion).toHaveBeenCalledTimes(2);
+    expect(session.analyze).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Equation: Tap to zoom' }));
+    expect(onZoom).toHaveBeenLastCalledWith(equation);
+    fireEvent.click(screen.getByRole('button', { name: 'Figure: Tap to zoom' }));
+    expect(onZoom).toHaveBeenLastCalledWith(figure);
+    act(() => useThemeStore.setState({ isDarkMode: false }));
+    expect(formula.style.filter).toBe('');
+    expect(formula.style.mixBlendMode).toBe('multiply');
+    expect(artwork.outerHTML).toBe(originalArtwork);
+    expect(renderRegion).toHaveBeenCalledTimes(2);
+    expect(JSON.stringify(scholarly)).toBe(before);
+  });
+
+  it('returns to the clicked text and focus after font changes, with a bounded nested jump history', async () => {
+    const body = { ...block('body', 1, 'paragraph'), text: 'See [34].' };
+    const first = { ...block('first-ref', 2, 'reference'), text: '[34] First study. See [35].' };
+    const second = { ...block('second-ref', 3, 'reference'), text: '[35] Second study.' };
+    const doc = documentFor([body, first, second]);
+    const view = render(<ScholarlyReader document={doc} session={session} onZoom={vi.fn()} />);
+    const scroller = screen.getByTestId('scholarly-scroll');
+    const rect = (top: number) => ({
+      top,
+      bottom: top + 20,
+      left: 0,
+      right: 100,
+      width: 100,
+      height: 20,
+      x: 0,
+      y: top,
+      toJSON() {},
+    });
+    const rootTop = () => (screen.queryByRole('button', { name: 'Back to reading' }) ? 140 : 100);
+    vi.spyOn(scroller, 'getBoundingClientRect').mockImplementation(() => rect(rootTop()));
+    const origin = screen.getAllByRole('link')[0]!;
+    const nested = screen.getAllByRole('link')[1]!;
+    const y = () => parseFloat(view.container.querySelector('article')!.style.fontSize);
+    vi.spyOn(origin, 'getBoundingClientRect').mockImplementation(() =>
+      rect(rootTop() + y() * 20 - scroller.scrollTop),
+    );
+    vi.spyOn(nested, 'getBoundingClientRect').mockImplementation(() =>
+      rect(rootTop() + y() * 100 + 50 - scroller.scrollTop),
+    );
+    const firstTarget = view.container.querySelector<HTMLElement>('[data-block-id="first-ref"]')!;
+    const secondTarget = view.container.querySelector<HTMLElement>('[data-block-id="second-ref"]')!;
+    vi.spyOn(firstTarget, 'getBoundingClientRect').mockImplementation(() =>
+      rect(rootTop() + y() * 100 - scroller.scrollTop),
+    );
+    vi.spyOn(secondTarget, 'getBoundingClientRect').mockImplementation(() =>
+      rect(rootTop() + y() * 200 - scroller.scrollTop),
+    );
+    scroller.scrollTop = 300;
+    origin.focus();
+    fireEvent.click(origin);
+    expect(window.document.activeElement).toBe(firstTarget);
+    expect(scroller.scrollTop).toBe(1788);
+    expect(window.history.state.readestAcademicLayers).toHaveLength(1);
+    fireEvent.click(origin);
+    expect(window.history.state.readestAcademicLayers).toHaveLength(1);
+    nested.focus();
+    fireEvent.click(nested);
+    expect(window.history.state.readestAcademicLayers).toHaveLength(2);
+    expect(window.document.activeElement).toBe(secondTarget);
+    fireEvent.click(screen.getByRole('button', { name: 'Back to reading' }));
+    expect(window.document.activeElement).toBe(nested);
+    expect(scroller.scrollTop).toBe(1788);
+    await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(1));
+    view.rerender(
+      <ScholarlyReader
+        document={doc}
+        session={session}
+        onZoom={vi.fn()}
+        viewSettings={{ defaultFontSize: 24 }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Back to reading' }));
+    expect(window.document.activeElement).toBe(origin);
+    expect(scroller.scrollTop).toBe(420);
+    expect(origin.getBoundingClientRect().top - scroller.getBoundingClientRect().top).toBe(60);
+    expect(screen.queryByRole('button', { name: 'Back to reading' })).toBeNull();
+    await waitFor(() => expect(window.history.state?.readestAcademicLayers).toBeUndefined());
+  });
+
+  it('jumps from a superscript footnote marker and returns without changing selectable text', () => {
+    const body = {
+      ...block('body', 1, 'paragraph'),
+      text: 'The packets were acknowledged. 5 More prose.',
+    };
+    const note = { ...block('note', 1, 'footnote'), text: '5Alternatively, an explanation.' };
+    const doc = documentFor([
+      {
+        ...body,
+        inlineRuns: [
+          { kind: 'text', text: 'The packets were acknowledged. ', source: body.source[0]! },
+          { kind: 'text', text: '5 ', source: body.source[0]!, style: { verticalAlign: 'super' } },
+          { kind: 'text', text: 'More prose.', source: body.source[0]! },
+        ],
+      },
+      {
+        ...note,
+        inlineRuns: [
+          { kind: 'text', text: '5', source: note.source[0]!, style: { verticalAlign: 'super' } },
+          { kind: 'text', text: 'Alternatively, an explanation.', source: note.source[0]! },
+        ],
+      },
+    ]);
+    doc.pages = [
+      {
+        page: 1,
+        width: 600,
+        height: 800,
+        rotation: 0,
+        tagged: false,
+        items: [],
+        graphics: [],
+        lines: [],
+        columns: [{ box: { x: 0, y: 0, width: 300, height: 800 }, confidence: 1 }],
+        visualRegions: [],
+        blockIds: ['body', 'note'],
+        suppressedItemIndices: [],
+      },
+    ];
+    const before = JSON.stringify(doc);
+    const view = render(<ScholarlyReader document={doc} session={session} onZoom={vi.fn()} />);
+    const link = screen.getByRole('link');
+    expect(link.querySelector('sup')?.textContent).toBe('5');
+    expect(view.container.querySelector('article')?.textContent).toBe(body.text + note.text);
+    link.focus();
+    fireEvent.click(link);
+    expect(window.document.activeElement).toBe(screen.getByRole('note'));
+    fireEvent.click(screen.getByRole('button', { name: 'Back to reading' }));
+    expect(window.document.activeElement).toBe(link);
+    expect(JSON.stringify(doc)).toBe(before);
+  });
+
   it('identifies a footnote as a separate note without suggesting a clickable destination', () => {
     const note = block('note', 1, 'footnote');
     note.text = '7An additional detail.';
