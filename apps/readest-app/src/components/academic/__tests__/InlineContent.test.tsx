@@ -84,6 +84,41 @@ describe('InlineContent', () => {
     expect(view.container.textContent).toBe('fallback');
   });
 
+  it('applies monospace only to confirmed code runs, including styled scripts', () => {
+    const view = render(
+      <div style={{ fontFamily: 'Georgia' }}>
+        <InlineContent
+          runs={[
+            text,
+            { ...text, text: 'buffer_size', style: { fontFamily: 'monospace' } },
+            {
+              ...text,
+              text: 'n',
+              style: {
+                fontFamily: 'monospace',
+                fontStyle: 'italic',
+                fontWeight: 'bold',
+                verticalAlign: 'super',
+              },
+            },
+          ]}
+          text='fallback'
+          fontSize={20}
+          session={session}
+          root={root}
+          onZoom={vi.fn()}
+        />
+      </div>,
+    );
+    expect(screen.getByText('A selectable sentence').style.fontFamily).toBe('');
+    expect(screen.getByText('buffer_size').style.fontFamily).toBe('monospace');
+    expect(view.container.querySelector('sup')?.style.cssText).toContain('font-family: monospace');
+    expect(view.container.querySelector('sup')?.style.fontStyle).toBe('italic');
+    expect(view.container.querySelector('sup')?.style.fontWeight).toBe('bold');
+    expect(view.container.textContent).toBe(`${text.text}buffer_sizen`);
+    expect(renderRegion).not.toHaveBeenCalled();
+  });
+
   it('omits a list marker split across runs without changing the saved runs', () => {
     const runs: InlineRun[] = [
       { ...text, text: '12.' },

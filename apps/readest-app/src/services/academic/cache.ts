@@ -28,6 +28,7 @@ const inlineRun = z.discriminatedUnion('kind', [
     source,
     style: z
       .object({
+        fontFamily: z.literal('monospace').optional(),
         fontStyle: z.literal('italic').optional(),
         fontWeight: z.literal('bold').optional(),
         verticalAlign: z.enum(['sub', 'super']).optional(),
@@ -65,6 +66,7 @@ const schema = z.object({
           fontSize: finite.nonnegative(),
           fontName: z.string(),
           fontFamily: z.string(),
+          fontMonospace: z.literal(true).optional(),
           fontStyle: z.literal('italic').optional(),
           fontWeight: z.literal('bold').optional(),
           angle: finite,

@@ -241,6 +241,23 @@ it('preserves caption-free previews and styled inline source metadata through ca
   expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toEqual(doc);
 });
 
+it('retains confirmed monospace geometry and inline styles through cached reopen', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  doc.pages[0]!.items[0]!.fontMonospace = true;
+  const caption = doc.blocks[0]!.captions![0]!;
+  caption.inlineRuns = [
+    {
+      kind: 'text',
+      text: caption.text,
+      style: { fontFamily: 'monospace', fontStyle: 'italic', fontWeight: 'bold' },
+      source: caption.source,
+    },
+  ];
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toEqual(doc);
+});
+
 it('rejects a preview that extends outside the source rather than displaying an unrelated region', async () => {
   const { storage } = storageFixture();
   const doc = captionFixture();

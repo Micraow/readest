@@ -17,7 +17,7 @@ import { buildInlineRuns, joinInlineRuns, unmappedGlyphAnchors } from './inline.
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-11';
+export const PARSER_VERSION = 'academic-12';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {

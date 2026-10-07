@@ -272,6 +272,7 @@ function sourceCrops(page: PageGeometry, items: PdfTextItem[]): Crop[] {
 function styleFor(item: PdfTextItem, font: number, baseline: number): InlineTextStyle | undefined {
   const style: InlineTextStyle = {};
   const descriptor = `${item.fontName} ${item.fontFamily}`;
+  if (item.fontMonospace) style.fontFamily = 'monospace';
   if (item.fontStyle || /italic|oblique/i.test(descriptor)) style.fontStyle = 'italic';
   if (item.fontWeight || /bold|semibold|demibold/i.test(descriptor)) style.fontWeight = 'bold';
   const delta = item.baseline - baseline;

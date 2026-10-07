@@ -290,6 +290,20 @@ describe('source-preserving inline content', () => {
     });
   });
 
+  it('keeps inline code selectable and owned while ordinary text inherits the reading font', () => {
+    const ordinary = item(0, 'Set', 10),
+      code = { ...item(1, 'buffer_size', 30), fontMonospace: true as const },
+      suffix = item(2, '= 5.', 90);
+    const items = [ordinary, code, suffix];
+    const runs = buildInlineRuns(page(items), [line(items)]);
+    expect(runs.map((run) => run.text).join('')).toBe('Set buffer_size = 5.');
+    expect(runs.flatMap((run) => run.source.itemIndices)).toEqual([0, 1, 2]);
+    expect(runs.filter((run) => run.kind === 'text' && run.style?.fontFamily)).toEqual([
+      expect.objectContaining({ text: 'buffer_size', style: { fontFamily: 'monospace' } }),
+    ]);
+    expect(items.map((item) => item.text)).toEqual(['Set', 'buffer_size', '= 5.']);
+  });
+
   it('joins wrapped words without losing styled runs or source ownership', () => {
     const first = item(0, 'fragmen-', 10),
       next = item(1, 'tation', 10, 112);

@@ -13,6 +13,7 @@ export interface RawTextStyle {
   ascent?: number;
   descent?: number;
   fontFamily?: string;
+  fontMonospace?: true;
   fontStyle?: 'italic';
   fontWeight?: 'bold';
   vertical?: boolean;
@@ -107,6 +108,7 @@ function textGeometry(
     fontSize,
     fontName: item.fontName,
     fontFamily: style.fontFamily ?? '',
+    ...(style.fontMonospace ? { fontMonospace: true as const } : {}),
     ...(style.fontStyle ? { fontStyle: style.fontStyle } : {}),
     ...(style.fontWeight ? { fontWeight: style.fontWeight } : {}),
     angle,
@@ -278,8 +280,12 @@ export async function extractPageGeometry(
       /bold|demibold|semibold/i.test(name) ||
       /^(?:LinLibertine|LinBiolinum)T?BI?\d*$/.test(name) ||
       ['bx', 'bl', 'bi', 'xc', 'oc', 'rb', 'bm', 'sx', 'so'].includes(cmSuperShape);
+    // PDF.js can infer a monospace fallback from a one-glyph symbol subset.
+    // Only preserve confirmed text faces; CM-Super vt/vi have variable width.
+    const monospace = ['tt', 'st', 'it', 'tc'].includes(cmSuperShape);
     styles[fontName] = {
       ...style,
+      ...(monospace ? { fontMonospace: true as const } : {}),
       ...(italic ? { fontStyle: 'italic' as const } : {}),
       ...(bold ? { fontWeight: 'bold' as const } : {}),
     };

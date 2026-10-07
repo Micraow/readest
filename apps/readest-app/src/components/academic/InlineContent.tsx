@@ -123,7 +123,11 @@ export default function InlineContent({
     if (run.kind === 'source') return <InlineSource key={index} run={run} {...props} />;
     const content = run.text.slice(remove);
     remove = Math.max(0, remove - run.text.length);
-    const style = { fontStyle: run.style?.fontStyle, fontWeight: run.style?.fontWeight };
+    const style = {
+      fontFamily: run.style?.fontFamily,
+      fontStyle: run.style?.fontStyle,
+      fontWeight: run.style?.fontWeight,
+    };
     if (run.style?.verticalAlign === 'sub')
       return (
         <sub key={index} style={style}>

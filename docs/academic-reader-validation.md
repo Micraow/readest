@@ -9,6 +9,22 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
+## Confirmed monospaced text: academic-12 (in validation)
+
+Same-document comparison identified typewriter-style parameter names that were
+still rendered in the body font. Confirmed CM-Super fixed-width text faces now
+carry an explicit flag through extraction, cached analysis and selectable inline
+text. Only those runs receive a monospace family; proportional body text retains
+the user's reading font. Variable-width typewriter shapes and PDF.js's inferred
+monospace fallback for single-glyph mathematical subsets are deliberately excluded.
+
+Synthetic regressions, cache round-trip and four-file (61-page) source comparison
+pass. The supplied single-column document changes only in confirmed font metadata
+and inline family; both HPCC variants and MP-RDMA remain structurally and textually
+unchanged. Parser `academic-12` requires fresh analysis while keeping older caches.
+Final native comparison and the aggregate suite are pending for this checkpoint.
+The academic-11 package and acceptance below remain immutable.
+
 ## Structured inline content and source-order figures: academic-11 (2026-10-07)
 
 Same-file native comparison exposed issues remaining in academic-8: inline math

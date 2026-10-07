@@ -13,6 +13,8 @@ export interface PdfTextItem {
   fontSize: number;
   fontName: string;
   fontFamily: string;
+  /** Confirmed fixed-width text face; the generic PDF fallback can also describe symbol subsets. */
+  fontMonospace?: true;
   fontStyle?: 'italic';
   fontWeight?: 'bold';
   angle: number;
@@ -37,6 +39,8 @@ export interface SourceSpan {
   itemIndices: number[];
 }
 export interface InlineTextStyle {
+  /** Proportional prose inherits the user's reading font. */
+  fontFamily?: 'monospace';
   fontStyle?: 'italic';
   fontWeight?: 'bold';
   verticalAlign?: 'sub' | 'super';
