@@ -3,8 +3,47 @@ import type { ViewSettings } from '@/types/book';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
-import type { ScholarlyBlock, ScholarlyDocument } from '@/services/academic/types';
+import type { ScholarlyBlock, ScholarlyDocument, SourceSpan } from '@/services/academic/types';
 import { visualRoleLabel } from './labels';
+import InlineContent from './InlineContent';
+
+const inlineZoomBlock = (block: ScholarlyBlock, source: SourceSpan): ScholarlyBlock => ({
+  ...block,
+  type: 'visual-region',
+  role: 'equation',
+  text: '',
+  source: [source],
+  captions: undefined,
+  previewBox: undefined,
+  inlineRuns: undefined,
+  listInlineRuns: undefined,
+});
+
+function sourceVisualRows(blocks: ScholarlyBlock[]): ScholarlyBlock[][] {
+  const rows: ScholarlyBlock[][] = [];
+  for (const block of blocks) {
+    const previous = rows.at(-1)?.at(-1);
+    const box = block.previewBox,
+      peer = previous?.previewBox;
+    const captions = block.captions?.flatMap((caption) => caption.source.boxes) ?? [];
+    const peerCaptions = previous?.captions?.flatMap((caption) => caption.source.boxes) ?? [];
+    const sameRow =
+      box &&
+      peer &&
+      captions.length &&
+      peerCaptions.length &&
+      block.source[0]?.page === previous?.source[0]?.page &&
+      box.x >= peer.x + peer.width - 2 &&
+      Math.abs(
+        Math.min(...captions.map((rect) => rect.y)) -
+          Math.min(...peerCaptions.map((rect) => rect.y)),
+      ) <
+        Math.min(block.fontStats.median, previous!.fontStats.median) * 0.6;
+    if (sameRow && rows.at(-1)!.length < 3) rows.at(-1)!.push(block);
+    else rows.push([block]);
+  }
+  return rows;
+}
 
 function VisualRegion({
   block,
@@ -12,9 +51,11 @@ function VisualRegion({
   root,
   onZoom,
   fontSize,
+  sourceFontSize,
 }: {
   block: ScholarlyBlock;
   fontSize: number;
+  sourceFontSize?: number;
   session: AcademicPdfSession;
   root: RefObject<HTMLDivElement | null>;
   onZoom: (block: ScholarlyBlock) => void;
@@ -26,10 +67,10 @@ function VisualRegion({
   const [width, setWidth] = useState(0);
   const [failed, setFailed] = useState(false);
   const source = block.source[0];
-  const box = source?.boxes[0];
+  const box = block.previewBox ?? source?.boxes[0];
   const maximumWidth =
-    block.role === 'equation' && box
-      ? (box.width * fontSize) / Math.max(1, block.fontStats.median)
+    (block.role === 'equation' || block.previewBox) && box
+      ? (box.width * fontSize) / Math.max(1, sourceFontSize ?? block.fontStats.median)
       : undefined;
   useEffect(() => {
     const node = host.current;
@@ -88,7 +129,7 @@ function VisualRegion({
   if (!source || !box) return null;
   const label = `${_(visualRoleLabel(block.role))}: ${_('Tap to zoom')}`;
   return (
-    <figure className='my-6'>
+    <figure className='mx-auto my-6' style={{ maxWidth: maximumWidth }}>
       <button
         type='button'
         ref={host}
@@ -104,6 +145,22 @@ function VisualRegion({
           </span>
         )}
       </button>
+      {block.previewBox &&
+        block.captions?.map((caption) => (
+          <figcaption
+            key={`${caption.role}-${caption.label}`}
+            className='text-base-content/75 mt-3 text-[0.88em] leading-snug'
+          >
+            <InlineContent
+              runs={caption.inlineRuns}
+              text={caption.text}
+              session={session}
+              fontSize={fontSize * 0.88}
+              root={root}
+              onZoom={(source) => onZoom(inlineZoomBlock(block, source))}
+            />
+          </figcaption>
+        ))}
       <figcaption className='text-base-content/60 mt-1 text-center text-xs'>
         {_('Tap to zoom')}
       </figcaption>
@@ -127,6 +184,15 @@ export default function ScholarlyReader({
   const globalSettings = useSettingsStore((state) => state.settings.globalViewSettings);
   const settings = { ...globalSettings, ...viewSettings };
   const fontSize = Math.max(16, settings.defaultFontSize || 18);
+  const sourceFonts = new Map(
+    scholarly.pages.map((page) => {
+      const sizes = page.items
+        .filter((item) => item.text.trim().length > 8)
+        .map((item) => item.fontSize)
+        .sort((a, b) => a - b);
+      return [page.page, sizes[Math.floor(sizes.length / 2)]];
+    }),
+  );
   const storageKey = `readest:academic-position:${scholarly.fingerprint}`;
   useLayoutEffect(() => {
     const element = root.current;
@@ -176,30 +242,57 @@ export default function ScholarlyReader({
           fontFamily: font ? `"${font}", serif` : 'serif',
         }}
       >
-        {scholarly.blocks.map((block) => {
+        {sourceVisualRows(scholarly.blocks).map((row) => {
+          const block = row[0]!;
           const props = {
             'data-block-id': block.id,
             'data-source-page': block.source[0]?.page,
           };
-          if (block.type === 'visual-region')
-            return (
+          const content = (
+            <InlineContent
+              runs={block.inlineRuns}
+              text={block.text}
+              session={session}
+              fontSize={fontSize}
+              root={root}
+              onZoom={(source) => onZoom(inlineZoomBlock(block, source))}
+            />
+          );
+          if (block.type === 'visual-region') {
+            const visuals = row.map((visual) => (
               <VisualRegion
-                key={block.id}
-                block={block}
+                key={visual.id}
+                block={visual}
                 fontSize={fontSize}
+                sourceFontSize={
+                  visual.role === 'equation'
+                    ? undefined
+                    : sourceFonts.get(visual.source[0]?.page ?? 0)
+                }
                 session={session}
                 root={root}
                 onZoom={onZoom}
               />
+            ));
+            return row.length === 1 ? (
+              visuals[0]
+            ) : (
+              <div
+                key={block.id}
+                className={`grid items-start gap-x-6 ${row.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}
+              >
+                {visuals}
+              </div>
             );
+          }
           if (block.type === 'heading')
             return block.level === 1 ? (
               <h1 key={block.id} {...props} className='mb-4 mt-8 text-[1.5em] font-semibold'>
-                {block.text}
+                {content}
               </h1>
             ) : (
               <h2 key={block.id} {...props} className='mb-3 mt-7 text-[1.2em] font-semibold'>
-                {block.text}
+                {content}
               </h2>
             );
           if (block.type === 'list') {
@@ -207,7 +300,15 @@ export default function ScholarlyReader({
             const numbered = items.every((item) => /^\s*\d+[.)]/.test(item));
             const children = items.map((item, index) => (
               <li key={`${block.id}-${index}`}>
-                {item.replace(/^\s*(?:[•●▪◦*–-]|\d+[.)])\s+/, '')}
+                <InlineContent
+                  runs={block.listInlineRuns?.[index]}
+                  omitListMarker
+                  text={item.replace(/^\s*(?:[•●▪◦*–-]|\d+[.)])\s+/, '')}
+                  session={session}
+                  fontSize={fontSize}
+                  root={root}
+                  onZoom={(source) => onZoom(inlineZoomBlock(block, source))}
+                />
               </li>
             ));
             return numbered ? (
@@ -237,7 +338,7 @@ export default function ScholarlyReader({
                     : 'mb-4'
               }
             >
-              {block.text}
+              {content}
             </p>
           );
         })}

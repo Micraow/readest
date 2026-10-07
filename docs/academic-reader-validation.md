@@ -9,6 +9,28 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
+## Structured inline content and source-order figures: academic-9 (in validation)
+
+Same-file native comparison exposed issues remaining in academic-8: an inline
+fraction became scrambled text, citation-based float movement reversed two
+adjacent figures, and small charts with raster captions were enlarged too far.
+
+The local pipeline now preserves source-near float order after completing an
+interrupted paragraph, extracts safe bottom captions as selectable text, scales
+small visuals relative to source text, and keeps adjacent source-row plots together.
+Inline runs preserve explicit font styles and scripts; actual fraction bars bound
+local source crops with their complete numerator and denominator. Geometric
+overlap alone cannot turn scripts on adjacent prose rows into a fraction.
+The full source crop remains available in the image viewer. Parser `academic-9`
+invalidates earlier analysis without deleting it.
+
+Synthetic regressions were observed failing before their fixes. Four local PDF
+copies pass source mapping, figure order, paragraph continuity, inline fraction,
+font metadata and cache round-trip assertions. Independent review also checked
+fraction crop closure and caption ownership. These are pre-build checks;
+native same-page comparison and final build results are still pending here.
+The academic-8 and UI-1 delivered artifacts remain separate historical versions.
+
 ## Continuous reading and local caption repair: academic-8 (2026-10-07)
 
 This checkpoint supersedes the academic-4 delivery and reading-quality conclusions

@@ -89,7 +89,7 @@ describe('continuous prose around floating figures', () => {
     expect(d.blocks.some((b) => b.role === 'algorithm')).toBe(true);
     expect(validateSourceCoverage(d)).toEqual([]);
   });
-  it('joins a cross-page sentence before placing its float after the first referring paragraph', () => {
+  it('finishes the interrupted paragraph before its nearby float without moving it to a later citation', () => {
     const first = page(1, [item(0, 'A deployment group, which', 40, 700)]);
     const d = analyze([first, floatingPage()]);
     expect(d.blocks[0]?.text).toBe(
@@ -98,7 +98,8 @@ describe('continuous prose around floating figures', () => {
     expect(d.blocks[0]?.source.map((s) => s.page)).toEqual([1, 2]);
     const figure = d.blocks.findIndex((b) => b.role === 'figure');
     const reference = d.blocks.findIndex((b) => b.text.startsWith('Figure 1 summarizes'));
-    expect(figure).toBe(reference + 1);
+    expect(figure).toBe(1);
+    expect(figure).toBeLessThan(reference);
     expect(d.blocks[reference]?.text).toContain('The complete comparison is reproducible.');
     expect(validateSourceCoverage(d)).toEqual([]);
   });
@@ -126,21 +127,19 @@ describe('continuous prose around floating figures', () => {
     );
   });
 
-  it('does not use a decimal figure reference as the anchor for an integer figure', () => {
+  it('keeps the source position regardless of later integer or decimal references', () => {
     const next = floatingPage(1);
     next.items[0]!.text = 'Figure 2: Synthetic measurements.';
     next.items[2]!.text = 'As Figure 2.1 showed, an earlier result was different.';
     next.items[4]!.text = 'Figure 2 is discussed in this complete paragraph.';
     const d = analyze([next]);
-    expect(d.blocks.findIndex((b) => b.role === 'figure')).toBe(
-      d.blocks.findIndex((b) => b.text.startsWith('Figure 2 is discussed')) + 1,
-    );
+    expect(d.blocks[0]?.role).toBe('figure');
   });
 
   it.each([
     'Figures 2 and 3',
     'Figures 2–3',
-  ])('keeps grouped floats together after %s', (reference) => {
+  ])('keeps grouped floats in source order before a later %s citation', (reference) => {
     const p = page(1, [
       item(0, 'Figure 2: One result.', 40, 80),
       item(1, 'Figure 3: Another result.', 40, 190),
@@ -151,20 +150,37 @@ describe('continuous prose around floating figures', () => {
       { kind: 'image', box: { x: 40, y: 110, width: 220, height: 70 } },
     );
     const d = analyze([p]);
-    expect(d.blocks.map((b) => b.type)).toEqual(['paragraph', 'visual-region', 'visual-region']);
-    expect(d.blocks[1]?.source[0]?.itemIndices).toContain(0);
-    expect(d.blocks[2]?.source[0]?.itemIndices).toContain(1);
+    expect(d.blocks.map((b) => b.type)).toEqual(['visual-region', 'visual-region', 'paragraph']);
+    expect(d.blocks[0]?.source[0]?.itemIndices).toContain(0);
+    expect(d.blocks[1]?.source[0]?.itemIndices).toContain(1);
     expect(validateSourceCoverage(d)).toEqual([]);
   });
 
-  it('anchors a Roman-numbered table after its referring paragraph', () => {
+  it('retains a Roman-numbered table at its source boundary', () => {
     const next = floatingPage(1);
     next.items[0]!.text = 'Table I: Synthetic measurements.';
     next.items[2]!.text = 'Table I summarizes the measurements.';
     const d = analyze([next]);
-    expect(d.blocks.findIndex((b) => b.role === 'table')).toBe(
-      d.blocks.findIndex((b) => b.text.startsWith('Table I summarizes')) + 1,
+    expect(d.blocks[0]?.role).toBe('table');
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+
+  it('keeps adjacent figures left-to-right despite unequal plot heights and reversed discussion order', () => {
+    const p = page(1, [
+      item(0, 'Figure 3: Left measurement.', 40, 200, 220),
+      item(1, 'Figure 4: Right measurement.', 330, 200, 220),
+      item(2, 'Figure 4 is discussed first in this paragraph.', 40, 240, 510),
+      item(3, 'Figure 3 is discussed in a later paragraph.', 50, 280, 500),
+    ]);
+    p.graphics.push(
+      { kind: 'image', box: { x: 40, y: 100, width: 220, height: 85 } },
+      { kind: 'image', box: { x: 330, y: 75, width: 220, height: 110 } },
     );
+    const d = analyze([p]);
+    expect(
+      d.blocks.filter((b) => b.role === 'figure').flatMap((b) => b.captions!.map((c) => c.label)),
+    ).toEqual(['3', '4']);
+    expect(d.blocks.slice(0, 2).every((b) => b.type === 'visual-region')).toBe(true);
     expect(validateSourceCoverage(d)).toEqual([]);
   });
 

@@ -58,6 +58,23 @@ const analyze = (items: PdfTextItem[], graphics: PageGeometry['graphics'] = []) 
   );
 
 describe('display mathematics requires complete block geometry', () => {
+  it('keeps a same-baseline prose continuation beside stacked inline notation in one paragraph', () => {
+    const d = analyze(
+      [
+        item(20, 'The measured rate is', 312, 400, 60),
+        item(21, 'a + b', 382, 397, 90, 7.5),
+        item(22, 'c + d', 403, 405, 52, 7.5),
+        item(23, 'where both values', 481, 400, 80),
+        item(24, 'are measured for the same interval.', 312, 414, 249),
+      ],
+      [{ kind: 'rule', box: { x: 382, y: 403, width: 90, height: 0.4 } }],
+    );
+    const owner = d.blocks.find((b) => b.source.some((s) => s.itemIndices.includes(20)))!;
+    expect(owner.type).toBe('paragraph');
+    expect(owner.source[0]!.itemIndices).toContain(23);
+    expect(owner.source[0]!.itemIndices).toContain(24);
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
   it('keeps a separated equals-sign fragment inside its surrounding settings paragraph', () => {
     const d = analyze([
       item(20, 'Our experiment selects several related parameter settings.', 312, 400, 251),

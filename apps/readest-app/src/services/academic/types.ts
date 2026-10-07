@@ -13,6 +13,8 @@ export interface PdfTextItem {
   fontSize: number;
   fontName: string;
   fontFamily: string;
+  fontStyle?: 'italic';
+  fontWeight?: 'bold';
   angle: number;
   hasEOL: boolean;
 }
@@ -34,6 +36,22 @@ export interface SourceSpan {
   boxes: Rect[];
   itemIndices: number[];
 }
+export interface InlineTextStyle {
+  fontStyle?: 'italic';
+  fontWeight?: 'bold';
+  verticalAlign?: 'sub' | 'super';
+}
+/** Text remains selectable; ambiguous notation keeps its exact local PDF appearance. */
+export type InlineRun =
+  | { kind: 'text'; text: string; source: SourceSpan; style?: InlineTextStyle }
+  | {
+      kind: 'source';
+      text: string;
+      source: SourceSpan;
+      /** Surrounding prose size and absolute baseline, in scale-one PDF points. */
+      fontSize: number;
+      baseline: number;
+    };
 export interface FontStatistics {
   median: number;
   min: number;
@@ -57,6 +75,7 @@ export interface VisualCaption {
   label: string;
   text: string;
   source: SourceSpan;
+  inlineRuns?: InlineRun[];
 }
 export interface ScholarlyBlock {
   id: string;
@@ -68,7 +87,11 @@ export interface ScholarlyBlock {
   fontStats: FontStatistics;
   level?: number;
   listItems?: string[];
+  inlineRuns?: InlineRun[];
+  listInlineRuns?: InlineRun[][];
   role?: VisualRole;
+  /** A caption-free preview; the complete source remains available for zoom. */
+  previewBox?: Rect;
   /** Semantic caption associations; source ownership remains in the block source. */
   captions?: VisualCaption[];
   /** Why a region/page was preserved visually instead of reordered. */

@@ -750,7 +750,7 @@ describe('deterministic academic layout', () => {
     expect(figures).toHaveLength(1);
     expect(figures[0]?.source[0]?.itemIndices).toEqual([0, 1, 2, 3]);
     const firstMention = d.blocks.findIndex((block) => block.text.startsWith('The second result'));
-    expect(d.blocks[firstMention + 1]?.id).toBe(figures[0]?.id);
+    expect(d.blocks.indexOf(figures[0]!)).toBeLessThan(firstMention);
     expect(
       figures[0]?.captions?.map((caption) => ({
         label: caption.label,

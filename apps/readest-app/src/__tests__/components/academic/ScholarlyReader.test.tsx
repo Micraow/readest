@@ -82,6 +82,57 @@ afterEach(() => {
 });
 
 describe('continuous academic flow', () => {
+  it('keeps adjacent source-row plots together while retaining both selectable captions', () => {
+    const figures = [0, 1].map((index) => {
+      const figure = block(`figure-${index}`, 2, 'visual-region');
+      figure.source[0]!.boxes[0] = { x: 10 + index * 150, y: 20, width: 140, height: 100 };
+      figure.previewBox = { ...figure.source[0]!.boxes[0]!, height: 60 };
+      figure.captions = [
+        {
+          role: 'figure' as const,
+          label: String(index + 1),
+          text: `Figure ${index + 1}: Result.`,
+          source: {
+            page: 2,
+            boxes: [{ x: 10 + index * 150, y: 85, width: 140, height: 20 }],
+            itemIndices: [index],
+          },
+        },
+      ];
+      return figure;
+    });
+    const result = render(
+      <ScholarlyReader document={documentFor(figures)} session={session} onZoom={vi.fn()} />,
+    );
+    const elements = result.container.querySelectorAll('figure');
+    expect(elements).toHaveLength(2);
+    expect(elements[0]!.parentElement).toBe(elements[1]!.parentElement);
+    expect(elements[0]!.parentElement?.classList.contains('grid')).toBe(true);
+    expect(screen.getAllByText(/Figure [12]: Result/)).toHaveLength(2);
+  });
+  it('renders a selectable caption once, scales a small chart to the reading font and zooms the full source', async () => {
+    const visual = block('captioned', 2, 'visual-region');
+    visual.previewBox = { x: 10, y: 20, width: 120, height: 60 };
+    visual.captions = [
+      {
+        role: 'figure',
+        label: '1',
+        text: 'Figure 1: A selectable caption.',
+        source: { page: 2, boxes: [{ x: 10, y: 85, width: 120, height: 20 }], itemIndices: [0] },
+      },
+    ];
+    const onZoom = vi.fn();
+    render(<ScholarlyReader document={documentFor([visual])} session={session} onZoom={onZoom} />);
+    await act(async () => intersect(true));
+    expect(renderRegion.mock.calls.at(-1)?.[1]).toEqual(visual.previewBox);
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBe(180);
+    expect(
+      screen.getByText('Figure 1: A selectable caption.').closest('figcaption'),
+    ).not.toBeNull();
+    fireEvent.click(screen.getByRole('button'));
+    expect(onZoom).toHaveBeenCalledWith(visual);
+    expect(visual.source[0]!.boxes[0]!.height).toBe(100);
+  });
   it('places paragraphs from different source pages in one article without page wrappers', () => {
     render(
       <ScholarlyReader

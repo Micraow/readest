@@ -13,6 +13,8 @@ export interface RawTextStyle {
   ascent?: number;
   descent?: number;
   fontFamily?: string;
+  fontStyle?: 'italic';
+  fontWeight?: 'bold';
   vertical?: boolean;
 }
 export interface RawPageGeometry {
@@ -105,6 +107,8 @@ function textGeometry(
     fontSize,
     fontName: item.fontName,
     fontFamily: style.fontFamily ?? '',
+    ...(style.fontStyle ? { fontStyle: style.fontStyle } : {}),
+    ...(style.fontWeight ? { fontWeight: style.fontWeight } : {}),
     angle,
     hasEOL: !!item.hasEOL,
   };
@@ -246,12 +250,39 @@ export async function extractPageGeometry(
     page.getOperatorList(),
     page.getStructTree(),
   ]);
+  // getOperatorList resolves the fonts already needed for this local page.
+  // FontFaceObject exposes these standard flags without fontExtraProperties.
+  const styles: Record<string, RawTextStyle> = {};
+  for (const [fontName, style] of Object.entries(textContent.styles)) {
+    const font: unknown = page.commonObjs.has(fontName) ? page.commonObjs.get(fontName) : undefined;
+    const metadata = font && typeof font === 'object' ? font : {};
+    const name =
+      'name' in metadata && typeof metadata.name === 'string'
+        ? metadata.name.replace(/^[A-Z]{6}\+/, '')
+        : '';
+    // Embedded fonts may omit boolean flags while retaining their PostScript
+    // name. Recognize explicit style names and established TeX font suffixes.
+    const italic =
+      ('italic' in metadata && metadata.italic === true) ||
+      /italic|oblique/i.test(name) ||
+      /^(?:LinLibertine|LinBiolinum)T?B?I\d*$/.test(name) ||
+      /^(?:cm|lm|tx|rtx|ntx)mi\d*$/.test(name);
+    const bold =
+      ('bold' in metadata && metadata.bold === true) ||
+      /bold|demibold|semibold/i.test(name) ||
+      /^(?:LinLibertine|LinBiolinum)T?BI?\d*$/.test(name);
+    styles[fontName] = {
+      ...style,
+      ...(italic ? { fontStyle: 'italic' as const } : {}),
+      ...(bold ? { fontWeight: 'bold' as const } : {}),
+    };
+  }
   return normalizePageGeometry(
     {
       page: pageNumber,
       rotation: page.rotate,
       viewport: page.getViewport({ scale: 1 }),
-      textContent,
+      textContent: { ...textContent, styles },
       operators,
       tagged: !!structure,
     },

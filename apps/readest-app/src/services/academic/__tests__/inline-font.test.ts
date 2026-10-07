@@ -1,0 +1,60 @@
+// @vitest-environment node
+import { describe, expect, it, vi } from 'vitest';
+import type { PDFPageProxy } from '@pdfjs/pdf.mjs';
+import { extractPageGeometry } from '../geometry';
+import { buildInlineRuns } from '../inline';
+
+describe('available PDF font styles', () => {
+  it('preserves explicit loaded font metadata without enabling extra font data or guessing opaque identifiers', async () => {
+    const get = vi.fn<() => unknown>(() => ({ italic: true, bold: true }));
+    const pdfPage = {
+      rotate: 0,
+      getViewport: () => ({ width: 600, height: 800, transform: [1, 0, 0, -1, 0, 800] }),
+      getTextContent: async () => ({
+        items: [
+          {
+            str: 'Styled words',
+            transform: [10, 0, 0, 10, 10, 700],
+            width: 60,
+            height: 10,
+            fontName: 'g_d0_f2',
+          },
+        ],
+        styles: { g_d0_f2: { fontFamily: 'sans-serif' } },
+      }),
+      getOperatorList: async () => ({ fnArray: [], argsArray: [] }),
+      getStructTree: async () => null,
+      commonObjs: { has: () => true, get },
+    } as unknown as PDFPageProxy;
+    const geometry = await extractPageGeometry(pdfPage, 1, {});
+    expect(geometry.items[0]).toMatchObject({
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      fontName: 'g_d0_f2',
+    });
+    const runs = buildInlineRuns(geometry, [
+      {
+        id: 'l1',
+        text: 'Styled words',
+        box: geometry.items[0]!.box,
+        itemIndices: [0],
+        fontSize: 10,
+      },
+    ]);
+    expect(runs[0]).toMatchObject({ style: { fontStyle: 'italic', fontWeight: 'bold' } });
+    expect(get).toHaveBeenCalledWith('g_d0_f2');
+    for (const [name, italic, bold] of [
+      ['ABCDEF+LinLibertineTI', 'italic', undefined],
+      ['ABCDEF+LinLibertineI7', 'italic', undefined],
+      ['ABCDEF+LinLibertineTB', undefined, 'bold'],
+      ['ABCDEF+rtxmi7', 'italic', undefined],
+      ['Times-BoldItalic', 'italic', 'bold'],
+      ['ArialMT', undefined, undefined],
+    ]) {
+      get.mockReturnValue({ name });
+      const actual = await extractPageGeometry(pdfPage, 1, {});
+      expect(actual.items[0]?.fontStyle, name).toBe(italic);
+      expect(actual.items[0]?.fontWeight, name).toBe(bold);
+    }
+  });
+});

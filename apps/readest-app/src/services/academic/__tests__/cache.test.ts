@@ -222,3 +222,42 @@ it('rejects a mismatched caption kind rather than silently dropping its associat
   await writeAcademicCache(storage, doc);
   expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toBeNull();
 });
+
+it('preserves caption-free previews and styled inline source metadata through cache reopen', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  const block = doc.blocks[0]!;
+  const box = block.source[0]!.boxes[0]!;
+  block.previewBox = { ...box, height: 20 };
+  block.captions![0]!.inlineRuns = [
+    {
+      kind: 'text',
+      text: block.captions![0]!.text,
+      style: { fontStyle: 'italic' },
+      source: block.captions![0]!.source,
+    },
+  ];
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toEqual(doc);
+});
+
+it('rejects a preview that extends outside the source rather than displaying an unrelated region', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  doc.blocks[0]!.previewBox = { x: 0, y: 0, width: 600, height: 790 };
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toBeNull();
+});
+
+it('rejects duplicate or foreign glyph ownership in inline metadata', async () => {
+  const { storage } = storageFixture();
+  const doc = captionFixture();
+  const caption = doc.blocks[0]!.captions![0]!;
+  const run = { kind: 'text' as const, text: caption.text, source: caption.source };
+  caption.inlineRuns = [run, run];
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toBeNull();
+  caption.inlineRuns = [{ ...run, source: { ...caption.source, page: 2 } }];
+  await writeAcademicCache(storage, doc);
+  expect(await readAcademicCache(storage, hash, 1, 'academic-1')).toBeNull();
+});

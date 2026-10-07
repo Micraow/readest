@@ -1,7 +1,7 @@
 import { sha256 as incrementalSha256 } from '@noble/hashes/sha2';
 import { z } from 'zod';
 import type { AppService } from '@/types/system';
-import type { ScholarlyDocument } from './types';
+import type { InlineRun, ScholarlyDocument, SourceSpan } from './types';
 import { validateSourceCoverage } from './layout';
 
 export type AcademicStorage = Pick<AppService, 'exists' | 'readFile' | 'writeFile' | 'createDir'>;
@@ -21,6 +21,27 @@ const source = z.object({
   itemIndices: z.array(index),
 });
 const role = z.enum(['figure', 'table', 'algorithm', 'equation', 'unknown']);
+const inlineRun = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('text'),
+    text: z.string(),
+    source,
+    style: z
+      .object({
+        fontStyle: z.literal('italic').optional(),
+        fontWeight: z.literal('bold').optional(),
+        verticalAlign: z.enum(['sub', 'super']).optional(),
+      })
+      .optional(),
+  }),
+  z.object({
+    kind: z.literal('source'),
+    text: z.string(),
+    source,
+    fontSize: finite.positive(),
+    baseline: finite,
+  }),
+]);
 const schema = z.object({
   schemaVersion: index,
   parserVersion: z.string(),
@@ -43,6 +64,8 @@ const schema = z.object({
           fontSize: finite.nonnegative(),
           fontName: z.string(),
           fontFamily: z.string(),
+          fontStyle: z.literal('italic').optional(),
+          fontWeight: z.literal('bold').optional(),
           angle: finite,
           hasEOL: z.boolean(),
         }),
@@ -80,6 +103,9 @@ const schema = z.object({
       }),
       level: index.optional(),
       listItems: z.array(z.string()).optional(),
+      inlineRuns: z.array(inlineRun).optional(),
+      listInlineRuns: z.array(z.array(inlineRun)).optional(),
+      previewBox: rect.optional(),
       role: role.optional(),
       captions: z
         .array(
@@ -88,6 +114,7 @@ const schema = z.object({
             label: z.string().regex(/^(?:\d+|[IVX]+)$/i),
             text: z.string().min(1),
             source,
+            inlineRuns: z.array(inlineRun).optional(),
           }),
         )
         .optional(),
@@ -158,12 +185,69 @@ function validReferences(document: ScholarlyDocument): boolean {
     return false;
   if (document.readingOrder.some((id, order) => blocks.get(id)?.order !== order)) return false;
   if (Object.keys(document.sourceMap).length !== blocks.size) return false;
+  const validInline = (runs: InlineRun[] | undefined, sources: SourceSpan[]) => {
+    if (!runs) return true;
+    const expected = new Set(
+      sources.flatMap((span) => span.itemIndices.map((id) => `${span.page}:${id}`)),
+    );
+    const seen = new Set<string>();
+    for (const run of runs) {
+      const page = pages.get(run.source.page);
+      if (!page || (run.source.itemIndices.length && !run.source.boxes.length)) return false;
+      if (
+        run.kind === 'source' &&
+        (!run.source.itemIndices.length ||
+          run.source.boxes.length !== 1 ||
+          run.source.boxes.some(
+            (box) =>
+              box.width <= 0 ||
+              box.height <= 0 ||
+              box.x < 0 ||
+              box.y < 0 ||
+              box.x + box.width > page.width + 0.01 ||
+              box.y + box.height > page.height + 0.01,
+          ))
+      )
+        return false;
+      for (const id of run.source.itemIndices) {
+        const key = `${run.source.page}:${id}`;
+        if (!expected.has(key) || seen.has(key)) return false;
+        seen.add(key);
+      }
+    }
+    return seen.size === expected.size;
+  };
   for (const block of document.blocks) {
     if (
       !block.source.length ||
       JSON.stringify(document.sourceMap[block.id]) !== JSON.stringify(block.source)
     )
       return false;
+    if (
+      !validInline(block.inlineRuns, block.source) ||
+      (block.listInlineRuns &&
+        (block.type !== 'list' ||
+          block.listInlineRuns.length !== block.listItems?.length ||
+          !validInline(block.listInlineRuns.flat(), block.source)))
+    )
+      return false;
+    if (block.previewBox) {
+      const preview = block.previewBox,
+        full = block.source[0]?.boxes[0];
+      if (
+        block.type !== 'visual-region' ||
+        !block.captions?.length ||
+        !full ||
+        preview.width <= 0 ||
+        preview.height <= 0 ||
+        preview.x < full.x ||
+        preview.y < full.y ||
+        preview.x + preview.width > full.x + full.width + 0.01 ||
+        preview.y + preview.height >
+          Math.min(...block.captions.flatMap((caption) => caption.source.boxes.map((box) => box.y)))
+      )
+        return false;
+    }
     for (const caption of block.captions ?? []) {
       const owned = new Set(
         block.source
@@ -175,7 +259,8 @@ function validReferences(document: ScholarlyDocument): boolean {
         block.role !== caption.role ||
         !caption.source.boxes.length ||
         !caption.source.itemIndices.length ||
-        caption.source.itemIndices.some((id) => !owned.has(id))
+        caption.source.itemIndices.some((id) => !owned.has(id)) ||
+        !validInline(caption.inlineRuns, [caption.source])
       )
         return false;
     }
