@@ -1,0 +1,124 @@
+name: Academic Android artifact smoke
+
+# One deliberate, bounded run against an existing unsigned artifact. No rebuild.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: academic-android-artifact-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    if: github.repository == 'Micraow/readest' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[smoke-academic-android]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ANDROID_SERIAL: emulator-5554
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Require usable KVM and disk before any download
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p smoke-evidence
+          if [[ ! -c /dev/kvm || ! -r /dev/kvm || ! -w /dev/kvm ]]; then
+            echo 'BLOCKED: /dev/kvm must already be readable/writable; no permission changes are authorized.' | tee smoke-evidence/blocker.txt
+            exit 1
+          fi
+          free_bytes=$(df -PB1 . | awk 'NR==2 {print $4}')
+          if (( free_bytes < 10737418240 )); then
+            echo 'BLOCKED: less than 10 GiB free disk; no image download attempted.' | tee smoke-evidence/blocker.txt
+            exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Check bounded smoke helpers
+        run: python3 .github/scripts/academic-android-smoke-test.py
+      - name: Download exact unsigned artifact ZIPs after run and job gates
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9; also pinned in release.yml
+        timeout-minutes: 3
+        with:
+          retries: 0
+          script: |
+            const fs = require('node:fs');
+            const crypto = require('node:crypto');
+            const base = { owner: context.repo.owner, repo: context.repo.repo };
+            const runId = 37639962100;
+            const sha = 'dca7a24b17c69d47ef9fb8640c80ff9e6e396392';
+            const { data: run } = await github.rest.actions.getWorkflowRun({ ...base, run_id: runId });
+            if (run.repository.full_name !== 'Micraow/readest' || run.head_sha !== sha ||
+                run.path !== '.github/workflows/academic-android.yml' || run.conclusion !== 'success') {
+              throw new Error('Unsigned source run provenance mismatch');
+            }
+            const { data: job } = await github.rest.actions.getJobForWorkflowRun({ ...base, job_id: 112855973312 });
+            if (job.run_id !== runId || job.head_sha !== sha || job.conclusion !== 'success' ||
+                !job.steps.some(s => s.name === 'Gate candidate on source and APK validation' && s.conclusion === 'success')) {
+              throw new Error('Source and APK gate did not pass in the expected build job');
+            }
+            const artifacts = [
+              ['academic-android-manifest', 11492083974, 15606, '4c10bceb4d897671a1b978c68a24d75a2a1cb43568d1d9edb86c3051d0e1379e'],
+              ['academic-android-part00', 11491988934, 16777350, 'e079919aad0afecb120534398b3493d91367e4092ef304ee0d5986fea88e4c55'],
+              ['academic-android-part01', 11492093858, 16777350, '0fbfcbcdfc96dccbeaa1319bac5f7e182aa1213a87bc3474ad7dfb58599272e4'],
+              ['academic-android-part02', 11491924224, 2920845, '602166e639c0bc1b2d5ae2c47abb709e02674b98ac685b53a29565b755dc8fb0'],
+            ];
+            fs.mkdirSync('smoke-input', { recursive: true });
+            fs.mkdirSync('smoke-evidence', { recursive: true });
+            for (const [name, id, size, sha256] of artifacts) {
+              const { data: info } = await github.rest.actions.getArtifact({ ...base, artifact_id: id });
+              if (info.name !== name || info.expired || info.workflow_run?.id !== runId || info.workflow_run?.head_sha !== sha) {
+                throw new Error('Artifact identity mismatch: ' + name);
+              }
+              const response = await github.rest.actions.downloadArtifact({ ...base, artifact_id: id, archive_format: 'zip' });
+              const data = Buffer.from(response.data);
+              if (data.length !== size || crypto.createHash('sha256').update(data).digest('hex') !== sha256) {
+                throw new Error('Artifact ZIP size/digest mismatch: ' + name);
+              }
+              fs.writeFileSync('smoke-input/' + name + '.zip', data);
+            }
+            fs.writeFileSync('smoke-evidence/build-source.json', JSON.stringify({
+              run: run.html_url, job: job.html_url, sourceCommit: sha, artifactIds: artifacts.map(a => a[1]),
+            }, null, 2));
+      - name: Verify ZIP entries, parts, APK payload, and provenance
+        run: python3 .github/scripts/academic-android-smoke.py verify
+      - name: Inspect official image metadata and existing accepted licenses
+        timeout-minutes: 1
+        run: python3 .github/scripts/academic-android-smoke.py preflight
+      - name: Install only the pinned image without accepting new licenses
+        timeout-minutes: 6
+        run: python3 .github/scripts/academic-android-smoke.py image
+      - name: Boot once, test-sign a copy, and exercise public PDF UI
+        timeout-minutes: 8
+        run: python3 .github/scripts/academic-android-smoke.py run
+      - name: Record outcome and stop the single emulator
+        if: always()
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          if [[ -f .github/scripts/academic-android-smoke.py ]]; then
+            python3 .github/scripts/academic-android-smoke.py finish
+          fi
+          if [[ -f smoke-evidence/result.json ]]; then
+            cat smoke-evidence/result.json >> "$GITHUB_STEP_SUMMARY"
+          elif [[ -f smoke-evidence/blocker.txt ]]; then
+            cat smoke-evidence/blocker.txt >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Smoke incomplete: an earlier prerequisite failed; see step logs. Reader acceptance was not established.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Preserve small screenshots, hierarchy, and scoped diagnostics only
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: academic-android-smoke-evidence
+          path: smoke-evidence/
+          if-no-files-found: warn
+          retention-days: 7
+          compression-level: 6
