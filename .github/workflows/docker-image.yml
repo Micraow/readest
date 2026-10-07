@@ -18,6 +18,7 @@ permissions:
 
 jobs:
   build:
+    if: ${{ vars.ENABLE_AUTOMATED_PUBLISHING == 'true' }}
     permissions:
       contents: read
       packages: write
@@ -88,6 +89,7 @@ jobs:
           retention-days: 1
 
   merge:
+    if: ${{ vars.ENABLE_AUTOMATED_PUBLISHING == 'true' }}
     needs: build
     permissions:
       contents: read

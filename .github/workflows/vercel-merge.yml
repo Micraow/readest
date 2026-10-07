@@ -7,6 +7,7 @@ permissions:
   contents: read
 jobs:
   build_and_deploy:
+    if: ${{ vars.ENABLE_AUTOMATED_PUBLISHING == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
