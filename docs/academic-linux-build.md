@@ -26,6 +26,13 @@ individual download below the consumer's 32 MiB limit. After downloading:
 2. Concatenate parts in the manifest's order and check the archive SHA-256.
 3. Extract the unstripped `readest`, license and provenance into a new staging
    directory. Verify the ELF hash against `provenance.json`.
+   If `sourceIntegrity.passed` is false, the uploaded bytes are quarantined:
+   inspect the included full source diff and explain every change before any
+   acceptance or delivery. The workflow remains failed in this case.
+   The only allowed tracked output changes are the pinned Turso plugin's nine
+   generated command-file deletions and regenerated permission reference/schema;
+   its source commit and custom permissions must remain unchanged. The pinned
+   Tauri generator moves command definitions into Cargo's OUT_DIR during build.
 4. Match **every** CEF runtime hash in provenance against the separately pinned
    CEF distribution before combining them. The ELF alone is not a portable app.
 5. Run the normal portable-package ELF, dependency and archive checks, then
