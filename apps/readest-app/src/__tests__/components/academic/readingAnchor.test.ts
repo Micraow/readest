@@ -76,6 +76,25 @@ describe('stable academic text anchors', () => {
     expect(root.scrollTop).toBe(200);
   });
 
+  it('restores the same character after inline words gain nested wrappers and split text nodes', () => {
+    const root = document.createElement('div');
+    const block = document.createElement('p');
+    block.dataset['blockId'] = 'wrapped-math';
+    block.innerHTML = `<span>${'a'.repeat(100)}</span><button><canvas></canvas></button><i>W</i><sub>i</sub><span>${'b'.repeat(198)}</span>`;
+    root.append(block);
+    document.body.append(root);
+    let lineHeight = 20;
+    const { characterY } = mockReadingLayout(root, block, () => lineHeight);
+    root.scrollTop = 400;
+    const anchor = captureReadingAnchor(root)!;
+    expect(anchor.textOffset).toBe(200);
+    block.innerHTML = `<span>${'a'.repeat(100)}</span><span class="inline-block"><button><canvas></canvas>Fallback source</button><i>W</i><sub>i</sub><span>${'b'.repeat(40)}</span></span><span>${'b'.repeat(158)}</span>`;
+    lineHeight = 30;
+    expect(restoreReadingAnchor(root, anchor)).toBe(true);
+    expect(root.scrollTop).toBe(600);
+    expect(characterY(200)).toBe(60);
+  });
+
   it('rejects corrupt anchors and safely declines missing blocks', () => {
     expect(isReadingAnchor({ blockId: 'p', viewportY: NaN, blockRatio: 0 })).toBe(false);
     expect(isReadingAnchor({ blockId: 'p', viewportY: 0, blockRatio: 2 })).toBe(false);

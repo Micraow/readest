@@ -44,6 +44,127 @@ describe('InlineContent', () => {
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(60);
   });
 
+  it('keeps a source glyph and its unspaced operand in one bounded inline word', async () => {
+    const sum = { ...source, text: '\u0002' };
+    const runs: InlineRun[] = [
+      { ...text, text: 'The amount is I = ' },
+      sum,
+      { ...text, text: 'W', style: { fontStyle: 'italic' } },
+      { ...text, text: 'i', style: { fontStyle: 'italic', verticalAlign: 'sub' } },
+      { ...text, text: '. The following sentence stays outside.' },
+    ];
+    const before = JSON.stringify(runs);
+    const onZoom = vi.fn();
+    const view = render(
+      <InlineContent
+        runs={runs}
+        text=''
+        fontSize={16}
+        session={session}
+        root={root}
+        onZoom={onZoom}
+      />,
+    );
+    const button = screen.getByRole('button');
+    const word = button.parentElement!;
+    expect(word.classList.contains('inline-block')).toBe(true);
+    expect(word.classList.contains('max-w-full')).toBe(true);
+    expect(word.textContent).toBe('Wi.');
+    expect(word.querySelector('sub')?.textContent).toBe('i');
+    expect(word.querySelector('sub')?.style.fontStyle).toBe('italic');
+    expect(view.container.textContent).toBe(
+      'The amount is I = Wi. The following sentence stays outside.',
+    );
+    expect(word.className).not.toMatch(/nowrap|overflow-hidden/);
+    expect(word.style.lineHeight).toBe('');
+    expect(JSON.stringify(runs)).toBe(before);
+    await waitFor(() => expect(renderRegion).toHaveBeenCalledTimes(1));
+    const canvas = button.querySelector('canvas');
+    view.rerender(
+      <InlineContent
+        runs={runs}
+        text=''
+        fontSize={22}
+        session={session}
+        root={root}
+        onZoom={onZoom}
+      />,
+    );
+    expect(screen.getByRole('button').querySelector('canvas')).toBe(canvas);
+    fireEvent.click(button);
+    expect(onZoom).toHaveBeenCalledWith(sum.source, sum.trimBelow);
+  });
+
+  it('splits text tokens but keeps a source with spaces in its alt text atomic', () => {
+    const view = render(
+      <InlineContent
+        runs={[
+          { ...text, text: 'Before (' },
+          source,
+          { ...text, text: ') after' },
+          { ...text, text: ' ' },
+          source,
+          { ...text, text: 'x next' },
+        ]}
+        text=''
+        fontSize={16}
+        session={session}
+        root={root}
+        onZoom={vi.fn()}
+      />,
+    );
+    const buttons = screen.getAllByRole('button');
+    expect(buttons[0]?.parentElement?.textContent).toBe('()');
+    expect(buttons[1]?.parentElement?.textContent).toBe('x');
+    expect(buttons[0]?.parentElement).not.toBe(buttons[1]?.parentElement);
+    expect(buttons[0]?.getAttribute('aria-label')).toContain('a / b');
+    expect(view.container.textContent).toBe('Before () after x next');
+  });
+
+  it('does not merge whitespace-separated prose or source-only words', () => {
+    const view = render(
+      <InlineContent
+        runs={[text, source, { ...text, text: ' ' }, { ...text, text: 'ordinary prose' }]}
+        text=''
+        fontSize={16}
+        session={session}
+        root={root}
+        onZoom={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole('button').parentElement).toBe(view.container);
+    expect(view.container.textContent).toBe('A selectable sentence  ordinary prose');
+    expect(view.container.querySelector('span.inline-block')).toBeNull();
+  });
+
+  it('keeps list and reference offsets while grouping an adjacent math word outside the link', () => {
+    const runs: InlineRun[] = [{ ...text, text: '12. See [34]' }, source, { ...text, text: 'x.' }];
+    const view = render(
+      <InlineContent
+        runs={runs}
+        text=''
+        omitListMarker
+        fontSize={16}
+        session={session}
+        root={root}
+        onZoom={vi.fn()}
+        references={{
+          links: [
+            { id: 'list', start: 8, end: 12, target: 'reference', kind: 'reference', number: '34' },
+          ],
+          prefix: 'test',
+          onNavigate: vi.fn(),
+        }}
+      />,
+    );
+    const anchor = screen.getByRole('link');
+    expect(anchor.textContent).toBe('[34]');
+    expect(anchor.querySelector('button')).toBeNull();
+    expect(screen.getByRole('button').parentElement?.textContent).toBe('x.');
+    expect(screen.getByRole('button').closest('a')).toBeNull();
+    expect(view.container.textContent).toBe('See [34]x.');
+  });
+
   it('updates only math presentation with the live theme without rendering the PDF again', async () => {
     const onZoom = vi.fn();
     const before = JSON.stringify(source);

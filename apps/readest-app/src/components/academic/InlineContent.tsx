@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { Fragment, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { AcademicLink } from '@/services/academic/navigation';
@@ -136,7 +136,7 @@ export default function InlineContent({
   const remove = omitListMarker
     ? (/^\s*(?:[•●▪◦*–-]|\d+[.)])\s+/.exec(content)?.[0].length ?? 0)
     : 0;
-  const renderRange = (start: number, end: number): ReactNode => {
+  const renderRuns = (start: number, end: number): ReactNode => {
     if (!runs?.length) return content.slice(start, end);
     let offset = 0;
     return runs.map((run, index) => {
@@ -168,6 +168,58 @@ export default function InlineContent({
         </span>
       );
     });
+  };
+  const renderRange = (start: number, end: number): ReactNode => {
+    if (!runs?.length) return content.slice(start, end);
+    const words: { start: number; end: number }[] = [];
+    let wordStart = start;
+    let hasSource = false;
+    let hasText = false;
+    const finishWord = (wordEnd: number, nextStart: number) => {
+      if (hasSource && hasText) words.push({ start: wordStart, end: wordEnd });
+      wordStart = nextStart;
+      hasSource = false;
+      hasText = false;
+    };
+    let offset = 0;
+    for (const run of runs) {
+      const runStart = offset;
+      offset += run.text.length;
+      if (offset <= start || runStart >= end) continue;
+      if (run.kind === 'source') {
+        // A crop is atomic even when its alternative text contains spaces.
+        hasSource = true;
+        continue;
+      }
+      const from = Math.max(start, runStart);
+      const value = run.text.slice(from - runStart, end - runStart);
+      let consumed = 0;
+      for (const space of value.matchAll(/\s+/g)) {
+        if (space.index > consumed) hasText = true;
+        finishWord(from + space.index, from + space.index + space[0].length);
+        consumed = space.index + space[0].length;
+      }
+      if (consumed < value.length) hasText = true;
+    }
+    finishWord(end, end);
+    if (!words.length) return renderRuns(start, end);
+    const children: ReactNode[] = [];
+    let cursor = start;
+    for (const word of words) {
+      if (cursor < word.start)
+        children.push(<Fragment key={`text-${cursor}`}>{renderRuns(cursor, word.start)}</Fragment>);
+      // Keep an unspaced glyph/operand together when it fits. Normal wrapping
+      // remains available inside an oversized word; do not clip or force nowrap.
+      children.push(
+        <span key={`word-${word.start}`} className='inline-block max-w-full'>
+          {renderRuns(word.start, word.end)}
+        </span>,
+      );
+      cursor = word.end;
+    }
+    if (cursor < end)
+      children.push(<Fragment key={`text-${cursor}`}>{renderRuns(cursor, end)}</Fragment>);
+    return children;
   };
   if (!references?.links.length) return renderRange(remove, content.length);
   const children: ReactNode[] = [];
