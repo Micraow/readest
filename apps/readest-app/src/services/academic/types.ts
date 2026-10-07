@@ -51,6 +51,8 @@ export type InlineRun =
       /** Surrounding prose size and absolute baseline, in scale-one PDF points. */
       fontSize: number;
       baseline: number;
+      /** Lowest owned glyph baseline when a following source line touches the crop edge. */
+      trimBelow?: number;
     };
 export interface FontStatistics {
   median: number;
@@ -92,6 +94,8 @@ export interface ScholarlyBlock {
   role?: VisualRole;
   /** A caption-free preview; the complete source remains available for zoom. */
   previewBox?: Rect;
+  /** Inline-only render hint, also carried into its temporary zoom block. */
+  trimBelow?: number;
   /** Semantic caption associations; source ownership remains in the block source. */
   captions?: VisualCaption[];
   /** Why a region/page was preserved visually instead of reordered. */

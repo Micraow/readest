@@ -39,6 +39,49 @@ const line = (items: PdfTextItem[]): LayoutLine => ({
 });
 
 describe('source-preserving inline content', () => {
+  it('anchors adjacent body-size fractions to prose rather than to each other', () => {
+    const body = item(0, 'A ratio is', 10, 112, 10, 45);
+    const numerator = [
+      item(1, 'a', 60, 108),
+      item(2, '+', 65, 108),
+      item(3, 'b', 70, 108),
+      item(5, 'd', 85, 108),
+      item(6, '+', 90, 108),
+      item(7, 'e', 95, 108),
+    ];
+    const denominators = [item(4, 'c', 65, 117), item(8, 'f', 90, 117)];
+    const geometry = page([body, ...numerator, ...denominators]);
+    geometry.graphics = [59, 84].map((x) => ({
+      kind: 'rule',
+      box: { x, y: 110, width: 17, height: 0.4 },
+    }));
+    const runs = buildInlineRuns(geometry, [line(numerator), line([body, ...denominators])]);
+    expect(runs.filter((run) => run.kind === 'source')).toHaveLength(2);
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([
+      0, 1, 2, 3, 4, 5, 6, 7, 8,
+    ]);
+    expect(runs.map((run) => (run.kind === 'source' ? '[fraction]' : run.text)).join('')).toBe(
+      'A ratio is [fraction] [fraction]',
+    );
+  });
+  it('places a fraction on its prose baseline even when its numerator is a separate earlier line', () => {
+    const earlier = item(0, 'Earlier prose.', 10, 100, 10, 80);
+    const prefix = item(1, 'by a factor of k =', 10, 112, 10, 100);
+    const numerator = item(2, 'm', 120, 108, 7, 15);
+    const denominator = item(3, 'n', 120, 116, 7, 15);
+    const suffix = item(4, '= r', 145, 112, 10, 30);
+    const geometry = page([earlier, prefix, numerator, denominator, suffix]);
+    geometry.graphics.push({ kind: 'rule', box: { x: 119, y: 110, width: 17, height: 0.4 } });
+    const runs = buildInlineRuns(geometry, [
+      line([earlier]),
+      line([numerator]),
+      line([prefix, denominator, suffix]),
+    ]);
+    expect(runs.map((run) => (run.kind === 'source' ? '[fraction]' : run.text)).join('')).toBe(
+      'Earlier prose. by a factor of k = [fraction] = r',
+    );
+    expect(runs.flatMap((run) => run.source.itemIndices).sort()).toEqual([0, 1, 2, 3, 4]);
+  });
   it('never pairs scripts from adjacent prose baselines into a fraction', () => {
     const first = [
       item(0, 'First T', 10, 100, 10, 35),

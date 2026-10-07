@@ -38,6 +38,11 @@ const page = (items: PdfTextItem[], pageNumber = 1): PageGeometry => ({
 const doc = (pages: PageGeometry[]) => analyzeDocument(pages, 'a'.repeat(64), '6.2.108');
 
 describe('deterministic academic layout', () => {
+  it('rejects missing inline glyphs even when the containing block owns every source item', () => {
+    const d = doc([page([item(0, 'A complete source paragraph.', 40, 100)])]);
+    d.blocks[0]!.inlineRuns = [];
+    expect(validateSourceCoverage(d)).toContain('Inline item 1:0 has 0 owners in p1-b0');
+  });
   it('clusters words and superscripts while separating column gutters', () => {
     const p = page([
       item(0, 'The', 40, 100, 15),

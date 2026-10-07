@@ -36,6 +36,71 @@ const floatingPage = (pageNumber = 2) => {
 const analyze = (pages: PageGeometry[]) => analyzeDocument(pages, 'synthetic-flow', 'test');
 
 describe('continuous prose around floating figures', () => {
+  it('keeps a display equation beside its introducing paragraph before deferred floats', () => {
+    const first = page(1, [item(0, 'This leads to', 40, 700)]);
+    const next = floatingPage();
+    next.items = [
+      item(0, 'Figure 1: Synthetic measurement.', 40, 170),
+      item(1, 'the available value:', 40, 205),
+      item(2, 'z = a + b', 80, 235, 100),
+      item(3, 'The next paragraph explains the result.', 50, 280),
+    ];
+    const d = analyze([first, next]);
+    const intro = d.blocks.findIndex((b) => b.text === 'This leads to the available value:');
+    expect(intro).toBeGreaterThanOrEqual(0);
+    expect(d.blocks[intro + 1]?.role).toBe('equation');
+    expect(d.blocks[intro + 2]?.role).toBe('figure');
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+
+  it('uses surrounding prose size to continue a script-dense line across a floating figure', () => {
+    const left = Array.from({ length: 6 }, (_, i) =>
+      item(i, i === 5 ? 'The result is' : `Left observation ${i}.`, 40, 300 + i * 14),
+    );
+    const prefix = item(6, 'continuing with rates', 40, 384, 120);
+    const scripts = Array.from({ length: 12 }, (_, i) => ({
+      ...item(7 + i, String(i % 10), 163 + i * 4, 388.4, 3),
+      fontSize: 7,
+      baseline: 394,
+      box: { x: 163 + i * 4, y: 388.4, width: 3, height: 7 },
+    }));
+    const p = page(1, [
+      ...left,
+      prefix,
+      ...scripts,
+      item(19, 'is the input', 216, 384, 44),
+      item(20, 'Figure 1: Synthetic result.', 330, 170),
+      item(21, 'rate for the model.', 330, 205),
+      ...Array.from({ length: 5 }, (_, i) =>
+        item(22 + i, `Right observation ${i}.`, 330, 240 + i * 14),
+      ),
+    ]);
+    p.graphics.push({ kind: 'image', box: { x: 330, y: 45, width: 220, height: 115 } });
+    const d = analyze([p]);
+    const joined = d.blocks.find((b) => b.text.includes('is the input rate for the model.'));
+    expect(joined).toBeDefined();
+    expect(joined?.text).toContain('The result is continuing with rates');
+    expect(validateSourceCoverage(d)).toEqual([]);
+  });
+
+  it('separates a styled lettered section heading from a wrapped first paragraph', () => {
+    const p = page(1, [
+      ...Array.from({ length: 6 }, (_, i) =>
+        item(i, `Normal body observation ${i}.`, 40, 100 + i * 14),
+      ),
+      { ...item(6, 'C. Out-of-Order Selection', 40, 240), fontName: 'section-italic' },
+      item(7, 'The method considers paral-', 50, 265),
+      item(8, 'lelism in the network.', 40, 279),
+      item(9, 'A. First ordinary option', 40, 320),
+      item(10, 'B. Second ordinary option', 40, 334),
+    ]);
+    const d = analyze([p]);
+    expect(d.blocks.find((b) => b.text === 'C. Out-of-Order Selection')?.type).toBe('heading');
+    expect(d.blocks.find((b) => b.text.includes('parallelism in the network.'))?.type).toBe(
+      'paragraph',
+    );
+    expect(d.blocks.find((b) => b.text.startsWith('A. First ordinary'))?.type).toBe('list');
+  });
   it.each([
     ['Packets with a higher', 'cost are rerouted.'],
     [

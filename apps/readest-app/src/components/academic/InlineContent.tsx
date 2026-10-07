@@ -7,7 +7,7 @@ type InlineProps = {
   session: AcademicPdfSession;
   fontSize: number;
   root: RefObject<HTMLDivElement | null>;
-  onZoom: (source: SourceSpan) => void;
+  onZoom: (source: SourceSpan, trimBelow?: number) => void;
 };
 
 function InlineSource({
@@ -66,15 +66,17 @@ function InlineSource({
     if (!target || !box || !visible || !width) return;
     const controller = new AbortController();
     setFailed(false);
-    void session.renderRegion(run.source.page, box, target, width, controller.signal).catch(() => {
-      if (!controller.signal.aborted) setFailed(true);
-    });
+    void session
+      .renderRegion(run.source.page, box, target, width, controller.signal, run.trimBelow)
+      .catch(() => {
+        if (!controller.signal.aborted) setFailed(true);
+      });
     return () => {
       controller.abort();
       target.width = 0;
       target.height = 0;
     };
-  }, [session, run.source.page, box, visible, width]);
+  }, [session, run.source.page, run.trimBelow, box, visible, width]);
   if (!box) return run.text;
   const label = `${_('Equation')}: ${run.text}. ${_('Tap to zoom')}`;
   return (
@@ -90,7 +92,7 @@ function InlineSource({
       }}
       aria-label={label}
       title={_('Tap to zoom')}
-      onClick={() => onZoom(run.source)}
+      onClick={() => onZoom(run.source, run.trimBelow)}
     >
       <canvas ref={canvas} className='block max-w-full' aria-hidden='true' />
       {failed && (

@@ -1,5 +1,6 @@
 import type {
   FontStatistics,
+  InlineRun,
   LayoutColumn,
   LayoutLine,
   PageAnalysis,
@@ -16,7 +17,7 @@ import { buildInlineRuns, joinInlineRuns } from './inline.ts';
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-9';
+export const PARSER_VERSION = 'academic-10';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -982,7 +983,7 @@ function heading(
     /^(?:references|bibliography|acknowledg(?:e)?ments|appendix)\b/i.test(line.text)
   )
     return true;
-  if (!/^(?:[1-9]|1\d)(?:\.\d+)*\s+\p{Lu}/u.test(line.text)) return false;
+  if (!/^(?:(?:[1-9]|1\d)(?:\.\d+)*\s+|[A-Z]\.\s+)\p{Lu}/u.test(line.text)) return false;
   // A number can begin a body continuation. Require size or style evidence;
   // PDF.js font identifiers are opaque, so compare with the dominant body face.
   if (line.fontSize >= font * 1.08) return true;
@@ -1010,6 +1011,12 @@ const listStart = (s: string) => /^(?:[•●▪◦‣–]\s*|[-*]\s+|\d+[.)]\s+
 function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): ScholarlyBlock[] {
   const font = bodyFont(page.items);
   const items = new Map(page.items.map((item) => [item.index, item]));
+  const proseSize = (line: LayoutLine) => {
+    const runs = line.itemIndices
+      .map((id) => items.get(id)!)
+      .filter((item) => item.text.trim().length > 8);
+    return runs.length ? median(runs.map((item) => item.fontSize)) : line.fontSize;
+  };
   const typefaces = new Map<string, number>();
   for (const item of page.items) {
     if (Math.abs(item.fontSize - font) > font * 0.06) continue;
@@ -1197,7 +1204,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
           (gap > Math.max(font * 0.35, normalGap + font * 0.18) &&
             /[.!?][”"')\]]?$/.test(previous.text)) ||
           (indent > font * 0.85 && /[.!?][”"')\]]?$/.test(previous.text)) ||
-          Math.abs(line.fontSize - previous.fontSize) > font * 0.2);
+          Math.abs(proseSize(line) - proseSize(previous)) > font * 0.2);
       const wrappedTitle =
         previous &&
         type === 'heading' &&
@@ -1438,6 +1445,19 @@ function analyzePage(
 const isFloat = (block: ScholarlyBlock) =>
   block.type === 'visual-region' && (block.role === 'figure' || block.role === 'table');
 
+function proseFont(block: ScholarlyBlock, pages: PageAnalysis[]): number {
+  const sizes = block.source.flatMap((span) => {
+    const ids = new Set(span.itemIndices);
+    return (
+      pages
+        .find((page) => page.page === span.page)
+        ?.items.filter((item) => ids.has(item.index) && item.text.trim().length > 8)
+        .map((item) => item.fontSize) ?? []
+    );
+  });
+  return sizes.length ? median(sizes) : block.fontStats.median;
+}
+
 function sourceColumn(page: PageAnalysis, box: Rect): { box: Rect; index: number } | undefined {
   const candidates = page.columns.map((column, index) => ({ ...column, index }));
   return candidates.sort(
@@ -1475,11 +1495,11 @@ function continuesProse(
   if (!prevPage || !nextPage || !prevBox || !nextBox) return false;
   const prevColumn = sourceColumn(prevPage, prevBox),
     nextColumn = sourceColumn(nextPage, nextBox);
-  const font = previous.fontStats.median;
+  const font = proseFont(previous, pages);
   if (
     !prevColumn ||
     !nextColumn ||
-    Math.abs(font - next.fontStats.median) >= font * 0.12 ||
+    Math.abs(font - proseFont(next, pages)) >= font * 0.12 ||
     nextBox.x > nextColumn.box.x + font * 0.75 ||
     Math.abs(prevColumn.box.width - nextColumn.box.width) >= prevPage.width * 0.15
   )
@@ -1534,6 +1554,32 @@ function mergeAcrossFlow(blocks: ScholarlyBlock[], pages: PageAnalysis[]): Schol
     )
       index--;
     const previous = result[index];
+    if (
+      previous?.type === 'paragraph' &&
+      /:\s*$/.test(previous.text) &&
+      block.role === 'equation' &&
+      result.slice(index + 1).every((entry) => isFloat(entry) || entry.type === 'footnote')
+    ) {
+      const before = previous.source.at(-1),
+        after = block.source[0];
+      const p = pages.find((page) => page.page === before?.page);
+      const a = before?.boxes.at(-1),
+        b = after?.boxes[0];
+      if (
+        p &&
+        a &&
+        b &&
+        before?.page === after?.page &&
+        sourceColumn(p, a)?.index === sourceColumn(p, b)?.index &&
+        b.y >= bottom(a) - 1 &&
+        b.y - bottom(a) < proseFont(previous, pages) * 3
+      ) {
+        // A display expression completes its introducing sentence before a
+        // float/note deferred while the preceding paragraph crossed columns.
+        result.splice(index + 1, 0, block);
+        continue;
+      }
+    }
     if (previous && continuesProse(previous, block, pages, result.slice(index + 1), blocks)) {
       previous.text = joinLines([previous.text, block.text]);
       previous.inlineRuns = joinInlineRuns(previous.inlineRuns ?? [], block.inlineRuns ?? []);
@@ -1649,10 +1695,31 @@ export function validateSourceCoverage(document: ScholarlyDocument): string[] {
     counts.set(key, (counts.get(key) ?? 0) + 1);
     if (!expected.has(key)) issues.push(`Unknown item ${key}`);
   };
+  const checkInline = (runs: InlineRun[] | undefined, sources: SourceSpan[], label: string) => {
+    if (!runs) return;
+    const owned = new Set(
+      sources.flatMap((span) => span.itemIndices.map((id) => `${span.page}:${id}`)),
+    );
+    const seen = new Map<string, number>();
+    for (const run of runs)
+      for (const id of run.source.itemIndices) {
+        const key = `${run.source.page}:${id}`;
+        if (!owned.has(key)) issues.push(`Unknown inline item ${key} in ${label}`);
+        seen.set(key, (seen.get(key) ?? 0) + 1);
+      }
+    for (const key of owned)
+      if (seen.get(key) !== 1)
+        issues.push(`Inline item ${key} has ${seen.get(key) ?? 0} owners in ${label}`);
+  };
   for (const page of document.pages)
     for (const index of page.suppressedItemIndices) count(page.page, index);
-  for (const block of document.blocks)
+  for (const block of document.blocks) {
     for (const span of block.source) for (const index of span.itemIndices) count(span.page, index);
+    checkInline(block.inlineRuns, block.source, block.id);
+    checkInline(block.listInlineRuns?.flat(), block.source, block.id);
+    for (const caption of block.captions ?? [])
+      checkInline(caption.inlineRuns, [caption.source], block.id);
+  }
   for (const key of expected)
     if (counts.get(key) !== 1) issues.push(`Item ${key} has ${counts.get(key) ?? 0} owners`);
   return issues;

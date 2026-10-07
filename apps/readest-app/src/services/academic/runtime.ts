@@ -12,6 +12,7 @@ import {
   type AcademicStorage,
 } from './cache';
 import { extractPageGeometry, intersectRects } from './geometry';
+import { findInlineBottomCut } from './inline-pixels';
 import { analyzeDocumentAsync, PARSER_VERSION, SCHEMA_VERSION } from './layout';
 import type { AnalysisProgress, PageGeometry, Rect, ScholarlyDocument } from './types';
 
@@ -126,6 +127,8 @@ export interface AcademicPdfSession {
     canvas: HTMLCanvasElement,
     targetWidth: number,
     signal?: AbortSignal,
+    /** Lowest selected glyph baseline in scale-one viewport coordinates. */
+    trimBelow?: number,
   ): Promise<void>;
   renderPage(page: number, canvas: HTMLCanvasElement, signal?: AbortSignal): Promise<void>;
   destroy(): Promise<void>;
@@ -277,6 +280,7 @@ function createSession(
     canvas,
     targetWidth,
     signal,
+    trimBelow,
   ) =>
     withOperationSignal(signal, async (operationSignal) => {
       if (
@@ -337,6 +341,17 @@ function createSession(
         operationSignal.addEventListener('abort', cancel, { once: true });
         try {
           await abortable(task.promise, [operationSignal]);
+          checkAbort([operationSignal]);
+          if (trimBelow !== undefined) {
+            const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+            const cut = findInlineBottomCut(pixels, (trimBelow - box.y) * scale, scale);
+            if (cut !== undefined && cut < canvas.height) {
+              // Keep the source dimensions/baseline, and preserve all ink through
+              // the first blank seam, including continuous glyph descenders.
+              pixels.data.fill(255, cut * canvas.width * 4);
+              context.putImageData(pixels, 0, 0, 0, cut, canvas.width, canvas.height - cut);
+            }
+          }
         } finally {
           operationSignal.removeEventListener('abort', cancel);
           if (renders.get(canvas) === task) renders.delete(canvas);

@@ -32,7 +32,14 @@ const baseItems = (items: PdfTextItem[], font: number) =>
 const compact = (item: PdfTextItem, font: number) =>
   item.text.length <= 40 && (item.fontSize < font * 0.92 || /^\S{1,8}$/.test(item.text));
 
-type Crop = { items: PdfTextItem[]; box: Rect; fontSize: number; baseline: number };
+type Crop = {
+  items: PdfTextItem[];
+  box: Rect;
+  fontSize: number;
+  baseline: number;
+  trimBelow?: number;
+  axis?: number;
+};
 
 /** Only accept a crop when every visible glyph inside it belongs to this block. */
 function makeCrop(
@@ -80,11 +87,22 @@ function makeCrop(
   );
   // A nearby ordinary baseline distinguishes inline notation from adjacent body rows.
   if (!outside.length) return;
+  const lowestBaseline = Math.max(...members.map((item) => item.baseline));
+  const followingInk = page.items.some(
+    (item) =>
+      item.text.trim() &&
+      !members.includes(item) &&
+      item.baseline > lowestBaseline &&
+      overlap(item.box, padded) > 0 &&
+      item.box.y < bottom(padded) &&
+      bottom(item.box) > padded.y,
+  );
   return {
     items: members,
     box: padded,
     fontSize: font,
     baseline: median(outside.map((item) => item.baseline)),
+    ...(followingInk ? { trimBelow: lowestBaseline } : {}),
   };
 }
 
@@ -126,7 +144,7 @@ function sourceCrops(page: PageGeometry, items: PdfTextItem[]): Crop[] {
       font,
     );
     if (crop && !crops.some((other) => other.items.some((item) => crop.items.includes(item))))
-      crops.push(crop);
+      crops.push({ ...crop, axis: rule.y + rule.height / 2 });
   }
   // A real bar bounds the complete numerator/denominator. Mere vertical overlap
   // also occurs between scripts on successive prose rows and cannot establish a fraction.
@@ -182,7 +200,32 @@ export function buildInlineRuns(page: PageGeometry, lines: LayoutLine[]): Inline
   const wanted = new Set(lines.flatMap((line) => line.itemIndices));
   const items = page.items.filter((item) => wanted.has(item.index) && item.text.trim());
   if (!items.length) return [];
-  const crops = sourceCrops(page, items);
+  const detected = sourceCrops(page, items);
+  const cropIds = new Set(detected.flatMap((crop) => crop.items.map((item) => item.index)));
+  const anchored = detected.flatMap((crop) => {
+    const expected = (crop.axis ?? crop.baseline - crop.fontSize * 0.25) + crop.fontSize * 0.25;
+    const candidates = lines.flatMap((line) => {
+      const ordinary = items.filter(
+        (item) =>
+          line.itemIndices.includes(item.index) &&
+          !cropIds.has(item.index) &&
+          item.fontSize >= crop.fontSize * 0.94 &&
+          Math.abs(item.baseline - expected) < crop.fontSize * 0.5,
+      );
+      return ordinary.length
+        ? [{ line, baseline: median(ordinary.map((item) => item.baseline)) }]
+        : [];
+    });
+    const center = crop.box.x + crop.box.width / 2;
+    const distance = (line: LayoutLine) =>
+      Math.max(line.box.x - center, center - right(line.box), 0);
+    const anchor = candidates.sort((a, b) => {
+      const delta = Math.abs(a.baseline - expected) - Math.abs(b.baseline - expected);
+      return Math.abs(delta) > crop.fontSize * 0.05 ? delta : distance(a.line) - distance(b.line);
+    })[0];
+    return anchor ? [{ crop: { ...crop, baseline: anchor.baseline }, anchor: anchor.line }] : [];
+  });
+  const crops = anchored.map(({ crop }) => crop);
   const spaces = new Map(
     page.items.filter((item) => /^\s+$/.test(item.text)).map((item) => [item.index, item]),
   );
@@ -192,17 +235,23 @@ export function buildInlineRuns(page: PageGeometry, lines: LayoutLine[]): Inline
   const emitted = new Set<number>();
   let result: InlineRun[] = [];
   for (const line of lines) {
-    const lineItems = items.filter((item) => line.itemIndices.includes(item.index));
-    if (!lineItems.length) continue;
+    // Numerators can occupy a separate, earlier LayoutLine. Emit the whole
+    // expression on the surrounding prose baseline, never on that first glyph.
+    const lineItems = items.filter(
+      (item) => line.itemIndices.includes(item.index) && !cropFor.has(item.index),
+    );
+    const lineCrops = anchored.filter(({ anchor }) => anchor === line).map(({ crop }) => crop);
+    if (!lineItems.length && !lineCrops.length) continue;
     const font = localFont(lineItems);
     const baseline = median(baseItems(lineItems, font).map((item) => item.baseline));
-    const atoms = lineItems
-      .map((item) => ({ item, crop: cropFor.get(item.index) }))
-      .sort(
-        (a, b) =>
-          (a.crop?.box.x ?? a.item.box.x) - (b.crop?.box.x ?? b.item.box.x) ||
-          a.item.index - b.item.index,
-      );
+    const atoms = [
+      ...lineItems.map((item) => ({ item, crop: undefined as Crop | undefined })),
+      ...lineCrops.map((crop) => ({ item: crop.items[0]!, crop })),
+    ].sort(
+      (a, b) =>
+        (a.crop?.box.x ?? a.item.box.x) - (b.crop?.box.x ?? b.item.box.x) ||
+        a.item.index - b.item.index,
+    );
     const runs: InlineRun[] = [];
     let previousBox: Rect | undefined;
     let previousText = '';
@@ -244,6 +293,7 @@ export function buildInlineRuns(page: PageGeometry, lines: LayoutLine[]): Inline
           },
           fontSize: crop.fontSize,
           baseline: crop.baseline,
+          ...(crop.trimBelow !== undefined ? { trimBelow: crop.trimBelow } : {}),
         });
       } else {
         emitted.add(item.index);

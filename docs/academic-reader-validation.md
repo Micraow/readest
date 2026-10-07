@@ -9,7 +9,7 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
-## Structured inline content and source-order figures: academic-9 (in validation)
+## Structured inline content and source-order figures: academic-10 (in validation)
 
 Same-file native comparison exposed issues remaining in academic-8: an inline
 fraction became scrambled text, citation-based float movement reversed two
@@ -21,14 +21,30 @@ small visuals relative to source text, and keeps adjacent source-row plots toget
 Inline runs preserve explicit font styles and scripts; actual fraction bars bound
 local source crops with their complete numerator and denominator. Geometric
 overlap alone cannot turn scripts on adjacent prose rows into a fraction.
-The full source crop remains available in the image viewer. Parser `academic-9`
+The full source crop remains available in the image viewer. Parser `academic-10`
 invalidates earlier analysis without deleting it.
+
+The academic-9 native candidate was withheld: a numerator on an earlier physical
+line could place its entire fraction before the corresponding prose prefix, and
+small math glyphs could prevent a continued paragraph from joining around a float.
+The next iteration anchors fractions to ordinary text beside their division axis,
+uses prose runs for body-size comparisons, and keeps a display expression adjacent
+to its colon-ending introduction before deferred figures or notes. Styled lettered
+section headings no longer consume the first wrapped body line as a list.
+Inline-source completeness is now validated during analysis, independently of
+block ownership, so a complete block cannot hide missing rendered glyphs.
+
+Where a following source row touches an inline crop, rendering may remove its edge
+ink only after a full-width blank raster band below the lowest selected baseline.
+This preserves continuous descenders and leaves an inseparable source unchanged.
+The same rule applies in preview and zoom. Closing the image viewer immediately
+also cancels its initial label timer rather than scheduling work after dismissal.
 
 Synthetic regressions were observed failing before their fixes. Four local PDF
 copies pass source mapping, figure order, paragraph continuity, inline fraction,
 font metadata and cache round-trip assertions. Independent review also checked
 fraction crop closure and caption ownership. These are pre-build checks;
-native same-page comparison and final build results are still pending here.
+academic-10 native same-page comparison and final build results are still pending here.
 The academic-8 and UI-1 delivered artifacts remain separate historical versions.
 
 ## Continuous reading and local caption repair: academic-8 (2026-10-07)

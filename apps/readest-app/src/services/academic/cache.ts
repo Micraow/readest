@@ -40,6 +40,7 @@ const inlineRun = z.discriminatedUnion('kind', [
     source,
     fontSize: finite.positive(),
     baseline: finite,
+    trimBelow: finite.optional(),
   }),
 ]);
 const schema = z.object({
@@ -106,6 +107,7 @@ const schema = z.object({
       inlineRuns: z.array(inlineRun).optional(),
       listInlineRuns: z.array(z.array(inlineRun)).optional(),
       previewBox: rect.optional(),
+      trimBelow: finite.optional(),
       role: role.optional(),
       captions: z
         .array(
@@ -202,6 +204,8 @@ function validReferences(document: ScholarlyDocument): boolean {
             (box) =>
               box.width <= 0 ||
               box.height <= 0 ||
+              (run.trimBelow !== undefined &&
+                (run.trimBelow < box.y || run.trimBelow > box.y + box.height)) ||
               box.x < 0 ||
               box.y < 0 ||
               box.x + box.width > page.width + 0.01 ||

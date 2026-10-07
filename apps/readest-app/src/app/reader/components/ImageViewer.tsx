@@ -275,11 +275,12 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
   // Grab Focus of modal and set up initial zoom label timeout
   useEffect(() => {
     containerRef.current?.focus();
-    setTimeout(() => {
+    const initialLabelTimer = setTimeout(() => {
       hideZoomLabelAfterDelay();
     }, 0);
 
     return () => {
+      clearTimeout(initialLabelTimer);
       if (zoomLabelTimeoutRef.current) {
         clearTimeout(zoomLabelTimeoutRef.current);
       }

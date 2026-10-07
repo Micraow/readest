@@ -16,6 +16,7 @@ const source: InlineRun = {
   text: 'a / b',
   fontSize: 10,
   baseline: 100,
+  trimBelow: 104,
   source: { page: 1, boxes: [{ x: 10, y: 90, width: 30, height: 16 }], itemIndices: [1, 2] },
 };
 const renderRegion = vi.fn<AcademicPdfSession['renderRegion']>();
@@ -52,10 +53,11 @@ describe('InlineContent', () => {
     expect(screen.getByText('A selectable sentence')).toBeTruthy();
     await waitFor(() => expect(renderRegion).toHaveBeenCalled());
     expect(renderRegion.mock.calls[0]?.slice(0, 2)).toEqual([1, source.source.boxes[0]]);
+    expect(renderRegion.mock.calls[0]?.[5]).toBe(104);
     const button = screen.getByRole('button');
     expect(button.style.verticalAlign).toBe('-0.6em');
     fireEvent.click(button);
-    expect(onZoom).toHaveBeenCalledWith(source.source);
+    expect(onZoom).toHaveBeenCalledWith(source.source, 104);
   });
 
   it('renders text style and falls back to the original text for old blocks', () => {

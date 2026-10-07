@@ -7,7 +7,11 @@ import type { ScholarlyBlock, ScholarlyDocument, SourceSpan } from '@/services/a
 import { visualRoleLabel } from './labels';
 import InlineContent from './InlineContent';
 
-const inlineZoomBlock = (block: ScholarlyBlock, source: SourceSpan): ScholarlyBlock => ({
+const inlineZoomBlock = (
+  block: ScholarlyBlock,
+  source: SourceSpan,
+  trimBelow?: number,
+): ScholarlyBlock => ({
   ...block,
   type: 'visual-region',
   role: 'equation',
@@ -17,6 +21,7 @@ const inlineZoomBlock = (block: ScholarlyBlock, source: SourceSpan): ScholarlyBl
   previewBox: undefined,
   inlineRuns: undefined,
   listInlineRuns: undefined,
+  trimBelow,
 });
 
 function sourceVisualRows(blocks: ScholarlyBlock[]): ScholarlyBlock[][] {
@@ -157,7 +162,7 @@ function VisualRegion({
               session={session}
               fontSize={fontSize * 0.88}
               root={root}
-              onZoom={(source) => onZoom(inlineZoomBlock(block, source))}
+              onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
             />
           </figcaption>
         ))}
@@ -255,7 +260,7 @@ export default function ScholarlyReader({
               session={session}
               fontSize={fontSize}
               root={root}
-              onZoom={(source) => onZoom(inlineZoomBlock(block, source))}
+              onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
             />
           );
           if (block.type === 'visual-region') {
@@ -307,7 +312,7 @@ export default function ScholarlyReader({
                   session={session}
                   fontSize={fontSize}
                   root={root}
-                  onZoom={(source) => onZoom(inlineZoomBlock(block, source))}
+                  onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
                 />
               </li>
             ));

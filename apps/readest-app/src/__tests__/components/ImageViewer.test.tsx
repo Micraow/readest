@@ -28,6 +28,21 @@ afterEach(cleanup);
 const gridInsets = { top: 0, right: 0, bottom: 0, left: 0 };
 
 describe('ImageViewer', () => {
+  it('cancels the initial zoom-label timer when closed immediately', () => {
+    vi.useFakeTimers();
+    try {
+      const schedule = vi.spyOn(globalThis, 'setTimeout');
+      const view = render(
+        <ImageViewer src='blob:test-image' onClose={vi.fn()} gridInsets={gridInsets} />,
+      );
+      view.unmount();
+      act(() => vi.runOnlyPendingTimers());
+      expect(schedule.mock.calls.some((args) => args[1] === 2000)).toBe(false);
+      schedule.mockRestore();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
   it('suppresses the native image callout on the zoomed image', () => {
     // The WebView's native long-press image callout collides with the
     // viewer's own pinch/pan handlers on Android and freezes the app. The

@@ -152,6 +152,7 @@ export default function AcademicReaderDialog({
         canvas,
         Math.min(2048, Math.max(1200, box.width * 3)),
         controller.signal,
+        block.trimBelow,
       );
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
       if (controller.signal.aborted) return;
