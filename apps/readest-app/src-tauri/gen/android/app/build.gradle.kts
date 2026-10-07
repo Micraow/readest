@@ -15,10 +15,17 @@ val tauriProperties = Properties().apply {
     }
 }
 
+// Only the separate academic CI lane opts in. Keep the Java/JNI namespace
+// unchanged; applicationId gives this APK its own install and data directory.
+val academicBuild = providers.gradleProperty("academicBuild").orNull == "true"
+
 android {
     compileSdk = 36
     namespace = "com.bilingify.readest"
     val keystorePropertiesFile = rootProject.file("keystore.properties")
+    check(!academicBuild || !keystorePropertiesFile.exists()) {
+        "Academic CI exports unsigned release APKs; remove keystore.properties"
+    }
     val keystoreProperties = Properties()
     if (keystorePropertiesFile.exists()) {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
@@ -43,9 +50,12 @@ android {
                         ?.substringAfter("=")?.trim()?.trim('"', '\'')?.takeIf { it.isNotEmpty() }
                 }
             ?: ""
-        applicationId = "com.bilingify.readest"
+        applicationId = if (academicBuild) "com.bilingify.readest.academic" else "com.bilingify.readest"
         minSdk = 26
         targetSdk = 36
+        if (academicBuild) {
+            ndk { abiFilters += "arm64-v8a" }
+        }
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
         val storeFlavor = project.findProperty("storeFlavor")?.toString() ?: "foss"
@@ -60,6 +70,16 @@ android {
         } else {
             "com.google.android.gms.car.application"
         }
+    }
+    if (academicBuild) {
+        // Prepared from the tracked manifest by scripts/academic-android-ci.py.
+        // It keeps file import but does not claim production OAuth/App Links.
+        val academicManifest = file("src/academic/AndroidManifest.xml")
+        check(academicManifest.isFile) { "Run academic-android-ci.py prepare-project first" }
+        sourceSets.getByName("main").manifest.srcFile(academicManifest)
+        buildToolsVersion = "36.0.0"
+        ndkVersion = "28.2.13676358"
+        packaging.jniLibs.useLegacyPackaging = true
     }
     signingConfigs {
         if (keystorePropertiesFile.exists()) {

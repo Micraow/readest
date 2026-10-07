@@ -42,6 +42,7 @@ jobs:
   # PRs that don't touch the Rust backend. The job still runs and reports
   # success so it stays green as a required check.
   rust_lint:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[build-academic-android]')
     runs-on: ubuntu-latest
     # pull-requests: read lets dorny/paths-filter list a PR's changed files
     # via the REST API (the top-level grant is contents: read only).
@@ -102,6 +103,7 @@ jobs:
   # libs by the release workflow. Before this job it had no PR-time CI at
   # all. Paths-filtered like rust_lint so most PRs skip the toolchain install.
   koplugin_rust_lint:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[build-academic-android]')
     runs-on: ubuntu-latest
     # pull-requests: read lets dorny/paths-filter list a PR's changed files
     # via the REST API (the top-level grant is contents: read only).
@@ -146,6 +148,7 @@ jobs:
         run: cargo test
 
   build_web_app:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[build-academic-android]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -217,6 +220,7 @@ jobs:
   # Playwright and run only on shard 1; koplugin + browser-extension tests
   # moved to the test_extensions job.
   test_web_app:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[build-academic-android]')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -273,6 +277,7 @@ jobs:
   # (and the ~45s LuaJIT/busted install they need) only run when the koplugin
   # sources changed, so most PRs skip that cost entirely.
   test_extensions:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[build-academic-android]')
     runs-on: ubuntu-latest
     # pull-requests: read lets dorny/paths-filter list a PR's changed files
     # via the REST API (the top-level grant is contents: read only).
@@ -351,6 +356,7 @@ jobs:
   # changed. Frontend-only PRs are covered by the web build/test jobs. The job
   # still runs and reports success so it stays green as a required check.
   build_tauri_app:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[build-academic-android]')
     runs-on: ubuntu-latest
     # pull-requests: read lets dorny/paths-filter list a PR's changed files
     # via the REST API (the top-level grant is contents: read only).

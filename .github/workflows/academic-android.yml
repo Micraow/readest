@@ -1,0 +1,169 @@
+name: Academic Android unsigned build
+
+# A deliberate marker is the connector-compatible equivalent of Run workflow.
+# Ordinary changes do not start a native build or publish a release.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    # Every explicit marker push must reach this job: the ordinary heavy CI
+    # lanes defer to it for that one push. The job-level gate skips all others.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: academic-android-unsigned
+  cancel-in-progress: false
+
+jobs:
+  android:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[build-academic-android]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 105
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_INCREMENTAL: '0'
+      READEST_BUILD_SOURCEMAPS: '0'
+      NEXT_PUBLIC_DISABLE_UPDATER: '1'
+      ORG_GRADLE_PROJECT_academicBuild: 'true'
+      RAYON_NUM_THREADS: '1'
+      CIRCLE_NODE_TOTAL: '2'
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Initialize build submodules
+        run: |
+          git submodule update --init --recursive -- \
+            packages/foliate-js packages/tauri packages/simplecc-wasm packages/js-mdict \
+            apps/readest-app/src-tauri/plugins/tauri-plugin-turso \
+            apps/readest-app/src-tauri/plugins/tauri-plugin-webview-upgrade
+      - name: Check CI identity and transfer helpers
+        run: |
+          python3 scripts/test-academic-linux-ci.py
+          python3 scripts/test-academic-android-ci.py
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 11.1.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: 24.19.0
+          cache: pnpm
+      - name: Install locked JavaScript dependencies and PDF assets
+        run: |
+          pnpm install --frozen-lockfile --prefer-offline
+          pnpm --filter @readest/readest-app setup-vendors
+      - name: Check academic code and types
+        run: |
+          pnpm --filter @readest/readest-app exec vitest run src/__tests__/services/academic src/__tests__/components/academic src/components/academic/__tests__ --maxWorkers=2
+          pnpm --filter @readest/readest-app lint
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: zulu
+          java-version: '17'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
+        with:
+          packages: platform-tools
+      - name: Install pinned Android and Rust tools
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> "$GITHUB_ENV"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential pkg-config perl libssl-dev
+          rustup toolchain install 1.99.0 --profile minimal --target aarch64-linux-android
+          rustup default 1.99.0
+      - uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
+        with:
+          key: academic-android-arm64-1.99.0-${{ hashFiles('Cargo.lock') }}
+          cache-on-failure: true
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: academic-android-gradle-8.14.3-kotlin-2.2.10-${{ hashFiles('apps/readest-app/src-tauri/gen/android/app/build.gradle.kts', 'Cargo.lock') }}
+      - name: Prepare isolated app identity and Android scaffolding
+        run: python3 scripts/academic-android-ci.py prepare-project
+      - name: Check Android dependency and Kotlin compatibility before Rust compilation
+        run: python3 scripts/academic-android-ci.py preflight
+      - name: Build production frontend with in-app updates disabled
+        env:
+          NODE_ENV: production
+        run: |
+          test "$NEXT_PUBLIC_DISABLE_UPDATER" = 1
+          pnpm --filter @readest/readest-app build
+      - name: Build unsigned arm64 release APK
+        working-directory: apps/readest-app
+        run: |
+          test ! -e src-tauri/gen/android/keystore.properties
+          pnpm tauri android build --apk --target aarch64 --ci --config '{"build":{"beforeBuildCommand":""}}' -- --locked
+      - name: Inspect and export unsigned candidate
+        run: python3 scripts/academic-android-ci.py export-artifact
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: academic-android-manifest
+          path: academic-android-artifact/*.json
+          retention-days: 7
+          if-no-files-found: error
+      # Each 16 MiB part ZIP stays below the consumer's 32 MiB download limit.
+      # Concatenate in transfer.json order, then verify the whole APK SHA-256.
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: academic-android-part00
+          path: academic-android-artifact/apk.part00
+          compression-level: 0
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part01') != ''
+        with:
+          name: academic-android-part01
+          path: academic-android-artifact/apk.part01
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part02') != ''
+        with:
+          name: academic-android-part02
+          path: academic-android-artifact/apk.part02
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part03') != ''
+        with:
+          name: academic-android-part03
+          path: academic-android-artifact/apk.part03
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part04') != ''
+        with:
+          name: academic-android-part04
+          path: academic-android-artifact/apk.part04
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part05') != ''
+        with:
+          name: academic-android-part05
+          path: academic-android-artifact/apk.part05
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part06') != ''
+        with:
+          name: academic-android-part06
+          path: academic-android-artifact/apk.part06
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: hashFiles('academic-android-artifact/apk.part07') != ''
+        with:
+          name: academic-android-part07
+          path: academic-android-artifact/apk.part07
+          compression-level: 0
+          retention-days: 7
+      - name: Gate candidate on source and APK validation
+        run: python3 scripts/academic-android-ci.py verify-candidate
