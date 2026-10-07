@@ -3,6 +3,12 @@ name: Build with Nix
 on:
   push:
     branches: [main]
+    # Documentation and acceptance-build plumbing do not change the Nix app.
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
+      - 'scripts/academic-linux-ci.py'
+      - 'scripts/test-academic-linux-ci.py'
 concurrency:
   group: nix-${{ github.ref }}
   cancel-in-progress: true

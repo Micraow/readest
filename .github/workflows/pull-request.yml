@@ -2,6 +2,13 @@ name: PR checks
 on:
   push:
     branches: [main]
+    # Keep normal source checks; avoid repeating the full web build/test matrix
+    # for documentation and the independent manual Linux acceptance workflow.
+    paths-ignore:
+      - '**/*.md'
+      - '.github/**'
+      - 'scripts/academic-linux-ci.py'
+      - 'scripts/test-academic-linux-ci.py'
   pull_request:
     branches: [main]
 permissions:
