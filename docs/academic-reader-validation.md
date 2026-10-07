@@ -26,7 +26,7 @@ The aggregate completed with **13,191 passed, 16 skipped**, **1,126 test files
 passed, 4 skipped**, using the same explicit external-network test exclusion as
 academic-11. TypeScript/Biome and 93 focused font, rendering and cache tests pass.
 
-There is no academic-12 native artifact yet. Local production builds exhausted
+Local production builds exhausted
 the available memory budget: Turbopack with 2048/1536 MiB V8 heaps exited 137;
 Webpack hit its 2048 MiB V8 limit, then received SIGKILL with a 2560 MiB heap.
 Next's optional memory optimizations/build worker and the supported escalated
@@ -35,11 +35,28 @@ experiment was reverted; no type checks were disabled and no system settings
 were changed. Earlier successful builds exceeded four GiB RSS, so this is not
 reported as a verified fixed per-process limit.
 
-The user authorized one on-demand Linux GitHub Actions build after these local
-failures. That route will use pinned dependencies and bounded caches, with no
-release publishing or platform matrix. Its artifact must still pass actual local
-PDF reading and font checks before delivery. The academic-11 package and its
-acceptance below remain immutable and available while this work continues.
+The on-demand Linux Actions recovery now has a successful
+[build run](https://github.com/Micraow/readest/actions/runs/37620562886) for
+[`0b786167`](https://github.com/Micraow/readest/commit/0b786167a2bf5301f6d9bdd8fdaaac8ee131a9e8).
+The first run compiled successfully but stopped at the source-integrity gate:
+the pinned Tauri generator deletes nine tracked Turso-generated command files and
+rewrites two generated documentation/schema files. The corrected gate accepts
+only those exact generated paths/operations while retaining their full diff;
+application source, custom permissions, lockfiles and gitlink revisions remain
+protected. Compiled candidates are preserved before the final gate so diagnostic
+failures cannot discard the completed binary.
+
+The successful executable was downloaded and reconstructed from four checksummed
+parts: **226,680,688 bytes**, SHA-256
+`8ab895f012adb3e0f3d1dba89125e1e11fd24c3f852e72910f12d801e3980b66`.
+All **234 CEF runtime files** match the pinned distribution used for the build.
+Rust 1.99.0, Node 24.19.0 and pnpm 11.1.1 were verified in provenance. This is a
+single Linux job with no release publishing; documentation/workflow checkpoints
+now avoid repeating the unrelated Nix and web-test builds.
+
+Actual desktop font and PDF reading acceptance is still in progress. CI success
+does not establish reading quality. The academic-11 package and its acceptance
+below remain immutable and available while this work continues.
 
 ## Structured inline content and source-order figures: academic-11 (2026-10-07)
 
