@@ -9,7 +9,7 @@ Before the quality correction, the implementation source checkpoint was
 Git tree `a67bb2aa207516af494f43c5a9ce0a38430ef4db`.
 Checks below distinguish code/build evidence from real-account/device acceptance.
 
-## Confirmed monospaced text: academic-12 (in validation)
+## Confirmed monospaced text: academic-12 (2026-10-07)
 
 Same-document comparison identified typewriter-style parameter names that were
 still rendered in the body font. Confirmed CM-Super fixed-width text faces now
@@ -54,9 +54,26 @@ Rust 1.99.0, Node 24.19.0 and pnpm 11.1.1 were verified in provenance. This is a
 single Linux job with no release publishing; documentation/workflow checkpoints
 now avoid repeating the unrelated Nix and web-test builds.
 
-Actual desktop font and PDF reading acceptance is still in progress. CI success
-does not establish reading quality. The academic-11 package and its acceptance
-below remain immutable and available while this work continues.
+Actual desktop acceptance passed using the downloaded CI executable in the
+independent portable package. The supplied single-column paper visibly retains
+its typewriter parameter runs in both wide and 527px windows while its body font,
+bold paragraph leads and paragraph boundaries remain intact. Three-line display
+math and the complete 17-line algorithm remain readable; high-resolution zoom,
+closing back to the same position, scrolling and reopening the cached reading
+view pass. HPCC summation glyphs/fractions and MP-RDMA's formula, footnote and
+figure-adjacent sentence order pass the same-file native regression check.
+All **22 older cache files** retain their hashes/mtimes; three fresh academic-12
+analyses were generated. Five native screenshots preserve these observations.
+
+The new versioned portable package was saved successfully after all **238 payload
+files** were verified: **205,809,545 bytes**, SHA-256
+`eb39c73f4a467c6d2b583d8de0862f548ad29720cb2e0dfa9399295da3ec8f6c`.
+The upload receipt and local post-upload checksum were checked; no remote
+read-back is claimed. Previous accepted packages remain unchanged.
+
+This phase improves confirmed source font styles. It does not add inferred
+citation/footnote navigation or claim complete typography parity with the
+comparison application. The existing local-only parsing scope is unchanged.
 
 ## Structured inline content and source-order figures: academic-11 (2026-10-07)
 
