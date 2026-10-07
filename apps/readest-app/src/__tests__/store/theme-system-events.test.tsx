@@ -92,7 +92,10 @@ describe.each(['Linux', 'Android'] as const)('%s system-theme event chain', (pla
     expect(useThemeStore.getState().systemIsDarkMode).toBe(true);
     expect(localStorage.getItem('systemIsDarkMode')).toBe('true');
     expect(document.documentElement.getAttribute('data-theme')).toBe('default-dark');
-    expect(result.current).toEqual({ filter: 'invert(100%) hue-rotate(180deg)', mixBlendMode: 'screen' });
+    expect(result.current).toEqual({
+      filter: 'invert(100%) hue-rotate(180deg)',
+      mixBlendMode: 'screen',
+    });
     act(() => media.change(false));
     expect(useThemeStore.getState().systemIsDarkMode).toBe(false);
     expect(localStorage.getItem('systemIsDarkMode')).toBe('false');
