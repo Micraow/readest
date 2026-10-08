@@ -1,0 +1,128 @@
+{
+  "scope": "One bounded official Granite-Docling VLM comparison on the same four known diagnostic pages. No prompt tuning or private input.",
+  "image": "ghcr.io/docling-project/docling-serve-cpu:v1.30.0@sha256:d822fc5d69272b5e614fd370ed835a6b5f1add34674968527f1e598a97260b48",
+  "sources": [
+    {
+      "key": "ForestColl-v4",
+      "title": "ForestColl: Throughput-Optimal Collective Communications on Heterogeneous Network Fabrics",
+      "url": "https://arxiv.org/pdf/2402.06787v4",
+      "sha256": "843cc72a56f3c9425d012d4be4cb70a94372d11a033c4edb0491b120d83a5288",
+      "pages": [
+        7
+      ]
+    },
+    {
+      "key": "Gottesman-v1",
+      "title": "An Introduction to Quantum Error Correction and Fault-Tolerant Quantum Computation",
+      "url": "https://arxiv.org/pdf/0904.2557v1",
+      "sha256": "2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29",
+      "pages": [
+        3,
+        9
+      ]
+    },
+    {
+      "key": "Uno-v1",
+      "title": "Uno: A One-Stop Solution for Inter- and Intra-Datacenter Congestion Control and Reliable Connectivity",
+      "url": "https://arxiv.org/pdf/2510.15802v1",
+      "sha256": "a3daa0a799f5df7a56c7cc6e33286134fa16c3179e7b1a2f8822fdc3bec15dee",
+      "pages": [
+        1
+      ]
+    }
+  ],
+  "questions": [
+    "Body versus caption roles and contamination",
+    "Table structure and caption association",
+    "Reading order including cross-column continuation and floats",
+    "Missing or duplicated source text",
+    "Formula and figure visual completeness",
+    "Body text that is genuinely usable as reflow"
+  ],
+  "limits": "2 CPU, 6 GiB, batch 1, 300 seconds per page, whole CI job 25 minutes. Official prompt and 8192 new-token limit. Truncation/timeout are explicit failures, not omissions or semantic passes.",
+  "model": {
+    "repo": "ibm-granite/granite-docling-258M",
+    "revision": "982fe3b40f2fa73c365bdb1bcacf6c81b7184bfe",
+    "license": "apache-2.0",
+    "files": [
+      {
+        "path": "README.md",
+        "size": 21039,
+        "sha256": null,
+        "gitBlobSha1": "9ca91f891770e0e507bee3f299c01a9d72ae1775"
+      },
+      {
+        "path": "added_tokens.json",
+        "size": 35,
+        "sha256": null,
+        "gitBlobSha1": "2895b6710d6bb8d5e7cc5d1137d79eff8ad06df2"
+      },
+      {
+        "path": "chat_template.jinja",
+        "size": 588,
+        "sha256": null,
+        "gitBlobSha1": "3b66e93d4b31ff6ba4fbea744407c43bad179212"
+      },
+      {
+        "path": "config.json",
+        "size": 1641,
+        "sha256": null,
+        "gitBlobSha1": "6a652f5b56550a9291c6a6bb019ade3744a8c8bb"
+      },
+      {
+        "path": "generation_config.json",
+        "size": 169,
+        "sha256": null,
+        "gitBlobSha1": "172b1f940804da1f6d8b8c2a807e0f3163122211"
+      },
+      {
+        "path": "merges.txt",
+        "size": 916646,
+        "sha256": null,
+        "gitBlobSha1": "354558edcdbd64ca7abd407b8be3d5d09d39d781"
+      },
+      {
+        "path": "model.safetensors",
+        "size": 515093104,
+        "sha256": "1cdad234deb1cde18ee6a586f849057f19851daf1fedce2e40aff791dbe46f61",
+        "gitBlobSha1": "d27772b891988931a1a43a3bb962c6f91c69b371"
+      },
+      {
+        "path": "preprocessor_config.json",
+        "size": 486,
+        "sha256": null,
+        "gitBlobSha1": "893236748032d4bf033823d6a4a0d62b78b6bc0e"
+      },
+      {
+        "path": "processor_config.json",
+        "size": 68,
+        "sha256": null,
+        "gitBlobSha1": "b3b1deadd0e6e18c2070fdb0c29074892ea58ffe"
+      },
+      {
+        "path": "special_tokens_map.json",
+        "size": 812,
+        "sha256": null,
+        "gitBlobSha1": "e8e87b5f11beb05b0c8205811fc65d27d895ccc0"
+      },
+      {
+        "path": "tokenizer.json",
+        "size": 7153134,
+        "sha256": null,
+        "gitBlobSha1": "d3eef61ed03b4b5f9a18bbd7c330a0ef7e5de02e"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "size": 17774,
+        "sha256": null,
+        "gitBlobSha1": "1b20bc7d876f053bf0bc1ef0fb25ef24e1ef6a61"
+      },
+      {
+        "path": "vocab.json",
+        "size": 1612698,
+        "sha256": null,
+        "gitBlobSha1": "07fe068601babcefc22b1f9ce254ed0eede3d7fd"
+      }
+    ]
+  }
+}

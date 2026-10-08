@@ -1,0 +1,9 @@
+# Bounded Granite Docling comparison
+
+One unchanged official Granite-Docling-258M preset and prompt, four previously inspected public pages, no private input. This is an experiment, not product acceptance or a commitment to desktop preprocessing as the final product architecture.
+
+The model revision and every file digest are fixed in manifest.json. Only official IBM Hugging Face model files are downloaded before conversion. The official CPU container is fixed to the same digest as the standard-pipeline study. No account or remote inference endpoint is used. Conversion has no network, a read-only root/input mount, 2 CPU and 6 GiB RAM. Each page runs once in a separate process with a 300-second ceiling; the job has a 25-minute ceiling. Chromium is installed before inference; the runner reserves the final five minutes for rendering/artifact retention and records budget_exhausted for any page that cannot receive its full five-minute allowance. There is no prompt retry, sampling search, weaker replacement page or silent truncation acceptance.
+
+The official preset's 8192-new-token limit is retained. Raw DocTags, reported token count and stop reason are saved. Length-limited/unknown/incomplete generation fails explicitly. Timeout is an execution failure, not a count of omitted content. Float32/eager CPU inference avoids quantization and temporary executable compilation. Both source and rendered structure must be inspected for missing content, hallucinations, mathematical meaning, order, table relationships and visual source preservation. A successful conversion status and loaded images do not establish fidelity.
+
+Source references: https://huggingface.co/ibm-granite/granite-docling-258M (Apache 2.0), https://docling-project.github.io/docling/usage/vision_models/ . The image's real runtime versions and model hashes are included in outputs. No model/runtime dependencies or source PDFs are returned as artifacts.

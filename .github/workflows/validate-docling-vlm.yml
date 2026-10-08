@@ -1,0 +1,83 @@
+name: Granite Docling bounded public VLM comparison
+on:
+  push:
+    branches: ['validate/docling-vlm-20261008']
+    paths: ['validation/docling-vlm/**', '.github/workflows/validate-docling-vlm.yml']
+permissions:
+  contents: read
+concurrency:
+  group: docling-vlm-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  four-pages:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+        working-directory: validation/docling-vlm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate resource and source limits
+        run: |
+          python3 - <<'PY'
+          import json, shutil, time
+          from pathlib import Path
+          manifest=json.loads(Path('manifest.json').read_text())
+          assert sum(len(s['pages']) for s in manifest['sources']) == 4
+          free=shutil.disk_usage('.').free
+          print('Available disk bytes:', free)
+          assert free >= 10*1024**3, 'Need 10 GiB free for official image and evidence'
+          Path('evidence').mkdir()
+          Path('budget.json').write_text(json.dumps({'computeDeadlineEpoch': time.time()+19*60, 'reservedForRenderAndArtifactSeconds': 360}))
+          PY
+      - name: Download only hash-pinned public PDFs
+        timeout-minutes: 4
+        run: python3 download.py
+      - name: Download only fixed official Granite model
+        timeout-minutes: 5
+        run: python3 download_model.py
+      - name: Pull official complete CPU release
+        timeout-minutes: 8
+        run: |
+          image=$(python3 -c "import json; print(json.load(open('manifest.json'))['image'])")
+          docker pull "$image"
+          docker image inspect "$image" --format '{{json .}}' > evidence/container-inspect.json
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: 24
+      - name: Prepare Chromium before consuming inference budget
+        timeout-minutes: 5
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Convert four pages with no network or credentials
+        timeout-minutes: 21
+        run: |
+          set -euo pipefail
+          image=$(python3 -c "import json; print(json.load(open('manifest.json'))['image'])")
+          trap 'docker rm -f docling-vlm-eval >/dev/null 2>&1 || true' EXIT
+          timeout --kill-after=30s 20m docker run --rm --name docling-vlm-eval \
+            --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 6g --memory-swap 6g --pids-limit 256 \
+            --user "$(id -u):$(id -g)" --tmpfs /tmp:rw,size=512m \
+            --mount "type=bind,src=$PWD,dst=/study,readonly" \
+            --mount "type=bind,src=$PWD/evidence,dst=/output" \
+            -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 -e HF_HUB_DISABLE_TELEMETRY=1 \
+            -e DO_NOT_TRACK=1 -e OMP_NUM_THREADS=2 -e PYTHONDONTWRITEBYTECODE=1 \
+            --entrypoint python "$image" /study/run_all.py 2>&1 | tee evidence/conversion.log
+      - name: Render actual exported HTML in Chromium
+        if: always()
+        timeout-minutes: 5
+        run: |
+          node render.mjs
+      - name: Preserve only conversion evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docling-vlm-four-page-evidence
+          path: validation/docling-vlm/evidence/
+          if-no-files-found: warn
+          retention-days: 7

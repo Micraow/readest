@@ -1,0 +1,12 @@
+{
+  "name": "readest-docling-vlm-diagnostic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "pngjs": "7.0.0"
+  }
+}
