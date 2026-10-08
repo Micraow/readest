@@ -1,0 +1,19 @@
+{
+  "hypothesis": "Native source lines establish columns, and same-column formula-number/caption constraints plus physical paint containment improve safe reading relationships over unstructured k2 wrapping on genuinely new pages.",
+  "immutable_components": "Same PP-DocLayout-S revision/confidence0.5, same k2 commit and word_spacing -0.2/fidelity switches, RGB288dpi source and390px output; no model training.",
+  "columns": "Two median-cluster centers of native prose-like line boxes; each >=5 lines, center gap>.25 page width and median gutter>.015 width, else one column. English prose signal only: this round does not establish Chinese generality.",
+  "number_relation": "Generic numeric native line; only formula detector candidates in same column, vertical overlap>=half token height or center distance<=.6 median font; score dy+.1 horizontal gap; runner-up gap>.5 median font else refuse.",
+  "caption_relation": "Same-column detected image/table/chart, horizontal overlap, vertical gap<=3 median fonts, unique nearest with margin>1font; otherwise retain separate original regions.",
+  "source_ownership": "Close proposals over complete native glyph bounds, preserve unknown native parents, add physical paint bounds for remaining ink, merge overlapping parents. No tail residual panel. Any unknown ink or ambiguous spanning/column overlap causes original-page fallback.",
+  "reading_order": "Spatial bands delimited by nonoverlapping spanning objects; within each band left column then right, top-down. This is a strong fixed geometric proposal, not author-order truth; independent visual checking required.",
+  "reflow": "Only pure detector text classes with no uncertain parent and complete single source-map ownership enter unchanged k2. Original protected objects and full-page fallback stay in denominators.",
+  "stop": "One pass on the two preregistered new pages. No source/output-informed rule changes; record actual missed candidates, erroneous accepted links, order and readable-body coverage. Any unsupported case stays failed.",
+  "limits": {
+    "cpus": 1,
+    "rss_stop_kib": 983040,
+    "composition_address_space_bytes": 1073741824,
+    "per_page_seconds": 60,
+    "disk_bytes": 1073741824
+  },
+  "page_furniture": "Pure detected header/footer/number in outer10% top/bottom is placed before/after all body columns; footnotes stay in their source column. Added during code review before any new input materialization."
+}

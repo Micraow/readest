@@ -1,0 +1,12 @@
+{
+  "frozen_at_utc": "2026-10-08T23:45:09.463888+00:00",
+  "files": {
+    "code/monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "code/compose.py": "5eee314e9c70f4373f9f4320b630cab5dacc3fc08208e722c042e1877df00f2a",
+    "code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "code/detect.py": "af6926a87e47862ff2b44411f362548c04640832f5fc6e5afb595031d05c12af",
+    "PIPELINE-FREEZE.json": "658223399d4bbc8204faa483e65ab2b4dd291801fb259f77d948271ba81469bc",
+    "SELECTION-FREEZE.json": "f15812e79892428fea9bd8ff14e287235246d797b4eb1eee05c57ba69a0d1d0d"
+  },
+  "pre_input_review_amendment_utc": "2026-10-08T23:45:47.674846+00:00"
+}

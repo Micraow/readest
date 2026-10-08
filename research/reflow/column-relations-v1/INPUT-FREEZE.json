@@ -1,0 +1,21 @@
+{
+  "inputs": [
+    {
+      "key": "RoFormer-v5-p04",
+      "url": "https://arxiv.org/pdf/2104.09864v5",
+      "page_1based": 4,
+      "sha256": "e9a481fbe1c8a20b7b1fa566b13102a1896c7829fa9a8b4c80528452a5ddaf79",
+      "bytes": 599289,
+      "pages": 14
+    },
+    {
+      "key": "ConvNeXt-v2-p03",
+      "url": "https://arxiv.org/pdf/2201.03545v2",
+      "page_1based": 3,
+      "sha256": "1fde2340370d0eb8045bda97fc94da7adb2a7abe8e6ded1a473d22475b945e1a",
+      "bytes": 751927,
+      "pages": 15
+    }
+  ],
+  "note": "Source pages materialized only after fixed pipeline source hash"
+}
