@@ -1,0 +1,57 @@
+{
+  "scope": "GROBID 0.9.1 CRF-only structure baseline. Parse ALL pages of three public works; manually audit four diagnostic pages plus page 1 headers and adjacent-page continuation. Not a full-DL benchmark or Readest integration.",
+  "image": "grobid/grobid:0.9.1-crf@sha256:eb306e6d494f6f7e89b35bbaf3b4925afd58c6a5638c775f2a1c35bfd3c5db0d",
+  "sources": [
+    {
+      "key": "ForestColl-v4",
+      "title": "ForestColl: Throughput-Optimal Collective Communications on Heterogeneous Network Fabrics",
+      "url": "https://arxiv.org/pdf/2402.06787v4",
+      "sha256": "843cc72a56f3c9425d012d4be4cb70a94372d11a033c4edb0491b120d83a5288",
+      "pages": [
+        7
+      ]
+    },
+    {
+      "key": "Gottesman-v1",
+      "title": "An Introduction to Quantum Error Correction and Fault-Tolerant Quantum Computation",
+      "url": "https://arxiv.org/pdf/0904.2557v1",
+      "sha256": "2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29",
+      "pages": [
+        3,
+        9
+      ]
+    },
+    {
+      "key": "Uno-v1",
+      "title": "Uno: A One-Stop Solution for Inter- and Intra-Datacenter Congestion Control and Reliable Connectivity",
+      "url": "https://arxiv.org/pdf/2510.15802v1",
+      "sha256": "a3daa0a799f5df7a56c7cc6e33286134fa16c3179e7b1a2f8822fdc3bec15dee",
+      "pages": [
+        1
+      ]
+    }
+  ],
+  "questions": [
+    "Body versus caption roles and contamination",
+    "Table structure and caption association",
+    "Reading order including cross-column continuation and floats",
+    "Missing or duplicated source text",
+    "Formula and figure visual completeness",
+    "Body text that is genuinely usable as reflow"
+  ],
+  "limits": "Structure proposals only. TEI formula strings do NOT preserve mathematical layout. Native PyMuPDF words/chars and original PDFs remain separate evidence, not proof of visible glyph or paint completeness. No OCR, no private PDFs, no external calls during parsing, all consolidation explicitly off, no per-paper rules.",
+  "imageMetadataUrl": "https://hub.docker.com/v2/repositories/grobid/grobid/tags/0.9.1-crf",
+  "documentation": [
+    "https://grobid.readthedocs.io/en/latest/Grobid-docker/",
+    "https://grobid.readthedocs.io/en/latest/Coordinates-in-PDF/",
+    "https://github.com/grobidOrg/grobid/blob/0.9.1/LICENSE",
+    "https://github.com/kermitt2/pdfalto"
+  ],
+  "resources": {
+    "cpu": 2,
+    "containerMemoryGiB": 6,
+    "jobTimeoutMinutes": 20,
+    "parseTimeoutSecondsPerDocument": 180,
+    "concurrency": 1
+  }
+}

@@ -1,0 +1,86 @@
+name: GROBID CRF offline public structure baseline
+on:
+  push:
+    branches: ['validate/grobid-public-20261008']
+    paths: ['validation/grobid-public/**', '.github/workflows/validate-grobid-public.yml']
+permissions:
+  contents: read
+concurrency:
+  group: grobid-public-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  structure-baseline:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: validation/grobid-public
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check scope, disk and evidence tests
+        run: |
+          python3 -m unittest -v test_analyze.py
+          python3 - <<'PY'
+          import json, shutil
+          from pathlib import Path
+          manifest = json.loads(Path('manifest.json').read_text())
+          assert len(manifest['sources']) == 3
+          assert sum(len(s['pages']) for s in manifest['sources']) == 4
+          assert shutil.disk_usage('.').free >= 5 * 1024**3, 'Need 5 GiB free'
+          Path('evidence').mkdir()
+          shutil.copy('manifest.json', 'evidence/manifest.json')
+          shutil.copy('image-metadata.json', 'evidence/image-metadata.json')
+          PY
+      - name: Download only hash-pinned public PDFs and analysis dependency
+        timeout-minutes: 3
+        run: |
+          python3 download.py
+          python3 -m pip install --disable-pip-version-check --only-binary=:all: PyMuPDF==1.26.6
+      - name: Pull official CRF image
+        timeout-minutes: 5
+        run: |
+          image=$(python3 -c "import json; print(json.load(open('manifest.json'))['image'])")
+          docker pull --platform linux/amd64 "$image"
+          docker image inspect "$image" --format '{{json .}}' > evidence/container-inspect.json
+      - name: Parse all three PDFs with external networking disabled
+        timeout-minutes: 9
+        run: |
+          set -euo pipefail
+          image=$(python3 -c "import json; print(json.load(open('manifest.json'))['image'])")
+          stats_pid=''
+          cleanup() {
+            if [[ -n "$stats_pid" ]]; then kill "$stats_pid" 2>/dev/null || true; fi
+            docker logs grobid-public-eval > evidence/service.log 2>&1 || true
+            docker inspect grobid-public-eval > evidence/container-final.json 2>/dev/null || true
+            docker rm -f grobid-public-eval >/dev/null 2>&1 || true
+            sudo chown -R "$(id -u):$(id -g)" evidence
+          }
+          trap cleanup EXIT
+          docker run -d --name grobid-public-eval --platform linux/amd64 \
+            --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 6g --memory-swap 6g --pids-limit 256 --ulimit core=0 \
+            --tmpfs /tmp:rw,size=512m --tmpfs /opt/grobid/grobid-home/tmp:rw,size=512m \
+            --tmpfs /opt/grobid/logs:rw,size=32m \
+            -e JAVA_TOOL_OPTIONS='-Xmx3g -XX:ActiveProcessorCount=2' "$image"
+          pid=$(docker inspect --format '{{.State.Pid}}' grobid-public-eval)
+          (while true; do date -u +%FT%TZ; docker stats --no-stream --format '{{json .}}' grobid-public-eval; sleep 2; done) > evidence/resource-samples.log 2>&1 &
+          stats_pid=$!
+          # Only the network namespace is entered; host Python reads fixed public input files.
+          # No external route exists in this namespace, and no GitHub credentials are forwarded.
+          sudo timeout --kill-after=15s 8m nsenter --target "$pid" --net \
+            env -i PATH=/usr/bin:/bin python3 "$PWD/request.py" | tee evidence/request.log
+      - name: Build independent native evidence and source overlays
+        if: always()
+        timeout-minutes: 2
+        run: python3 analyze.py
+      - name: Preserve only public diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: grobid-public-structure-evidence
+          path: validation/grobid-public/evidence/
+          if-no-files-found: warn
+          retention-days: 7
