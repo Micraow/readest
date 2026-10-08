@@ -10,7 +10,8 @@ import time
 import traceback
 
 from PIL import ImageDraw
-from docling.datamodel.base_models import InputFormat
+from docling.datamodel.base_models import InputFormat, ConversionStatus
+from docling.datamodel.object_detection_engine_options import TransformersObjectDetectionEngineOptions
 from docling.datamodel.pipeline_options import PdfPipelineOptions, TableFormerMode
 from docling.datamodel.accelerator_options import AcceleratorOptions, AcceleratorDevice
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -39,6 +40,8 @@ for path in sorted(artifacts.rglob('*')):
                             'sha256': h.hexdigest()})
 report['bundledModels'] = model_files
 options = PdfPipelineOptions()
+# Official runtime option: eager inference works with noexec temporary storage.
+options.layout_options.engine_options = TransformersObjectDetectionEngineOptions(compile_model=False)
 options.artifacts_path = artifacts
 options.do_ocr = False
 options.do_table_structure = True
@@ -78,6 +81,9 @@ for source in manifest['sources']:
             result = converter.convert(pdf, page_range=(number, number), raises_on_error=True)
             entry['seconds'] = time.perf_counter() - start
             entry['status'] = str(result.status)
+            entry['errors'] = [error.model_dump(mode='json') for error in result.errors]
+            if result.status != ConversionStatus.SUCCESS or entry['errors']:
+                raise RuntimeError('Conversion status or errors failed: ' + json.dumps(entry))
             entry['conversionCompleted'] = True
             document = result.document
             document.save_as_json(destination / 'document.json', image_mode=ImageRefMode.PLACEHOLDER)
@@ -122,4 +128,9 @@ for source in manifest['sources']:
             failures += 1
         save_report()
         print(json.dumps(entry), flush=True)
+if len(report['pages']) != 4 or any(not page.get('conversionCompleted') or page.get('error')
+                                  or page.get('errors') for page in report['pages']):
+    failures += 1
+report['allFourPagesConvertedAndExported'] = failures == 0
+save_report()
 raise SystemExit(bool(failures))
