@@ -30,6 +30,14 @@ class AndroidTests(unittest.TestCase):
         self.repo = Path(__file__).resolve().parents[1]
         self.base = (self.repo / ci.ANDROID / "app/src/main/AndroidManifest.xml").read_text()
 
+    def test_rotated_signing_identity_can_coexist_with_previous_academic_install(self):
+        self.assertEqual(ci.APP_ID, "com.bilingify.readest.academic.v2")
+        self.assertEqual(ci.LABEL, "Readest 学术测试版 2")
+        gradle = (self.repo / ci.ANDROID / "app/build.gradle.kts").read_text()
+        self.assertIn('applicationId = if (academicBuild) "' + ci.APP_ID + '"', gradle)
+        self.assertIn("val academicRevision = 14", gradle)
+        self.assertNotEqual(ci.APP_ID, "com.bilingify.readest.academic")
+
     def test_parallel_manifest_preserves_imports_without_claiming_production_links(self):
         derived = ci.academic_manifest(self.base)
         root = ET.fromstring(derived)
