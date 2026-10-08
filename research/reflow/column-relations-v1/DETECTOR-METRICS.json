@@ -1,0 +1,15 @@
+{
+  "load_seconds": 4.046575184998801,
+  "pages": [
+    {
+      "key": "RoFormer-v5-p04",
+      "inference_seconds": 0.5287314050074201,
+      "peak_rss_kib": 546088
+    },
+    {
+      "key": "ConvNeXt-v2-p03",
+      "inference_seconds": 0.25102705700555816,
+      "peak_rss_kib": 546088
+    }
+  ]
+}

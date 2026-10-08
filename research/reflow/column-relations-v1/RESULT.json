@@ -1,0 +1,59 @@
+{
+  "stage": "frozen column/real-candidate comparison",
+  "rows": [
+    {
+      "key": "RoFormer-v5-p04",
+      "columns": {
+        "count": 1,
+        "cut": null,
+        "evidence_lines": 11,
+        "reason": "unbalanced support"
+      },
+      "failure": null,
+      "source_ink": 506343,
+      "uncovered_ink": 0,
+      "duplicate_ink": 0,
+      "seconds": 1.748651083005825,
+      "peak_rss_kib": 249760,
+      "body_glyph_denominator": 2491,
+      "candidate_body_glyphs": 2366,
+      "complete_body_units": 8,
+      "complete_units_fully_word_reflowed": 7,
+      "formula_number_candidates": 6,
+      "accepted_formula_links": 4
+    },
+    {
+      "key": "ConvNeXt-v2-p03",
+      "columns": {
+        "count": 2,
+        "cut": 1190.5,
+        "gutter": [
+          1147.0,
+          1234.0
+        ],
+        "evidence_lines": 76,
+        "reason": "two supported line clusters with gap"
+      },
+      "failure": null,
+      "source_ink": 1034375,
+      "uncovered_ink": 0,
+      "duplicate_ink": 0,
+      "seconds": 1.8873073540016776,
+      "peak_rss_kib": 267112,
+      "body_glyph_denominator": 3208,
+      "candidate_body_glyphs": 932,
+      "complete_body_units": 4,
+      "complete_units_fully_word_reflowed": 0,
+      "formula_number_candidates": 0,
+      "accepted_formula_links": 0
+    }
+  ],
+  "total_complete_prose_reflow": {
+    "baseline": 12,
+    "candidate": 7,
+    "denominator": 12
+  },
+  "readability_and_order_acceptance": "Failed: small protected math; compound paint parent reverses column continuation. Ink coverage alone is not acceptance.",
+  "source_and_output_visual_audit": "Self-audit of both source references and all15 output tiles; no independent acceptance.",
+  "code_unchanged": true
+}
