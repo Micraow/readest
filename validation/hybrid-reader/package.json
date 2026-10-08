@@ -1,0 +1,12 @@
+{
+  "name": "readest-hybrid-reader-synthetic-validation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node validate.mjs",
+    "check:fixture": "node validate.mjs --check-fixture"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0"
+  }
+}

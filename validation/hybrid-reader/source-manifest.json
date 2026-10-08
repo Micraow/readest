@@ -1,0 +1,8 @@
+{
+  "renderer": "Exact copy of the self-authored hybrid reader v1.1 HTML, with no paper content",
+  "rendererSha256": "74da7d2edd425615a62c0c67a8c5990491e618bd29214de41e66e1ca0bd45665",
+  "fixture": "Self-authored synthetic text and SVG rectangles only",
+  "excluded": ["PDF inputs", "paper-derived pages.json", "source-page images", "private extraction results", "offline paper snapshots", "model weights"],
+  "scope": "Chromium behavior and rendering only; no PDF semantic, native-shell, or Android acceptance",
+  "applicationBaseCommit": "51599081eee523b6eef8a635c05bd4503cb376c6"
+}
