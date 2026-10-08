@@ -1,0 +1,15 @@
+{
+ "hypothesis":"Learned geometric pair scoring can improve formula-number ownership and rejection over nearest-rectangle distance on unseen original synthetic layout families.",
+ "scope":"Relationship isolation only: source-authored oracle formula boxes and numeric-token candidates. No detector, PDF extraction, k2, rendering or real-paper generalization claim.",
+ "data_license":"Original geometry and annotations, repository AGPL-3.0; no third-party paper content.",
+ "partitions":{"train":{"families":["single-right","single-left","double-right","double-alternate"],"pages_per_family":60,"seed":11000},"calibration":{"families":["single-right","single-left","double-right","double-alternate"],"pages_per_family":20,"seed":21000},"test_in_family":{"families":["single-right","single-left","double-right","double-alternate"],"pages_per_family":20,"seed":31000},"test_unseen_family":{"families":["narrow-staggered","wide-multiline"],"pages_per_family":40,"seed":41000}},
+ "candidate_generation":"All formula objects on page. Source-parent IDs, template names, text and source order excluded from features. Candidate recall measured separately.",
+ "model":{"type":"class-balanced L2 binary logistic pair classifier","iterations":600,"learning_rate":0.08,"l2":0.002,"training":"full batch deterministic float64; training-only normalization"},
+ "comparator":"Nearest rectangle: Euclidean bbox gap divided by numeric-token height; confidence exp(-gap/4).",
+ "calibration":"Each method separately selects score threshold [0.5,0.6,0.7,0.8,0.9,0.95,0.98,0.99] and winner margin [0,0.05,0.1,0.2,0.3], maximizing correct accepted links with <=1% observed wrong-owner/accepted and >=100 accepted. No eligible setting means reject all. Test labels never select settings.",
+ "success_gate":"Unseen-family correct accepted/true links improves >=5pp over calibrated comparator, with observed wrong-owner/accepted <=1%, true-link coverage >=50%, inference <50ms/page, model <10KiB. Synthetic mechanism gate only; report uncertainty.",
+ "metrics":["candidate recall","wrong owner/accepted incl nuisance","correct accepted/true links","rejection/all candidates","exact page relations","per-family errors","latency","RSS","parameters"],
+ "nonmeasured":["source-paint conservation","prose reflow coverage","font size","formula semantics","Chinese OCR","scan fidelity"],
+ "limits":{"cpus":1,"address_space_bytes":1073741824,"additional_disk_bytes":1073741824,"run_wall_seconds":120},
+ "stop":"One frozen run; no output-informed parameter/feature/model changes. Existing paper diagnostics excluded. Temporary artifacts backed up before further work."
+}
