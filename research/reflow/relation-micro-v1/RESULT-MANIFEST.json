@@ -1,0 +1,25 @@
+{
+  "excluded": "Model weights, raw synthetic data and all paper assets excluded from publication; data regenerates from fixed source/seeds.",
+  "files": [
+    {
+      "name": "RESULT.json",
+      "sha256": "2b44db04a35f4ac3af8102734e196186b865945190b8a8434845c9805e88cfe4"
+    },
+    {
+      "name": "AUDIT.json",
+      "sha256": "6c876705f68af395be5019b28aeb17c073cf7679a321b5501f9a80056bdb4176"
+    },
+    {
+      "name": "RUN-STARTED.json",
+      "sha256": "c111fbcdfb69323c45c8c21d065b3dc60c06c6910d34c08bf593b08e8c0a73c4"
+    },
+    {
+      "name": "README.md",
+      "sha256": "3dfa899d6574aa5e13dc168db82d77e231ae555b20cf44fb1c4261524d3fdef7"
+    },
+    {
+      "name": "SMALL-MODEL-RESEARCH.md",
+      "sha256": "d30a32dd484d57b135079bcbd6ef00e3ed33c33e86b5029aa1b7f78ef5586c1a"
+    }
+  ]
+}

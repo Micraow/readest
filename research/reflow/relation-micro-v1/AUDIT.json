@@ -1,0 +1,97 @@
+{
+  "cross_partition_identical_geometry": [],
+  "duplicate_formula_ids": 0,
+  "true_candidate_missing": 0,
+  "unique_page_geometries": 480,
+  "accepted_error_wilson95": [
+    0.000957696349835899,
+    0.012636330155880749
+  ],
+  "warning": "Wilson treats links as independent; shared page/template correlation makes this descriptive, not a deployment guarantee. Interval upper bound exceeds 1%.",
+  "wrong_accepted_examples": [
+    {
+      "prediction": {
+        "page": 24,
+        "query": 6,
+        "family": "narrow-staggered",
+        "start": 3070,
+        "end": 3080,
+        "true_index": 8,
+        "chosen": 1,
+        "score": 0.9380269603678267,
+        "margin": 0.09576405589778814
+      },
+      "query": {
+        "box": [
+          537.3726142532058,
+          474.5264605702857,
+          551.8860847328489,
+          484.29836230607435
+        ],
+        "parent": 542617020
+      },
+      "predicted_formula": {
+        "id": 446990798,
+        "box": [
+          68.67532788023587,
+          460.627671751078,
+          247.246942229937,
+          484.3801247687916
+        ]
+      },
+      "correct_formula": {
+        "id": 542617020,
+        "box": [
+          321.9566705338355,
+          475.80759132916114,
+          417.44801086510057,
+          506.3292108210515
+        ]
+      },
+      "page_seed": 41024
+    },
+    {
+      "prediction": {
+        "page": 29,
+        "query": 9,
+        "family": "narrow-staggered",
+        "start": 3750,
+        "end": 3760,
+        "true_index": 9,
+        "chosen": 1,
+        "score": 0.9050300755103843,
+        "margin": 0.08212273936938352
+      },
+      "query": {
+        "box": [
+          545.7259009923395,
+          229.0477566309906,
+          559.7098163509345,
+          237.65904548407315
+        ],
+        "parent": 1281338989
+      },
+      "predicted_formula": {
+        "id": 1310597124,
+        "box": [
+          56.83265818629956,
+          218.56834812112885,
+          194.2260366216504,
+          242.48590610807082
+        ]
+      },
+      "correct_formula": {
+        "id": 1281338989,
+        "box": [
+          321.82917968752093,
+          230.10658255904664,
+          404.9899778662607,
+          259.31807700943284
+        ]
+      },
+      "page_seed": 41029
+    }
+  ],
+  "source_code_sha256": "cf3313580fd486af13b1aa91d69f4286814faaec502d8688ea51d33b485c2210",
+  "freeze_hash_matches": true
+}

@@ -1,0 +1,428 @@
+{
+  "train_pages": 240,
+  "train_pairs": 19435,
+  "train_positive_pairs": 1800,
+  "train_seconds": 0.14616486401064321,
+  "thresholds": {
+    "learned": {
+      "threshold": 0.8,
+      "margin": 0.05,
+      "metrics": {
+        "queries": 802,
+        "true_links": 600,
+        "accepted": 536,
+        "correct_accepted": 536,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": 0.0,
+        "true_link_coverage": 0.8933333333333333,
+        "rejection_rate": 0.3316708229426434,
+        "exact_pages": 46,
+        "total_pages": 80,
+        "candidate_recall": 1.0
+      }
+    },
+    "nearest_rectangle": {
+      "threshold": 2.0,
+      "margin": 1.0,
+      "metrics": {
+        "queries": 802,
+        "true_links": 600,
+        "accepted": 0,
+        "correct_accepted": 0,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": null,
+        "true_link_coverage": 0.0,
+        "rejection_rate": 1.0,
+        "exact_pages": 0,
+        "total_pages": 80,
+        "candidate_recall": 1.0
+      },
+      "reason": "No calibration setting met risk/support constraints"
+    }
+  },
+  "results": {
+    "calibration": {
+      "learned": {
+        "queries": 802,
+        "true_links": 600,
+        "accepted": 536,
+        "correct_accepted": 536,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": 0.0,
+        "true_link_coverage": 0.8933333333333333,
+        "rejection_rate": 0.3316708229426434,
+        "exact_pages": 46,
+        "total_pages": 80,
+        "candidate_recall": 1.0,
+        "forced_owner_accuracy_on_true_links": 0.9833333333333333,
+        "per_family": {
+          "single-right": {
+            "queries": 148,
+            "true_links": 100,
+            "accepted": 100,
+            "correct_accepted": 100,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 1.0,
+            "rejection_rate": 0.32432432432432434,
+            "exact_pages": 20,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "single-left": {
+            "queries": 149,
+            "true_links": 100,
+            "accepted": 100,
+            "correct_accepted": 100,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 1.0,
+            "rejection_rate": 0.32885906040268453,
+            "exact_pages": 20,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-right": {
+            "queries": 252,
+            "true_links": 200,
+            "accepted": 172,
+            "correct_accepted": 172,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 0.86,
+            "rejection_rate": 0.31746031746031744,
+            "exact_pages": 3,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-alternate": {
+            "queries": 253,
+            "true_links": 200,
+            "accepted": 164,
+            "correct_accepted": 164,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 0.82,
+            "rejection_rate": 0.3517786561264822,
+            "exact_pages": 3,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          }
+        }
+      },
+      "nearest_rectangle": {
+        "queries": 802,
+        "true_links": 600,
+        "accepted": 0,
+        "correct_accepted": 0,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": null,
+        "true_link_coverage": 0.0,
+        "rejection_rate": 1.0,
+        "exact_pages": 0,
+        "total_pages": 80,
+        "candidate_recall": 1.0,
+        "forced_owner_accuracy_on_true_links": 0.7083333333333334,
+        "per_family": {
+          "single-right": {
+            "queries": 148,
+            "true_links": 100,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "single-left": {
+            "queries": 149,
+            "true_links": 100,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-right": {
+            "queries": 252,
+            "true_links": 200,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-alternate": {
+            "queries": 253,
+            "true_links": 200,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          }
+        }
+      }
+    },
+    "test_in_family": {
+      "learned": {
+        "queries": 800,
+        "true_links": 600,
+        "accepted": 531,
+        "correct_accepted": 531,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": 0.0,
+        "true_link_coverage": 0.885,
+        "rejection_rate": 0.33625000000000005,
+        "exact_pages": 44,
+        "total_pages": 80,
+        "candidate_recall": 1.0,
+        "forced_owner_accuracy_on_true_links": 0.9783333333333334,
+        "per_family": {
+          "single-right": {
+            "queries": 149,
+            "true_links": 100,
+            "accepted": 100,
+            "correct_accepted": 100,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 1.0,
+            "rejection_rate": 0.32885906040268453,
+            "exact_pages": 20,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "single-left": {
+            "queries": 149,
+            "true_links": 100,
+            "accepted": 100,
+            "correct_accepted": 100,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 1.0,
+            "rejection_rate": 0.32885906040268453,
+            "exact_pages": 20,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-right": {
+            "queries": 249,
+            "true_links": 200,
+            "accepted": 162,
+            "correct_accepted": 162,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 0.81,
+            "rejection_rate": 0.3493975903614458,
+            "exact_pages": 2,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-alternate": {
+            "queries": 253,
+            "true_links": 200,
+            "accepted": 169,
+            "correct_accepted": 169,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 0.845,
+            "rejection_rate": 0.3320158102766798,
+            "exact_pages": 2,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          }
+        }
+      },
+      "nearest_rectangle": {
+        "queries": 800,
+        "true_links": 600,
+        "accepted": 0,
+        "correct_accepted": 0,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": null,
+        "true_link_coverage": 0.0,
+        "rejection_rate": 1.0,
+        "exact_pages": 0,
+        "total_pages": 80,
+        "candidate_recall": 1.0,
+        "forced_owner_accuracy_on_true_links": 0.71,
+        "per_family": {
+          "single-right": {
+            "queries": 149,
+            "true_links": 100,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "single-left": {
+            "queries": 149,
+            "true_links": 100,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-right": {
+            "queries": 249,
+            "true_links": 200,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          },
+          "double-alternate": {
+            "queries": 253,
+            "true_links": 200,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 20,
+            "candidate_recall": 1.0
+          }
+        }
+      }
+    },
+    "test_unseen_family": {
+      "learned": {
+        "queries": 808,
+        "true_links": 600,
+        "accepted": 573,
+        "correct_accepted": 571,
+        "wrong_accepted": 2,
+        "wrong_rate_among_accepted": 0.0034904013961605585,
+        "true_link_coverage": 0.9516666666666667,
+        "rejection_rate": 0.2908415841584159,
+        "exact_pages": 57,
+        "total_pages": 80,
+        "candidate_recall": 1.0,
+        "forced_owner_accuracy_on_true_links": 0.9816666666666667,
+        "per_family": {
+          "narrow-staggered": {
+            "queries": 503,
+            "true_links": 400,
+            "accepted": 373,
+            "correct_accepted": 371,
+            "wrong_accepted": 2,
+            "wrong_rate_among_accepted": 0.005361930294906166,
+            "true_link_coverage": 0.9275,
+            "rejection_rate": 0.25844930417495027,
+            "exact_pages": 17,
+            "total_pages": 40,
+            "candidate_recall": 1.0
+          },
+          "wide-multiline": {
+            "queries": 305,
+            "true_links": 200,
+            "accepted": 200,
+            "correct_accepted": 200,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": 0.0,
+            "true_link_coverage": 1.0,
+            "rejection_rate": 0.34426229508196726,
+            "exact_pages": 40,
+            "total_pages": 40,
+            "candidate_recall": 1.0
+          }
+        }
+      },
+      "nearest_rectangle": {
+        "queries": 808,
+        "true_links": 600,
+        "accepted": 0,
+        "correct_accepted": 0,
+        "wrong_accepted": 0,
+        "wrong_rate_among_accepted": null,
+        "true_link_coverage": 0.0,
+        "rejection_rate": 1.0,
+        "exact_pages": 0,
+        "total_pages": 80,
+        "candidate_recall": 1.0,
+        "forced_owner_accuracy_on_true_links": 0.6383333333333333,
+        "per_family": {
+          "narrow-staggered": {
+            "queries": 503,
+            "true_links": 400,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 40,
+            "candidate_recall": 1.0
+          },
+          "wide-multiline": {
+            "queries": 305,
+            "true_links": 200,
+            "accepted": 0,
+            "correct_accepted": 0,
+            "wrong_accepted": 0,
+            "wrong_rate_among_accepted": null,
+            "true_link_coverage": 0.0,
+            "rejection_rate": 1.0,
+            "exact_pages": 0,
+            "total_pages": 40,
+            "candidate_recall": 1.0
+          }
+        }
+      }
+    }
+  },
+  "timing": {
+    "calibration": {
+      "feature_and_model_seconds": 0.03136678200098686,
+      "mean_seconds_per_page": 0.00039208477501233573
+    },
+    "test_in_family": {
+      "feature_and_model_seconds": 0.02774442698864732,
+      "mean_seconds_per_page": 0.0003468053373580915
+    },
+    "test_unseen_family": {
+      "feature_and_model_seconds": 0.027657586004352197,
+      "mean_seconds_per_page": 0.0003457198250544025
+    }
+  },
+  "learned_parameters": 25,
+  "float32_runtime_bytes": 292,
+  "peak_rss_kib": 64052,
+  "wall_seconds": 0.5886654080095468,
+  "data_sha256": "7b24d87e0112ea7fa39f50622c5f6ea3709ba7b157276d598b14e9486f0e7689",
+  "limitations": "Relationship isolation only: source-authored oracle formula boxes and numeric-token candidates. No detector, PDF extraction, k2, rendering or real-paper generalization claim.",
+  "predefined_success_gate_passed": true
+}
