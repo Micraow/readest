@@ -1,0 +1,103 @@
+[
+  {
+    "file": "k2-reuse-v1/harness.c",
+    "sha256": "d9bef62fb1b4daff47f1d07e3f33e03cfdbdb633b4f4315b347d6ab24c596238",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v1/settings_override.c",
+    "sha256": "6f232a37e9c9cea95510a7845a0e6855b8f0e38435b681f211a6b091773a5a4b",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v1/build.py",
+    "sha256": "301a889a1865c1221bf136014debce78ab22b63a5cbe4d2aaed920bf3c334ad5",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v1/run_diagnostics.py",
+    "sha256": "79a222ffd68628f2e8bea089b2d7981ae01b13748214e4dba16302e97334c27a",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v1/measure_geometry.py",
+    "sha256": "49f38705b13b91a5858d4d2919e817c63ca79beb6db516009d00cb77794bb22d",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v2-default/harness.c",
+    "sha256": "de29b7d863fe50288f31d67270952aa884aea12800fc539e8ef0c3a23fd8a5be",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v2-default/run_round.py",
+    "sha256": "be4169e03a1546aec211621c22ed4515902941b61cd7fbba4c5e65243813c640",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v2-default/measure_round.py",
+    "sha256": "e704f1cadb0733a6416596732cd7fdd4719ff075ab88691c088031dd99b31285",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-protection-v1/code/compose.py",
+    "sha256": "a378ad03161311c40d704062ac4e3a2fdde93f60ca997cfe386a61e5a2243713",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-protection-v1/code/detect.py",
+    "sha256": "af6926a87e47862ff2b44411f362548c04640832f5fc6e5afb595031d05c12af",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-protection-v1/code/monitor.py",
+    "sha256": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-anchor-v1/code/anchor.py",
+    "sha256": "88f64a056cc26e204442e57cdee2551cc14b0046c2835860aa82186cdfba8f30",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-anchor-v1/code/helpers.py",
+    "sha256": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "byte_identical_to_frozen_source": true
+  },
+  {
+    "file": "k2-reuse-v1/PUBLIC-FREEZE.json",
+    "original_freeze_sha256": "bb460f1ed26f5ee0fbea04bd663456b3ba5cf11d60242fc80ec58c6a0667b5ba",
+    "public_sha256": "3ecd50a5f4d66c10e5f2184c60e797b406f5f4582af0b48f375dad53c8f3af23",
+    "sanitized_export": true
+  },
+  {
+    "file": "k2-reuse-v2-default/PUBLIC-CONFIG-FREEZE.json",
+    "original_freeze_sha256": "6c6e1c826a405980bbe8acfe3aae4c153d391d61e6e3a4a8730c9ddc7728d319",
+    "public_sha256": "88c2f92db4b4e7b58219824421b0d62954922ed46bc01596e8c2251a9fadbe3b",
+    "sanitized_export": true
+  },
+  {
+    "file": "k2-reuse-v2-default/PUBLIC-RUN-FREEZE.json",
+    "original_freeze_sha256": "92d70866592da10396455968af55bf5271b05fe9c278da319842bb62e4bf26ad",
+    "public_sha256": "26930c2d1785be6b982c92c04eef53799ee3df9d6953d5b4fb8fe1927e491ea7",
+    "sanitized_export": true
+  },
+  {
+    "file": "k2-protection-v1/PUBLIC-INPUT-FREEZE.json",
+    "original_freeze_sha256": "5f206a80cb8ee4084bfd10745f7d697af520847610d88bbffa5b98afb4ca09f7",
+    "public_sha256": "9c1ada24a29a114f60834ab42869531f4ceca4838527580ac59de9ee438aeb1c",
+    "sanitized_export": true
+  },
+  {
+    "file": "k2-anchor-v1/PUBLIC-INPUT-FREEZE.json",
+    "original_freeze_sha256": "e573d1e4033497ac1593563dbdf44253168f9a38723a94008408ddbcffd9c380",
+    "public_sha256": "2d7fad3b5e60c1671a70b85cfed27a9d43c614ec0d026569a54813b810434929",
+    "sanitized_export": true
+  },
+  {
+    "file": "k2-anchor-v1/PUBLIC-HOLDOUT-FREEZE.json",
+    "original_freeze_sha256": "3bee01997548c96dc92ac848c741088b114c41da366860b4f355582a2bcf6f7c",
+    "public_sha256": "35de4b8953863d84ee1406c6ef0d4d9f1d054e3c7d6a351bc25d556310ce5120",
+    "sanitized_export": true
+  }
+]

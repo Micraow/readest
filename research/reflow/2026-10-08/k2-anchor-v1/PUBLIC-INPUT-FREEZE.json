@@ -1,0 +1,69 @@
+{
+  "frozen_at_utc": "2026-10-08T14:25:30.935742+00:00",
+  "hypothesis": "Source glyph/native-line membership plus ink-supported k2 output intervals correct block association and parent placement without changing detector, word reflow or renderer.",
+  "inputs": [
+    {
+      "key": "BERT-v2-p03",
+      "partition": "mechanism_regression_only",
+      "pdf": "k2-protection-v1/inputs/BERT-v2.pdf",
+      "pdf_page_1based": 3,
+      "sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "prior_dir": "k2-protection-v1",
+      "cached_predictions": "same PP-S JSON from frozen prior round",
+      "cached_k2": "same word-reflowed region bitmaps and full-page baseline maps; no model or k2 rerun"
+    },
+    {
+      "key": "LayerNorm-v1-p04",
+      "partition": "mechanism_regression_only",
+      "pdf": "k2-protection-v1/inputs/LayerNorm-v1.pdf",
+      "pdf_page_1based": 4,
+      "sha256": "c464f839fb8d59f7fde92f9b4caa67c2d1f2f196b88f93fb60502249df0aaef7",
+      "prior_dir": "k2-protection-v1",
+      "cached_predictions": "same PP-S JSON from frozen prior round",
+      "cached_k2": "same word-reflowed region bitmaps and full-page baseline maps; no model or k2 rerun"
+    },
+    {
+      "key": "GroupNorm-v3-p03",
+      "partition": "planned_unseen_holdout",
+      "source_url": "https://arxiv.org/pdf/1803.08494v3",
+      "pdf_page_1based": 3,
+      "blocked": true,
+      "sha256": null
+    }
+  ],
+  "unchanged_components": [
+    "PP-DocLayout-S revision8ac289e66575bb9bba6e15c53719d8b15cc9b3b2/confidence0.5",
+    "k2commit64aa9ccfcd55921c596458cb8a7197339d5f32c3/word_spacing-0.2",
+    "390px target,RGB288dpi source/144dpi destination,all prior fidelity settings",
+    "same region reflow bitmap reused whenever its parent remains unchanged"
+  ],
+  "relations": {
+    "glyph": "stable block:line:span:character ID,original text and source bounding box; this is native PDF evidence, not re-recognized text",
+    "parent": "native text block or native non-text paint operation; evidence only, not semantic ground truth",
+    "mapping": "source-ink intersection with actual k2 source rectangles; no centre-point matching",
+    "position": "interval of supporting maps in the k2 output sequence; requires visual reading-order audit"
+  },
+  "invariants": [
+    "No original ink may be omitted or represented twice. Refused material remains in all denominators.",
+    "A protected formula may acquire a native parent only if it already shares source glyph evidence and that entire parent fits the unchanged formula vertical band.",
+    "Conflicting-role blocks preserve their complete intersecting native parent. Unknown content is attached to complete native text/paint parents, never a tail fragment atlas.",
+    "Overlapping source parents or interleaving/shared output intervals are coarsened to a protected parent. Each merge reduces node count.",
+    "If source ink lacks a parent, an anchor is missing, or all content collapses to one uncertain parent, return the original full page and score automatic reflow as failed.",
+    "Every retained word-reflow bitmap comes from the unchanged previous invocation; no new text/line segmentation rules.",
+    "No per-paper text matching,regex,threshold exception,manual algorithm input boxes,or output-informed edits."
+  ],
+  "limits": {
+    "cpus": 1,
+    "address_space_bytes": 1073741824,
+    "per_page_seconds": 60,
+    "additional_disk_bytes": 1073741824
+  },
+  "stop": "One frozen mechanism-regression pass. Holdout may run once only if a real input is subsequently authorized and materialized against the unchanged code. No further tuning.",
+  "code_hashes": {
+    "code/anchor.py": "88f64a056cc26e204442e57cdee2551cc14b0046c2835860aa82186cdfba8f30",
+    "code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c"
+  },
+  "reference_for_regression": "k2-protection-v1/REFERENCE-FREEZE.json",
+  "no_production_integration": true,
+  "public_export_note": "Path-only relocation and removal of private coordination/download incident details. Original freeze remains unchanged locally; archived source code bytes unchanged."
+}

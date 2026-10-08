@@ -1,0 +1,75 @@
+{
+  "created_utc": "2026-10-08T12:12:15.062455+00:00",
+  "type": "Previously seen diagnostic subset, not a blind or held-out test",
+  "engine_commit": "64aa9ccfcd55921c596458cb8a7197339d5f32c3",
+  "engine_origin": "https://github.com/koreader/libk2pdfopt",
+  "engine_logic_modified": false,
+  "settings_bridge": "Uniform content-preserving overrides in settings_override.c; no per-document conditions.",
+  "raster_dpi": 288,
+  "source_zoom": 4,
+  "destination_width_px": 390,
+  "destination_dpi": 144,
+  "maximum_columns": 2,
+  "wrap": true,
+  "ocr_transcription": false,
+  "hyphen_removal": false,
+  "automatic_outer_crop": false,
+  "paint_white": false,
+  "gamma": 1,
+  "contrast_max": 1,
+  "sharpen": false,
+  "dither": false,
+  "erase_lines": false,
+  "white_threshold": 255,
+  "defect_size_pts": 0,
+  "justification": "left",
+  "input_regions": "Complete page; no human boxes passed to the engine",
+  "run_count_per_input": 1,
+  "manual_rescue": "none",
+  "limits": {
+    "process_address_space_bytes": 1073741824,
+    "cpus": 1,
+    "page_seconds": 60,
+    "experiment_disk_bytes": 1073741824
+  },
+  "quality_measure_warning": "Rectangle coverage is not evidence of content or relationship correctness. Resampling is present. No fallback may be removed from denominators.",
+  "files": {
+    "settings_override.c": "6f232a37e9c9cea95510a7845a0e6855b8f0e38435b681f211a6b091773a5a4b",
+    "harness.c": "d9bef62fb1b4daff47f1d07e3f33e03cfdbdb633b4f4315b347d6ab24c596238",
+    "build.py": "301a889a1865c1221bf136014debce78ab22b63a5cbe4d2aaed920bf3c334ad5",
+    "run_diagnostics.py": "79a222ffd68628f2e8bea089b2d7981ae01b13748214e4dba16302e97334c27a",
+    "build/k2-reflow-harness": "facd211c3de262ec8a5ac78ea7966587d462bbf1920430a7e5de7b8424a7f31b",
+    "source/libk2pdfopt.tar.gz": "1abe325dc5710e3800407f2a5a25ad91ad326f5d5ed45e8f06094e2db41749a5"
+  },
+  "inputs": [
+    {
+      "key": "Adam-v9-p03",
+      "relative_path": "native-structure-v1/inputs/Adam-v9-p03.pdf",
+      "pdf_page_1based": 3,
+      "url": "https://arxiv.org/pdf/1412.6980v9",
+      "sha256": "eab9c73ae2ceda884b94830bda99312254bac4806f6c9f045cbab90721ecda31"
+    },
+    {
+      "key": "ResNet-v1-p03",
+      "relative_path": "native-structure-v1/inputs/ResNet-v1-p03.pdf",
+      "pdf_page_1based": 3,
+      "url": "https://arxiv.org/pdf/1512.03385v1",
+      "sha256": "1e0651b6810ecba34a3dbc5b5b0209226f889004607c1f203540a48d64e5a93a"
+    },
+    {
+      "key": "Gottesman-v1-p09",
+      "relative_path": "hybrid-prototype/inputs/Gottesman-v1.pdf",
+      "pdf_page_1based": 9,
+      "url": "https://arxiv.org/pdf/0904.2557v1",
+      "sha256": "2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29"
+    },
+    {
+      "key": "ForestColl-v4-p07",
+      "relative_path": "layout-evaluation/inputs/ForestColl.pdf",
+      "pdf_page_1based": 7,
+      "url": "https://arxiv.org/pdf/2402.06787v4",
+      "sha256": "843cc72a56f3c9425d012d4be4cb70a94372d11a033c4edb0491b120d83a5288"
+    }
+  ],
+  "public_export_note": "Path-only relocation and removal of private coordination/download incident details. Original freeze remains unchanged locally; archived source code bytes unchanged."
+}

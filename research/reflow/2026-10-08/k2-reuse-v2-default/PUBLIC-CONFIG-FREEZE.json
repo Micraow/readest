@@ -1,0 +1,33 @@
+{
+  "frozen_at_utc": "2026-10-08T12:22:51.137155+00:00",
+  "engine_commit": "64aa9ccfcd55921c596458cb8a7197339d5f32c3",
+  "precedes_new_input_selection": true,
+  "change_from_v1": {
+    "word_spacing": {
+      "old": -1,
+      "new": -0.2,
+      "reason": "Use the actual KOReader reader default, not the bare FFI context placeholder."
+    }
+  },
+  "other_settings": "All identical to k2-reuse-v1/FREEZE.json and settings_override.c. Not an exact reproduction of KOReader UI defaults: it is the same fidelity-oriented benchmark invocation with corrected word-gap setting.",
+  "no_retuning_seen_pages": true,
+  "harness_sha256": "de29b7d863fe50288f31d67270952aa884aea12800fc539e8ef0c3a23fd8a5be",
+  "settings_override_sha256": "6f232a37e9c9cea95510a7845a0e6855b8f0e38435b681f211a6b091773a5a4b",
+  "first_freeze_sha256": "bb460f1ed26f5ee0fbea04bd663456b3ba5cf11d60242fc80ec58c6a0667b5ba",
+  "round_limit": "One engine invocation for each of 3 newly selected public diagnostic pages; no output-informed corrections.",
+  "resource_limits": {
+    "cpu": 1,
+    "address_space_bytes": 1073741824,
+    "seconds_per_page": 60,
+    "combined_experiment_disk_bytes": 1073741824
+  },
+  "acceptance_metrics": [
+    "Exact source nonwhite-pixel denominator and source-map union/overlap (geometric only)",
+    "All independently frozen major blocks audited for presence, relationships, ordering, and readability",
+    "Separately count whole prose blocks that actually undergo usable word reflow; readable source-line scaling and protected graphics do not enter that numerator",
+    "Per-page wall/engine time and peak process RSS",
+    "No exclusion of failed, uncertain or protected regions from their relevant denominator"
+  ],
+  "no_model_or_ocr_transcription": true,
+  "public_export_note": "Path-only relocation and removal of private coordination/download incident details. Original freeze remains unchanged locally; archived source code bytes unchanged."
+}

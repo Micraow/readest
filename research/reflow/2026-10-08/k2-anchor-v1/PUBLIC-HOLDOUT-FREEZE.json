@@ -1,0 +1,24 @@
+{
+  "frozen_at_utc": "2026-10-08T14:39:07.400510+00:00",
+  "input": {
+    "key": "GroupNorm-v3-p03",
+    "partition": "previously_unused_holdout",
+    "pdf": "k2-anchor-v1/inputs/GroupNorm-v3.pdf",
+    "pdf_page_1based": 3,
+    "sha256": "b2863f7fc089095da466c4318a4764ae666ce60b7d264b5de129d1867a4541a3",
+    "prior_dir": "k2-anchor-v1/holdout-prior",
+    "source_url": "https://arxiv.org/pdf/1803.08494v3"
+  },
+  "anchor_code_hash": "88f64a056cc26e204442e57cdee2551cc14b0046c2835860aa82186cdfba8f30",
+  "helper_code_hash": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+  "anchor_code_matches_original": true,
+  "reference_sha256": "6b64cfea42b108eb7adff88f962207e4da9e4d22f18d75c11994666ca4da1017",
+  "comparator_code": {
+    "monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "compose.py": "e7927435c3e3a48019535648a3eee057a9bb4c563985dd077b05aa41d4276eff",
+    "detect.py": "684087a1ebf351dc48dfb939ff1c84b31bab5ed4795d7f70777ebf5c9f9c34cd"
+  },
+  "run_count": 1,
+  "stop_after_this_page": true,
+  "public_export_note": "Path-only relocation and removal of private coordination/download incident details. Original freeze remains unchanged locally; archived source code bytes unchanged."
+}

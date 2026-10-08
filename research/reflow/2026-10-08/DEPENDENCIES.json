@@ -1,0 +1,41 @@
+{
+  "packages": [
+    {
+      "name": "libk2pdfopt",
+      "commit": "64aa9ccfcd55921c596458cb8a7197339d5f32c3",
+      "source_url": "https://github.com/koreader/libk2pdfopt/archive/64aa9ccfcd55921c596458cb8a7197339d5f32c3.tar.gz",
+      "path": "source/libk2pdfopt.tar.gz",
+      "sha256": "1abe325dc5710e3800407f2a5a25ad91ad326f5d5ed45e8f06094e2db41749a5",
+      "bytes": 1307869
+    },
+    {
+      "name": "libleptonica-dev",
+      "version": "1.84.1-4",
+      "source_url": "https://deb.debian.org/debian/pool/main/l/leptonlib/libleptonica-dev_1.84.1-4_amd64.deb",
+      "path": "deps/libleptonica-dev.deb",
+      "sha256": "2888dcb40c2b20301d47a1f0fc8b8eee01311d1a2bf2b075a093ec2a5ec98d81",
+      "bytes": 1485672
+    },
+    {
+      "name": "libtesseract-dev",
+      "version": "5.5.0-1+b1",
+      "source_url": "https://deb.debian.org/debian/pool/main/t/tesseract/libtesseract-dev_5.5.0-1+b1_amd64.deb",
+      "path": "deps/libtesseract-dev.deb",
+      "sha256": "49fd1b4b7a19737c28f1b757eb7ac3bdfc030e58c9b8d50c193ec1aeb969b4a1",
+      "bytes": 27251400
+    }
+  ],
+  "system_shared_libraries": [
+    {
+      "soname": "libtesseract.so.5",
+      "sha256": "66b27d857aa90bb7a31059c65bb624e918e96a7c276699bd5ac5dca4cf1ba322"
+    },
+    {
+      "soname": "libleptonica.so.6",
+      "sha256": "3d56e8982393abbae4e5ba8717e73b347cf78fd4f24070c9970ff08ec0e01822"
+    }
+  ],
+  "upstream_source_modified_files": [],
+  "system_package_install": "Official Debian headers extracted locally; existing shared libraries used.",
+  "licensing": "Readest repository LICENSE governs original glue. Third-party dependencies retain their own licenses; no third-party source, binaries, or model weights included."
+}

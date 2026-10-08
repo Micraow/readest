@@ -1,0 +1,70 @@
+{
+  "frozen_at_utc": "2026-10-08T13:36:55.395344+00:00",
+  "hypothesis": "Block roles and protected original-image atoms plus separation of auxiliary/float content improve structural fidelity over page-level k2 without regenerating text.",
+  "detector": {
+    "name": "PP-DocLayout-S",
+    "revision": "8ac289e66575bb9bba6e15c53719d8b15cc9b3b2",
+    "weights_sha256": "491c3382d84ca04d2033afbee0c105942ed82fea392bb4a19170646adebe088a",
+    "confidence": 0.5,
+    "new_download": false,
+    "threads": 1,
+    "outbound_network": false
+  },
+  "k2": "reuse same v2 -0.2 harness and same source/destination DPI and 390px width",
+  "rules": [
+    "Expand each detector proposal by1PDFpoint then close over intersecting native glyph bounding boxes",
+    "Merge overlapping proposals; mixed-role components are protected, never forced into text",
+    "Join detected formula_number to nearest vertically overlapping detected formula",
+    "Only confident text/abstract/content/reference-only components are eligible for unchanged k2",
+    "Reject a region to original image if k2 source-map ink coverage is incomplete or duplicated",
+    "Use baseline k2 map rank for main-flow block order; this is a proposal needing visual audit, not ground truth",
+    "Preserve formula/headings in main flow; put detected figures/tables/algorithms/captions after main flow; put detected footnotes/headers/page numbers in auxiliary section",
+    "Unassigned ink retained in masked original-page panel; never discard or count as successful reflow",
+    "No semantic re-recognition, manual object boxes, per-paper branches, or model/threshold tuning"
+  ],
+  "limits": {
+    "cpus": 1,
+    "model_rss_stop_kib": 983040,
+    "composition_address_space_bytes": 1073741824,
+    "per_page_seconds": 60,
+    "additional_disk_bytes": 1073741824
+  },
+  "stopping_condition": "Exactly2newpages, one baseline and one protection pipeline each. Report failure if relationship damage remains, safe reflow collapses, or resource limit is reached. No same-page repairs or extra engines.",
+  "scope": "New pages for this workflow, executor-selected and self-audited; not independently reviewed or a corpus accuracy estimate.",
+  "code_hashes": {
+    "code/compose.py": "a378ad03161311c40d704062ac4e3a2fdde93f60ca997cfe386a61e5a2243713",
+    "code/detect.py": "af6926a87e47862ff2b44411f362548c04640832f5fc6e5afb595031d05c12af",
+    "code/monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49"
+  },
+  "inputs": [
+    {
+      "key": "BERT-v2-p03",
+      "pdf": "k2-protection-v1/inputs/BERT-v2.pdf",
+      "pdf_page_1based": 3,
+      "source_url": "https://arxiv.org/pdf/1810.04805v2",
+      "sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "page_size": [
+        0.0,
+        0.0,
+        595.2760009765625,
+        841.8900146484375
+      ],
+      "source_raster_dpi": 288
+    },
+    {
+      "key": "LayerNorm-v1-p04",
+      "pdf": "k2-protection-v1/inputs/LayerNorm-v1.pdf",
+      "pdf_page_1based": 4,
+      "source_url": "https://arxiv.org/pdf/1607.06450v1",
+      "sha256": "c464f839fb8d59f7fde92f9b4caa67c2d1f2f196b88f93fb60502249df0aaef7",
+      "page_size": [
+        0.0,
+        0.0,
+        612.0,
+        792.0
+      ],
+      "source_raster_dpi": 288
+    }
+  ],
+  "public_export_note": "Path-only relocation and removal of private coordination/download incident details. Original freeze remains unchanged locally; archived source code bytes unchanged."
+}

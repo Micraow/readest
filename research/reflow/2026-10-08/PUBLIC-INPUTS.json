@@ -1,0 +1,65 @@
+{
+  "notice": "Public availability is not a redistribution or training license. No paper bytes/crops/transcribed text included. All listed pages are now seen diagnostics.",
+  "papers": [
+    {
+      "key": "Adam-v9-p03",
+      "url": "https://arxiv.org/pdf/1412.6980v9",
+      "sha256": "eab9c73ae2ceda884b94830bda99312254bac4806f6c9f045cbab90721ecda31",
+      "page_1based": 3
+    },
+    {
+      "key": "ResNet-v1-p03",
+      "url": "https://arxiv.org/pdf/1512.03385v1",
+      "sha256": "1e0651b6810ecba34a3dbc5b5b0209226f889004607c1f203540a48d64e5a93a",
+      "page_1based": 3
+    },
+    {
+      "key": "Gottesman-v1-p09",
+      "url": "https://arxiv.org/pdf/0904.2557v1",
+      "sha256": "2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29",
+      "page_1based": 9
+    },
+    {
+      "key": "ForestColl-v4-p07",
+      "url": "https://arxiv.org/pdf/2402.06787v4",
+      "sha256": "843cc72a56f3c9425d012d4be4cb70a94372d11a033c4edb0491b120d83a5288",
+      "page_1based": 7
+    },
+    {
+      "key": "BERT-v2-p03",
+      "url": "https://arxiv.org/pdf/1810.04805v2",
+      "sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "page_1based": 3
+    },
+    {
+      "key": "LayerNorm-v1-p04",
+      "url": "https://arxiv.org/pdf/1607.06450v1",
+      "sha256": "c464f839fb8d59f7fde92f9b4caa67c2d1f2f196b88f93fb60502249df0aaef7",
+      "page_1based": 4
+    },
+    {
+      "key": "Attention-v7-p05",
+      "url": "https://arxiv.org/pdf/1706.03762v7",
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "page_1based": 5
+    },
+    {
+      "key": "Heisenberg-v1-p04",
+      "url": "https://arxiv.org/pdf/quant-ph/9807006v1",
+      "sha256": "4c5f0b3c818cb85f8dd0290e697d96370981720a6283ee4fd7db002b7e3baad8",
+      "page_1based": 4
+    },
+    {
+      "key": "FasterRCNN-v3-p03",
+      "url": "https://arxiv.org/pdf/1506.01497v3",
+      "sha256": "f2630182ccfabd6fc89ac20270b4daf15a0ca849298a7db1e5d124ca443051f1",
+      "page_1based": 3
+    },
+    {
+      "key": "GroupNorm-v3-p03",
+      "url": "https://arxiv.org/pdf/1803.08494v3",
+      "sha256": "b2863f7fc089095da466c4318a4764ae666ce60b7d264b5de129d1867a4541a3",
+      "page_1based": 3
+    }
+  ]
+}

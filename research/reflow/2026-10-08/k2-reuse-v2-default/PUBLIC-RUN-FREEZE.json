@@ -1,0 +1,27 @@
+{
+  "created_utc": "2026-10-08T12:33:22.955520+00:00",
+  "config_freeze_sha256": "6c6e1c826a405980bbe8acfe3aae4c153d391d61e6e3a4a8730c9ddc7728d319",
+  "harness_binary_sha256": "688ca0f6130f6ff15bc5164f07ac5b70d1f0f739f0faabdbbf320aeed29077f2",
+  "reference_audit_sha256": "68658b83d976eafe97c2ade310311c4290f88399a17b9001b2770f711c5939eb",
+  "inputs": [
+    {
+      "key": "Attention-v7-p05",
+      "file": "Attention-v7.pdf",
+      "pdf_page_1based": 5,
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+    },
+    {
+      "key": "Heisenberg-v1-p04",
+      "file": "Heisenberg-v1.pdf",
+      "pdf_page_1based": 4,
+      "sha256": "4c5f0b3c818cb85f8dd0290e697d96370981720a6283ee4fd7db002b7e3baad8"
+    },
+    {
+      "key": "FasterRCNN-v3-p03",
+      "file": "FasterRCNN-v3.pdf",
+      "pdf_page_1based": 3,
+      "sha256": "f2630182ccfabd6fc89ac20270b4daf15a0ca849298a7db1e5d124ca443051f1"
+    }
+  ],
+  "public_export_note": "Path-only relocation and removal of private coordination/download incident details. Original freeze remains unchanged locally; archived source code bytes unchanged."
+}
