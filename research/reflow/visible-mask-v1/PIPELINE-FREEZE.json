@@ -1,0 +1,30 @@
+{
+  "inputs": [
+    {
+      "key": "ConvNeXt-v2-p03",
+      "url": "https://arxiv.org/pdf/2201.03545v2",
+      "page_1based": 3,
+      "partition": "seen_mechanism_regression",
+      "sha256": "1fde2340370d0eb8045bda97fc94da7adb2a7abe8e6ded1a473d22475b945e1a"
+    },
+    {
+      "key": "MobileNet-v1-p03",
+      "url": "https://arxiv.org/pdf/1704.04861v1",
+      "page_1based": 3,
+      "partition": "new_page_validation"
+    }
+  ],
+  "frozen_at_utc": "2026-10-08T23:55:16.516882+00:00",
+  "scope": "Mask-only physical ownership change; all column, roles, number/caption, k2, rendering rules copied unchanged from column-relations-v1. ConvNeXt is seen regression, never generalization. MobileNet preregistered before download/inspection.",
+  "stop": "One pass each; unexplained or multi-owner connected ink forces full original page; no output-informed rule changes.",
+  "hashes": {
+    "code/masks.py": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+    "code/monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "code/fixtures.py": "1a2016c2d92c9f81d83e8e6a9bff6f50e3d9b9fc63d96ced2f852b6927863eaa",
+    "code/compose.py": "b741767d657efad3e3a71d0c9d980da84792c1843ce34ffff71cfb281761d723",
+    "code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "code/detect.py": "81ae1fbc7ae4120df30e5aab8298a3d8004e3da0a9f02b0ff054e29a3b34a12a"
+  },
+  "cached_detector_reuse": "Skip existing ConvNeXt detector JSON; only new input is inferred, same model settings.",
+  "finalized_before_new_input_utc": "2026-10-08T23:55:49.931902+00:00"
+}

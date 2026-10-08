@@ -1,0 +1,80 @@
+{
+  "rows": [
+    {
+      "visible_ink": 880,
+      "components": 6,
+      "unseeded_components": 0,
+      "ambiguous_components": 0,
+      "unassigned_visible_ink": 0,
+      "whole_page_refusal": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "case": "wide_white_background",
+      "expected": "accept",
+      "expectation_met": true
+    },
+    {
+      "visible_ink": 650,
+      "components": 6,
+      "unseeded_components": 0,
+      "ambiguous_components": 0,
+      "unassigned_visible_ink": 0,
+      "whole_page_refusal": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "case": "white_overpaint",
+      "expected": "accept",
+      "expectation_met": true
+    },
+    {
+      "visible_ink": 1298,
+      "components": 14,
+      "unseeded_components": 0,
+      "ambiguous_components": 0,
+      "unassigned_visible_ink": 0,
+      "whole_page_refusal": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "case": "late_separate_text",
+      "expected": "accept",
+      "expectation_met": true
+    },
+    {
+      "visible_ink": 4232,
+      "components": 6,
+      "unseeded_components": 0,
+      "ambiguous_components": 1,
+      "unassigned_visible_ink": 4005,
+      "whole_page_refusal": true,
+      "changed_rgb_pixels_after_guard": 0,
+      "case": "transparent_overlay",
+      "expected": "refuse",
+      "expectation_met": true
+    },
+    {
+      "visible_ink": 1317,
+      "components": 5,
+      "unseeded_components": 0,
+      "ambiguous_components": 1,
+      "unassigned_visible_ink": 1133,
+      "whole_page_refusal": true,
+      "changed_rgb_pixels_after_guard": 0,
+      "case": "touching_distinct_objects",
+      "expected": "refuse",
+      "expectation_met": true
+    },
+    {
+      "visible_ink": 932,
+      "components": 7,
+      "unseeded_components": 1,
+      "ambiguous_components": 0,
+      "unassigned_visible_ink": 52,
+      "whole_page_refusal": true,
+      "changed_rgb_pixels_after_guard": 0,
+      "case": "unseeded_dot",
+      "expected": "refuse",
+      "expectation_met": true
+    }
+  ],
+  "seconds": 0.04338515500421636,
+  "peak_rss_kib": 49880,
+  "source_sha256": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+  "scope": "Original oracle-semantic-seed invariant test, not real candidate or reading-order evidence."
+}

@@ -1,0 +1,8 @@
+{
+  "frozen_at_utc": "2026-10-08T23:54:25.423706+00:00",
+  "hashes": {
+    "code/masks.py": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+    "code/fixtures.py": "1a2016c2d92c9f81d83e8e6a9bff6f50e3d9b9fc63d96ced2f852b6927863eaa",
+    "FREEZE.json": "b48b79482df1d00ceecd83657528f8d743dd807afd50f5c847d9d0578b478f08"
+  }
+}
