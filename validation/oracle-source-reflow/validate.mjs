@@ -68,5 +68,5 @@ try{
  });
  await check('Auxiliary selectable text is separately labelled scientifically unverified',async()=>{await page.locator('#aux-text summary').click();await expect(page.locator('#aux-text pre')).toBeVisible();await expect(page.locator('#aux-text')).toContainText('上下标会被压平');});
  assert.deepEqual(errors,[]);report.result='passed';
-}catch(e){report.result='failed';report.failure=String(e.stack||e);process.exitCode=1;console.error(e);}
+}catch(e){report.result='failed';report.failure=String(e.stack||e);process.exitCode=1;console.error(e);if(page){try{report.overflowElements=await page.evaluate(()=>[...document.querySelectorAll('main *')].filter(e=>e.getBoundingClientRect().right>innerWidth+1).map(e=>({tag:e.tagName,cls:e.className,text:e.textContent.slice(0,100),box:e.getBoundingClientRect().toJSON()})));await page.screenshot({path:fileURLToPath(new URL('failure.png',output)),fullPage:true});}catch(diag){report.diagnosticFailure=String(diag);}}}
 finally{report.browserErrors=errors;await writeFile(new URL('report.json',output),JSON.stringify(report,null,2));await context?.close();await browser?.close();await new Promise(r=>server.close(r));}

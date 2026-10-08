@@ -13,7 +13,7 @@
     },
     {
       "path": "render.py",
-      "sha256": "5c2ac301ea1f4e0dec4750a7985ab0e24eb1fc01156d0474a17d89d0f51228ee"
+      "sha256": "cbc25b8daad4730e057619d2a9568ca7d287f448f933bb609208580dd346e20b"
     },
     {
       "path": "interaction.js",
@@ -29,7 +29,7 @@
     },
     {
       "path": "validate.mjs",
-      "sha256": "abe151792e31c5e9136bfefcca5507d8f45dfe9d75b173707235bdbec43e71a5"
+      "sha256": "d7a8a706c9453e06df85bb0e8a6d45844f1bd36c8a8a1e5332f44a3315e29d20"
     },
     {
       "path": "README.md",
