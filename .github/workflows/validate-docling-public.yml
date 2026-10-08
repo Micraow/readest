@@ -1,0 +1,75 @@
+name: Docling official CPU public diagnostic pages
+on:
+  push:
+    branches: ['validate/docling-public-20261008']
+    paths: ['validation/docling-public/**', '.github/workflows/validate-docling-public.yml']
+permissions:
+  contents: read
+concurrency:
+  group: docling-public-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  four-pages:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: validation/docling-public
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate resource and source limits
+        run: |
+          python3 - <<'PY'
+          import json, shutil
+          from pathlib import Path
+          manifest=json.loads(Path('manifest.json').read_text())
+          assert sum(len(s['pages']) for s in manifest['sources']) == 4
+          free=shutil.disk_usage('.').free
+          print('Available disk bytes:', free)
+          assert free >= 10*1024**3, 'Need 10 GiB free for official image and evidence'
+          Path('evidence').mkdir()
+          PY
+      - name: Download only hash-pinned public PDFs
+        timeout-minutes: 4
+        run: python3 download.py
+      - name: Pull official complete CPU release
+        timeout-minutes: 8
+        run: |
+          image=$(python3 -c "import json; print(json.load(open('manifest.json'))['image'])")
+          docker pull "$image"
+          docker image inspect "$image" --format '{{json .}}' > evidence/container-inspect.json
+      - name: Convert four pages with no network or credentials
+        timeout-minutes: 11
+        run: |
+          image=$(python3 -c "import json; print(json.load(open('manifest.json'))['image'])")
+          trap 'docker rm -f docling-public-eval >/dev/null 2>&1 || true' EXIT
+          timeout --kill-after=30s 10m docker run --rm --name docling-public-eval \
+            --network none --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 6g --memory-swap 6g --pids-limit 256 \
+            --user "$(id -u):$(id -g)" --tmpfs /tmp:rw,size=512m \
+            --mount "type=bind,src=$PWD,dst=/study,readonly" \
+            --mount "type=bind,src=$PWD/evidence,dst=/output" \
+            -e HF_HUB_OFFLINE=1 -e TRANSFORMERS_OFFLINE=1 -e HF_HUB_DISABLE_TELEMETRY=1 \
+            -e DO_NOT_TRACK=1 -e OMP_NUM_THREADS=2 -e PYTHONDONTWRITEBYTECODE=1 \
+            --entrypoint python "$image" /study/convert.py 2>&1 | tee evidence/conversion.log
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        if: always()
+        with:
+          node-version: 24
+      - name: Render actual exported HTML in Chromium
+        if: always()
+        timeout-minutes: 5
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          node render.mjs
+      - name: Preserve only conversion evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docling-public-four-page-evidence
+          path: validation/docling-public/evidence/
+          if-no-files-found: warn
+          retention-days: 7
