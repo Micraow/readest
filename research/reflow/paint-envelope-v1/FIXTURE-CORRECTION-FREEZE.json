@@ -1,0 +1,10 @@
+{
+  "epoch": 1791502931.5223727,
+  "reason": "Visual QA showed original Symbol insert_text fixture painted a dot, not a radical; original result retained and not counted as radical validation.",
+  "envelope_sha256": "7298f9b2779fd6ace41d3b0990bfdd3cb41a9acb1a5faacd40ec70c480d908d3",
+  "new_generator": "TextWriter with Symbol Unicode glyph",
+  "scales": [
+    1.25,
+    4.0
+  ]
+}

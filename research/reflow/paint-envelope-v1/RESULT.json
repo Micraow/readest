@@ -1,0 +1,346 @@
+{
+  "rows": [
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        400,
+        525
+      ],
+      "paint_objects": 3,
+      "source_ink": 2092,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-0",
+      "seconds": 0.013884216998121701
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1280,
+        1680
+      ],
+      "paint_objects": 3,
+      "source_ink": 15534,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-0",
+      "seconds": 0.08549655799288303
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        400,
+        525
+      ],
+      "paint_objects": 4,
+      "source_ink": 3970,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-1",
+      "seconds": 0.011234977006097324
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1280,
+        1680
+      ],
+      "paint_objects": 4,
+      "source_ink": 29220,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-1",
+      "seconds": 0.09093420099816285
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        400,
+        525
+      ],
+      "paint_objects": 4,
+      "source_ink": 34298,
+      "outside_logical_glyph_envelopes": 20677,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-2",
+      "seconds": 0.016751123999711126
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1280,
+        1680
+      ],
+      "paint_objects": 4,
+      "source_ink": 341944,
+      "outside_logical_glyph_envelopes": 213505,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-2",
+      "seconds": 0.1263214899954619
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        400,
+        525
+      ],
+      "paint_objects": 4,
+      "source_ink": 3514,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-3",
+      "seconds": 0.010480302997166291
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1280,
+        1680
+      ],
+      "paint_objects": 4,
+      "source_ink": 27557,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-3",
+      "seconds": 0.08871006399567705
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        339,
+        451
+      ],
+      "paint_objects": 3,
+      "source_ink": 2107,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-4",
+      "seconds": 0.00809758499963209
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1082,
+        1442
+      ],
+      "paint_objects": 3,
+      "source_ink": 15534,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-4",
+      "seconds": 0.06264785000530537
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        525,
+        400
+      ],
+      "paint_objects": 3,
+      "source_ink": 2091,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-5",
+      "seconds": 0.009514703007880598
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1680,
+        1280
+      ],
+      "paint_objects": 3,
+      "source_ink": 15539,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-5",
+      "seconds": 0.08432103799714241
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        400,
+        525
+      ],
+      "paint_objects": 5,
+      "source_ink": 15133,
+      "outside_logical_glyph_envelopes": 13041,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-6",
+      "seconds": 0.009927513005095534
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1280,
+        1680
+      ],
+      "paint_objects": 5,
+      "source_ink": 146016,
+      "outside_logical_glyph_envelopes": 130482,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-6",
+      "seconds": 0.08767547599563841
+    },
+    {
+      "scale": 1.25,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        400,
+        525
+      ],
+      "paint_objects": 4,
+      "source_ink": 3237,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-7",
+      "seconds": 0.009842114988714457
+    },
+    {
+      "scale": 4.0,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        1280,
+        1680
+      ],
+      "paint_objects": 4,
+      "source_ink": 23999,
+      "outside_logical_glyph_envelopes": 0,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "original-fixture-7",
+      "seconds": 0.08852145199489314
+    },
+    {
+      "scale": 4,
+      "pixel_origin": [
+        0,
+        0
+      ],
+      "size": [
+        2448,
+        3168
+      ],
+      "paint_objects": 966,
+      "source_ink": 870445,
+      "outside_logical_glyph_envelopes": 296896,
+      "outside_physical_paint_envelopes": 0,
+      "whole_page_fallback": false,
+      "changed_rgb_pixels_after_guard": 0,
+      "warning": "Envelopes prove raster containment only; overlaps do not assign semantic ownership or author reading order.",
+      "key": "GroupNorm-v3-p03-seen-regression",
+      "seconds": 0.591655668002204
+    }
+  ],
+  "wall_seconds": 1.6970740980032133,
+  "peak_rss_kib": 256696
+}
