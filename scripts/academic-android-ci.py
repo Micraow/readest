@@ -27,9 +27,9 @@ PART_SIZE = 16 * 1024 * 1024
 APP = Path("apps/readest-app")
 ANDROID = APP / "src-tauri/gen/android"
 OUTPUT = Path("academic-android-artifact")
-APP_ID = "com.bilingify.readest.academic"
+APP_ID = "com.bilingify.readest.academic.v2"
 NAMESPACE = "com.bilingify.readest"
-LABEL = "Readest 学术测试版"
+LABEL = "Readest 学术测试版 2"
 A = "{http://schemas.android.com/apk/res/android}"
 ET.register_namespace("android", A[1:-1])
 

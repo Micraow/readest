@@ -19,7 +19,7 @@ val tauriProperties = Properties().apply {
 // unchanged; applicationId gives this APK its own install and data directory.
 val academicBuild = providers.gradleProperty("academicBuild").orNull == "true"
 // Increment for delivered academic updates; the first parallel build used revision 12.
-val academicRevision = 13
+val academicRevision = 14
 
 android {
     compileSdk = 36
@@ -52,7 +52,7 @@ android {
                         ?.substringAfter("=")?.trim()?.trim('"', '\'')?.takeIf { it.isNotEmpty() }
                 }
             ?: ""
-        applicationId = if (academicBuild) "com.bilingify.readest.academic" else "com.bilingify.readest"
+        applicationId = if (academicBuild) "com.bilingify.readest.academic.v2" else "com.bilingify.readest"
         minSdk = 26
         targetSdk = 36
         if (academicBuild) {

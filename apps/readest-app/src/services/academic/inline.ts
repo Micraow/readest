@@ -31,7 +31,9 @@ const baseItems = (items: PdfTextItem[], font: number) =>
   items.filter((item) => item.fontSize >= font * 0.94);
 const compact = (item: PdfTextItem, font: number) =>
   item.text.length <= 40 && (item.fontSize < font * 0.92 || /^\S{1,8}$/.test(item.text));
-const unmapped = (item: PdfTextItem) => /[\p{Cc}\p{Co}\uFFFD]/u.test(item.text.trim());
+const unmapped = (item: PdfTextItem) =>
+  /[\p{Cc}\p{Co}\uFFFD]/u.test(item.text.trim()) ||
+  (item.fontMath === true && /^\p{L}{1,4}$/u.test(item.text.trim()));
 
 /** Broken font mappings can also report a raised baseline for an ordinary-size operator. */
 export function unmappedGlyphAnchors(items: PdfTextItem[]): Map<number, PdfTextItem> {
@@ -304,7 +306,16 @@ export function joinInlineRuns(previous: InlineRun[], next: InlineRun[]): Inline
         /^[a-z]{2}/.test(first.text)))
   )
     last.text = last.text.slice(0, -1);
-  else if (!/-$|\s$/.test(text) && !/^\s/.test(first.text))
+  else if (
+    !/-$|\s$/.test(text) &&
+    !/^\s/.test(first.text) &&
+    !(
+      /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}，。！？：；、）】》]$/u.test(text) &&
+      /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}，。！？：；、（【《]/u.test(
+        first.text,
+      )
+    )
+  )
     // Put inferred separators in a separate text run, never inside source alt text.
     left.push({
       kind: 'text',

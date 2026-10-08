@@ -15,6 +15,8 @@ export interface PdfTextItem {
   fontFamily: string;
   /** Confirmed fixed-width text face; the generic PDF fallback can also describe symbol subsets. */
   fontMonospace?: true;
+  /** Confirmed symbol/extension face; letter codes may represent mathematical operators. */
+  fontMath?: true;
   fontStyle?: 'italic';
   fontWeight?: 'bold';
   angle: number;

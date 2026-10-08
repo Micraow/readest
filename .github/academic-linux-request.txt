@@ -1,4 +1,4 @@
-academic-13-inlineword: keep unspaced inline source glyphs and operands together, 2026-10-07
-UI-only bounded inline word grouping. Parser, analysis cache, source crop geometry and Position1 character anchors remain unchanged.
-325 focused academic/image-viewer tests, application TypeScript and Biome lint pass. Full repository suite remains incomplete due to the previously documented unrelated network-dependent novel-import fixture.
-Native acceptance must verify the reproduced wide-window sum/operand line break, narrow large-font fallback without horizontal overflow, inline zoom/baseline and Position1 reading anchors on the new executable.
+academic-14: respect source visibility and multilingual scholarly layout, 2026-10-08
+Filter clipped and invisible source text using paint-time geometry; preserve partial visible glyphs as source pixels. Recognize localized/mixed-language captions and bibliography, isolate margin annotations, keep multilingual prose out of equation/figure crops, and preserve math-font operator pixels and CJK line boundaries.
+367 focused academic/image-viewer tests, application TypeScript and Biome lint pass. Linux artifact-contract tests (4) and Android build-identity tests (6) pass. Full repository suite remains incomplete due to the unrelated network-dependent novel-import fixture; the broader excluded-file run was stopped under memory pressure.
+Native acceptance must verify multilingual prose/figures/tables, shared captions, math operators, zoom, theme, narrow/large-font behavior and reading anchors on the rebuilt executable. Private test documents and extracted content remain local only.

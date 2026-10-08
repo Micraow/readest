@@ -17,7 +17,7 @@ import { buildInlineRuns, joinInlineRuns, unmappedGlyphAnchors } from './inline.
 
 export const SCHEMA_VERSION = 1;
 /** Change when extraction, ordering or classification changes, not just JSON shape. */
-export const PARSER_VERSION = 'academic-13';
+export const PARSER_VERSION = 'academic-14';
 const right = (r: Rect) => r.x + r.width;
 const bottom = (r: Rect) => r.y + r.height;
 const median = (values: number[]) => {
@@ -103,7 +103,7 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
   const rows: Array<{ baseline: number; size: number; items: PdfTextItem[] }> = [];
   // Main glyphs establish baseline anchors before superscripts/subscripts are attached.
   for (const item of items
-    .filter((item) => !dropCaps.has(item))
+    .filter((item) => !dropCaps.has(item) && isHorizontal(item))
     .sort(
       (a, b) =>
         b.fontSize - a.fontSize ||
@@ -124,7 +124,8 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
       if (delta > tolerance || delta >= distance) continue;
       // Superscripts attach only to a nearby run, not a different column on the same row.
       const nearby =
-        item.fontSize >= row.size * 0.82 ||
+        (!(item.fontSize < font * 0.82 && /^\S{1,4}$/.test(item.text)) &&
+          item.fontSize >= row.size * 0.82) ||
         row.items.some(
           (i) => item.box.x < right(i.box) + row.size && right(item.box) > i.box.x - row.size,
         ) ||
@@ -224,6 +225,15 @@ export function clusterLines(page: PageGeometry, excluded: Set<number> = new Set
     }
     flush();
   }
+  // A rotated annotation has no meaningful baseline in the prose coordinate system.
+  for (const item of items.filter((item) => !isHorizontal(item)))
+    lines.push({
+      id: '',
+      text: item.text,
+      box: item.box,
+      itemIndices: [item.index],
+      fontSize: item.fontSize,
+    });
   return lines
     .sort((a, b) => a.box.y - b.box.y || a.box.x - b.box.x || a.itemIndices[0]! - b.itemIndices[0]!)
     .map((line, index) => ({ ...line, id: `p${page.page}-l${index}` }));
@@ -241,6 +251,11 @@ export function joinLines(lines: string[]): string {
         return text.slice(0, -1) + trimmed;
       return text + trimmed;
     }
+    if (
+      /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}，。！？：；、）】》]$/u.test(text) &&
+      /^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}，。！？：；、（【《]/u.test(trimmed)
+    )
+      return text + trimmed;
     return `${text} ${trimmed}`;
   }, '');
 }
@@ -252,11 +267,28 @@ interface Region {
   reason?: string;
   captionIds?: string[];
 }
+const captionLabel = (text: string) => {
+  const match = text.match(/^\s*(Figure|Fig\.|Table|图|表)\s*(\d+|[IVX]+)/iu);
+  if (!match) return undefined;
+  const remainder = text.slice(match[0].length);
+  if (
+    !/^(?:[:：]|\.(?:\s|$)|\s*$|\s*\p{Script=Han}|\s+[A-Za-z][A-Za-z0-9_/-]*\s*\p{Script=Han})/u.test(
+      remainder,
+    ) &&
+    !(/^[图表]$/.test(match[1]!) && /^\s+/.test(remainder))
+  )
+    return undefined;
+  if (/^(?:所示|显示|表明|说明|给出|中|为|是)/.test(remainder.trim())) return undefined;
+  return {
+    role: /^(?:Table|表)$/i.test(match[1]!) ? ('table' as const) : ('figure' as const),
+    label: match[2]!,
+  };
+};
+const bibliographyHeading = (text: string) =>
+  /^(?:(?:references|bibliography)\b|参考文献(?:\s|$))/i.test(text);
 const captionRole = (text: string): VisualRole | undefined => {
   if (/^\s*(?:Algorithm|Procedure)\s+\d+[.:\s]/i.test(text)) return 'algorithm';
-  if (/^\s*Table\s+(?:\d+|[IVX]+)(?:[.:](?:\s|$)|\s*$)/i.test(text)) return 'table';
-  if (/^\s*(?:Figure|Fig\.)\s*\d+(?:[.:](?:\s|$)|\s*$)/i.test(text)) return 'figure';
-  return undefined;
+  return captionLabel(text)?.role;
 };
 function connected(a: Rect, b: Rect, gap: number): boolean {
   const dx = Math.max(0, a.x - right(b), b.x - right(a));
@@ -288,7 +320,7 @@ function captionBox(
   for (const next of lines) {
     if (next.id === caption.id || next.box.y < caption.box.y + caption.fontSize * 0.6) continue;
     const gap = next.box.y - bottom(box);
-    if (gap < -1 || gap > caption.fontSize * 0.7) continue;
+    if (gap < -1 || gap > caption.fontSize * 0.95) continue;
     if (
       Math.abs(next.fontSize - caption.fontSize) > caption.fontSize * 0.15 ||
       captionRole(next.text)
@@ -441,7 +473,8 @@ function detectVisualRegions(
           line.box.y >= preceding &&
           !captionRole(line.text) &&
           line.fontSize >= font * 0.94 &&
-          (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length >= 6,
+          ((line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length >= 6 ||
+            (line.text.match(/\p{Script=Han}/gu) ?? []).length >= 8),
       );
       const oppositeBodyStart = Math.min(...oppositeBody.map((line) => line.box.y));
       const oppositeCaption = captions.some(
@@ -475,7 +508,8 @@ function detectVisualRegions(
         inColumn(line.box) &&
         !captionRole(line.text) &&
         line.fontSize >= font * 0.94 &&
-        (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length >= 6,
+        ((line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length >= 6 ||
+          (line.text.match(/\p{Script=Han}/gu) ?? []).length >= 8),
     );
     const lowerBound = Math.max(
       page.height * 0.05,
@@ -659,7 +693,17 @@ function detectVisualRegions(
       (line) =>
         line.box.x >= colLeft - 2 &&
         right(line.box) <= colRight + 5 &&
-        (!line.itemIndices.every((id) => excluded.has(id)) || /^\d+$/.test(line.text)) &&
+        (!line.itemIndices.every((id) => excluded.has(id)) ||
+          (/^\d+$/.test(line.text) &&
+            page.graphics.some(
+              ({ kind, box }) =>
+                kind === 'rule' &&
+                box.height <= 1.5 &&
+                box.width >= 5 &&
+                box.width <= font * 12 &&
+                horizontalOverlap(box, line.box) > line.box.width * 0.5 &&
+                Math.min(Math.abs(box.y - bottom(line.box)), Math.abs(line.box.y - box.y)) < font,
+            ))) &&
         !regions.some((region) => centerInside(line.box, region.box)),
     );
     const hasNumber = (line: LayoutLine) =>
@@ -670,13 +714,17 @@ function detectVisualRegions(
     const prose = columnLines.filter((line) => {
       if (hasNumber(line)) return false;
       const words = (line.text.match(/\b[a-zA-Z]{4,}\b/g) ?? []).length;
+      const cjk = (line.text.match(/\p{Script=Han}/gu) ?? []).length;
       const connectiveWords = (
         line.text.match(
           /\b(?:the|a|an|we|is|are|be|for|to|from|with|where|since|thus|and|of|by|as|at|according)\b/gi,
         ) ?? []
       ).length;
       return (
-        /https?:|www\.|[?&][\w-]+=/.test(line.text) ||
+        /https?:|www\.|[?&][\w-]+=|\w+\([^)]*=[^)]*\)\.(?:html?|aspx?)/i.test(line.text) ||
+        cjk >= 4 ||
+        (cjk > 0 && !mathSymbol.test(line.text)) ||
+        /^(?:其中|因此|由于|因为|所以|故|则|由|可得|有)(?:\s|$)/u.test(line.text) ||
         /^(?:where|since|thus|and|but|hence)\b/i.test(line.text) ||
         words >= 4 ||
         (line.box.x < column.x + font * 1.4 &&
@@ -814,7 +862,10 @@ function detectVisualRegions(
       if (
         current.captionIds?.length &&
         other.captionIds?.length &&
-        !current.captionIds.some((id) => other.captionIds!.includes(id))
+        !current.captionIds.some((id) => other.captionIds!.includes(id)) &&
+        (horizontalOverlap(current.box, other.box) <= font * 0.5 ||
+          verticalOverlap(current.box, other.box) <
+            Math.min(current.box.height, other.box.height) * 0.5)
       )
         continue;
       if (
@@ -879,7 +930,7 @@ function repeatedMargins(pages: PageGeometry[], linePages: LayoutLine[][]): Set<
       if (
         !inset.has(line) &&
         line.box.y > pages[i]!.height * 0.105 &&
-        bottom(line.box) < pages[i]!.height * 0.92
+        bottom(line.box) < pages[i]!.height * 0.9
       )
         continue;
       const side = inset.has(line)
@@ -917,11 +968,21 @@ function suppressedItems(
   lines: LayoutLine[],
   repeated: Set<string>,
 ): Set<number> {
-  const suppressed = new Set(page.items.filter((i) => !i.text.trim()).map((i) => i.index));
+  const suppressed = new Set(
+    page.items
+      .filter(
+        (i) =>
+          !i.text.trim() ||
+          (!isHorizontal(i) &&
+            /^arxiv:/i.test(i.text.trim()) &&
+            (right(i.box) < page.width * 0.1 || i.box.x > page.width * 0.9)),
+      )
+      .map((i) => i.index),
+  );
   const inset = insetHeaderRow(page, lines);
   const runningHeads = inset.filter((line) => repeated.has(`inset-top:${marginKey(line.text)}`));
   for (const line of lines) {
-    const margin = line.box.y < page.height * 0.105 || bottom(line.box) > page.height * 0.92;
+    const margin = line.box.y < page.height * 0.105 || bottom(line.box) > page.height * 0.9;
     const key = `${line.box.y < page.height / 2 ? 'top' : 'bottom'}:${marginKey(line.text)}`;
     const pageNumber = /^[-–—]?\s*\d{1,4}\s*[-–—]?$/.test(line.text);
     const insetMargin =
@@ -1176,7 +1237,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
           horizontalOverlap(g.box, line.box) > 0,
       );
       const isFootnote: boolean =
-        (line.fontSize < font * 0.87 &&
+        (proseSize(line) < font * 0.87 &&
           line.box.y > page.height * 0.72 &&
           (footnoteRule || /^\d+\s/.test(line.text) || !!superscriptNoteMarker)) ||
         // First-page publication notes may start halfway down the column
@@ -1195,7 +1256,7 @@ function textBlocks(page: PageGeometry, lines: LayoutLine[], cut?: number): Scho
           line.box.y - bottom(previous.box) < font * 1.2 &&
           Math.abs(line.fontSize - previous.fontSize) < previous.fontSize * 0.06 &&
           horizontalOverlap(line.box, previous.box) > 0);
-      if (/^(?:references|bibliography)\b/i.test(line.text)) references = true;
+      if (bibliographyHeading(line.text)) references = true;
       let type: ScholarlyBlock['type'] = isFootnote
         ? 'footnote'
         : isHeading
@@ -1421,29 +1482,40 @@ function analyzePage(
     );
     block.role = region.role;
     const owned = new Set(items.map((item) => item.index));
-    const associated = lines.filter(
-      (line) =>
-        (region.role === 'figure' || region.role === 'table') &&
-        captionRole(line.text) === region.role &&
-        line.itemIndices.every((id) => owned.has(id)) &&
-        (!region.captionIds?.length || region.captionIds.includes(line.id)),
-    );
+    const associated = lines
+      .filter(
+        (line) =>
+          (region.role === 'figure' || region.role === 'table') &&
+          captionRole(line.text) === region.role &&
+          line.itemIndices.every((id) => owned.has(id)),
+      )
+      .sort((a, b) =>
+        Math.abs(a.box.y - b.box.y) < Math.min(a.fontSize, b.fontSize) * 0.6
+          ? a.box.x - b.box.x
+          : a.box.y - b.box.y,
+      );
     const visualCaptions: VisualCaption[] = associated.flatMap((line) => {
-      const label = line.text.match(/^\s*(?:Figure|Fig\.|Table)\s*(\d+|[IVX]+)(?:[.:\s]|$)/i)?.[1];
+      const label = captionLabel(line.text)?.label;
       const role = captionRole(line.text);
       if (!label || (role !== 'figure' && role !== 'table')) return [];
       // The prose gutter is not a caption boundary. Use the visual's width,
       // splitting it only where another independently labelled caption begins.
-      const peers = associated.filter(
-        (peer) => peer !== line && Math.abs(peer.box.y - line.box.y) < line.fontSize * 0.6,
-      );
+      const peers = associated
+        .filter((peer) => peer !== line && Math.abs(peer.box.y - line.box.y) < line.fontSize * 0.6)
+        .sort((a, b) => a.box.x - b.box.x);
       const leftPeer = peers.filter((peer) => peer.box.x < line.box.x).at(-1);
       const rightPeer = peers.find((peer) => peer.box.x > line.box.x);
       const x = leftPeer ? (right(leftPeer.box) + line.box.x) / 2 : region.box.x;
       const end = rightPeer ? (right(line.box) + rightPeer.box.x) / 2 : right(region.box);
       const anchor = { ...line.box, x, width: end - x };
-      const bounds = captionBox({ ...line, box: anchor }, lines, page, anchor);
-      const captionItems = items.filter((item) => centerInside(item.box, bounds));
+      // Continuations from adjacent captions can share one PDF baseline. Partition
+      // source items first, so a broad clustered line cannot interleave captions.
+      const localItems = items.filter(
+        (item) => item.box.x + item.box.width / 2 >= x && item.box.x + item.box.width / 2 < end,
+      );
+      const localLines = clusterLines({ ...page, items: localItems });
+      const bounds = captionBox({ ...line, id: '', box: anchor }, localLines, page, anchor);
+      const captionItems = localItems.filter((item) => centerInside(item.box, bounds));
       const captionLines = clusterLines({ ...page, items: captionItems });
       return [
         {
@@ -1461,10 +1533,15 @@ function analyzePage(
     });
     if (visualCaptions.length) {
       block.captions = visualCaptions;
+      const captionIds = new Set(visualCaptions.flatMap((caption) => caption.source.itemIndices));
+      // Some PDF fonts understate ascent. Reserve the ordinary glyph band too,
+      // otherwise a thin strip of caption ink survives in the plot preview.
       const captionY = Math.min(
         ...visualCaptions.flatMap((caption) => caption.source.boxes.map((box) => box.y)),
+        ...items
+          .filter((item) => captionIds.has(item.index))
+          .map((item) => item.baseline - item.fontSize * 0.82),
       );
-      const captionIds = new Set(visualCaptions.flatMap((caption) => caption.source.itemIndices));
       const content = items.filter((item) => !captionIds.has(item.index));
       const graphicBelow = page.graphics.some(
         (graphic) =>
@@ -1686,7 +1763,7 @@ function finalize(
   const ordered = results.flatMap((r) => r.blocks);
   let references = false;
   for (const block of ordered) {
-    if (block.type === 'heading') references = /^(?:references|bibliography)\b/i.test(block.text);
+    if (block.type === 'heading') references = bibliographyHeading(block.text);
     else if (references && block.type === 'paragraph') block.type = 'reference';
   }
   // Preserve source-near float order; only finish an interrupted paragraph first.

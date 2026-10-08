@@ -1,14 +1,14 @@
 # Parallel Android reading test build
 
 The `Academic Android unsigned build` workflow produces one arm64 release APK
-with the academic-12 reader. Use **Run workflow**, or explicitly include
+with the current academic reader. Use **Run workflow**, or explicitly include
 `[build-academic-android]` in a main-branch commit. Ordinary commits skip this job
 before runner allocation. For that explicit marker push, the separate Android
 tests/lint/build replace the unrelated Nix, web and host-native build lanes;
 ordinary source and pull-request checks keep their existing behavior.
 
 The optional `academicBuild=true` Gradle property selects
-`com.bilingify.readest.academic`, displayed as **Readest 学术测试版**. It preserves
+`com.bilingify.readest.academic.v2`, displayed as **Readest 学术测试版 2**. It preserves
 the original Java/JNI namespace while giving the APK a separate installation and
 data directory. Normal builds without that property keep the original identity.
 
@@ -74,3 +74,17 @@ The private key was not uploaded to CI, source control or ordinary artifacts;
 secure user-controlled backup remains pending. Do not overwrite that key when
 preparing future updates. Android device/emulator reading acceptance remains
 pending; the corresponding reading UI was visually checked in the Linux build.
+
+## Replacement signing identity (2026-10-08)
+
+The v2 package is separate from both official Readest and the previous
+`com.bilingify.readest.academic` test app. It can coexist with them without
+uninstalling either or modifying their data. It starts with its own empty
+library; re-import PDFs from the original files. Keep old apps installed until
+any needed local annotations/settings have been exported through supported UI.
+
+The new package uses academic revision 14. The Java/JNI namespace is unchanged.
+Only the unsigned APK enters CI artifact storage. The separately approved local
+signing key must never enter the repository, logs, chat, Library, or workflow
+artifacts. Temporary local retention is not a durable backup; user-controlled
+secure backup remains a separate handoff.

@@ -39,6 +39,40 @@ const line = (items: PdfTextItem[]): LayoutLine => ({
 });
 
 describe('source-preserving inline content', () => {
+  it.each([
+    ['这里的传', '输采用新的方法。'],
+    ['第一段，', '随后继续。'],
+  ])('joins physical CJK rows without inserting spaces: %s / %s', (before, after) => {
+    const a = item(0, before, 10, 100);
+    const b = item(1, after, 10, 112);
+    const runs = buildInlineRuns(page([a, b]), [line([a]), line([b])]);
+    expect(runs.map((run) => run.text).join('')).toBe(before + after);
+    expect(runs.flatMap((run) => run.source.itemIndices)).toEqual([0, 1]);
+  });
+
+  it.each(['Í', 'Ð'])('preserves a Latin-mapped symbol-font %s as local source pixels', (text) => {
+    const prefix = item(0, 'The result is', 10, 100, 10, 40);
+    const operator = { ...item(1, text, 54, 93, 10, 8), fontMath: true as const };
+    const suffix = item(2, 'x.', 66, 100);
+    const runs = buildInlineRuns(page([prefix, operator, suffix]), [
+      line([operator]),
+      line([prefix, suffix]),
+    ]);
+    expect(runs.filter((run) => run.kind === 'source')).toMatchObject([
+      { text, baseline: 100, source: { itemIndices: [1] } },
+    ]);
+    expect(runs.map((run) => (run.kind === 'source' ? '[operator]' : run.text)).join('')).toBe(
+      'The result is [operator] x.',
+    );
+  });
+
+  it('keeps accented Latin prose selectable when its font is not a confirmed symbol face', () => {
+    const items = [item(0, 'Í', 10), item(1, 'and Ð are letters.', 20)];
+    const runs = buildInlineRuns(page(items), [line(items)]);
+    expect(runs.every((run) => run.kind === 'text')).toBe(true);
+    expect(runs.map((run) => run.text).join('')).toBe('Í and Ð are letters.');
+  });
+
   it('preserves an unmapped operator on its prose baseline without taking the preceding row', () => {
     const earlier = item(0, 'Earlier prose continues here.', 10, 88, 10, 150);
     const prefix = item(1, 'Value =', 10, 100, 10, 40);
