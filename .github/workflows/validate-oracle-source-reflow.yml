@@ -1,0 +1,57 @@
+name: Oracle source reflow Chromium experiment
+on:
+  push:
+    branches: ['validate/oracle-source-reflow-20261008']
+    paths:
+      - 'validation/oracle-source-reflow/**'
+      - '.github/workflows/validate-oracle-source-reflow.yml'
+permissions:
+  contents: read
+concurrency:
+  group: oracle-source-reflow-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  chromium:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: validation/oracle-source-reflow
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: validation/oracle-source-reflow/package-lock.json
+      - name: Install pinned reference-rendering dependencies
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -r requirements.txt
+          npm ci --ignore-scripts --no-audit --no-fund
+      - name: Fetch immutable public source and compile explicit oracle fixture
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 --output source.pdf 'https://arxiv.org/pdf/0904.2557v1'
+          printf '%s  %s\n' '2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29' source.pdf | sha256sum -c -
+          python3 prepare.py source.pdf --oracle oracle.json --out .
+          python3 render.py --dir .
+          python3 -m unittest -v test_prepare.py
+          npm run check:fixture
+      - name: Install Chromium from Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Validate phone-width source rendering and interactions
+        run: npm test
+      - name: Preserve public-source screenshots and audit
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: oracle-source-reflow-evidence
+          path: |
+            validation/oracle-source-reflow/evidence/
+            validation/oracle-source-reflow/audit.json
+          if-no-files-found: warn
+          retention-days: 7

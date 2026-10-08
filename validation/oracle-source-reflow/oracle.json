@@ -1,0 +1,631 @@
+{
+  "schemaVersion": "oracle-source-units/1",
+  "provenance": "Human-reviewed reference structure INPUT, not automatic parser output. Selected public-paper excerpts only.",
+  "source": {
+    "url": "https://arxiv.org/pdf/0904.2557v1",
+    "sha256": "2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29",
+    "coordinateSystem": "PDF points, top-left",
+    "nativeAdapter": "PyMuPDF 1.26.6 rawdict path identifiers, not content-operation glyph IDs"
+  },
+  "bodyFontPt": 9.962639808654785,
+  "rasterScale": 4,
+  "sections": [
+    {
+      "id": "excerpt-a",
+      "label": "第 3 页：叠加态正文及完整公式（11）",
+      "page": 3,
+      "nodes": [
+        {
+          "id": "a-body-1",
+          "role": "body",
+          "lines": [
+            {
+              "refs": [
+                [
+                  10,
+                  0
+                ]
+              ],
+              "window": [
+                125,
+                250,
+                488,
+                262
+              ],
+              "baseline": 258.72015380859375
+            },
+            {
+              "refs": [
+                [
+                  10,
+                  1
+                ]
+              ],
+              "window": [
+                125,
+                262,
+                488,
+                275
+              ],
+              "baseline": 270.72015380859375
+            }
+          ]
+        },
+        {
+          "id": "a-equation-11",
+          "role": "equation",
+          "window": [
+            125,
+            275,
+            424,
+            295
+          ],
+          "label": "Equation 11, including number, overbars and tensor exponent"
+        },
+        {
+          "id": "a-body-2",
+          "role": "body",
+          "lines": [
+            {
+              "refs": [
+                [
+                  16,
+                  0
+                ]
+              ],
+              "window": [
+                125,
+                296,
+                488,
+                309
+              ],
+              "baseline": 305.75970458984375,
+              "groups": [
+                {
+                  "chars": [
+                    31,
+                    31
+                  ],
+                  "role": "inline-math",
+                  "label": "alpha"
+                },
+                {
+                  "chars": [
+                    37,
+                    38
+                  ],
+                  "role": "inline-math",
+                  "label": "beta and punctuation"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  16,
+                  1
+                ]
+              ],
+              "window": [
+                125,
+                309,
+                488,
+                323
+              ],
+              "baseline": 317.75970458984375
+            },
+            {
+              "refs": [
+                [
+                  16,
+                  2
+                ]
+              ],
+              "window": [
+                125,
+                323,
+                488,
+                333
+              ],
+              "baseline": 329.75970458984375
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "excerpt-b",
+      "label": "第 3 页：泡利群、反对易关系和幂",
+      "page": 3,
+      "nodes": [
+        {
+          "id": "b-body-1",
+          "role": "body",
+          "lines": [
+            {
+              "refs": [
+                [
+                  20,
+                  12
+                ]
+              ],
+              "window": [
+                125,
+                570,
+                488,
+                581.5
+              ],
+              "baseline": 578.2801513671875
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  13
+                ]
+              ],
+              "window": [
+                125,
+                581.5,
+                488,
+                593.5
+              ],
+              "baseline": 590.2801513671875,
+              "groups": [
+                {
+                  "chars": [
+                    7,
+                    8
+                  ],
+                  "role": "inline-math",
+                  "label": "X"
+                },
+                {
+                  "chars": [
+                    10,
+                    12
+                  ],
+                  "role": "inline-math",
+                  "label": "Y with comma"
+                },
+                {
+                  "chars": [
+                    18,
+                    18
+                  ],
+                  "role": "inline-math",
+                  "label": "Z"
+                },
+                {
+                  "chars": [
+                    33,
+                    40
+                  ],
+                  "role": "inline-math",
+                  "label": "XZ equals minus ZX"
+                },
+                {
+                  "chars": [
+                    56,
+                    67
+                  ],
+                  "role": "inline-math",
+                  "label": "anticommutator XZ"
+                },
+                {
+                  "chars": [
+                    69,
+                    72
+                  ],
+                  "role": "word",
+                  "label": "Source line-end hyphen retained with forced break",
+                  "breakAfter": true,
+                  "normalizationException": "discretionary-hyphen-retained"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  14
+                ]
+              ],
+              "window": [
+                125,
+                593.5,
+                488,
+                606
+              ],
+              "baseline": 602.2801513671875,
+              "groups": [
+                {
+                  "chars": [
+                    8,
+                    18
+                  ],
+                  "role": "inline-math",
+                  "label": "anticommutator XY"
+                },
+                {
+                  "chars": [
+                    24,
+                    34
+                  ],
+                  "role": "inline-math",
+                  "label": "anticommutator YZ"
+                },
+                {
+                  "chars": [
+                    46,
+                    52
+                  ],
+                  "role": "inline-math",
+                  "label": "n-qubit"
+                },
+                {
+                  "chars": [
+                    66,
+                    67
+                  ],
+                  "role": "inline-math",
+                  "label": "Pauli group P subscript n"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  15
+                ]
+              ],
+              "window": [
+                125,
+                606,
+                488,
+                617
+              ],
+              "baseline": 614.1598510742188,
+              "groups": [
+                {
+                  "chars": [
+                    4,
+                    5
+                  ],
+                  "role": "inline-math",
+                  "label": "4 superscript n"
+                },
+                {
+                  "chars": [
+                    26,
+                    27
+                  ],
+                  "role": "inline-math",
+                  "label": "I"
+                },
+                {
+                  "chars": [
+                    29,
+                    30
+                  ],
+                  "role": "inline-math",
+                  "label": "X"
+                },
+                {
+                  "chars": [
+                    32,
+                    34
+                  ],
+                  "role": "inline-math",
+                  "label": "Y with comma"
+                },
+                {
+                  "chars": [
+                    40,
+                    41
+                  ],
+                  "role": "inline-math",
+                  "label": "Z"
+                },
+                {
+                  "chars": [
+                    67,
+                    68
+                  ],
+                  "role": "inline-math",
+                  "label": "plus or minus one"
+                },
+                {
+                  "chars": [
+                    73,
+                    75
+                  ],
+                  "role": "inline-math",
+                  "label": "plus or minus i"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  16
+                ]
+              ],
+              "window": [
+                125,
+                617,
+                488,
+                630
+              ],
+              "baseline": 626.1598510742188,
+              "groups": [
+                {
+                  "chars": [
+                    11,
+                    14
+                  ],
+                  "role": "inline-math",
+                  "label": "4 superscript n plus one"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  17
+                ]
+              ],
+              "window": [
+                125,
+                630,
+                488,
+                641.5
+              ],
+              "baseline": 638.0399169921875
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  18
+                ]
+              ],
+              "window": [
+                125,
+                641.5,
+                488,
+                653.5
+              ],
+              "baseline": 650.0399169921875
+            },
+            {
+              "refs": [
+                [
+                  20,
+                  19
+                ]
+              ],
+              "window": [
+                125,
+                653.5,
+                488,
+                665
+              ],
+              "baseline": 662.0399169921875
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "excerpt-c",
+      "label": "第 9 页：整体保护的算子表与重排图注",
+      "page": 9,
+      "nodes": [
+        {
+          "id": "c-table",
+          "role": "table",
+          "window": [
+            224,
+            114,
+            389,
+            210
+          ],
+          "label": "Table 2: all eight rows and nine columns, preserved whole"
+        },
+        {
+          "id": "c-caption",
+          "role": "caption",
+          "captionOf": "c-table",
+          "lines": [
+            {
+              "refs": [
+                [
+                  1,
+                  72
+                ],
+                [
+                  1,
+                  73
+                ]
+              ],
+              "window": [
+                160,
+                210.5,
+                452,
+                222.5
+              ],
+              "baseline": 219.60015869140625
+            },
+            {
+              "refs": [
+                [
+                  1,
+                  74
+                ]
+              ],
+              "window": [
+                160,
+                222.5,
+                452,
+                234
+              ],
+              "baseline": 231.60015869140625
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "excerpt-d",
+      "label": "Page 9: operators and complete equations 44\u201345",
+      "page": 9,
+      "nodes": [
+        {
+          "id": "d-body-1",
+          "role": "body",
+          "lines": [
+            {
+              "refs": [
+                [
+                  4,
+                  3
+                ]
+              ],
+              "window": [
+                125,
+                330,
+                488,
+                343
+              ],
+              "baseline": 339.35986328125,
+              "groups": [
+                {
+                  "chars": [
+                    67,
+                    67
+                  ],
+                  "role": "inline-math",
+                  "label": "operator M"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  4,
+                  4
+                ]
+              ],
+              "window": [
+                125,
+                343,
+                488,
+                356
+              ],
+              "baseline": 351.35986328125,
+              "groups": [
+                {
+                  "chars": [
+                    23,
+                    24
+                  ],
+                  "role": "inline-math",
+                  "label": "eigenvalue plus one"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "d-equation-44",
+          "role": "equation",
+          "window": [
+            125,
+            357,
+            335,
+            373
+          ],
+          "label": "Equation 44 including number and both kets"
+        },
+        {
+          "id": "d-body-2",
+          "role": "body",
+          "lines": [
+            {
+              "refs": [
+                [
+                  6,
+                  0
+                ]
+              ],
+              "window": [
+                125,
+                374,
+                488,
+                388
+              ],
+              "baseline": 383.9996337890625,
+              "groups": [
+                {
+                  "chars": [
+                    12,
+                    12
+                  ],
+                  "role": "inline-math",
+                  "label": "error E"
+                },
+                {
+                  "chars": [
+                    38,
+                    38
+                  ],
+                  "role": "inline-math",
+                  "label": "operator M"
+                },
+                {
+                  "chars": [
+                    77,
+                    81
+                  ],
+                  "role": "inline-math",
+                  "label": "state E ket psi and comma"
+                }
+              ]
+            },
+            {
+              "refs": [
+                [
+                  6,
+                  1
+                ]
+              ],
+              "window": [
+                125,
+                388,
+                488,
+                401
+              ],
+              "baseline": 395.9996337890625
+            }
+          ]
+        },
+        {
+          "id": "d-equation-45",
+          "role": "equation",
+          "window": [
+            125,
+            402,
+            378,
+            418
+          ],
+          "label": "Equation 45 including number, all three terms, and both minus signs"
+        }
+      ]
+    }
+  ],
+  "scopeNote": "This fixture explicitly omits other paragraphs/pages. Gaps between excerpts are labelled. Reference-region boxes informed selection; source windows and inline groups were manually refined against original pixels. Nothing here is held-out parsing accuracy."
+}

@@ -1,0 +1,51 @@
+{
+  "publicSource": {
+    "url": "https://arxiv.org/pdf/0904.2557v1",
+    "sha256": "2d53b60b7616defa1af51a1ad623c0febec565e583b7c1584212436226b3be29",
+    "coordinateSystem": "PDF points, top-left",
+    "nativeAdapter": "PyMuPDF 1.26.6 rawdict path identifiers, not content-operation glyph IDs"
+  },
+  "scope": "Explicit reference structure input; public source only; no automatic parser claims",
+  "files": [
+    {
+      "path": "prepare.py",
+      "sha256": "2762b08a7ac94c4bf79a21b38575b2ff6e61cfb2a2e9a87fa46c8cfb31ded234"
+    },
+    {
+      "path": "render.py",
+      "sha256": "5c2ac301ea1f4e0dec4750a7985ab0e24eb1fc01156d0474a17d89d0f51228ee"
+    },
+    {
+      "path": "interaction.js",
+      "sha256": "1d739b65f3109fabd1c782739809f6f1c94b4be9002d19ab8b5d4ee6c6538055"
+    },
+    {
+      "path": "oracle.json",
+      "sha256": "69d0210a4dfb3e3b6fda67484c94a6ac54e93c290274b046cc7f90a7fdce879a"
+    },
+    {
+      "path": "test_prepare.py",
+      "sha256": "95a72b93f02fcce0ca724b633bca638c6d1bafb78c0b69f00d9ed0c4bc420592"
+    },
+    {
+      "path": "validate.mjs",
+      "sha256": "abe151792e31c5e9136bfefcca5507d8f45dfe9d75b173707235bdbec43e71a5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "929ec4f503e86dc7422fa602d821e3155d8a5debcf5bed2f2165e01e546229cd"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "aade9116a68e72edfe379d4d22703192c60ef9735eba971db27ad15ae91a3188"
+    },
+    {
+      "path": "package.json",
+      "sha256": "489849207fabc6208fd2a54e5305bd8731f5206ac1cac84966a55c73e444fd10"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "0925361f69926364952e0b8ec620b7d63bef01b9cb57ff004d224159944a647f"
+    }
+  ]
+}
