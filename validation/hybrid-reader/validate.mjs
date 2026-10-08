@@ -20,6 +20,7 @@ if(process.argv.includes('--check-fixture')) {
 }
 
 const {chromium,expect} = await import('@playwright/test');
+const {PNG} = await import('pngjs');
 const output = new URL('evidence/',root);
 await mkdir(output,{recursive:true});
 const resources = new Map([
@@ -43,7 +44,36 @@ const checks=[];
 let browser,context,page;
 const report={scope:'Synthetic fixture and Chromium only. No PDF semantic, native-shell, or Android acceptance.',source:manifest,checks};
 const check=async(name,fn)=>{await fn();checks.push(name);console.log(`PASS ${name}`)};
-const shot=async(name)=>page.screenshot({path:fileURLToPath(new URL(`${name}.png`,output)),fullPage:true});
+const painted=async()=>page.evaluate(async()=>{
+  await document.fonts.ready;
+  await Promise.all([...document.querySelectorAll('svg image')].map(image=>new Promise((resolve,reject)=>{
+    const probe=new Image();
+    probe.onload=()=>{
+      if(probe.naturalWidth!==600||probe.naturalHeight!==800){
+        reject(new Error(`Unexpected SVG source size ${probe.naturalWidth}x${probe.naturalHeight}`));
+      }else resolve();
+    };
+    probe.onerror=()=>reject(new Error('SVG source image failed to decode'));
+    probe.src=image.href.baseVal;
+  })));
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+});
+const shot=async(name)=>{
+  await painted();
+  return page.screenshot({path:fileURLToPath(new URL(`${name}.png`,output)),fullPage:true});
+};
+const assertBluePixels=async(locator,label)=>{
+  await painted();
+  const box=await locator.boundingBox();
+  assert.ok(box&&box.width>0&&box.height>0,`${label}: missing visible bounds`);
+  assert.equal(await locator.locator('image').getAttribute('href'),'synthetic.svg');
+  const pixels=PNG.sync.read(await locator.screenshot());
+  let blue=0;
+  for(let i=0;i<pixels.data.length;i+=4){
+    if(pixels.data[i]===219&&pixels.data[i+1]===234&&pixels.data[i+2]===254)blue++;
+  }
+  assert.ok(blue>pixels.width*pixels.height*0.2,`${label}: source crop is blank or incorrect (${blue} expected blue pixels)`);
+};
 const noOverflow=async()=>{
   const geometry=await page.evaluate(()=>({
     width:document.documentElement.clientWidth,
@@ -82,6 +112,7 @@ try {
     for(let i=0;i<10;i++)await page.locator('#larger').click();
     await expect(page.locator('#size')).toHaveText('32px');
     await noOverflow();
+    await assertBluePixels(page.locator('#content .inlinecrop'),'32px inline source');
     await shot('desktop-font-32');
     for(let i=0;i<12;i++)await page.locator('#smaller').click();
     await expect(page.locator('#size')).toHaveText('14px');
@@ -105,6 +136,7 @@ try {
     for(let i=0;i<2;i++){
       await page.locator('#content .inlinecrop').click();
       await expect(page.locator('#zoom')).toBeVisible();
+      await assertBluePixels(page.locator('#zoom svg'),'zoom source');
       await shot(`inline-zoom-${i}`);
       if(i===0)await page.locator('#zoom button').click();
       else await page.keyboard.press('Escape');
