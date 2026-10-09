@@ -1,0 +1,226 @@
+{
+  "scope": "opt-in seen H8 atomic native-region diagnostic",
+  "original_holdout": {
+    "passes": 0,
+    "total": 1,
+    "wall_seconds": 17.728822860997752,
+    "unchanged": true
+  },
+  "default_cold_pipeline_unchanged": true,
+  "model_inferences": 0,
+  "cold_request": false,
+  "atomic_region": {
+    "regions": 1,
+    "original_leaves": 12,
+    "source_units": 29,
+    "internal_text_leaves": 2,
+    "bounding_box_graphic_coverage": 0.8330716718970843,
+    "native_support": [
+      {
+        "native_graphic_support_pixels": 278879,
+        "region_pixel_area": 332869,
+        "native_graphic_coverage": 0.8378040610570525,
+        "accepted": true
+      }
+    ],
+    "internal_semantic_order_inferred": false,
+    "tail_labels_not_added": true
+  },
+  "native_stage_seconds": 3.260505448997719,
+  "reader_stage_seconds": 40.59174466399418,
+  "separate_external_caps_seconds": [
+    60,
+    60
+  ],
+  "combined_cold_time_claimed": false,
+  "final_policy_order_and_source_plan_identical_to_tested_reader": true,
+  "conservation": {
+    "scope": "seen cached-plan diagnostic; no blind or cold-request claim",
+    "blocks": 16,
+    "source_units": 529,
+    "native_glyphs": 3072,
+    "source_plan_byte_identical": true,
+    "source_unit_bijection": true,
+    "native_glyph_bijection": true,
+    "vector_paints": 2878,
+    "vector_paint_bijection": true,
+    "native_vector_geometry_resources_and_state_unchanged": true,
+    "native_image_tokens": 17,
+    "independent_native_composite_pixel_equality": true,
+    "composite_supported_pixels": 3411520,
+    "unsupported_source_units": 0,
+    "target_requests_accepted": true,
+    "source_replay_exact": true,
+    "observer_pixel_difference": 0,
+    "serialized_clip_replay_pixel_difference": 0,
+    "native_clip_replay_pixel_difference": 20,
+    "native_character_bijection": true,
+    "native_interval_conflicts": 0,
+    "reader_sha256": "b84951669682134e3f5fb3dede6918097d412994bf205a2a186ebc6a23bfa22e",
+    "mixed_engine_pixel_ownership_proven": false,
+    "browser_verified": false,
+    "reading_acceptance": false
+  },
+  "mapping": {
+    "eligible_tokens": 467,
+    "refused_tokens": 31,
+    "refusal_reasons": {
+      "native_image_has_no_verified_text_layer": 17,
+      "no_source_glyphs": 16,
+      "no_unique_geometry_bridge": 17,
+      "not_ordinary_native_word": 3,
+      "incomplete_glyph_paint_bijection": 1,
+      "nonmonotone_native_character_order": 1,
+      "mixed_or_invalid_glyph_sizes": 5,
+      "unsupported_unicode_category_or_replacement": 12,
+      "extractor_unicode_disagreement": 9,
+      "native_unicode_unknown_or_mapping_error": 9,
+      "unsupported_bidirectional_text": 9
+    },
+    "semantic_unicode_certified": false,
+    "browser_selection_verified": false,
+    "copy_across_refused_content_allowed": false
+  },
+  "render": {
+    "scope": "actual native Node Canvas renders; not browser evidence",
+    "cases": [
+      {
+        "font": 20,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 16,
+        "vector_paints": 2878,
+        "native_images": 17,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 20,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 16,
+        "vector_paints": 2878,
+        "native_images": 17,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 24,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 16,
+        "vector_paints": 2878,
+        "native_images": 17,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 24,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 16,
+        "vector_paints": 2878,
+        "native_images": 17,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 28,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 16,
+        "vector_paints": 2878,
+        "native_images": 17,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 28,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 16,
+        "vector_paints": 2878,
+        "native_images": 17,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      }
+    ],
+    "browser_verified": false,
+    "reading_acceptance": false,
+    "mixed_engine_pixel_ownership_proven": false
+  },
+  "viewer_smoke": {
+    "pages": 1,
+    "blocks": 16,
+    "eligible_paragraph_copy": true,
+    "refused_paragraph_copy_blocked": true,
+    "font_selection_cleanup": true,
+    "network_attempts": 0,
+    "paint_calls": 5790,
+    "browser_verified": false,
+    "renderer": "native Node canvas"
+  },
+  "h5h6_regression": {
+    "module_initialization": true,
+    "real_pages_imported": 2,
+    "paragraph_copy": true,
+    "font_change_selection_cleared": true,
+    "page_change": true,
+    "invalid_import_preserves_reader": true,
+    "overbudget_page_preserves_reader_and_source": true,
+    "decode_failure_import_preserves_reader": true,
+    "failure_bundle_source_fallback": true,
+    "network_attempts": 0,
+    "paint_calls": 8303,
+    "renderer": "native Node canvas",
+    "native_canvas_reference_blocks": 30,
+    "compiled_paths": 405,
+    "decoded_images": 39,
+    "return_to_first_page_resource_work": 0,
+    "browser_verified": false
+  },
+  "controls": {
+    "atomic_region": 38,
+    "native_composition_mutations": 5,
+    "selection": 31,
+    "interaction": 10,
+    "mapping": 35,
+    "python_unittest": 195,
+    "local_geometry_total_including_atomic": 96,
+    "native_structure": 33,
+    "flow_bridge_component": 36,
+    "formula_relation": 19,
+    "baseline_evidence": 8,
+    "failure_handoff": 3,
+    "formula_layout": 18,
+    "paragraph_layout": 4,
+    "hostile_bundles": 27,
+    "h5h6_font_width_layouts": 12
+  },
+  "visual_review": {
+    "inspected": "complete 28px / 390px native Canvas reader against source page",
+    "reading_acceptance": false,
+    "retained_defects": [
+      "bottom-row panel labels are outside the frozen image prior and remain detached flow paragraphs",
+      "two-line section heading remains split into separate blocks",
+      "uncertain printed line-end hyphens remain in reflowed words",
+      "page-wide figures are small at mobile reading width; original-source zoom is still needed"
+    ]
+  },
+  "browser_verified": false,
+  "full_app_build_verified": false,
+  "mixed_engine_pixel_ownership_proven": false,
+  "public_or_standalone_H8_content_included": false
+}
