@@ -1,0 +1,8 @@
+{
+  "scope": "Development controls before implementation freeze; no registered paper inspected",
+  "corrections": [
+    "Original authored x/script initially overlapped ordinary letters; reserved a blank source slot. Original control PDF and manifest retained.",
+    "First detector smoke call took PDF directly; preserve exploratory output and use explicit4x RGB raster for subsequent matching detector coordinates."
+  ],
+  "not_changed": "No new-paper output, acceptance threshold or held-out document selection"
+}
