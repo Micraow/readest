@@ -1,0 +1,180 @@
+{
+  "eligibility_amendment": "Before any registry or PDF/image inspection: val manuals, redbooks and chinese_laws each have only one source document and all were seen previously, so unseen-source alternatives FAA regulations, EU tenders and German laws were selected. The declared source-disjoint requirement was not relaxed.",
+  "status": "REGISTERED_NOT_EVALUATED",
+  "seed": "generic-reflow-v2-20261009-registry-1",
+  "quotas": [
+    "faa_regulations",
+    "eu_tenders",
+    "ann_reports_10_14_fancy",
+    "german_laws",
+    "arxiv_mediumspaced",
+    "arxiv_two_columns"
+  ],
+  "metadata_only": true,
+  "rule": "Minimum seeded SHA256(filename) per collection, >=2 Text annotations, paper >=1 Formula, PDF <=2 MiB, globally distinct previously-unseen doc_name; no quality-based replacement.",
+  "excluded_previous_documents": 36,
+  "exclusion_sources": [
+    {
+      "path": "local-break-constraints-v1/INPUT-SELECTION.json",
+      "sha256": "efab3f329ae32a9870129c0d6d37e0804e268064db7690fce472087676c7ebc2"
+    },
+    {
+      "path": "doclaynet-role-pilot-v1/PUBLIC-RESULT.json",
+      "sha256": "b880a4477626e86fbef9403320a84ea65b6d4aee0cfb74ceac1a0a418582fd5d"
+    },
+    {
+      "path": "doclaynet-role-pilot-v1/SELECTION-FREEZE.json",
+      "sha256": "250e59bdb625708eb1ac22419f3f274054fff9b68c05bfccfeb5cbfe70d845ba"
+    }
+  ],
+  "excluded_arxiv_ids": [
+    "09042557",
+    "14062661",
+    "14126980",
+    "150203167",
+    "150504597",
+    "150601497",
+    "151203385",
+    "160706450",
+    "160806993",
+    "170404861",
+    "170603762",
+    "180100862",
+    "180308494",
+    "181004805",
+    "191007467",
+    "201011929",
+    "210314030",
+    "210409864",
+    "220103545",
+    "240206787"
+  ],
+  "metadata_sha256": "25b5a8ed106a8d50caa04e47cb2bee6e8d6f05ebfc11a3a3520e54562037fe16",
+  "expanded_metadata_sha256": "eacd2ba2a32e6c2ebe2dc5ea1545f405d8461c46bba53e0c35d9c54fba0bcef6",
+  "extra_directory_sha256": "44e8faddab5b87c529290d047b1bda6c85dc6fc7caa1631496ad93c632680435",
+  "pages": [
+    {
+      "key": "H1",
+      "official_split": "val",
+      "image_id": 3703,
+      "file_name": "6cc933d1726289d297e7163d027627b0d4a77249e9b01eee8c79440657cf976e.png",
+      "doc_name": "amt_general_handbook.pdf",
+      "collection": "faa_regulations",
+      "page_no": 540,
+      "class_counts": {
+        "7": 3,
+        "1": 3,
+        "10": 7,
+        "5": 1,
+        "8": 2
+      },
+      "archive_pdf_expanded_bytes": 148197,
+      "archive_pdf_crc32": 1727166092,
+      "input_sha256": null,
+      "inspection_status": "PDF, source image and reflow output not opened"
+    },
+    {
+      "key": "H2",
+      "official_split": "val",
+      "image_id": 3050,
+      "file_name": "709ce1dabf9f6c07e87585faad40dbd67ec4fa84196a68f4e13a300ef6a02469.png",
+      "doc_name": "EN-Lot1 7 Vol3 d4.3 Section 7 Mechanical Works en GIR rev7.pdf",
+      "collection": "eu_tenders",
+      "page_no": 56,
+      "class_counts": {
+        "6": 2,
+        "4": 5,
+        "8": 1,
+        "10": 12,
+        "5": 1
+      },
+      "archive_pdf_expanded_bytes": 107093,
+      "archive_pdf_crc32": 3188084560,
+      "input_sha256": null,
+      "inspection_status": "PDF, source image and reflow output not opened"
+    },
+    {
+      "key": "H3",
+      "official_split": "val",
+      "image_id": 1511,
+      "file_name": "c100fd4a71803ef20f780fa1f13103e40b285c7d198168af87b7d82102e4d576.png",
+      "doc_name": "TSX_PWF_2014.pdf",
+      "collection": "ann_reports_10_14_fancy",
+      "page_no": 76,
+      "class_counts": {
+        "8": 2,
+        "10": 10,
+        "9": 2,
+        "5": 1
+      },
+      "archive_pdf_expanded_bytes": 48150,
+      "archive_pdf_crc32": 2928150235,
+      "input_sha256": null,
+      "inspection_status": "PDF, source image and reflow output not opened"
+    },
+    {
+      "key": "H4",
+      "official_split": "val",
+      "image_id": 4025,
+      "file_name": "ae84b46f043982a0f9f04cdbbc2e6cf65ea0a3f15e6062cfd1a10849091252fe.png",
+      "doc_name": "FamFG.pdf",
+      "collection": "german_laws",
+      "page_no": 54,
+      "class_counts": {
+        "6": 1,
+        "10": 9,
+        "8": 5,
+        "4": 8,
+        "5": 1
+      },
+      "archive_pdf_expanded_bytes": 37276,
+      "archive_pdf_crc32": 258999944,
+      "input_sha256": null,
+      "inspection_status": "PDF, source image and reflow output not opened"
+    },
+    {
+      "key": "H5",
+      "official_split": "val",
+      "image_id": 2199,
+      "file_name": "865528a69d711a324c0707765d67b3ba407f8f5dc8131d5c2fbeaae932025914.png",
+      "doc_name": "1002.2102.pdf",
+      "collection": "arxiv_mediumspaced",
+      "page_no": 8,
+      "class_counts": {
+        "8": 2,
+        "10": 5,
+        "3": 2,
+        "5": 1
+      },
+      "archive_pdf_expanded_bytes": 44876,
+      "archive_pdf_crc32": 1785152131,
+      "input_sha256": null,
+      "inspection_status": "PDF, source image and reflow output not opened"
+    },
+    {
+      "key": "H6",
+      "official_split": "val",
+      "image_id": 2579,
+      "file_name": "08b119931b53979c2b25d3fd05c07734bd8fa9a399c32e3f9165d9476d7121cd.png",
+      "doc_name": "1001.0345.pdf",
+      "collection": "arxiv_two_columns",
+      "page_no": 0,
+      "class_counts": {
+        "11": 1,
+        "10": 14,
+        "3": 3,
+        "6": 1
+      },
+      "archive_pdf_expanded_bytes": 66776,
+      "archive_pdf_crc32": 1913260663,
+      "input_sha256": null,
+      "inspection_status": "PDF, source image and reflow output not opened"
+    }
+  ],
+  "limitations": [
+    "Page/style strata only; not evidence of absent upstream training overlap or semantic near-duplicates.",
+    "No adjacent-page continuation claim can be made from this single-page registry.",
+    "Actual input SHA256 remains pending; freeze bytes before first source/output inspection.",
+    "Hard representation gates currently fail on the original fraction control; these holdouts must remain unopened until a later explicitly versioned candidate is frozen."
+  ]
+}

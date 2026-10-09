@@ -1,0 +1,21 @@
+{
+  "status": "REGISTERED_NOT_DOWNLOADED_OR_EVALUATED",
+  "key": "H7-ZH",
+  "title": "內政部移民署114年人權教材",
+  "publisher": "內政部移民署",
+  "publishing_unit": "北區事務大隊",
+  "published_date": "2025-08-21",
+  "official_landing_page": "https://www.immigration.gov.tw/5385/7353/7359/396266/cp_news",
+  "official_pdf_url": "https://www.immigration.gov.tw/media/114167/內政部移民署114年人權教材.pdf",
+  "source_of_registration": "Official landing-page HTML and its attachment href only; the PDF was not opened or downloaded.",
+  "language": "Chinese; Traditional Chinese is indicated by the official title and publisher. Full-document script mix is unverified.",
+  "native_text_or_scan": "Unknown until bytes are acquired; no inference from the PDF extension or title.",
+  "page_rule": "Physical PDF page 3 only (zero-based index 2); fewer than three pages is an invalid registered sample and will not trigger replacement.",
+  "download_limit_bytes": 5242880,
+  "size_bytes": null,
+  "input_sha256": null,
+  "eligibility_failure_rule": "Unavailable, over-size or invalid inputs remain recorded failures. No content-driven replacement.",
+  "ground_truth": "No existing human ground truth. A separate independent visual/content review is required; annotated-dataset metrics cannot be claimed.",
+  "distribution": "Official public download does not authorize public redistribution. Do not add source bytes, native text or page images to the repository.",
+  "inspection_status": "No source PDF, source page image or reflow output inspected. Selection uses metadata only."
+}
