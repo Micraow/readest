@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';import {createRequire} from 'node:module';import path from 'node:path';import {trackState} from './state_tracker.mjs';
+const require=createRequire(path.resolve(process.argv[2],'package.json'));const {createCanvas,Path2D}=require('@napi-rs/canvas');let passed=0;
+function test(name,f){f();passed++;console.log('PASS '+name);}
+function context(){return trackState(createCanvas(16,16).getContext('2d'),Path2D);}
+test('shadow state retains real fill after native getter save/restore discrepancy',()=>{const c=context();c.fillStyle='#2c2e35';c.save();c.fillStyle='#000000';c.restore();c.fillRect(0,0,1,1);assert.equal(c.__readestState().fillStyle,'#2c2e35');assert.deepEqual([...c.getImageData(0,0,1,1).data],[44,46,53,255]);});
+test('nested save restore preserves alpha and blend',()=>{const c=context();c.globalAlpha=.5;const half=c.globalAlpha;c.save();c.globalAlpha=.25;const quarter=c.globalAlpha;c.globalCompositeOperation='multiply';c.save();c.globalAlpha=1;c.restore();assert.equal(c.__readestState().alpha,quarter);c.restore();assert.equal(c.__readestState().alpha,half);assert.equal(c.__readestState().blend,'source-over');});
+test('clip retains native matrix and rule',()=>{const c=context(),p=new Path2D();p.rect(0,0,5,5);c.translate(3,4);c.clip(p,'evenodd');const clip=c.__readestState().clips[0];assert.equal(clip.rule,'evenodd');assert.deepEqual(clip.transform,[1,0,0,1,3,4]);});
+test('restoring a clip does not leak it to later text',()=>{const c=context(),p=new Path2D();p.rect(0,0,5,5);c.save();c.clip(p);assert.equal(c.__readestState().clips.length,1);c.restore();assert.equal(c.__readestState().clips.length,0);});
+test('clip snapshot does not change if caller mutates original path',()=>{const c=context(),p=new Path2D();p.rect(0,0,5,5);c.clip(p);const before=c.__readestState().clips[0].svg;p.rect(10,10,5,5);assert.equal(c.__readestState().clips[0].path.toSVGString(),before);});
+test('implicit current-path clip explicitly rejects',()=>{const c=context();c.rect(0,0,5,5);assert.throws(()=>c.clip(),/outside this probe/);});
+test('serialized clip roundtrip on original control retains pixels',()=>{const a=context(),b=context(),p=new Path2D();p.rect(.5,.5,6,7);a.clip(p);b.clip(new Path2D(p.toSVGString()));a.fillRect(0,0,16,16);b.fillRect(0,0,16,16);assert.deepEqual([...a.getImageData(0,0,16,16).data],[...b.getImageData(0,0,16,16).data]);});
+console.log(JSON.stringify({tests:passed,renderer:'native Node canvas, not browser'}));

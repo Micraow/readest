@@ -1,0 +1,189 @@
+{
+  "authored_control": {
+    "operatorCount": 97,
+    "counters": {
+      "showTextCalls": 12,
+      "glyphRecords": 270,
+      "expectedObservedPaintCalls": 238,
+      "observedPaintCalls": 238,
+      "type3Calls": 0,
+      "invalidFontCalls": 0,
+      "zeroFontCalls": 0,
+      "unsupportedPaintCalls": 0
+    },
+    "resourceCount": 38,
+    "clipResourceCount": 0,
+    "absoluteTransformGlyphs": 0,
+    "stateGetterColorMismatch": 0,
+    "observerDifference": {
+      "pixels": 0,
+      "max": 0
+    },
+    "nativeClipReplayDifference": {
+      "pixels": 0,
+      "max": 0
+    },
+    "serializedClipReplayDifference": {
+      "pixels": 0,
+      "max": 0
+    },
+    "relocationVerified": true,
+    "relocationScope": "single native showText interval without clips; nontext/mathematical strokes not included",
+    "semanticUnicodeCertified": false,
+    "holdoutsOpened": 0,
+    "relocation": [
+      {
+        "scale": 1,
+        "width": 584,
+        "height": 39,
+        "glyphs": 45,
+        "nativeCalls": 45,
+        "resourceCount": 19,
+        "difference": {
+          "pixels": 0,
+          "max": 0
+        }
+      },
+      {
+        "scale": 3,
+        "width": 1719,
+        "height": 84,
+        "glyphs": 45,
+        "nativeCalls": 45,
+        "resourceCount": 19,
+        "difference": {
+          "pixels": 0,
+          "max": 0
+        }
+      }
+    ],
+    "cost": {
+      "wall_seconds": 3.593638940998062,
+      "cpu_seconds": 3.538932,
+      "peak_family_rss_mib": 163.0,
+      "cpu_affinity": [
+        0
+      ],
+      "load_before": [
+        0.923828125,
+        3.04296875,
+        3.2734375
+      ],
+      "load_after": [
+        1.17041015625,
+        3.05908203125,
+        3.27734375
+      ],
+      "file_cache_flushed": false
+    },
+    "resources": {
+      "resources-private.json": {
+        "json_bytes": 48117,
+        "gzip_bytes": 9401
+      },
+      "events-private.json": {
+        "json_bytes": 171437,
+        "gzip_bytes": 5080
+      },
+      "clips-private.json": {
+        "json_bytes": 2,
+        "gzip_bytes": 22
+      }
+    }
+  },
+  "seen_paper": {
+    "operatorCount": 5493,
+    "counters": {
+      "showTextCalls": 879,
+      "glyphRecords": 3384,
+      "expectedObservedPaintCalls": 3380,
+      "observedPaintCalls": 3380,
+      "type3Calls": 0,
+      "invalidFontCalls": 0,
+      "zeroFontCalls": 0,
+      "unsupportedPaintCalls": 0
+    },
+    "resourceCount": 269,
+    "clipResourceCount": 2,
+    "absoluteTransformGlyphs": 0,
+    "stateGetterColorMismatch": 1434,
+    "observerDifference": {
+      "pixels": 0,
+      "max": 0
+    },
+    "nativeClipReplayDifference": {
+      "pixels": 1,
+      "max": 1
+    },
+    "serializedClipReplayDifference": {
+      "pixels": 0,
+      "max": 0
+    },
+    "relocationVerified": true,
+    "relocationScope": "single native showText interval without clips; nontext/mathematical strokes not included",
+    "semanticUnicodeCertified": false,
+    "holdoutsOpened": 0,
+    "relocation": [
+      {
+        "scale": 1,
+        "width": 504,
+        "height": 33,
+        "glyphs": 51,
+        "nativeCalls": 51,
+        "resourceCount": 18,
+        "difference": {
+          "pixels": 0,
+          "max": 0
+        }
+      },
+      {
+        "scale": 3,
+        "width": 1480,
+        "height": 65,
+        "glyphs": 51,
+        "nativeCalls": 51,
+        "resourceCount": 18,
+        "difference": {
+          "pixels": 0,
+          "max": 0
+        }
+      }
+    ],
+    "cost": {
+      "wall_seconds": 16.88271027200244,
+      "cpu_seconds": 16.471469,
+      "peak_family_rss_mib": 308.1015625,
+      "cpu_affinity": [
+        0
+      ],
+      "load_before": [
+        5.70654296875,
+        4.49169921875,
+        3.6455078125
+      ],
+      "load_after": [
+        6.5126953125,
+        4.75244140625,
+        3.75
+      ],
+      "file_cache_flushed": false
+    },
+    "resources": {
+      "resources-private.json": {
+        "json_bytes": 406427,
+        "gzip_bytes": 64072
+      },
+      "events-private.json": {
+        "json_bytes": 3072083,
+        "gzip_bytes": 93953
+      },
+      "clips-private.json": {
+        "json_bytes": 233,
+        "gzip_bytes": 159
+      }
+    }
+  },
+  "cost_scope": "fresh native probe + quality/reference passes and selected relocation, not full reflow/page/browser; dependency installation excluded",
+  "strict_failure_retained": "seen-paper postposed glyph/full nontext reconstruction differs at 1 pixel/max1; original paint-order reconstruction must not be inferred",
+  "tests": 7
+}
