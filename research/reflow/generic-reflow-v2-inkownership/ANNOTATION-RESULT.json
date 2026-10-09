@@ -1,0 +1,841 @@
+{
+  "schema": "generic-reflow-v2-annotation-diagnostic-v2",
+  "status": "seen_page_diagnostic_and_original_controls_only",
+  "pdfium": "153.0.7999.0",
+  "pypdfium2": "5.13.0",
+  "conclusion": "Ink diagnosis is separate from link interaction. All three diagnostic-input links have no normal-view ink at 72/144 dpi, but their /Dest keys exist and native destination resolution fails in these loaded inputs. Reflow click-region and destination mapping is not implemented. Opaque original alpha recomposition is exact; Normal half-alpha and Multiply still fail the strict gate.",
+  "initial_probe_costs": [
+    {
+      "key": "D5-P1",
+      "render_count": 2,
+      "render_pixels": 969408,
+      "cold_wall_s": 1.3217085500000394,
+      "cold_cpu_s": 1.264513,
+      "peak_rss_mib": 43.84375
+    },
+    {
+      "key": "D4-P1",
+      "render_count": 2,
+      "render_pixels": 969408,
+      "cold_wall_s": 0.7324350569997478,
+      "cold_cpu_s": 0.725104,
+      "peak_rss_mib": 45.21875
+    }
+  ],
+  "cost_totals": {
+    "all_actual_native_renders": 176,
+    "all_actual_native_pixels": 88131456,
+    "cold_diagnostic_wall_s": 20.86580115900233,
+    "cold_diagnostic_cpu_s": 20.211841999999997,
+    "original_control_authoring_wall_s": 1.035699406999811,
+    "original_control_authoring_cpu_s": 1.031496,
+    "local_test_wall_s": 0.869176580000385,
+    "local_test_cpu_s": 0.8672201179999999,
+    "max_page_peak_rss_mib": 159.3828125,
+    "initial_launch_failure": "/usr/bin/time was absent; both attempted launches failed before starting Python or rendering. This failed shell setup took 0.0523s according to execution tool. Replaced with subprocess cold-process timing.",
+    "budget_scope": "Each complete case includes both 72 and 144 dpi probes, input loading, all native raster calls, array composition, private image serialization and process exit. One CPU affinity and 1 GiB address-space limit applied before exec. 60s timeout per case. Source files were already local. No browser stage.",
+    "final_link_metadata_probe_and_tests_cold_wall_s": 1.428337774999818,
+    "final_link_metadata_probe_and_tests_cold_cpu_s": 1.393568,
+    "initial_link_metadata_probe_wall_s": 0.977329588,
+    "initial_link_metadata_probe_scope": "Execution-tool wall time including command wrapper; zero native renders.",
+    "link_unit_test_development_failures": {
+      "attempts": 2,
+      "native_renders": 0,
+      "target_requests": 0,
+      "failure": "An initial assertion assumed FPDFLink_GetDest only represented a direct /Dest. A valid GoTo action is also resolved by that getter. The metadata key was renamed link_destination and direct /Dest presence is now inspected separately. Both failed assertions are retained in the private execution record. Their isolated Python process costs were not recorded; do not claim the successful measured totals cover those test-development costs."
+    }
+  },
+  "tests": {
+    "native_ink_and_restoration_assertions_passed": 85,
+    "link_metadata_assertions_passed": 29,
+    "final_assertions_failed": 0,
+    "native_renders_in_tests": 0,
+    "link_original_fixture": {
+      "link_count": 3,
+      "interaction_supported": false,
+      "reason": "reflow_click_region_and_destination_mapping_not_implemented",
+      "target_requests": 0,
+      "native_rect_extracted_count": 3,
+      "native_quadpoints_declared": 1,
+      "quadpoints_complete_count": 3,
+      "action_types": [
+        "none",
+        "goto",
+        "uri"
+      ],
+      "uri_extractable_count": 1,
+      "file_path_extractable_count": 0,
+      "direct_destination_key_present_count": 1,
+      "link_destination_present_count": 2,
+      "action_destination_present_count": 1,
+      "internal_destination_page_resolved_count": 2
+    },
+    "base_test_rerun_wall_s": 0.249581930000204,
+    "base_test_rerun_cpu_s": 0.24229018400000002
+  },
+  "preservation_proof": {
+    "frozen_checkpoint": "2c41e2fa79efc58a1c2be272b67d8912d56acda9",
+    "tree_file_count_before": 27,
+    "tree_file_count_after": 27,
+    "frozen_tree_unchanged": true,
+    "before_manifest_sha256": "2c6b88316835a4415edb6196931ff1a39d3d96f5e0d3652dcdbb3e8fbf1379b3",
+    "after_manifest_sha256": "2c6b88316835a4415edb6196931ff1a39d3d96f5e0d3652dcdbb3e8fbf1379b3",
+    "source_input_hashes": {
+      "D5-P1": {
+        "before": "a3032f429db2c91554d43c524b6269f04b8781094a075724a06f5a86100929a3",
+        "after": "a3032f429db2c91554d43c524b6269f04b8781094a075724a06f5a86100929a3",
+        "unchanged": true
+      },
+      "D4-P1": {
+        "before": "368e749ee40619d9a3e9fc4e3521318e92c69482ea5f9a932b77f1ddaced741e",
+        "after": "368e749ee40619d9a3e9fc4e3521318e92c69482ea5f9a932b77f1ddaced741e",
+        "unchanged": true
+      }
+    },
+    "new_code_sha256": "7b627919e41a1a88f481998078f681fc10c8e97670629b270dcd19bcc252e7b8"
+  },
+  "limits": [
+    "Only normal screen render state and fixed 72/144 dpi were tested; rollover/down, printing, other zoom grids, optional-content state and all PDF annotation variants remain unverified.",
+    "Widget/XFA form appearance rendering is not included and explicitly blocks acceptance.",
+    "Strict zero-delta comparison rejects even the observed one-level normal-alpha compositor rounding mismatch. No relaxed tolerance or per-input compositor calibration.",
+    "Original opaque control contains one visible stamp plus one invisible link. Native ordering with multiple simultaneously visible overlapping annotations is not validated by this control.",
+    "Per-annotation full-canvas alpha and page-native render keep original coordinates and native clipping. No broad clipping-support claim is made; clipping-specific annotation fixture is not included.",
+    "Zero visible ink does not certify annotation link semantics or browser interaction retention.",
+    "Native source/crop images are private diagnostics only. No public uploads, holdout selection, browser audit, Codex CLI/API or independent Codex task occurred.",
+    "A /Dest key exists on all three diagnostic links but PDFium cannot resolve the destination in these loaded inputs. Do not infer that the full original documents lack destinations.",
+    "Public summaries contain only metadata counts and extraction status. Native coordinates, destination parameters and actual target strings remain in private results. No link target was fetched, opened or executed.",
+    "FPDFLink_GetDest can resolve GoTo actions too; link_destination counts and action_destination counts are not disjoint categories."
+  ],
+  "official_api_sources": [
+    "https://pdfium.googlesource.com/pdfium/+/refs/heads/main/public/fpdf_annot.h",
+    "https://pdfium.googlesource.com/pdfium/+/refs/heads/main/public/fpdf_edit.h",
+    "https://pdfium.googlesource.com/pdfium/+/refs/heads/main/public/fpdf_doc.h"
+  ],
+  "pixel_and_link_interaction_results_separated": true,
+  "annotation_fully_supported": false,
+  "interaction_supported": false,
+  "previous_raster_diagnosis_cases": [
+    {
+      "key": "D5-P1",
+      "native_render_count": 14,
+      "native_render_pixels": 16964640,
+      "cold_wall_s": 4.849794225999176,
+      "cold_cpu_s": 4.481380000000001,
+      "peak_rss_mib": 156.859375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 1,
+          "annotation_subtypes": [
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 1,
+          "annotation_subtypes": [
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        }
+      ]
+    },
+    {
+      "key": "D4-P1",
+      "native_render_count": 18,
+      "native_render_pixels": 21811680,
+      "cold_wall_s": 4.102625257,
+      "cold_cpu_s": 4.0559959999999995,
+      "peak_rss_mib": 158.9921875,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "link",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true,
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "link",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true,
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        }
+      ]
+    },
+    {
+      "key": "original-opaque",
+      "native_render_count": 18,
+      "native_render_pixels": 1440000,
+      "cold_wall_s": 0.593336542000543,
+      "cold_cpu_s": 0.5649410000000012,
+      "peak_rss_mib": 39.49609375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 6000,
+          "isolated_alpha_nonzero_pixels": [
+            6000,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 24000,
+          "isolated_alpha_nonzero_pixels": [
+            24000,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        }
+      ]
+    },
+    {
+      "key": "original-alpha",
+      "native_render_count": 18,
+      "native_render_pixels": 1440000,
+      "cold_wall_s": 0.6066178230003061,
+      "cold_cpu_s": 0.594247999999999,
+      "peak_rss_mib": 39.484375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 6000,
+          "isolated_alpha_nonzero_pixels": [
+            6000,
+            0
+          ],
+          "recomposition_changed_pixels": 6000,
+          "recomposition_max_channel_delta": 1,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 24000,
+          "isolated_alpha_nonzero_pixels": [
+            24000,
+            0
+          ],
+          "recomposition_changed_pixels": 24000,
+          "recomposition_max_channel_delta": 1,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "original-multiply",
+      "native_render_count": 18,
+      "native_render_pixels": 1440000,
+      "cold_wall_s": 0.8579016810008397,
+      "cold_cpu_s": 0.8015670000000013,
+      "peak_rss_mib": 39.484375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 6000,
+          "isolated_alpha_nonzero_pixels": [
+            6000,
+            0
+          ],
+          "recomposition_changed_pixels": 6000,
+          "recomposition_max_channel_delta": 186,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 24000,
+          "isolated_alpha_nonzero_pixels": [
+            24000,
+            0
+          ],
+          "recomposition_changed_pixels": 24000,
+          "recomposition_max_channel_delta": 186,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "key": "D5-P1",
+      "native_render_count": 14,
+      "native_render_pixels": 16964640,
+      "cold_wall_s": 3.125989257000583,
+      "cold_cpu_s": 3.111363,
+      "peak_rss_mib": 157.30859375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "paint_raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 1,
+          "annotation_subtypes": [
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 1,
+          "annotation_subtypes": [
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        }
+      ],
+      "link_interaction": {
+        "link_count": 1,
+        "interaction_supported": false,
+        "reason": "reflow_click_region_and_destination_mapping_not_implemented",
+        "target_requests": 0,
+        "native_rect_extracted_count": 1,
+        "native_quadpoints_declared": 0,
+        "quadpoints_complete_count": 1,
+        "action_types": [
+          "none"
+        ],
+        "uri_extractable_count": 0,
+        "file_path_extractable_count": 0,
+        "direct_destination_key_present_count": 1,
+        "link_destination_present_count": 0,
+        "action_destination_present_count": 0,
+        "internal_destination_page_resolved_count": 0
+      },
+      "interaction_supported": false,
+      "annotation_fully_supported": false
+    },
+    {
+      "key": "D4-P1",
+      "native_render_count": 18,
+      "native_render_pixels": 21811680,
+      "cold_wall_s": 3.350059035000413,
+      "cold_cpu_s": 3.30061,
+      "peak_rss_mib": 159.3828125,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "paint_raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "link",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true,
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "link",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            true,
+            true
+          ],
+          "native_visible_contribution_pixels": 0,
+          "isolated_alpha_nonzero_pixels": [
+            0,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        }
+      ],
+      "link_interaction": {
+        "link_count": 2,
+        "interaction_supported": false,
+        "reason": "reflow_click_region_and_destination_mapping_not_implemented",
+        "target_requests": 0,
+        "native_rect_extracted_count": 2,
+        "native_quadpoints_declared": 0,
+        "quadpoints_complete_count": 2,
+        "action_types": [
+          "none",
+          "none"
+        ],
+        "uri_extractable_count": 0,
+        "file_path_extractable_count": 0,
+        "direct_destination_key_present_count": 2,
+        "link_destination_present_count": 0,
+        "action_destination_present_count": 0,
+        "internal_destination_page_resolved_count": 0
+      },
+      "interaction_supported": false,
+      "annotation_fully_supported": false
+    },
+    {
+      "key": "original-opaque",
+      "native_render_count": 18,
+      "native_render_pixels": 1440000,
+      "cold_wall_s": 0.4362580730003174,
+      "cold_cpu_s": 0.4313719999999992,
+      "peak_rss_mib": 39.8671875,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "paint_raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 6000,
+          "isolated_alpha_nonzero_pixels": [
+            6000,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 24000,
+          "isolated_alpha_nonzero_pixels": [
+            24000,
+            0
+          ],
+          "recomposition_changed_pixels": 0,
+          "recomposition_max_channel_delta": 0,
+          "accepted_at_tested_raster_only": true,
+          "source_pixels_restored": true,
+          "blocking_reasons": []
+        }
+      ],
+      "link_interaction": {
+        "link_count": 1,
+        "interaction_supported": false,
+        "reason": "reflow_click_region_and_destination_mapping_not_implemented",
+        "target_requests": 0,
+        "native_rect_extracted_count": 1,
+        "native_quadpoints_declared": 0,
+        "quadpoints_complete_count": 1,
+        "action_types": [
+          "uri"
+        ],
+        "uri_extractable_count": 1,
+        "file_path_extractable_count": 0,
+        "direct_destination_key_present_count": 0,
+        "link_destination_present_count": 0,
+        "action_destination_present_count": 0,
+        "internal_destination_page_resolved_count": 0
+      },
+      "interaction_supported": false,
+      "annotation_fully_supported": false
+    },
+    {
+      "key": "original-alpha",
+      "native_render_count": 18,
+      "native_render_pixels": 1440000,
+      "cold_wall_s": 0.4339558070005296,
+      "cold_cpu_s": 0.42889799999999934,
+      "peak_rss_mib": 39.87109375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "paint_raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 6000,
+          "isolated_alpha_nonzero_pixels": [
+            6000,
+            0
+          ],
+          "recomposition_changed_pixels": 6000,
+          "recomposition_max_channel_delta": 1,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 24000,
+          "isolated_alpha_nonzero_pixels": [
+            24000,
+            0
+          ],
+          "recomposition_changed_pixels": 24000,
+          "recomposition_max_channel_delta": 1,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        }
+      ],
+      "link_interaction": {
+        "link_count": 1,
+        "interaction_supported": false,
+        "reason": "reflow_click_region_and_destination_mapping_not_implemented",
+        "target_requests": 0,
+        "native_rect_extracted_count": 1,
+        "native_quadpoints_declared": 0,
+        "quadpoints_complete_count": 1,
+        "action_types": [
+          "uri"
+        ],
+        "uri_extractable_count": 1,
+        "file_path_extractable_count": 0,
+        "direct_destination_key_present_count": 0,
+        "link_destination_present_count": 0,
+        "action_destination_present_count": 0,
+        "internal_destination_page_resolved_count": 0
+      },
+      "interaction_supported": false,
+      "annotation_fully_supported": false
+    },
+    {
+      "key": "original-multiply",
+      "native_render_count": 18,
+      "native_render_pixels": 1440000,
+      "cold_wall_s": 0.45511985099983576,
+      "cold_cpu_s": 0.4518499999999994,
+      "peak_rss_mib": 39.99609375,
+      "cpu_affinity": [
+        0
+      ],
+      "input_unchanged": true,
+      "paint_raster_outcomes": [
+        {
+          "dpi": 72.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 6000,
+          "isolated_alpha_nonzero_pixels": [
+            6000,
+            0
+          ],
+          "recomposition_changed_pixels": 6000,
+          "recomposition_max_channel_delta": 186,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        },
+        {
+          "dpi": 144.0,
+          "annotation_count": 2,
+          "annotation_subtypes": [
+            "stamp",
+            "link"
+          ],
+          "normal_ap_is_empty": [
+            false,
+            true
+          ],
+          "native_visible_contribution_pixels": 24000,
+          "isolated_alpha_nonzero_pixels": [
+            24000,
+            0
+          ],
+          "recomposition_changed_pixels": 24000,
+          "recomposition_max_channel_delta": 186,
+          "accepted_at_tested_raster_only": false,
+          "source_pixels_restored": true,
+          "blocking_reasons": [
+            "annotation_0_backdrop_or_rounding_or_clip_not_exact",
+            "recomposition_not_exact"
+          ]
+        }
+      ],
+      "link_interaction": {
+        "link_count": 1,
+        "interaction_supported": false,
+        "reason": "reflow_click_region_and_destination_mapping_not_implemented",
+        "target_requests": 0,
+        "native_rect_extracted_count": 1,
+        "native_quadpoints_declared": 0,
+        "quadpoints_complete_count": 1,
+        "action_types": [
+          "uri"
+        ],
+        "uri_extractable_count": 1,
+        "file_path_extractable_count": 0,
+        "direct_destination_key_present_count": 0,
+        "link_destination_present_count": 0,
+        "action_destination_present_count": 0,
+        "internal_destination_page_resolved_count": 0
+      },
+      "interaction_supported": false,
+      "annotation_fully_supported": false
+    }
+  ],
+  "final_raster_revalidation": [
+    {
+      "key": "D5-P1",
+      "all_native_pixels_match_pre_interaction_version": true,
+      "render_count": 14
+    },
+    {
+      "key": "D4-P1",
+      "all_native_pixels_match_pre_interaction_version": true,
+      "render_count": 18
+    },
+    {
+      "key": "original-opaque",
+      "all_native_pixels_match_pre_interaction_version": true,
+      "render_count": 18
+    },
+    {
+      "key": "original-alpha",
+      "all_native_pixels_match_pre_interaction_version": true,
+      "render_count": 18
+    },
+    {
+      "key": "original-multiply",
+      "all_native_pixels_match_pre_interaction_version": true,
+      "render_count": 18
+    }
+  ]
+}

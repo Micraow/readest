@@ -1,0 +1,114 @@
+{
+  "D5-P1": {
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 11.030777857999055,
+    "sampled_peak_family_rss_mib": 191.0078125,
+    "sampled_cpu_seconds": 10.86,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 10.869076,
+    "process_peak_rss_mib": 190.86328125,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, PDF open per phase, native inventory/planning, stable text alpha extraction and encoding, conditional coalescing/repartition, full native masked replay, 72/144dpi annotation diagnosis, all local unit native render/encode, HTML and final audit writes",
+    "excluded": "browser startup/load/paint and interactive audit; cannot claim interactive-page budget",
+    "pipeline": {
+      "phases": [
+        {
+          "name": "extract_plan_partition_encode",
+          "wall_seconds": 2.4081977949990687
+        },
+        {
+          "name": "native_masked_source_replay",
+          "wall_seconds": 0.9147919960014406
+        },
+        {
+          "name": "annotation_appearance_and_interaction_inventory",
+          "wall_seconds": 1.6121887970002717
+        },
+        {
+          "name": "local_native_unit_render_encode",
+          "wall_seconds": 4.445750767999925
+        },
+        {
+          "name": "build_reflow_reader",
+          "wall_seconds": 0.2902431010006694
+        }
+      ],
+      "assets": 426,
+      "native_renders": 649,
+      "source_replay_pass": true,
+      "source_support_mismatched_units": [],
+      "unresolved_pixels": 0,
+      "all_crops_stable": true,
+      "annotation_ink_pass_at_tested_scales": true,
+      "annotation_interaction_supported": false,
+      "reader_units": 426,
+      "elapsed_before_final_report_seconds": 9.671246072999566,
+      "holdout_used": false,
+      "reading_acceptance": false
+    }
+  },
+  "D4-P1": {
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 47.488797751000675,
+    "sampled_peak_family_rss_mib": 212.0390625,
+    "sampled_cpu_seconds": 46.99,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 47.001698,
+    "process_peak_rss_mib": 211.95703125,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, PDF open per phase, native inventory/planning, stable text alpha extraction and encoding, conditional coalescing/repartition, full native masked replay, 72/144dpi annotation diagnosis, all local unit native render/encode, HTML and final audit writes",
+    "excluded": "browser startup/load/paint and interactive audit; cannot claim interactive-page budget",
+    "pipeline": {
+      "phases": [
+        {
+          "name": "extract_plan_partition_encode",
+          "wall_seconds": 9.330820696000956
+        },
+        {
+          "name": "coalesce_repartition_encode",
+          "wall_seconds": 4.586096875998919
+        },
+        {
+          "name": "native_masked_source_replay",
+          "wall_seconds": 1.9634670489995187
+        },
+        {
+          "name": "annotation_appearance_and_interaction_inventory",
+          "wall_seconds": 2.233323663000192
+        },
+        {
+          "name": "local_native_unit_render_encode",
+          "wall_seconds": 27.09931401600079
+        },
+        {
+          "name": "build_reflow_reader",
+          "wall_seconds": 0.5545345319987973
+        }
+      ],
+      "assets": 995,
+      "native_renders": 8439,
+      "source_replay_pass": true,
+      "source_support_mismatched_units": [
+        "o642",
+        "w2925",
+        "w2922",
+        "w4212",
+        "w4209"
+      ],
+      "unresolved_pixels": 0,
+      "all_crops_stable": true,
+      "annotation_ink_pass_at_tested_scales": true,
+      "annotation_interaction_supported": false,
+      "reader_units": 995,
+      "elapsed_before_final_report_seconds": 45.767739348999385,
+      "holdout_used": false,
+      "reading_acceptance": false
+    }
+  }
+}

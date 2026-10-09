@@ -1,0 +1,20 @@
+{
+  "files": {
+    "code/annotations.py": "7b627919e41a1a88f481998078f681fc10c8e97670629b270dcd19bcc252e7b8",
+    "code/build_unit_reader.py": "36542c98773fce6ed4c87b774f2f12b3418871230a6a9bcd47380b98e3e58002",
+    "code/coalesce_local_intervals.py": "9588b0958d937d6e0843c4ca29d43fddeacb80645a1604aa059fef65de97ec53",
+    "code/ink_config.py": "20d6263c82b8147277d71ecb37f65edaf0d4f411c7103991c86cc083cf8bdd34",
+    "code/ink_ownership.py": "9625be7f922056350d4ec93490945a1b4e28a7a485461650880dbb2e887a10e5",
+    "code/masked_native_replay.py": "8cc93f945af7208439ba83563bfa020ae4ba1def1c6562dc772d7ff3237a709e",
+    "code/measure_page.py": "6c1a946656bd011e738900e00349701156908c936b5267749bfda1bde90cc26f",
+    "code/native_paint_replay.py": "940b1a61a32b6e6369025661df2a1842bd53a83a117d00229765be4d19c813f2",
+    "code/page_pipeline.py": "181da03363fe5cdf2c5b7c12cb99f03c5b52db0256eaa6d1bc92cc77ed0e964a",
+    "code/reader_spacing.py": "48f90b61b9464b7319c3c34905c984daf3682daafa3ac8530c61102be0ca9343",
+    "code/recompose_native_layers.py": "e26da09ed305b6490e2cfde42e8f4a452c83765afca3d4ec75c3f21a59123928",
+    "code/render_native_units.py": "70922336257bb931e370afe34b4462f47000eebcdec37f2484f5b92b58628cee",
+    "code/static_unit_qa.py": "e58c2ec74929d212d398044a173d686a31b69ad576996b42db8243cda694ecd1",
+    "code/test_ink_ownership.py": "a9aadc00fcf60597e36c5e800ab831440d08ab54d2eec9f494632d95ef083119"
+  },
+  "held_out_pages_opened": 0,
+  "acceptance": false
+}
