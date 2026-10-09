@@ -1,0 +1,42 @@
+{
+  "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+  "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+  "rows": [
+    {
+      "key": "D4-P1",
+      "arm": "AB",
+      "elapsed_seconds": 24.49766442200007,
+      "returncode": 0
+    },
+    {
+      "key": "D4-P1",
+      "arm": "E",
+      "elapsed_seconds": 22.821909676999894,
+      "returncode": 0
+    },
+    {
+      "key": "D4-P1",
+      "arm": "CD",
+      "elapsed_seconds": 8.482889561999855,
+      "returncode": 0
+    },
+    {
+      "key": "D4-P2",
+      "arm": "AB",
+      "elapsed_seconds": 25.07292370899995,
+      "returncode": 0
+    },
+    {
+      "key": "D4-P2",
+      "arm": "E",
+      "elapsed_seconds": 30.1741904659998,
+      "returncode": 0
+    },
+    {
+      "key": "D4-P2",
+      "arm": "CD",
+      "elapsed_seconds": 8.451366340000277,
+      "returncode": 0
+    }
+  ]
+}

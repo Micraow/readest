@@ -1,3 +1,5 @@
+Current conclusion: [frozen negative final assessment](FINAL-ASSESSMENT.md). The twelve-page 390/20 source/output audit is complete at its stated scope; the full matrix is not certified.
+
 # Recovery after executor reset
 
 These original orchestration scripts reproduce the frozen 9f6b88c candidate after the 2026-10-09 environment reset. They do not repair the observed grouping/order/rendering failures. Copy this directory to a workspace sibling named `readest-recovery`, beside the experiment directories documented by the main research README. Restore official inputs only from their recorded source and verify every SHA. Never copy private PDFs into a public repository.

@@ -1,3 +1,5 @@
+> Superseded by recovery/FINAL-ASSESSMENT.md. The historical 95-region / 76-candidate scoring numbers below are INVALID because the old QA join mixed split-local IDs. Preserved for audit, not a valid score.
+
 # Readest frozen local-break experiment: observed results before execution-environment reset
 
 Recorded 2026-10-09 03:35 UTC from visible tool outputs and direct image inspection. This is an interrupted audit, not a complete quality report. Raw files became unavailable at 03:34:37 when the executor reported a key change; the workspace then showed a nearly empty 32GB filesystem. No reset cause is established.

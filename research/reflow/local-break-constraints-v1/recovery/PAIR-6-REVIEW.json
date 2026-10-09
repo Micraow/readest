@@ -1,0 +1,20 @@
+{
+  "scope": "A390px20px self visual review; source pixels and word sequence inspected, no whole-document or all-size pass",
+  "D6-P1": {
+    "observed": "Chinese glyphs genuinely wrap, but original source-line divisions survive as extra paragraph gaps inside articles6/7 and the next paragraph; page number3 merges into running title.",
+    "body_risks": [
+      "R5",
+      "R6",
+      "R7"
+    ],
+    "header_relationship_failure": true
+  },
+  "D6-P2": {
+    "observed": "Most Chinese body regions flow, but the two source lines of the clean-production paragraph remain separated by a false paragraph gap; page number4 merges into title.",
+    "body_risks": [
+      "R10"
+    ],
+    "header_relationship_failure": true
+  },
+  "counting_warning": "Official Text includes running titles; no87-region score is called complete-body coverage."
+}

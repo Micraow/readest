@@ -1,0 +1,751 @@
+{
+  "scope": "Mechanical source/display coverage, not semantic or paragraph-reflow acceptance",
+  "pages": [
+    {
+      "key": "D1-P1",
+      "arms": {
+        "A": {
+          "source_ink": 425344,
+          "assigned_ink": 425344,
+          "declared_shown_ink": 425344,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 340,
+          "max_island_words": 22,
+          "island_word_count": 56
+        },
+        "B": {
+          "source_ink": 425344,
+          "assigned_ink": 425344,
+          "declared_shown_ink": 412432,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 310,
+          "max_island_words": 37,
+          "island_word_count": 84
+        },
+        "E": {
+          "source_ink": 425344,
+          "assigned_ink": 425344,
+          "declared_shown_ink": 425344,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 340,
+          "max_island_words": 22,
+          "island_word_count": 56
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 425344,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 1660,
+          "all_native_nonspace_glyphs": 2066,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D1-P2",
+      "arms": {
+        "A": {
+          "source_ink": 444860,
+          "assigned_ink": 444860,
+          "declared_shown_ink": 444860,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 383,
+          "max_island_words": 3,
+          "island_word_count": 3
+        },
+        "B": {
+          "source_ink": 444860,
+          "assigned_ink": 444860,
+          "declared_shown_ink": 444860,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 383,
+          "max_island_words": 3,
+          "island_word_count": 3
+        },
+        "E": {
+          "source_ink": 444860,
+          "assigned_ink": 444860,
+          "declared_shown_ink": 444860,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 383,
+          "max_island_words": 3,
+          "island_word_count": 3
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 444860,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 2125,
+          "all_native_nonspace_glyphs": 2156,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D2-P1",
+      "arms": {
+        "A": {
+          "source_ink": 237289,
+          "assigned_ink": 237289,
+          "declared_shown_ink": 237289,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 277,
+          "max_island_words": 2,
+          "island_word_count": 6
+        },
+        "B": {
+          "source_ink": 237289,
+          "assigned_ink": 237289,
+          "declared_shown_ink": 237289,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 277,
+          "max_island_words": 2,
+          "island_word_count": 6
+        },
+        "E": {
+          "source_ink": 237289,
+          "assigned_ink": 237289,
+          "declared_shown_ink": 237289,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 277,
+          "max_island_words": 2,
+          "island_word_count": 6
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 237289,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 1058,
+          "all_native_nonspace_glyphs": 1416,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D2-P2",
+      "arms": {
+        "A": {
+          "source_ink": 240528,
+          "assigned_ink": 240528,
+          "declared_shown_ink": 240528,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 258,
+          "max_island_words": 38,
+          "island_word_count": 41
+        },
+        "B": {
+          "source_ink": 240528,
+          "assigned_ink": 240528,
+          "declared_shown_ink": 240528,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 249,
+          "max_island_words": 47,
+          "island_word_count": 50
+        },
+        "E": {
+          "source_ink": 240528,
+          "assigned_ink": 240528,
+          "declared_shown_ink": 240528,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 258,
+          "max_island_words": 38,
+          "island_word_count": 41
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 240528,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 1200,
+          "all_native_nonspace_glyphs": 1415,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D3-P1",
+      "arms": {
+        "A": {
+          "source_ink": 721650,
+          "assigned_ink": 721650,
+          "declared_shown_ink": 721650,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 726,
+          "max_island_words": 41,
+          "island_word_count": 66
+        },
+        "B": {
+          "source_ink": 721650,
+          "assigned_ink": 721650,
+          "declared_shown_ink": 721650,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 704,
+          "max_island_words": 63,
+          "island_word_count": 88
+        },
+        "E": {
+          "source_ink": 721650,
+          "assigned_ink": 721650,
+          "declared_shown_ink": 721650,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 726,
+          "max_island_words": 41,
+          "island_word_count": 66
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 721650,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 1188,
+          "all_native_nonspace_glyphs": 3763,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D3-P2",
+      "arms": {
+        "A": {
+          "source_ink": 777824,
+          "assigned_ink": 777824,
+          "declared_shown_ink": 777824,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 933,
+          "max_island_words": 4,
+          "island_word_count": 54
+        },
+        "B": {
+          "source_ink": 777824,
+          "assigned_ink": 777824,
+          "declared_shown_ink": 773636,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 932,
+          "max_island_words": 4,
+          "island_word_count": 54
+        },
+        "E": {
+          "source_ink": 777824,
+          "assigned_ink": 777824,
+          "declared_shown_ink": 777824,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 933,
+          "max_island_words": 4,
+          "island_word_count": 54
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 777824,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 2631,
+          "all_native_nonspace_glyphs": 4717,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D4-P1",
+      "arms": {
+        "A": {
+          "source_ink": 940999,
+          "assigned_ink": 940999,
+          "declared_shown_ink": 940999,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 430,
+          "max_island_words": 56,
+          "island_word_count": 369
+        },
+        "B": {
+          "source_ink": 940999,
+          "assigned_ink": 940999,
+          "declared_shown_ink": 937636,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 27,
+          "max_island_words": 252,
+          "island_word_count": 673
+        },
+        "E": {
+          "source_ink": 940999,
+          "assigned_ink": 940999,
+          "declared_shown_ink": 940999,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 425,
+          "max_island_words": 56,
+          "island_word_count": 374
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 940999,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 1039,
+          "all_native_nonspace_glyphs": 3362,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D4-P2",
+      "arms": {
+        "A": {
+          "source_ink": 1396854,
+          "assigned_ink": 1396854,
+          "declared_shown_ink": 1396854,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 513,
+          "max_island_words": 52,
+          "island_word_count": 255
+        },
+        "B": {
+          "source_ink": 1396854,
+          "assigned_ink": 1396854,
+          "declared_shown_ink": 1396854,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 229,
+          "max_island_words": 421,
+          "island_word_count": 528
+        },
+        "E": {
+          "source_ink": 1396854,
+          "assigned_ink": 1396854,
+          "declared_shown_ink": 1396854,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 514,
+          "max_island_words": 52,
+          "island_word_count": 255
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 1396854,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 231,
+          "all_native_nonspace_glyphs": 3436,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D5-P1",
+      "arms": {
+        "A": {
+          "source_ink": 1391158,
+          "assigned_ink": 1391158,
+          "declared_shown_ink": 1391158,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 346,
+          "max_island_words": 93,
+          "island_word_count": 93
+        },
+        "B": {
+          "source_ink": 1391158,
+          "assigned_ink": 1391158,
+          "declared_shown_ink": 1391158,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 346,
+          "max_island_words": 93,
+          "island_word_count": 93
+        },
+        "E": {
+          "source_ink": 1391158,
+          "assigned_ink": 1391158,
+          "declared_shown_ink": 1391158,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 346,
+          "max_island_words": 93,
+          "island_word_count": 93
+        },
+        "C": {
+          "failure": "Physical coverage or unique semantic-mask ownership unproved: preserve whole original page",
+          "source_ink": 1391158,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 0,
+          "all_native_nonspace_glyphs": 2145,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D5-P2",
+      "arms": {
+        "A": {
+          "source_ink": 1371048,
+          "assigned_ink": 1371048,
+          "declared_shown_ink": 1371048,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 372,
+          "max_island_words": 0,
+          "island_word_count": 0
+        },
+        "B": {
+          "source_ink": 1371048,
+          "assigned_ink": 1371048,
+          "declared_shown_ink": 1371048,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 372,
+          "max_island_words": 0,
+          "island_word_count": 0
+        },
+        "E": {
+          "source_ink": 1371048,
+          "assigned_ink": 1371048,
+          "declared_shown_ink": 1371048,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 372,
+          "max_island_words": 0,
+          "island_word_count": 0
+        },
+        "C": {
+          "failure": "Physical coverage or unique semantic-mask ownership unproved: preserve whole original page",
+          "source_ink": 1371048,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 0,
+          "all_native_nonspace_glyphs": 1876,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D6-P1",
+      "arms": {
+        "A": {
+          "source_ink": 421083,
+          "assigned_ink": 421083,
+          "declared_shown_ink": 421083,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 555,
+          "max_island_words": 3,
+          "island_word_count": 73
+        },
+        "B": {
+          "source_ink": 421083,
+          "assigned_ink": 421083,
+          "declared_shown_ink": 421083,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 555,
+          "max_island_words": 3,
+          "island_word_count": 73
+        },
+        "E": {
+          "source_ink": 421083,
+          "assigned_ink": 421083,
+          "declared_shown_ink": 421083,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 555,
+          "max_island_words": 3,
+          "island_word_count": 73
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 421083,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 505,
+          "all_native_nonspace_glyphs": 683,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    },
+    {
+      "key": "D6-P2",
+      "arms": {
+        "A": {
+          "source_ink": 459575,
+          "assigned_ink": 459575,
+          "declared_shown_ink": 459575,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 601,
+          "max_island_words": 2,
+          "island_word_count": 94
+        },
+        "B": {
+          "source_ink": 459575,
+          "assigned_ink": 459575,
+          "declared_shown_ink": 459575,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 601,
+          "max_island_words": 2,
+          "island_word_count": 94
+        },
+        "E": {
+          "source_ink": 459575,
+          "assigned_ink": 459575,
+          "declared_shown_ink": 459575,
+          "duplicate_displayed_atom_ids": 0,
+          "atoms": 601,
+          "max_island_words": 2,
+          "island_word_count": 94
+        },
+        "C": {
+          "failure": null,
+          "source_ink": 459575,
+          "uncovered_ink": 0,
+          "duplicate_ink": 0,
+          "candidate_reflow_native_glyphs": 605,
+          "all_native_nonspace_glyphs": 739,
+          "metric_warning": "Mode branch candidate count, NOT genuinely rewrapped text coverage."
+        }
+      }
+    }
+  ],
+  "timings": [
+    {
+      "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+      "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+      "rows": [
+        {
+          "key": "D1-P1",
+          "arm": "AB",
+          "elapsed_seconds": 26.769823281000072,
+          "returncode": 0
+        },
+        {
+          "key": "D1-P1",
+          "arm": "E",
+          "elapsed_seconds": 31.33395164600006,
+          "returncode": 0
+        },
+        {
+          "key": "D1-P1",
+          "arm": "CD",
+          "elapsed_seconds": 7.914077601999907,
+          "returncode": 0
+        },
+        {
+          "key": "D1-P2",
+          "arm": "AB",
+          "elapsed_seconds": 14.800170422000065,
+          "returncode": 0
+        },
+        {
+          "key": "D1-P2",
+          "arm": "E",
+          "elapsed_seconds": 15.888650792999897,
+          "returncode": 0
+        },
+        {
+          "key": "D1-P2",
+          "arm": "CD",
+          "elapsed_seconds": 7.931434007000007,
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+      "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+      "rows": [
+        {
+          "key": "D2-P1",
+          "arm": "AB",
+          "elapsed_seconds": 19.039154901999837,
+          "returncode": 0
+        },
+        {
+          "key": "D2-P1",
+          "arm": "E",
+          "elapsed_seconds": 18.00093303099993,
+          "returncode": 0
+        },
+        {
+          "key": "D2-P1",
+          "arm": "CD",
+          "elapsed_seconds": 11.585443790999989,
+          "returncode": 0
+        },
+        {
+          "key": "D2-P2",
+          "arm": "AB",
+          "elapsed_seconds": 21.655386045000114,
+          "returncode": 0
+        },
+        {
+          "key": "D2-P2",
+          "arm": "E",
+          "elapsed_seconds": 20.556216597000002,
+          "returncode": 0
+        },
+        {
+          "key": "D2-P2",
+          "arm": "CD",
+          "elapsed_seconds": 10.190931268999975,
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+      "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+      "rows": [
+        {
+          "key": "D3-P1",
+          "arm": "AB",
+          "elapsed_seconds": 28.591433198999994,
+          "returncode": 0
+        },
+        {
+          "key": "D3-P1",
+          "arm": "E",
+          "elapsed_seconds": 30.65863197800013,
+          "returncode": 0
+        },
+        {
+          "key": "D3-P1",
+          "arm": "CD",
+          "elapsed_seconds": 24.013713906999783,
+          "returncode": 0
+        },
+        {
+          "key": "D3-P2",
+          "arm": "AB",
+          "elapsed_seconds": 45.20730418899984,
+          "returncode": 0
+        },
+        {
+          "key": "D3-P2",
+          "arm": "E",
+          "elapsed_seconds": 46.84042624299991,
+          "returncode": 0
+        },
+        {
+          "key": "D3-P2",
+          "arm": "CD",
+          "elapsed_seconds": 17.814318029999868,
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+      "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+      "rows": [
+        {
+          "key": "D4-P1",
+          "arm": "AB",
+          "elapsed_seconds": 24.49766442200007,
+          "returncode": 0
+        },
+        {
+          "key": "D4-P1",
+          "arm": "E",
+          "elapsed_seconds": 22.821909676999894,
+          "returncode": 0
+        },
+        {
+          "key": "D4-P1",
+          "arm": "CD",
+          "elapsed_seconds": 8.482889561999855,
+          "returncode": 0
+        },
+        {
+          "key": "D4-P2",
+          "arm": "AB",
+          "elapsed_seconds": 25.07292370899995,
+          "returncode": 0
+        },
+        {
+          "key": "D4-P2",
+          "arm": "E",
+          "elapsed_seconds": 30.1741904659998,
+          "returncode": 0
+        },
+        {
+          "key": "D4-P2",
+          "arm": "CD",
+          "elapsed_seconds": 8.451366340000277,
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+      "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+      "rows": [
+        {
+          "key": "D5-P1",
+          "arm": "AB",
+          "elapsed_seconds": 21.411208906999946,
+          "returncode": 0
+        },
+        {
+          "key": "D5-P1",
+          "arm": "E",
+          "elapsed_seconds": 17.9890661620002,
+          "returncode": 0
+        },
+        {
+          "key": "D5-P1",
+          "arm": "CD",
+          "elapsed_seconds": 7.516197029000068,
+          "returncode": 0
+        },
+        {
+          "key": "D5-P2",
+          "arm": "AB",
+          "elapsed_seconds": 15.874935681999887,
+          "returncode": 0
+        },
+        {
+          "key": "D5-P2",
+          "arm": "E",
+          "elapsed_seconds": 28.977344698000252,
+          "returncode": 0
+        },
+        {
+          "key": "D5-P2",
+          "arm": "CD",
+          "elapsed_seconds": 9.847496267999759,
+          "returncode": 0
+        }
+      ]
+    },
+    {
+      "scope": "Post-reset reproduction of frozen candidate; source already seen, not fresh generalization",
+      "base_commit": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+      "rows": [
+        {
+          "key": "D6-P1",
+          "arm": "AB",
+          "elapsed_seconds": 17.725594757999716,
+          "returncode": 0
+        },
+        {
+          "key": "D6-P1",
+          "arm": "E",
+          "elapsed_seconds": 20.620949521000057,
+          "returncode": 0
+        },
+        {
+          "key": "D6-P1",
+          "arm": "CD",
+          "elapsed_seconds": 20.203347980000217,
+          "returncode": 0
+        },
+        {
+          "key": "D6-P2",
+          "arm": "AB",
+          "elapsed_seconds": 20.902732417999687,
+          "returncode": 0
+        },
+        {
+          "key": "D6-P2",
+          "arm": "E",
+          "elapsed_seconds": 18.803891358999863,
+          "returncode": 0
+        },
+        {
+          "key": "D6-P2",
+          "arm": "CD",
+          "elapsed_seconds": 10.676799926000058,
+          "returncode": 0
+        }
+      ]
+    }
+  ]
+}

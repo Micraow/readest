@@ -1,3 +1,9 @@
+# Local breakpoint constraints: frozen negative result
+
+The frozen twelve-page batch is closed without acceptance. See [the final assessment](recovery/FINAL-ASSESSMENT.md) and [the paragraph-unit audit](recovery/FINAL-ASSESSMENT.json). All twelve sources and A outputs were visually reviewed at 390 px/20 px. Other settings and real-PDF browser semantics are not certified. The earlier 95-region score is invalid, and B suppresses three complete formulas. Do not promote the candidate or claim A/B superiority.
+
+The original pre-evaluation implementation checkpoint follows unchanged for provenance.
+
 # Local breakpoint constraints: implementation checkpoint
 
 Status: original development controls only. The12 registered source pages have been downloaded and hashed but not inspected or processed by this implementation. Algorithm freeze and full A/B/C/D evaluation are pending. This checkpoint is crash recovery, not a quality result.

@@ -1,0 +1,1490 @@
+{
+  "status": "negative_frozen_candidate_assessment_complete_at_stated_scope",
+  "date_utc": "2026-10-09",
+  "source_freeze": "9f6b88cfa9b15169f7d739b10c350efa261e19dd",
+  "engine_rerun_or_tuning_in_this_assessment": false,
+  "scope": "Manual source and A 390px/20px self-review of all twelve pages; not independent or browser acceptance. Paragraph grouping was audited after output inspection, so descriptive rather than preregistered.",
+  "unit_definition": "Join source paragraphs across display formulas, columns and the registered adjacent-page boundary; standalone list items count. Retain clipped, failed and unknown units. Exclude only two explicitly identified running titles. Units concern registered source body, not complete documents.",
+  "old_scoring_invalid": {
+    "raw_regions": 95,
+    "mechanical_candidates": 76,
+    "reason": "DocLayNet image_id collision across train/val mixed D3-P2 annotations; invalid counts preserved in historical observation document."
+  },
+  "corrected_denominator": {
+    "raw_Text_List_regions": 87,
+    "excluded_nonbody_titles": {
+      "D6-P1-R2": "Running title, not body",
+      "D6-P2-R2": "Running title, not body"
+    },
+    "mapped_body_regions": 85,
+    "paragraph_or_list_units": 69,
+    "unmapped_body_regions": 0,
+    "duplicate_region_assignments": 0
+  },
+  "A_390_20_self_review_counts": {
+    "fail": 31,
+    "readable_at_inspected_setting": 34,
+    "unknown": 4
+  },
+  "overall_success_percentage": null,
+  "why_no_acceptance_percentage": "Single-setting visible readability is not complete mathematical/glyph/browser or six-setting verification. Unknowns stay in the 69-unit denominator. No A/B gain is valid because B omits three complete formula atoms.",
+  "by_document": {
+    "D1": {
+      "fail": 1,
+      "readable_at_inspected_setting": 2,
+      "unknown": 1
+    },
+    "D2": {
+      "readable_at_inspected_setting": 5,
+      "unknown": 1,
+      "fail": 1
+    },
+    "D3": {
+      "fail": 8,
+      "readable_at_inspected_setting": 1,
+      "unknown": 1
+    },
+    "D4": {
+      "fail": 8
+    },
+    "D5": {
+      "readable_at_inspected_setting": 8,
+      "fail": 9,
+      "unknown": 1
+    },
+    "D6": {
+      "readable_at_inspected_setting": 18,
+      "fail": 4
+    }
+  },
+  "units": [
+    {
+      "id": "D1-U1",
+      "document": 1,
+      "reference_regions": [
+        "D1-P1-R1",
+        "D1-P1-R3",
+        "D1-P1-R5",
+        "D1-P1-R7",
+        "D1-P2-R1"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "fail",
+      "reason": "One continuous derivation around three displayed formulas crosses the page boundary. Source entry is clipped; A has definite multi-line prose-island reordering within the available portion.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D1-U2",
+      "document": 1,
+      "reference_regions": [
+        "D1-P2-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D1-U3",
+      "document": 1,
+      "reference_regions": [
+        "D1-P2-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D1-U4",
+      "document": 1,
+      "reference_regions": [
+        "D1-P2-R5"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "unknown",
+      "reason": "The visible fragment flows, but the paragraph ends outside the registered pair; complete-unit readability cannot be accepted.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U1",
+      "document": 2,
+      "reference_regions": [
+        "D2-P1-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U2",
+      "document": 2,
+      "reference_regions": [
+        "D2-P1-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U3",
+      "document": 2,
+      "reference_regions": [
+        "D2-P1-R6",
+        "D2-P2-R2",
+        "D2-P2-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "unknown",
+      "reason": "One formula-connected unit with equations 13-16 spans the two source pages. Page-local portions flow, but paired-reader continuation was not tested.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U4",
+      "document": 2,
+      "reference_regions": [
+        "D2-P2-R6"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U5",
+      "document": 2,
+      "reference_regions": [
+        "D2-P2-R7"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U6",
+      "document": 2,
+      "reference_regions": [
+        "D2-P2-R8"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D2-U7",
+      "document": 2,
+      "reference_regions": [
+        "D2-P2-R10"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "fail",
+      "reason": "Footnote/rule island interrupts the last ordinary body sentence; the paragraph also continues beyond the registered pair.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U1",
+      "document": 3,
+      "reference_regions": [
+        "D3-P1-R2"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "fail",
+      "reason": "Initial source fragment is split into multi-line math/prose islands with interrupted logical order.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U2",
+      "document": 3,
+      "reference_regions": [
+        "D3-P1-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Prose wraps, but its end is merged directly into the next independently indented source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U3",
+      "document": 3,
+      "reference_regions": [
+        "D3-P1-R9",
+        "D3-P1-R11"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "One paragraph spans equation 14; its continuation is then merged directly into the next source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U4",
+      "document": 3,
+      "reference_regions": [
+        "D3-P1-R12"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "The paragraph is merged into adjacent source paragraphs, including the following summary.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U5",
+      "document": 3,
+      "reference_regions": [
+        "D3-P1-R14",
+        "D3-P1-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "The left-bottom to right-top continuation is interrupted by the source page number.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U6",
+      "document": 3,
+      "reference_regions": [
+        "D3-P1-R7"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U7",
+      "document": 3,
+      "reference_regions": [
+        "D3-P2-R3",
+        "D3-P2-R6",
+        "D3-P2-R8",
+        "D3-P2-R10"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "unknown",
+      "reason": "Formula-connected paragraph with equations 15-17. Prose mostly flows, but complete mathematical dependency/readability and horizontal access were not verified; isolated punctuation is visible.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U8",
+      "document": 3,
+      "reference_regions": [
+        "D3-P2-R12",
+        "D3-P2-R2"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "False paragraph gap at the cross-column continuation and loss of separation from the next source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U9",
+      "document": 3,
+      "reference_regions": [
+        "D3-P2-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Source paragraph boundaries are lost at both adjacent prose transitions.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D3-U10",
+      "document": 3,
+      "reference_regions": [
+        "D3-P2-R13"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "fail",
+      "reason": "Merged into the preceding paragraph; the exit also lies outside the registered pair.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U1",
+      "document": 4,
+      "reference_regions": [
+        "D4-P1-R5"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "fail",
+      "reason": "Inline math islands include ordinary prose from multiple source lines and corrupt its sequence; entry is outside the pair.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U2",
+      "document": 4,
+      "reference_regions": [
+        "D4-P1-R9"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Short paragraph is broken around a summation island, reordering ordinary words.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U3",
+      "document": 4,
+      "reference_regions": [
+        "D4-P1-R11",
+        "D4-P1-R8"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Multi-line prose islands and page header/figure/caption interposition corrupt the column-spanning paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U4",
+      "document": 4,
+      "reference_regions": [
+        "D4-P1-R12",
+        "D4-P2-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Inline mathematical islands reorder ordinary words on both pages; source paragraph continuation is not preserved.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U5",
+      "document": 4,
+      "reference_regions": [
+        "D4-P2-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Ordinary prose is retained in multi-line mathematical islands and appears in interrupted or reordered sequence.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U6",
+      "document": 4,
+      "reference_regions": [
+        "D4-P2-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Ordinary prose is retained in multi-line mathematical islands and appears in interrupted or reordered sequence.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U7",
+      "document": 4,
+      "reference_regions": [
+        "D4-P2-R6"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Ordinary prose is retained in multi-line mathematical islands and appears in interrupted or reordered sequence.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D4-U8",
+      "document": 4,
+      "reference_regions": [
+        "D4-P2-R7",
+        "D4-P2-R9"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Inline islands break prose order, while page number and figure/caption interrupt the column continuation.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U1",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U2",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U3",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R7"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U4",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R8"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Margin revision stroke is inserted inside the paragraph, splitting the sentence.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U5",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R9"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Grey painted background connects the Tips introduction/list into a page-width local island; ordinary body cannot genuinely wrap.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U6",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R10"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Grey painted background connects the Tips introduction/list into a page-width local island; ordinary body cannot genuinely wrap.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U7",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R11"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Grey painted background connects the Tips introduction/list into a page-width local island; ordinary body cannot genuinely wrap.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U8",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R12"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Grey painted background connects the Tips introduction/list into a page-width local island; ordinary body cannot genuinely wrap.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U9",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R13"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Grey painted background connects the Tips introduction/list into a page-width local island; ordinary body cannot genuinely wrap.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U10",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R14"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U11",
+      "document": 5,
+      "reference_regions": [
+        "D5-P1-R15"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Margin revision stroke is inserted between two parts of the same sentence.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U12",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U13",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U14",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U15",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R8"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U16",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R9"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Margin revision stroke is inserted in the middle of the paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U17",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R10",
+        "D5-P2-R11"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Introductory sentence and expression are one unit. Revision stroke and spacing split the expression; its ordinary Text annotation does not make it a separate paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D5-U18",
+      "document": 5,
+      "reference_regions": [
+        "D5-P2-R12"
+      ],
+      "complete_source_unit_within_registered_pair": false,
+      "A_390_20_visual_result": "unknown",
+      "reason": "Visible prose flows, but it introduces a calculation outside the registered pair; full unit remains unknown.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U1",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U2",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Original source-line divisions survive as false paragraph gaps inside one source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U3",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R6"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Original source-line divisions survive as false paragraph gaps inside one source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U4",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R7"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Original source-line divisions survive as false paragraph gaps inside one source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U5",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R8"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U6",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R9"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U7",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R10"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U8",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R11"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U9",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R12"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U10",
+      "document": 6,
+      "reference_regions": [
+        "D6-P1-R13"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U11",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R3"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U12",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R4"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U13",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R5"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U14",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R6"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U15",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R7"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U16",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R8"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U17",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R9"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U18",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R10"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "fail",
+      "reason": "Original source-line division survives as a false paragraph gap inside one source paragraph.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U19",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R11"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U20",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R12"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U21",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R13"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    },
+    {
+      "id": "D6-U22",
+      "document": 6,
+      "reference_regions": [
+        "D6-P2-R14"
+      ],
+      "complete_source_unit_within_registered_pair": true,
+      "A_390_20_visual_result": "readable_at_inspected_setting",
+      "reason": "Visibly rewrapped at the inspected setting without an identified internal sequence or paragraph-boundary defect; not full acceptance.",
+      "full_matrix_acceptance": "not_certified"
+    }
+  ],
+  "visual_coverage": [
+    {
+      "page": "D1-P1",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "WeasyPrint CSS raster",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D1-P2",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "WeasyPrint CSS raster",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D2-P1",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "WeasyPrint CSS raster",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D2-P2",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "WeasyPrint CSS raster",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D3-P1",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D3-P2",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D4-P1",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D4-P2",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D5-P1",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D5-P2",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D6-P1",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    },
+    {
+      "page": "D6-P2",
+      "source_pixels_inspected": true,
+      "A_390_20_inspected": true,
+      "A_evidence_kind": "Source atlas blit at WeasyPrint box coordinates; UI labels/borders omitted",
+      "other_five_settings_visual_review": "not_done",
+      "real_page_browser_review": "not_done",
+      "E_visual_review": "not_done",
+      "C_D_visual_review": "not_done"
+    }
+  ],
+  "B_comparison": {
+    "status": "invalid_for_superiority_claim",
+    "missing_formula_atoms": [
+      {
+        "page": "D1-P1",
+        "atom": "473",
+        "declared_source_ink": 12912
+      },
+      {
+        "page": "D3-P2",
+        "atom": "226",
+        "declared_source_ink": 4188
+      },
+      {
+        "page": "D4-P1",
+        "atom": "1130",
+        "declared_source_ink": 3363
+      }
+    ],
+    "D1_P1_selected_visual_comparison": true,
+    "other_omissions_verified_from_atom_and_HTML_accounting": true
+  },
+  "display_accounting_not_semantic_proof": [
+    {
+      "page": "D1-P1",
+      "arm": "A",
+      "atoms": 340,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D1-P1",
+      "arm": "B",
+      "atoms": 310,
+      "missing_atoms": 1,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 12912
+    },
+    {
+      "page": "D1-P2",
+      "arm": "A",
+      "atoms": 383,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D1-P2",
+      "arm": "B",
+      "atoms": 383,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D2-P1",
+      "arm": "A",
+      "atoms": 277,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D2-P1",
+      "arm": "B",
+      "atoms": 277,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D2-P2",
+      "arm": "A",
+      "atoms": 258,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D2-P2",
+      "arm": "B",
+      "atoms": 249,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D3-P1",
+      "arm": "A",
+      "atoms": 726,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D3-P1",
+      "arm": "B",
+      "atoms": 704,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D3-P2",
+      "arm": "A",
+      "atoms": 933,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D3-P2",
+      "arm": "B",
+      "atoms": 932,
+      "missing_atoms": 1,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 4188
+    },
+    {
+      "page": "D4-P1",
+      "arm": "A",
+      "atoms": 430,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D4-P1",
+      "arm": "B",
+      "atoms": 27,
+      "missing_atoms": 1,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 3363
+    },
+    {
+      "page": "D4-P2",
+      "arm": "A",
+      "atoms": 513,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D4-P2",
+      "arm": "B",
+      "atoms": 229,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D5-P1",
+      "arm": "A",
+      "atoms": 346,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D5-P1",
+      "arm": "B",
+      "atoms": 346,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D5-P2",
+      "arm": "A",
+      "atoms": 372,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D5-P2",
+      "arm": "B",
+      "atoms": 372,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D6-P1",
+      "arm": "A",
+      "atoms": 555,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D6-P1",
+      "arm": "B",
+      "atoms": 555,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D6-P2",
+      "arm": "A",
+      "atoms": 601,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    },
+    {
+      "page": "D6-P2",
+      "arm": "B",
+      "atoms": 601,
+      "missing_atoms": 0,
+      "duplicate_display_ids": 0,
+      "missing_declared_source_ink": 0
+    }
+  ],
+  "acceptance_gate": {
+    "body_85_percent": "not_established; candidate has definite paragraph/relationship failures",
+    "gain_over_B_15_percentage_points": "not_evaluable_with_contaminated_B",
+    "strict_content_and_relation_gate": "failed",
+    "decision": "do_not_promote"
+  },
+  "resource_accounting": {
+    "executed_groups": 36,
+    "all_group_exit_codes_zero": true,
+    "max_group_wall_seconds": 46.84042624299991,
+    "detector_cold_init_seconds": 15.022414749999825,
+    "detector_page_seconds_range": [
+      0.9031268360001832,
+      1.4393752769999537
+    ],
+    "per_page_comparison_costs": [
+      {
+        "page": "D1-P1",
+        "sum_AB_E_CD_group_wall_seconds": 66.01785252900004,
+        "detector_page_seconds": 1.4393752769999537,
+        "full_comparison_sum_plus_hot_detector_seconds": 67.45722780599999
+      },
+      {
+        "page": "D1-P2",
+        "sum_AB_E_CD_group_wall_seconds": 38.62025522199997,
+        "detector_page_seconds": 1.1098908449998817,
+        "full_comparison_sum_plus_hot_detector_seconds": 39.73014606699985
+      },
+      {
+        "page": "D2-P1",
+        "sum_AB_E_CD_group_wall_seconds": 48.62553172399976,
+        "detector_page_seconds": 0.9031268360001832,
+        "full_comparison_sum_plus_hot_detector_seconds": 49.52865855999994
+      },
+      {
+        "page": "D2-P2",
+        "sum_AB_E_CD_group_wall_seconds": 52.40253391100009,
+        "detector_page_seconds": 0.9842479740000272,
+        "full_comparison_sum_plus_hot_detector_seconds": 53.38678188500012
+      },
+      {
+        "page": "D3-P1",
+        "sum_AB_E_CD_group_wall_seconds": 83.2637790839999,
+        "detector_page_seconds": 1.1479378919998453,
+        "full_comparison_sum_plus_hot_detector_seconds": 84.41171697599975
+      },
+      {
+        "page": "D3-P2",
+        "sum_AB_E_CD_group_wall_seconds": 109.86204846199962,
+        "detector_page_seconds": 1.1354393809999692,
+        "full_comparison_sum_plus_hot_detector_seconds": 110.99748784299959
+      },
+      {
+        "page": "D4-P1",
+        "sum_AB_E_CD_group_wall_seconds": 55.80246366099982,
+        "detector_page_seconds": 1.297212312000056,
+        "full_comparison_sum_plus_hot_detector_seconds": 57.099675972999876
+      },
+      {
+        "page": "D4-P2",
+        "sum_AB_E_CD_group_wall_seconds": 63.69848051500003,
+        "detector_page_seconds": 1.2021319319999293,
+        "full_comparison_sum_plus_hot_detector_seconds": 64.90061244699996
+      },
+      {
+        "page": "D5-P1",
+        "sum_AB_E_CD_group_wall_seconds": 46.91647209800021,
+        "detector_page_seconds": 1.0565512950001903,
+        "full_comparison_sum_plus_hot_detector_seconds": 47.9730233930004
+      },
+      {
+        "page": "D5-P2",
+        "sum_AB_E_CD_group_wall_seconds": 54.6997766479999,
+        "detector_page_seconds": 1.2461216280000826,
+        "full_comparison_sum_plus_hot_detector_seconds": 55.94589827599998
+      },
+      {
+        "page": "D6-P1",
+        "sum_AB_E_CD_group_wall_seconds": 58.54989225899999,
+        "detector_page_seconds": 1.2006291039999724,
+        "full_comparison_sum_plus_hot_detector_seconds": 59.75052136299996
+      },
+      {
+        "page": "D6-P2",
+        "sum_AB_E_CD_group_wall_seconds": 50.38342370299961,
+        "detector_page_seconds": 1.150183836999986,
+        "full_comparison_sum_plus_hot_detector_seconds": 51.53360753999959
+      }
+    ],
+    "warning": "AB and E each build two alternatives and six sizes; CD builds two baseline alternatives. Group wall time is not per-arm mobile latency. Summed full comparison exceeds 60 seconds on four pages even before cold detector initialization; do not claim that the full experiment fits a 60-second page budget.",
+    "browser_validation": "Run 37882285419 passed five original-fixture groups only. No real-PDF browser acceptance.",
+    "storage": "Historical evidence exceeded the planned 200 MiB budget before storage compaction; private backups are additional durable copies, not evidence that the original cap was met."
+  },
+  "integrity": {
+    "engine_files": [
+      {
+        "path": "local-break-constraints-v1/code/baseline_cd.py",
+        "sha256": "074c5c9e51fb3fca4652f3cce5ffc0c0f5d1303ee308ab981f1b5bba6fba507a",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/build_original_demo.py",
+        "sha256": "7aabee3a53a02c259797346b3c64bb95dd4c99ceee3fc492e1b64b17bfab361c",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/select_inputs.py",
+        "sha256": "8d673f29698479cfc4cfa7df005b92684ff9d39e5644839e81cdbd7a8feaa691",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/create_controls.py",
+        "sha256": "fd022fcc36380c88cc41d9e23717ef9baabb6dbce3b1c1a6a1f1c04d651fbb8f",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/fetch_inputs.py",
+        "sha256": "c4e7a5c978b17c63cc2d1343332991d21f56de2a03b02c41f649f7b9ce787235",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/run_page.py",
+        "sha256": "577afb1006028b4ee23d80f7794415052a9cc52c964acbc1aa672f8273407b07",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/reader.py",
+        "sha256": "86756856ba645c03b936100ab14693dfd5aed4df3a1d9eaf1abc903972833e6e",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/snapshots.py",
+        "sha256": "2b678177959f0b7eb8a4ab8286144ee1a1e47fe0309f31795acf7b9b83e99fac",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/atoms.py",
+        "sha256": "dfcf81b7bfe06b8485565a495b09e5d5db87a5d9dd9bfcaa5644912456845658",
+        "matches_freeze": true
+      },
+      {
+        "path": "local-break-constraints-v1/code/detect_registered.py",
+        "sha256": "14cf92dd670edf3708afa2864ebbe9bd8663d355239b4d5348cfdeb1e370201c",
+        "matches_freeze": true
+      },
+      {
+        "path": "stroke-object-batch-v1/code/compose.py",
+        "sha256": "ab06db0b3866fec1edd3c779d3c9ae80f0fdc40375411f0d1a97363709bf1605",
+        "matches_freeze": true
+      },
+      {
+        "path": "stroke-object-batch-v1/code/helpers.py",
+        "sha256": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+        "matches_freeze": true
+      },
+      {
+        "path": "stencil-paint-v1/code/envelope.py",
+        "sha256": "e2329abd8b2b11594639474075a09c0819e385754a5f5996b779ed72a28d3dbd",
+        "matches_freeze": true
+      }
+    ],
+    "source_files": [
+      {
+        "key": "D1-P1",
+        "kind": "extra",
+        "sha256": "2a8637df7206c29f78ae81050dade6487f8a57e58fd7b2c32248dbb38aeaa00f",
+        "matches_receipt": true
+      },
+      {
+        "key": "D1-P1",
+        "kind": "core",
+        "sha256": "24bc22d66bb3401676c7183b64f51c5c5010a186698579071d90a16a36518848",
+        "matches_receipt": true
+      },
+      {
+        "key": "D1-P2",
+        "kind": "extra",
+        "sha256": "9191b15fb8e0af7ddb853d07febb56bf3ad4509e872f87a9d0500194b38ea3d5",
+        "matches_receipt": true
+      },
+      {
+        "key": "D1-P2",
+        "kind": "core",
+        "sha256": "660fec5c41f962e29ceb2b438b77749768d6145bbe29508875e17b7540e71e07",
+        "matches_receipt": true
+      },
+      {
+        "key": "D2-P1",
+        "kind": "extra",
+        "sha256": "4d279eb043edf195ab309b8ff07d6d3786b44092bf6ee718c85ede5fa0f0e273",
+        "matches_receipt": true
+      },
+      {
+        "key": "D2-P1",
+        "kind": "core",
+        "sha256": "df0d6623412960ea942c799affd205968f1163ca9bb1a40ea3156d06a50f898b",
+        "matches_receipt": true
+      },
+      {
+        "key": "D2-P2",
+        "kind": "extra",
+        "sha256": "2048238785615c0eda0b57c0daba7348093b3998807ce2b25f614a22c07a8bdd",
+        "matches_receipt": true
+      },
+      {
+        "key": "D2-P2",
+        "kind": "core",
+        "sha256": "f44cd7d5c826e803f1697a956e569ed82f94d80ad32724f87fcb7ea0f30eecb5",
+        "matches_receipt": true
+      },
+      {
+        "key": "D3-P1",
+        "kind": "extra",
+        "sha256": "34ee68aa26e4547b6d0f52d790dd84de2b598e368be752020ad2377f4ee8c2a4",
+        "matches_receipt": true
+      },
+      {
+        "key": "D3-P1",
+        "kind": "core",
+        "sha256": "63ea4e03f8f0b50d527fca4a46100ac1bdf062e5f1c2103e20cae87403efcc50",
+        "matches_receipt": true
+      },
+      {
+        "key": "D3-P2",
+        "kind": "extra",
+        "sha256": "38dc2f93a44d293390801b117307901928407c6c84e82241b070dff2a0245502",
+        "matches_receipt": true
+      },
+      {
+        "key": "D3-P2",
+        "kind": "core",
+        "sha256": "8275b9a3a4f8150cbf98cf220287ef691279f9bb0531e499d7f53c005fe392bf",
+        "matches_receipt": true
+      },
+      {
+        "key": "D4-P1",
+        "kind": "extra",
+        "sha256": "368e749ee40619d9a3e9fc4e3521318e92c69482ea5f9a932b77f1ddaced741e",
+        "matches_receipt": true
+      },
+      {
+        "key": "D4-P1",
+        "kind": "core",
+        "sha256": "3ada33a5034fc0f03c959abe7c3791acd7e8cb5bc1bbf731c98bcdc798002083",
+        "matches_receipt": true
+      },
+      {
+        "key": "D4-P2",
+        "kind": "extra",
+        "sha256": "1229534367dda529d4613ceb72984aa0a810e43432b381d9cd752ed5ac6ed55b",
+        "matches_receipt": true
+      },
+      {
+        "key": "D4-P2",
+        "kind": "core",
+        "sha256": "b0892a30e7ce404d33d50b6cfa7f3d66c94bf038dbba92e6fd85d8ec730ff32d",
+        "matches_receipt": true
+      },
+      {
+        "key": "D5-P1",
+        "kind": "extra",
+        "sha256": "a3032f429db2c91554d43c524b6269f04b8781094a075724a06f5a86100929a3",
+        "matches_receipt": true
+      },
+      {
+        "key": "D5-P1",
+        "kind": "core",
+        "sha256": "0db922b984f97486d8f0abb7f250985503e55d763a0807181c9a240f031419e3",
+        "matches_receipt": true
+      },
+      {
+        "key": "D5-P2",
+        "kind": "extra",
+        "sha256": "054cf3c2eadb4f8c813ad5a881af4cf700066ec1f5be14427b2af42771600c1c",
+        "matches_receipt": true
+      },
+      {
+        "key": "D5-P2",
+        "kind": "core",
+        "sha256": "287991bd2e2ccac09852bed5d84c33d0faad461431dee2f3b5eac7c09b5b6706",
+        "matches_receipt": true
+      },
+      {
+        "key": "D6-P1",
+        "kind": "extra",
+        "sha256": "a6131a1af5abec39934021a12ae05601a906478db97eee434069410a521aaef9",
+        "matches_receipt": true
+      },
+      {
+        "key": "D6-P1",
+        "kind": "core",
+        "sha256": "e5713efa683cb2446eefbf5b6c5be3e171955f3d28bd7d4533434b6115f7ec85",
+        "matches_receipt": true
+      },
+      {
+        "key": "D6-P2",
+        "kind": "extra",
+        "sha256": "6e404caf54ff9e21e67a9c8f8eedf5d7a174db313dead78ace7841e97ebbd547",
+        "matches_receipt": true
+      },
+      {
+        "key": "D6-P2",
+        "kind": "core",
+        "sha256": "442299a3b1d18c729ef232afe4945b7338a6788fc37fe9064f381593be5e923b",
+        "matches_receipt": true
+      }
+    ]
+  },
+  "next_generic_architecture": [
+    "Separate painted backgrounds, foreground glyph ink and decorative/revision marks before dependency closure.",
+    "Require each geometry atom to be emitted exactly once even when semantic association endpoints share a component.",
+    "Enforce consistency between source logical intervals and actual renderer event order; preserve paragraph and cross-column/page continuations.",
+    "Keep headers, footnotes, captions and figure labels associated without interposing them inside body sentences.",
+    "Validate new mechanisms first with original controls, then a newly frozen unseen corpus; do not repair or replace these twelve samples to claim generalization."
+  ]
+}
