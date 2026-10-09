@@ -1,0 +1,73 @@
+{
+  "frozen_at_utc": "2026-10-09T00:48:02.763938+00:00",
+  "hypothesis": "Uniquely matched, spatially isolated visible native stroke can be retained as an unclassified original object without requiring detector footnote labels or merging text via paint rectangles.",
+  "inputs": [
+    {
+      "key": "RMSNorm-v1-p03",
+      "url": "https://arxiv.org/pdf/1910.07467v1",
+      "page_1based": 3,
+      "partition": "new_source_batch"
+    },
+    {
+      "key": "BatchNorm-v1-p03",
+      "url": "https://arxiv.org/pdf/1502.03167v1",
+      "page_1based": 3,
+      "partition": "new_source_batch"
+    },
+    {
+      "key": "DenseNet-v1-p03",
+      "url": "https://arxiv.org/pdf/1608.06993v1",
+      "page_1based": 3,
+      "partition": "new_source_batch"
+    },
+    {
+      "key": "UNet-v1-p02",
+      "url": "https://arxiv.org/pdf/1505.04597v1",
+      "page_1based": 2,
+      "partition": "new_source_batch"
+    },
+    {
+      "key": "GAN-v1-p03",
+      "url": "https://arxiv.org/pdf/1406.2661v1",
+      "page_1based": 3,
+      "partition": "new_source_batch"
+    },
+    {
+      "key": "NISQ-v1-p03",
+      "url": "https://arxiv.org/pdf/1801.00862v1",
+      "page_1based": 3,
+      "partition": "new_source_batch"
+    },
+    {
+      "key": "Swin-v2-p04",
+      "url": "https://arxiv.org/pdf/2103.14030v2",
+      "page_1based": 4,
+      "partition": "mechanism_regression"
+    },
+    {
+      "key": "ViT-v2-p03",
+      "url": "https://arxiv.org/pdf/2010.11929v2",
+      "page_1based": 3,
+      "partition": "mechanism_regression"
+    }
+  ],
+  "batch_policy": "All6newpaperpages fixed before download/inspection. One shared pipeline pass, no page-specific changes. Report error distribution across single/double column, margins, math and diagrams. Existing2pages regression only. English native PDFs only; not Chinese or scan acceptance.",
+  "stroke_rule": "Actual nonwhite single horizontal native line; length>=5bodyems, width<=.1em. Entire unseeded visible component within stroke distance(width/2+1pixel), exactly one native match, and bounding region overlaps no semantic parent. Retain a separate original mask at supported source position. White fills/ambiguous/vertical strokes remain ineligible.",
+  "other_rules": "Copied unchanged from native-primitives-v1; no new model or per-paper adjustment.",
+  "limits": {
+    "cpu": 1,
+    "memory_bytes": 1073741824,
+    "per_page_seconds": 60,
+    "additional_disk_bytes": 1073741824
+  },
+  "hashes": {
+    "code/masks.py": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+    "code/monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "code/compose.py": "ab06db0b3866fec1edd3c779d3c9ae80f0fdc40375411f0d1a97363709bf1605",
+    "code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "code/detect.py": "81ae1fbc7ae4120df30e5aab8298a3d8004e3da0a9f02b0ff054e29a3b34a12a",
+    "code/roles.py": "261ab798aa667e0e7aa313171f3a318fa945d22d16714acf571e006bad3e299a",
+    "code/controls.py": "3327e2ba41efcd9e3cb988449a5640e9cb3ff45038ae04587189e4f712ccefeb",
+    "code/primitives.py": "67b3c259a259cd08e98b57633e5d657ce4770cfc8d656fb177cfeaeb3fd0b817"
+  }
+}

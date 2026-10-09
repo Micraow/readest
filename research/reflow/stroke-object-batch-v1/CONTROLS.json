@@ -1,0 +1,27 @@
+[
+  {
+    "case": "black_between_body",
+    "expected_recovered": 1,
+    "recovered": 1
+  },
+  {
+    "case": "white_fill_background",
+    "expected_recovered": 0,
+    "recovered": 0
+  },
+  {
+    "case": "vertical",
+    "expected_recovered": 0,
+    "recovered": 0
+  },
+  {
+    "case": "ambiguous_two_strokes",
+    "expected_recovered": 0,
+    "recovered": 0
+  },
+  {
+    "case": "overlapping_semantic_parent",
+    "expected_recovered": 0,
+    "recovered": 0
+  }
+]
