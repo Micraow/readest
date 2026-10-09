@@ -1,0 +1,145 @@
+{
+  "scope": "already-seen single paper page; native Node canvas, not browser",
+  "holdouts_opened": 0,
+  "blocks": 11,
+  "paragraphs": 7,
+  "protected_objects": 3,
+  "auxiliary_blocks": 1,
+  "reading_tokens": 660,
+  "vector_tokens": 638,
+  "native_image_tokens": 22,
+  "source_units_emitted": 707,
+  "unique_source_units": 707,
+  "native_glyph_paints": 2690,
+  "shared_contours": 197,
+  "affine_programs": 404,
+  "shared_paint_states": 1,
+  "payload_bytes": 1816511,
+  "payload_gzip_bytes": 792547,
+  "html_bytes": 1824037,
+  "image_resources": 22,
+  "image_png_bytes": 673633,
+  "image_decoded_bytes": 15028916,
+  "canvas_elements_in_prototype": 11,
+  "external_resource_urls_in_packed_prototype": 0,
+  "accepted_refinements": {
+    "leading_script_reconnect_to_previous_baseline_anchor": 4,
+    "scripted_base_with_adjacent_parenthesized_argument": 6,
+    "source_line_hyphen_kept_with_zero_separator": 9
+  },
+  "source_glyphs_deleted": 0,
+  "visual_review": {
+    "viewport_css_px": 390,
+    "same_payload_for_both_sizes": true,
+    "font20_dpr1_full_page_bands_inspected": 5,
+    "font28_dpr2_full_page_bands_inspected": 8,
+    "review_includes": [
+      "body paragraphs",
+      "cross-column continuation",
+      "inline-script and function-argument associations",
+      "display formula and number",
+      "all 16 table rows",
+      "two-panel graphic and caption",
+      "last paragraph and source page number"
+    ],
+    "automatic_general_reading_acceptance": false
+  },
+  "geometry": {
+    "vector_token_source_contour_boxes_exceeding_old_raster_frames": 218,
+    "maximum_source_pixel_frame_overflow": 0.4947509765625,
+    "cross_vector_source_contour_box_contacts": 0,
+    "output_sizes": [
+      {
+        "font_css": 20,
+        "viewport_css": 390,
+        "contour_or_asset_boxes_outside_canvas": 0,
+        "contour_or_asset_box_contacts": 0
+      },
+      {
+        "font_css": 28,
+        "viewport_css": 390,
+        "contour_or_asset_boxes_outside_canvas": 0,
+        "contour_or_asset_box_contacts": 0
+      }
+    ],
+    "mixed_engine_pixel_ownership_proven": false
+  },
+  "selection_copy_implemented": false,
+  "browser_interaction_verified": false,
+  "cross_page_joining_implemented": false,
+  "whole_cold_page_budget_pass": false,
+  "python_control_tests": 22,
+  "native_layout_control_tests": 4,
+  "new_ci_runs": 0,
+  "costs": {
+    "native_target6_image_stage": {
+      "wall_seconds": 23.749054271000205,
+      "cpu_seconds": 23.585660999999998,
+      "peak_family_rss_mib": 391.04296875,
+      "exit_code": 0,
+      "failure": null,
+      "cpu_affinity": [
+        0
+      ],
+      "load_before": [
+        6.2041015625,
+        5.47509765625,
+        4.30810546875
+      ],
+      "load_after": [
+        6.271484375,
+        5.55029296875,
+        4.365234375
+      ],
+      "cold_whole_page_pipeline": false,
+      "source_preprocessing_cache_reused": true,
+      "filesystem_cache_flushed": false
+    },
+    "final_font20_dpr1_reader": {
+      "wall_seconds": 3.467428170999483,
+      "cpu_seconds": 3.167042,
+      "peak_family_rss_mib": 109.90625,
+      "exit_code": 0,
+      "failure": null,
+      "cpu_affinity": [
+        0
+      ],
+      "load_before": [
+        11.298828125,
+        9.38916015625,
+        6.7197265625
+      ],
+      "load_after": [
+        11.2744140625,
+        9.416015625,
+        6.7431640625
+      ],
+      "cold_whole_page_pipeline": false,
+      "source_preprocessing_cache_reused": true,
+      "filesystem_cache_flushed": false
+    },
+    "final_font28_dpr2_reader": {
+      "wall_seconds": 4.707192505000421,
+      "cpu_seconds": 3.8903659999999998,
+      "peak_family_rss_mib": 145.81640625,
+      "exit_code": 0,
+      "failure": null,
+      "cpu_affinity": [
+        0
+      ],
+      "load_before": [
+        10.41162109375,
+        9.02783203125,
+        6.517578125
+      ],
+      "load_after": [
+        10.458984375,
+        9.06103515625,
+        6.5419921875
+      ],
+      "cold_whole_page_pipeline": false,
+      "source_preprocessing_cache_reused": true,
+      "filesystem_cache_flushed": false
+    }
+  }
+}
