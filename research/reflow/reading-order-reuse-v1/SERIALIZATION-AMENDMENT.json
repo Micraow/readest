@@ -1,0 +1,6 @@
+{
+  "at_utc": "2026-10-09T01:03:16.861026+00:00",
+  "executed_source_sha256": "ca48598ce7c51db4450b651a8104b7867160be68e7f4672465a27eb6a1c32475",
+  "recording_fix_sha256": "9c0773bdf96a8166cf5871f2f9e5f460e2271392b451ea77a11693c1c8da3096",
+  "change": "Only JSON scalar serialization; model not rerun. Raw executed source and every prediction retained."
+}

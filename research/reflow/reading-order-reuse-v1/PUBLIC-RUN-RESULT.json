@@ -1,0 +1,99 @@
+{
+  "model_revision": "880e8971b88938518611c54fc0f59ad57849c9d4",
+  "loaded_parameters": 20743304,
+  "rows": [
+    {
+      "key": "RMSNorm-v1-p03",
+      "partition": "new_source_batch",
+      "candidates": 17,
+      "seconds": 0.0744535870035179,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 136,
+      "failed": false,
+      "prediction_sha256": "7486e42ba9a3e0b8b65155c289d755bb40635b612cb4a219805d5f0d12cccb6f"
+    },
+    {
+      "key": "BatchNorm-v1-p03",
+      "partition": "new_source_batch",
+      "candidates": 24,
+      "seconds": 0.0820832640019944,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 276,
+      "failed": false,
+      "prediction_sha256": "d7efad72699ca1b2c48d816f02e9ff18aee78590e17d7e50bb519ea96774328c"
+    },
+    {
+      "key": "DenseNet-v1-p03",
+      "partition": "new_source_batch",
+      "candidates": 9,
+      "seconds": 0.03302047599572688,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 36,
+      "failed": false,
+      "prediction_sha256": "fe8095f7b9c37d242bf7eb6f167e679907fda5a414e96ba6419c6a65fed3bda9"
+    },
+    {
+      "key": "UNet-v1-p02",
+      "partition": "new_source_batch",
+      "candidates": 5,
+      "seconds": 0.024740943990764208,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 10,
+      "failed": false,
+      "prediction_sha256": "d3e6a40126f747883a6ab44c15dd803393221fda2f8770bb10719b7ee45286cf"
+    },
+    {
+      "key": "GAN-v1-p03",
+      "partition": "new_source_batch",
+      "candidates": 9,
+      "seconds": 0.03483589299139567,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 36,
+      "failed": false,
+      "prediction_sha256": "eddcb0454674d8c94f26d14d76a13d31be4284d40be90efa9de1fdb9eabfda74"
+    },
+    {
+      "key": "NISQ-v1-p03",
+      "partition": "new_source_batch",
+      "candidates": 7,
+      "seconds": 0.03244405100122094,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 21,
+      "failed": false,
+      "prediction_sha256": "b10886413958892d7a175f434c06ffc0396097b7b875448d6fb18941111cbe4b"
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "mechanism_regression",
+      "candidates": 15,
+      "seconds": 0.0379506110039074,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 105,
+      "failed": false,
+      "prediction_sha256": "b09d8b91d391f8600e115e7c43d3f8bba560efd4f48e768c410b0fdd9bf3c20d"
+    },
+    {
+      "key": "ViT-v2-p03",
+      "partition": "mechanism_regression",
+      "candidates": 11,
+      "seconds": 0.037113002996193245,
+      "reversal_pairwise_disagreements": 0,
+      "pair_count": 55,
+      "failed": false,
+      "prediction_sha256": "b971275b304654f7a0dfaeffa67029ca1d993087b19a7a2979901a38909ec1ee"
+    }
+  ],
+  "external_resource_monitor": {
+    "seconds": 5.1490101240051445,
+    "peak_group_rss_kib": 644312,
+    "returncode": 1,
+    "stopped_reason": null,
+    "rss_stop_threshold_kib": 983040,
+    "cpu_affinity": [
+      0
+    ]
+  },
+  "weights_load_seconds": null,
+  "status": "All8ordinary and8reversed-input inferences completed with saved logits. Final JSON serialization failed on a NumPy scalar; this file reconstructed without rerunning inference. Dedicated weights-load timer was not recoverable.",
+  "scope": "Order-only benchmark on PP-S candidates; upstream training overlap unknown; no reading-quality claim from latency or input-order stability."
+}

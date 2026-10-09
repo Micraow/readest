@@ -1,0 +1,25 @@
+{
+  "repo": "PaddlePaddle/PP-DocLayoutV2_safetensors",
+  "revision": "880e8971b88938518611c54fc0f59ad57849c9d4",
+  "license": "apache-2.0",
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "config.json"
+    },
+    {
+      "rfilename": "inference.yml"
+    },
+    {
+      "rfilename": "model.safetensors"
+    },
+    {
+      "rfilename": "preprocessor_config.json"
+    }
+  ]
+}

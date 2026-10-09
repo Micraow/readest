@@ -1,0 +1,16 @@
+{
+  "url": "https://huggingface.co/PaddlePaddle/PP-DocLayoutV2_safetensors/resolve/880e8971b88938518611c54fc0f59ad57849c9d4/model.safetensors",
+  "revision": "880e8971b88938518611c54fc0f59ad57849c9d4",
+  "started_utc": "2026-10-09T00:56:39.537871+00:00",
+  "max_bytes": 250000000,
+  "max_seconds": 60,
+  "recovery": "Previous process was lost; no weight file or completion record existed.",
+  "bytes": 214798436,
+  "seconds": 15.446770048991311,
+  "sha256": "e60f3725aeedc88fd319416ef166bda79171a41516a301c27cab9132dc2739d2",
+  "completed_utc": "2026-10-09T00:56:54.984796+00:00",
+  "matches_official_lfs": true,
+  "reading_order_tensors": 114,
+  "reading_order_parameters": 20743304,
+  "reading_order_tensor_bytes": 82973216
+}

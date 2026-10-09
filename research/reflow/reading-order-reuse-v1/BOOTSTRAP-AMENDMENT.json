@@ -1,0 +1,7 @@
+{
+  "at_utc": "2026-10-09T01:01:34.222096+00:00",
+  "reason": "PaddleX initialization attempted its default cache on a read-only home path; no weights loaded and no inference occurred. Use the same existing writable cache as detector runs.",
+  "change": "Only cache environment paths; model/configuration/input mapping unchanged.",
+  "original_sha256": "9f03307eb6e78f05fe23a1c1baee5741fe0bcb6124f4bb0cec6badf78fe784b4",
+  "fixed_sha256": "ca48598ce7c51db4450b651a8104b7867160be68e7f4672465a27eb6a1c32475"
+}

@@ -1,0 +1,13 @@
+{
+  "versions": {
+    "paddlepaddle": "3.3.1",
+    "paddlex": "3.7.2",
+    "safetensors": "0.8.0",
+    "numpy": "2.3.5"
+  },
+  "implementation_sha256": "242ad12b7f9fc1e94cc2b7e4017e34e95a12fde4b58dcaee2d1a8b1c596355f3",
+  "official_code": "https://github.com/PaddlePaddle/PaddleX/blob/develop/paddlex/inference/models/object_detection/modeling/pp_doclayout_v2.py",
+  "code_license": "Apache-2.0 (installed official file header)",
+  "weights_license": "Apache-2.0 (official model repository metadata)",
+  "model": "https://huggingface.co/PaddlePaddle/PP-DocLayoutV2_safetensors/tree/880e8971b88938518611c54fc0f59ad57849c9d4"
+}
