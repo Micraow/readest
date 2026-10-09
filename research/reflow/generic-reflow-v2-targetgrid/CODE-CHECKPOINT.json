@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-09",
+  "previous_commit": "1e853235f9a43d5334a8e72d26b82466f56da9e8",
+  "previous_frozen_directories_modified": false,
+  "holdouts_opened": 0,
+  "private_pdf_text_images_committed": false,
+  "sha256": {
+    "generic-reflow-v2-targetgrid/.gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "generic-reflow-v2-targetgrid/README.md": "ffca4a361e4b4701d042eefabe8636e45e0a9cd31f52159a260f056034abc091",
+    "generic-reflow-v2-targetgrid/PUBLIC-RESULT.json": "df5465555aed4921683c44865d6d5bd8a853a326581cb7d15160657e7ba2adba",
+    "generic-reflow-v2-targetgrid/CONTRACT.md": "8bdc6ea8d5ca5d0121c6d3e0decdb24087b2bf054e4a04512296f0fe32004490",
+    "generic-reflow-v2-targetgrid/code/request_probe.py": "f246cdac0c0b31499a2ad23edf08b588de681ab96d5981b4240fff51521b7efe",
+    "generic-reflow-v2-targetgrid/code/measure_requests.py": "f7927f38c8aeea958c7541d09b10492dbb69f09f3e897eea244e2dd63c2c6b68",
+    "generic-reflow-v2-targetgrid/code/render_request_strict.py": "91253b03f4e1589a49a8107d505c0c4f33824934f341dd4b30cee278999bdcd6",
+    "generic-reflow-v2-targetgrid/code/native_target_layer.py": "b289bb40a9646a1c9e446a9a27516a90a853ed3d687553e1c5158922e2ccec2c",
+    "generic-reflow-v2-targetgrid/code/asset_service.py": "1ecb38fe8e90e2ed9f91750ce56208c3bccc33861b1c6515a4317904a4af6917",
+    "generic-reflow-v2-targetgrid/code/test_target_grid.py": "b86282205aac37f9827b11c706aff8909022a03be75ac62abda7ba8ad586acc9",
+    "generic-reflow-v2-targetgrid/code/render_request.py": "80f7c29e39210a5e05014a11e8b5745d513afaf9f8f68685233dd134ae26ea17",
+    "generic-reflow-v2-targetgrid/code/target_grid.py": "eed0f8d4d4d17d5809448543e7d5e8f36390359bc082167527aebd28fc930301"
+  }
+}

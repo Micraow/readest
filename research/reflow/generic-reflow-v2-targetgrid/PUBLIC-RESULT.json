@@ -1,0 +1,516 @@
+{
+  "scope": "three requested old-page native units; not whole-page target-font/DPR or browser validation",
+  "holdouts_opened": 0,
+  "real_browser_runs": 0,
+  "new_remote_ci_runs": 0,
+  "tests": 9,
+  "source_bitmap_resampling": false,
+  "native_grid_for_28px_dpr2": 6,
+  "required_samples_per_pdf_point": 5.621000164168482,
+  "output_pixels_per_device_pixel": 1.0674256937844413,
+  "native_asset_png_bytes": 331049,
+  "decoded_bytes": 7925204,
+  "mask_reference": {
+    "strict_text_objects": 88,
+    "strict_local_full_rgba_pixel_differences": 1949,
+    "strict_outside_viewport_ink": 0,
+    "batched_closed_text_object_counts": [
+      11,
+      13,
+      63
+    ],
+    "shared_text_objects_kept_strict": 1,
+    "strict_and_batched_asset_png_bytes_equal": 3,
+    "strict_and_batched_source_coordinates_equal": 3,
+    "fixed_pdf_geometry_equal_between_2x_and_6x": 3
+  },
+  "strict_probe": {
+    "load_before": [
+      2.40966796875,
+      2.02978515625,
+      3.4130859375
+    ],
+    "load_after": [
+      3.46875,
+      2.32958984375,
+      3.455078125
+    ],
+    "shared_environment_not_isolated": true,
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 39.91919349700038,
+    "sampled_peak_family_rss_mib": 324.421875,
+    "sampled_cpu_seconds": 37.14,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 37.155293,
+    "process_peak_rss_mib": 324.2734375,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, local request service, source/plan fingerprinting, native target-grid mask/regional asset generation and encoding, cache store/hit/eviction and evidence writes",
+    "excluded": "initial page extraction/model/order pipeline; browser load/font/zoom/selection; not a complete page latency",
+    "pipeline": {
+      "scope": "native requested-unit cache service after existing page preprocessing, not full page or UI",
+      "requests": [
+        {
+          "cache_hit": false,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 34.92964266800118,
+          "cpu_seconds": 32.347326402,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": true,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 0.03265065800042066,
+          "cpu_seconds": 0.0326549380000003,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": false,
+          "grid": 2.0,
+          "payload_bytes": 112257,
+          "cache_encoded_bytes": 112257,
+          "cache_decoded_bytes": 883944,
+          "wall_seconds": 3.6015695780006354,
+          "cpu_seconds": 3.4435905570000003,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        }
+      ],
+      "cache_trace": [
+        {
+          "action": "miss"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 336127,
+          "decoded_bytes": 7925204
+        },
+        {
+          "action": "hit"
+        },
+        {
+          "action": "miss"
+        },
+        {
+          "action": "eviction"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 112257,
+          "decoded_bytes": 883944
+        }
+      ],
+      "repeat_high_grid_payload_identical": true,
+      "final_cached_entries": 1,
+      "all_requests_succeeded": true,
+      "semantic_selection_certified": false,
+      "interactive_zoom_tested": false
+    }
+  },
+  "first_batched_probe": {
+    "load_before": [
+      3.35546875,
+      2.39208984375,
+      3.13330078125
+    ],
+    "load_after": [
+      3.32666015625,
+      2.40234375,
+      3.13232421875
+    ],
+    "shared_environment_not_isolated": true,
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 5.382976233000591,
+    "sampled_peak_family_rss_mib": 324.09375,
+    "sampled_cpu_seconds": 5.300000000000001,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 5.318294999999999,
+    "process_peak_rss_mib": 323.90234375,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, local request service, source/plan fingerprinting, native target-grid mask/regional asset generation and encoding, cache store/hit/eviction and evidence writes",
+    "excluded": "initial page extraction/model/order pipeline; browser load/font/zoom/selection; not a complete page latency",
+    "pipeline": {
+      "scope": "native requested-unit cache service after existing page preprocessing, not full page or UI",
+      "requests": [
+        {
+          "cache_hit": false,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 3.191504124999483,
+          "cpu_seconds": 3.1736163549999996,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": true,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 0.014812942999924417,
+          "cpu_seconds": 0.014816315000000024,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": false,
+          "grid": 2.0,
+          "payload_bytes": 112258,
+          "cache_encoded_bytes": 112258,
+          "cache_decoded_bytes": 883944,
+          "wall_seconds": 1.0845857309996063,
+          "cpu_seconds": 1.0838952719999995,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        }
+      ],
+      "cache_trace": [
+        {
+          "action": "miss"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 336127,
+          "decoded_bytes": 7925204
+        },
+        {
+          "action": "hit"
+        },
+        {
+          "action": "miss"
+        },
+        {
+          "action": "eviction"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 112258,
+          "decoded_bytes": 883944
+        }
+      ],
+      "repeat_high_grid_payload_identical": true,
+      "final_cached_entries": 1,
+      "all_requests_succeeded": true,
+      "semantic_selection_certified": false,
+      "interactive_zoom_tested": false
+    }
+  },
+  "higher_load_batched_probe": {
+    "load_before": [
+      6.333984375,
+      3.28759765625,
+      3.2998046875
+    ],
+    "load_after": [
+      7.19287109375,
+      3.57470703125,
+      3.3935546875
+    ],
+    "shared_environment_not_isolated": true,
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 9.911336336001114,
+    "sampled_peak_family_rss_mib": 324.15234375,
+    "sampled_cpu_seconds": 9.07,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 9.076108,
+    "process_peak_rss_mib": 323.984375,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, local request service, source/plan fingerprinting, native target-grid mask/regional asset generation and encoding, cache store/hit/eviction and evidence writes",
+    "excluded": "initial page extraction/model/order pipeline; browser load/font/zoom/selection; not a complete page latency",
+    "pipeline": {
+      "scope": "native requested-unit cache service after existing page preprocessing, not full page or UI",
+      "requests": [
+        {
+          "cache_hit": false,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 6.142441728999984,
+          "cpu_seconds": 5.681447862000001,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": true,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 0.03922187999887683,
+          "cpu_seconds": 0.03232058399999982,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": false,
+          "grid": 2.0,
+          "payload_bytes": 112257,
+          "cache_encoded_bytes": 112257,
+          "cache_decoded_bytes": 883944,
+          "wall_seconds": 2.3249893190004514,
+          "cpu_seconds": 2.0901246440000003,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        }
+      ],
+      "cache_trace": [
+        {
+          "action": "miss"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 336127,
+          "decoded_bytes": 7925204
+        },
+        {
+          "action": "hit"
+        },
+        {
+          "action": "miss"
+        },
+        {
+          "action": "eviction"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 112257,
+          "decoded_bytes": 883944
+        }
+      ],
+      "repeat_high_grid_payload_identical": true,
+      "final_cached_entries": 1,
+      "all_requests_succeeded": true,
+      "semantic_selection_certified": false,
+      "interactive_zoom_tested": false
+    }
+  },
+  "current_code_probe": {
+    "load_before": [
+      4.11474609375,
+      4.74365234375,
+      4.0361328125
+    ],
+    "load_after": [
+      4.025390625,
+      4.71435546875,
+      4.0302734375
+    ],
+    "shared_environment_not_isolated": true,
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 8.69549660499979,
+    "sampled_peak_family_rss_mib": 324.07421875,
+    "sampled_cpu_seconds": 8.66,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 8.679096000000001,
+    "process_peak_rss_mib": 323.94140625,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, local request service, source/plan fingerprinting, native target-grid mask/regional asset generation and encoding, cache store/hit/eviction and evidence writes",
+    "excluded": "initial page extraction/model/order pipeline; browser load/font/zoom/selection; not a complete page latency",
+    "pipeline": {
+      "scope": "native requested-unit cache service after existing page preprocessing, not full page or UI",
+      "requests": [
+        {
+          "cache_hit": false,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 4.890377931998955,
+          "cpu_seconds": 4.889521614,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": true,
+          "grid": 6.0,
+          "payload_bytes": 336127,
+          "cache_encoded_bytes": 336127,
+          "cache_decoded_bytes": 7925204,
+          "wall_seconds": 0.03211706699948991,
+          "cpu_seconds": 0.03212325599999932,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": false,
+          "grid": 2.0,
+          "payload_bytes": 112257,
+          "cache_encoded_bytes": 112257,
+          "cache_decoded_bytes": 883944,
+          "wall_seconds": 2.2110142019992054,
+          "cpu_seconds": 2.2077626720000003,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        }
+      ],
+      "cache_trace": [
+        {
+          "action": "miss"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 336127,
+          "decoded_bytes": 7925204
+        },
+        {
+          "action": "hit"
+        },
+        {
+          "action": "miss"
+        },
+        {
+          "action": "eviction"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 112257,
+          "decoded_bytes": 883944
+        }
+      ],
+      "repeat_high_grid_payload_identical": true,
+      "final_cached_entries": 1,
+      "all_requests_succeeded": true,
+      "semantic_selection_certified": false,
+      "interactive_zoom_tested": false
+    }
+  },
+  "authored_control_probe": {
+    "load_before": [
+      4.361328125,
+      2.61865234375,
+      3.08984375
+    ],
+    "load_after": [
+      5.6416015625,
+      2.9453125,
+      3.19140625
+    ],
+    "shared_environment_not_isolated": true,
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 9.645262588999685,
+    "sampled_peak_family_rss_mib": 161.65234375,
+    "sampled_cpu_seconds": 8.28,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 8.292354,
+    "process_peak_rss_mib": 161.54296875,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, local request service, source/plan fingerprinting, native target-grid mask/regional asset generation and encoding, cache store/hit/eviction and evidence writes",
+    "excluded": "initial page extraction/model/order pipeline; browser load/font/zoom/selection; not a complete page latency",
+    "pipeline": {
+      "scope": "native requested-unit cache service after existing page preprocessing, not full page or UI",
+      "requests": [
+        {
+          "cache_hit": false,
+          "grid": 6.0,
+          "payload_bytes": 28794,
+          "cache_encoded_bytes": 28794,
+          "cache_decoded_bytes": 3987200,
+          "wall_seconds": 3.8385528469989367,
+          "cpu_seconds": 2.8551175859999995,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": true,
+          "grid": 6.0,
+          "payload_bytes": 28794,
+          "cache_encoded_bytes": 28794,
+          "cache_decoded_bytes": 3987200,
+          "wall_seconds": 0.0023510119990532985,
+          "cpu_seconds": 0.002353117000000182,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        },
+        {
+          "cache_hit": false,
+          "grid": 2.0,
+          "payload_bytes": 11823,
+          "cache_encoded_bytes": 11823,
+          "cache_decoded_bytes": 443232,
+          "wall_seconds": 0.288948874000198,
+          "cpu_seconds": 0.26560509300000046,
+          "includes": "source/plan fingerprinting, cache lookup; on miss native mask/reference/render/encode and pack/store",
+          "native_preprocessing_reused": "existing source ownership plan; no new layout-model invocation",
+          "failure": null
+        }
+      ],
+      "cache_trace": [
+        {
+          "action": "miss"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 28794,
+          "decoded_bytes": 3987200
+        },
+        {
+          "action": "hit"
+        },
+        {
+          "action": "miss"
+        },
+        {
+          "action": "eviction"
+        },
+        {
+          "action": "store",
+          "encoded_bytes": 11823,
+          "decoded_bytes": 443232
+        }
+      ],
+      "repeat_high_grid_payload_identical": true,
+      "final_cached_entries": 1,
+      "all_requests_succeeded": true,
+      "semantic_selection_certified": false,
+      "interactive_zoom_tested": false
+    }
+  },
+  "limitations": [
+    "initial page preprocessing/model/order excluded from all request-service timings",
+    "only three old-page units, not entire-font-size change",
+    "source-flat-backdrop only",
+    "no semantic text-selection certification",
+    "no UI native-service integration",
+    "no actual local zoom/font control validation",
+    "Python/Linux native runtime, mobile and browser deployment unmeasured"
+  ]
+}
