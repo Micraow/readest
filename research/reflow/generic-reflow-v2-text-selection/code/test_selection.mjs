@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+import {selectionSourceBoxes,selectionGeometry,copyPieces,mountSelectionLayer,readSelection,installCopyGuard} from './selection_layer.mjs';
+const require=createRequire(process.env.SELECTION_TEST_PACKAGE || import.meta.url);
+const {JSDOM}=require('jsdom');
+const doc=new JSDOM('<main></main><p id="status"></p>').window.document,root=doc.querySelector('main');
+const reader={body_font_pdf:10,source_capture_scale:2};
+const token=(id,gap=1)=>({id,gap_em:gap,source_pixel_box:[20,40,60,60]});
+const layout={width:200,height:40,placements:[{token:token('a'),x:12,y:10,width:20,height:10,fontScale:10},{token:token('formula'),x:40,y:10,width:30,height:10,fontScale:10},{token:token('b',0),x:80,y:10,width:10,height:10,fontScale:10}]};
+const char=(text,i)=>({text,source_glyph:'g'+i,box_pdf:[10+i*10,20,20+i*10,30]});
+const mapping={tokens:[{id:'a',eligible:true,text:'AB',characters:[char('A',0),char('B',1)],reasons:[]},{id:'formula',eligible:false,characters:[],reasons:['unknown_formula']},{id:'b',eligible:true,text:'C',characters:[char('C',0)],reasons:[]}]};
+let count=0;function check(name,fn){fn();count++;console.log('PASS',name);}
+check('glyph source transform',()=>assert.deepEqual(selectionGeometry(reader,layout,mapping)[0].characters.map(c=>[c.x,c.y,c.width,c.height]),[[12,10,10,10],[22,10,10,10]]));
+check('font change doubles geometry about placement',()=>{const l=structuredClone(layout);l.placements[0].fontScale=20;assert.equal(selectionGeometry(reader,l,mapping)[0].characters[1].x,32);});
+check('source link retained',()=>assert.equal(selectionGeometry(reader,layout,mapping)[0].characters[0].source_glyph,'g0'));
+check('token identity mismatch refuses',()=>{const m=structuredClone(mapping);m.tokens[0].id='wrong';assert.throws(()=>selectionGeometry(reader,layout,m));});
+check('text mismatch refuses',()=>{const m=structuredClone(mapping);m.tokens[0].text='bad';assert.throws(()=>selectionGeometry(reader,layout,m));});
+check('invalid glyph geometry refuses',()=>{const m=structuredClone(mapping);m.tokens[0].characters[0].box_pdf[0]=NaN;assert.throws(()=>selectionGeometry(reader,layout,m));});
+root.append(mountSelectionLayer(doc,reader,layout,mapping));
+const spans=[...root.querySelectorAll('[data-selection-piece]')];
+function select(a,ao,b,bo){const s=doc.getSelection();s.removeAllRanges();const r=doc.createRange();r.setStart(a,ao);r.setEnd(b,bo);s.addRange(r);return s;}
+check('ordinary full token',()=>assert.deepEqual(readSelection(root,select(spans[0].firstChild,0,spans[1].firstChild,1)),{ok:true,text:'AB'}));
+check('partial token',()=>assert.deepEqual(readSelection(root,select(spans[1].firstChild,0,spans[1].firstChild,1)),{ok:true,text:'B'}));
+check('collapsed selection refuses',()=>assert.equal(readSelection(root,select(spans[0].firstChild,0,spans[0].firstChild,0)).ok,false));
+check('unresolved alone refuses',()=>assert.equal(readSelection(root,select(spans[3].firstChild,0,spans[3].firstChild,1)).ok,false));
+check('range across formula refuses',()=>assert.equal(readSelection(root,select(spans[0].firstChild,0,spans[5].firstChild,1)).ok,false));
+check('endpoint before unresolved stays valid',()=>assert.deepEqual(readSelection(root,select(spans[0].firstChild,0,spans[3].firstChild,0)),{ok:true,text:'AB '}));
+check('endpoint after unresolved stays valid',()=>assert.deepEqual(readSelection(root,select(spans[3].firstChild,1,spans[5].firstChild,1)),{ok:true,text:' C'}));
+check('reverse selection same ordered copy',()=>{const s=doc.getSelection();s.setBaseAndExtent(spans[1].firstChild,1,spans[0].firstChild,0);assert.equal(readSelection(root,s).text,'AB');});
+check('element boundaries',()=>assert.equal(readSelection(root,select(spans[0].parentNode,0,spans[0].parentNode,2)).text,'AB'));
+check('selection outside reader refuses',()=>assert.equal(readSelection(root,select(root,0,doc.querySelector('#status'),0)).ok,false));
+check('pure copier cannot omit unknown',()=>assert.equal(copyPieces([{text:'A'},{unresolved:true,text:''},{text:'B'}]).ok,false));
+const status=doc.querySelector('#status'),remove=installCopyGuard(doc,root,status);
+function copy(){const e=new doc.defaultView.Event('copy',{bubbles:true,cancelable:true}),values={};Object.defineProperty(e,'clipboardData',{value:{setData:(k,v)=>values[k]=v}});doc.dispatchEvent(e);return {values,prevented:e.defaultPrevented};}
+check('copy event exact text',()=>{select(spans[0].firstChild,0,spans[1].firstChild,1);assert.deepEqual(copy(),{values:{'text/plain':'AB'},prevented:true});});
+check('copy event refuses formula without clipboard payload',()=>{select(spans[0].firstChild,0,spans[5].firstChild,1);assert.deepEqual(copy(),{values:{},prevented:true});assert.match(status.textContent,/未复制/);});
+check('paragraph separator explicit',()=>assert.equal(spans.at(-1).textContent,'\n'));
+check('missing clipboard API fails closed',()=>{select(spans[0].firstChild,0,spans[1].firstChild,1);const e=new doc.defaultView.Event('copy',{cancelable:true});doc.dispatchEvent(e);assert.equal(e.defaultPrevented,true);assert.match(status.textContent,/未复制/);});
+check('source glyph data attribute',()=>assert.equal(spans[0].dataset.sourceGlyph,'g0'));
+check('selected glyph returns original source box',()=>{select(spans[1].firstChild,0,spans[1].firstChild,1);assert.deepEqual(selectionSourceBoxes(root,doc.getSelection(),2),[[40,40,60,60]]);});
+check('unresolved formula can return to original source',()=>{select(spans[3].firstChild,0,spans[3].firstChild,1);assert.deepEqual(selectionSourceBoxes(root,doc.getSelection(),2),[[20,40,60,60]]);});
+check('selection clearing invalidates old range',()=>{doc.getSelection().removeAllRanges();assert.equal(readSelection(root,doc.getSelection()).ok,false);});
+check('cross-block logical order and newline',()=>{const next=mountSelectionLayer(doc,reader,layout,mapping);root.append(next);const first=next.querySelector('[data-selection-piece]').firstChild;assert.equal(readSelection(root,select(spans[5].firstChild,0,first,1)).text,'C\nA');});
+check('partial surrogate refuses',()=>assert.equal(copyPieces([{text:'\uD835'}]).ok,false));
+remove();console.log(JSON.stringify({passed:count,browserVerified:false}));

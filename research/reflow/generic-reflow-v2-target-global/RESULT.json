@@ -1,0 +1,587 @@
+{
+  "status": "exact completed comparisons, no net performance gate passed; not adopted into cold pipeline",
+  "new_holdouts_opened": 0,
+  "controls": {
+    "independent_full_RGBA_exact_cases": 6,
+    "negative_controls": 4,
+    "all_passed": true,
+    "canvas": {
+      "config": {
+        "maximum_reference_pixels": 32000000,
+        "shared_window_policy": "fixed_initial_padding_plus_one_existing_step",
+        "outside_ink_policy": "refuse_without_window_expansion"
+      },
+      "allocated_bitmaps": 1,
+      "allocated_bgra_bytes": 1152000,
+      "native_renders": 7,
+      "requests": [
+        {
+          "paint_objects": 1,
+          "window_pixels": 288000,
+          "global_ink_outside_fixed_window": 0
+        },
+        {
+          "paint_objects": 1,
+          "window_pixels": 288000,
+          "global_ink_outside_fixed_window": 0
+        },
+        {
+          "paint_objects": 1,
+          "window_pixels": 288000,
+          "global_ink_outside_fixed_window": 0
+        },
+        {
+          "paint_objects": 1,
+          "window_pixels": 288000,
+          "global_ink_outside_fixed_window": 0
+        },
+        {
+          "paint_objects": 1,
+          "window_pixels": 288000,
+          "global_ink_outside_fixed_window": 0
+        },
+        {
+          "paint_objects": 5,
+          "window_pixels": 288000,
+          "global_ink_outside_fixed_window": 0
+        },
+        {
+          "paint_objects": 5,
+          "window_pixels": 1,
+          "global_ink_outside_fixed_window": 4941
+        }
+      ],
+      "native_paint_order_preserved": true,
+      "whole_page_reader_image": false
+    }
+  },
+  "pairs": {
+    "control-paired": {
+      "runs": [
+        {
+          "ordinal": 0,
+          "mode": "old",
+          "measurement": {
+            "wall_seconds": 2.303817482999875,
+            "request_family_cpu_seconds": 2.137527,
+            "supervisor_cpu_seconds": 0.103621414,
+            "total_accounted_cpu_seconds": 2.241148414,
+            "peak_sampled_family_plus_supervisor_rss_mib": 134.8515625,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 26,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 2.137527
+              }
+            ],
+            "load_before": [
+              5.513671875,
+              6.59619140625,
+              6.505859375
+            ],
+            "load_after": [
+              5.6328125,
+              6.60302734375,
+              6.5087890625
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 12,
+          "asset_native_renders": 19,
+          "global_alpha_bitmaps": null
+        },
+        {
+          "ordinal": 1,
+          "mode": "new",
+          "measurement": {
+            "wall_seconds": 1.732751195999299,
+            "request_family_cpu_seconds": 1.648593,
+            "supervisor_cpu_seconds": 0.04537345599999998,
+            "total_accounted_cpu_seconds": 1.693966456,
+            "peak_sampled_family_plus_supervisor_rss_mib": 142.02734375,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 28,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 1.648593
+              }
+            ],
+            "load_before": [
+              5.6328125,
+              6.60302734375,
+              6.5087890625
+            ],
+            "load_after": [
+              5.6328125,
+              6.60302734375,
+              6.5087890625
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 6,
+          "asset_native_renders": 19,
+          "global_alpha_bitmaps": 2,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        },
+        {
+          "ordinal": 2,
+          "mode": "new",
+          "measurement": {
+            "wall_seconds": 3.907514082999114,
+            "request_family_cpu_seconds": 3.195881,
+            "supervisor_cpu_seconds": 0.664496973,
+            "total_accounted_cpu_seconds": 3.860377973,
+            "peak_sampled_family_plus_supervisor_rss_mib": 152.296875,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 30,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 3.195881
+              }
+            ],
+            "load_before": [
+              5.6328125,
+              6.60302734375,
+              6.5087890625
+            ],
+            "load_after": [
+              5.74267578125,
+              6.60986328125,
+              6.51171875
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 6,
+          "asset_native_renders": 19,
+          "global_alpha_bitmaps": 2,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        },
+        {
+          "ordinal": 3,
+          "mode": "old",
+          "measurement": {
+            "wall_seconds": 2.7651135029991565,
+            "request_family_cpu_seconds": 2.277818,
+            "supervisor_cpu_seconds": 0.45862844700000005,
+            "total_accounted_cpu_seconds": 2.736446447,
+            "peak_sampled_family_plus_supervisor_rss_mib": 134.9375,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 32,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 2.277818
+              }
+            ],
+            "load_before": [
+              5.74267578125,
+              6.60986328125,
+              6.51171875
+            ],
+            "load_after": [
+              6.00390625,
+              6.64990234375,
+              6.525390625
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 12,
+          "asset_native_renders": 19,
+          "global_alpha_bitmaps": null,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        }
+      ],
+      "existing_plan_reused": true,
+      "complete_page_cost": false
+    },
+    "H5-paired": {
+      "runs": [
+        {
+          "ordinal": 0,
+          "mode": "old",
+          "measurement": {
+            "wall_seconds": 12.138950788001239,
+            "request_family_cpu_seconds": 10.0679,
+            "supervisor_cpu_seconds": 1.6505171930000002,
+            "total_accounted_cpu_seconds": 11.718417193,
+            "peak_sampled_family_plus_supervisor_rss_mib": 323.87890625,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 15,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 10.0679
+              }
+            ],
+            "load_before": [
+              6.20556640625,
+              6.64208984375,
+              6.52490234375
+            ],
+            "load_after": [
+              6.46240234375,
+              6.68603515625,
+              6.54052734375
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 22,
+          "asset_native_renders": 24,
+          "global_alpha_bitmaps": null
+        },
+        {
+          "ordinal": 1,
+          "mode": "new",
+          "measurement": {
+            "wall_seconds": 14.018855050999264,
+            "request_family_cpu_seconds": 11.522281,
+            "supervisor_cpu_seconds": 1.6241379109999998,
+            "total_accounted_cpu_seconds": 13.146418911,
+            "peak_sampled_family_plus_supervisor_rss_mib": 382.8125,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 17,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 11.522281
+              }
+            ],
+            "load_before": [
+              6.42529296875,
+              6.67431640625,
+              6.53759765625
+            ],
+            "load_after": [
+              6.5263671875,
+              6.68603515625,
+              6.54296875
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 12,
+          "asset_native_renders": 24,
+          "global_alpha_bitmaps": 2,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        },
+        {
+          "ordinal": 2,
+          "mode": "new",
+          "measurement": {
+            "wall_seconds": 14.837502236001455,
+            "request_family_cpu_seconds": 11.95843,
+            "supervisor_cpu_seconds": 1.819173543,
+            "total_accounted_cpu_seconds": 13.777603543,
+            "peak_sampled_family_plus_supervisor_rss_mib": 391.05078125,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 19,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 11.95843
+              }
+            ],
+            "load_before": [
+              6.64453125,
+              6.7080078125,
+              6.55126953125
+            ],
+            "load_after": [
+              6.279296875,
+              6.623046875,
+              6.52587890625
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 12,
+          "asset_native_renders": 24,
+          "global_alpha_bitmaps": 2,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        },
+        {
+          "ordinal": 3,
+          "mode": "old",
+          "measurement": {
+            "wall_seconds": 27.303945445000863,
+            "request_family_cpu_seconds": 18.7693,
+            "supervisor_cpu_seconds": 5.114635201,
+            "total_accounted_cpu_seconds": 23.883935201,
+            "peak_sampled_family_plus_supervisor_rss_mib": 323.89453125,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 21,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 18.7693
+              }
+            ],
+            "load_before": [
+              6.279296875,
+              6.623046875,
+              6.52587890625
+            ],
+            "load_after": [
+              6.7607421875,
+              6.7158203125,
+              6.56005859375
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 12,
+          "accepted_units": 12,
+          "mask_native_renders": 22,
+          "asset_native_renders": 24,
+          "global_alpha_bitmaps": null,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        }
+      ],
+      "existing_plan_reused": true,
+      "complete_page_cost": false
+    },
+    "H6-paired": {
+      "runs": [
+        {
+          "ordinal": 0,
+          "mode": "old",
+          "measurement": {
+            "wall_seconds": 37.36827499299761,
+            "request_family_cpu_seconds": 28.610506,
+            "supervisor_cpu_seconds": 5.2965140040000005,
+            "total_accounted_cpu_seconds": 33.907020004,
+            "peak_sampled_family_plus_supervisor_rss_mib": 395.32421875,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 31,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 28.610506
+              }
+            ],
+            "load_before": [
+              6.61962890625,
+              6.68701171875,
+              6.55126953125
+            ],
+            "load_after": [
+              7.087890625,
+              6.7880859375,
+              6.5888671875
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 27,
+          "accepted_units": 27,
+          "mask_native_renders": 77,
+          "asset_native_renders": 56,
+          "global_alpha_bitmaps": null
+        },
+        {
+          "ordinal": 1,
+          "mode": "new",
+          "measurement": {
+            "wall_seconds": 31.301840022999386,
+            "request_family_cpu_seconds": 26.078659000000002,
+            "supervisor_cpu_seconds": 3.6972377659999998,
+            "total_accounted_cpu_seconds": 29.775896766000002,
+            "peak_sampled_family_plus_supervisor_rss_mib": 421.0234375,
+            "exit_code": 0,
+            "failure": null,
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 33,
+                "exit_code": 0,
+                "wait4_cpu_seconds_including_waited_descendants": 26.078659000000002
+              }
+            ],
+            "load_before": [
+              7.087890625,
+              6.7880859375,
+              6.5888671875
+            ],
+            "load_after": [
+              5.95751953125,
+              6.541015625,
+              6.5126953125
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "all_accepted": true,
+          "requested_units": 27,
+          "accepted_units": 27,
+          "mask_native_renders": 27,
+          "asset_native_renders": 56,
+          "global_alpha_bitmaps": 4,
+          "unit_id_set_equal": true,
+          "metrics_exact": true,
+          "alpha_supported_RGBA_exact": true,
+          "zero_alpha_RGB_different_pixels": 0
+        },
+        {
+          "ordinal": 2,
+          "mode": "new",
+          "measurement": {
+            "wall_seconds": 60.27506489499865,
+            "request_family_cpu_seconds": 44.228907,
+            "supervisor_cpu_seconds": 9.378197208,
+            "total_accounted_cpu_seconds": 53.607104207999996,
+            "peak_sampled_family_plus_supervisor_rss_mib": 422.703125,
+            "exit_code": -9,
+            "failure": "BUDGET_WALL",
+            "request_and_supervisor_cpu_affinity": [
+              0
+            ],
+            "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+            "sampling_interval_seconds": 0.05,
+            "reaped_processes": [
+              {
+                "pid": 35,
+                "exit_code": -9,
+                "wait4_cpu_seconds_including_waited_descendants": 44.228907
+              }
+            ],
+            "load_before": [
+              5.95751953125,
+              6.541015625,
+              6.5126953125
+            ],
+            "load_after": [
+              7.4140625,
+              6.916015625,
+              6.6474609375
+            ],
+            "cold_complete_page_request": false,
+            "cached_or_partial_stage": true,
+            "filesystem_cache_flushed": false
+          },
+          "failure": "no complete target-asset report"
+        }
+      ],
+      "existing_plan_reused": true,
+      "complete_page_cost": false
+    }
+  },
+  "H6_ABBA_incomplete": true,
+  "full_cold_requests_started": 0
+}

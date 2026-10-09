@@ -1,0 +1,10 @@
+{
+  ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+  "CONTRACT.md": "1f6ed6f6ee38667ea52cd0be11de0a98458b66bfd33bc3592ba1551b871b77df",
+  "code/compare_requests.py": "4ae09435d5a6e605ac25e72fd101347d8da450e86e3c395b12b52216289cbbd2",
+  "code/device_alpha.py": "dff0624f05c7ad9aaf7bbc86650ef9ce13efc199243697919d1d4fdee598939a",
+  "code/install.py": "889fef94b2569b00b1fd0f22e51e46590b6ba31b67d7cc4c3173ad7adb3cd1c5",
+  "code/render_request.py": "439d3d06c3d5c01a66bbd1e3ab3ba07a58077b05f79967c0345e5d364c6bd00d",
+  "code/request_local_images.py": "fb39d2caa6cb765297c583155f5867972c64138756a15c8a422450bda521baac",
+  "code/test_device_alpha.py": "4658751e7eb07805ae659f7eaa5ecf1e38854346852a093797e62a46f0149c32"
+}
