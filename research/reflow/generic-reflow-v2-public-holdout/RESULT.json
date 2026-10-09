@@ -1,0 +1,60 @@
+{
+  "sample": "H7",
+  "source_title": "Attention Is All You Need",
+  "source_url": "https://papers.nips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf",
+  "full_document_sha256": "d87d482d5ae7960e2e43d7dd6d21377e60e73e8fce1bf2a01aff7aca8a08c537",
+  "full_document_pages": 11,
+  "selected_original_pdf_page_index": 3,
+  "printed_page_label": "4",
+  "derived_fixture_pdf_page_index": 0,
+  "fixture_sha256": "03423c222b2255bd6cd84b5abc551523fb4aeb11d300c877697ce321315ee771",
+  "frozen_candidate_commit": "934e250ab16ffb570d68c69e6a6e2aad0246c3be",
+  "new_holdout_outcome": "fail",
+  "new_holdout_passes": 0,
+  "new_holdout_total": 1,
+  "earlier_blind_passes": 0,
+  "earlier_blind_total": 2,
+  "retries": 0,
+  "wall_seconds": 37.00564128199767,
+  "child_cpu_seconds": 38.025006000000005,
+  "timed_out": false,
+  "failed_stage": "native_model_plan/native_fraction_structure",
+  "failure_type": "ValueError: min() iterable argument is empty",
+  "failure_site": "generic-reflow-v2-order-tree/code/bounded_inline.py: propose",
+  "cause": "A standalone thin graphic paint has no source glyphs; native interval closure unconditionally requested min/max source_index.",
+  "glyph_capture_reached": false,
+  "text_mapping_reached": false,
+  "reader_render_reached": false,
+  "source_layout_observed": "One body-text column, two side-by-side diagram regions above it, full-width caption, centered numbered display equation, inline stacked fractions, bottom footnote.",
+  "font_observation": "Embedded subset Type 1 Nimbus Roman and Computer Modern families; pdffonts reports no ToUnicode mapping for those subsets. Font names were observed only, not used to tune rules.",
+  "column_diversity_limit": "Not a new third column count: one body column as in H5, contrasted with H6 two columns. Figure/formula composition and source family differ.",
+  "completed_internal_phases": [
+    {
+      "name": "isolated_cold_model_process_import_load_raster_inference",
+      "wall_seconds": 23.810028752996004
+    },
+    {
+      "name": "native_inventory_stable_ownership",
+      "wall_seconds": 5.022604273995967
+    },
+    {
+      "name": "within_object_interval_closure",
+      "wall_seconds": 2.698305029000039
+    },
+    {
+      "name": "graphic_printed_paint_and_text_closure",
+      "wall_seconds": 0.5731469260063022
+    },
+    {
+      "name": "cross_object_support_closure",
+      "wall_seconds": 1.5053279280036804
+    },
+    {
+      "name": "verified_weak_region_priors",
+      "wall_seconds": 0.545074007997755
+    }
+  ],
+  "post_failure_fix_scope": "A later generic guard declines glyph-free interval proposals and retains original paints; only authored controls are run. H7 is not retried or reclassified.",
+  "browser_verified": false,
+  "source_stderr_sha256": "133111c047758529a0e9759bcaae66229f49dcb24d3380c7331bd0893717ddda"
+}
