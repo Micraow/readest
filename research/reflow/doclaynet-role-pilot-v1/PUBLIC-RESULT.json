@@ -1,0 +1,5576 @@
+{
+  "status": "one frozen role-only fit/evaluation complete",
+  "model": {
+    "feature_names": [
+      "x",
+      "y",
+      "w",
+      "h",
+      "log_chars",
+      "font_relative",
+      "font_spread",
+      "math_font",
+      "digit_fraction",
+      "alpha_fraction",
+      "operator_fraction",
+      "bracket_fraction",
+      "space_fraction",
+      "log_words",
+      "log_aspect",
+      "edge_y",
+      "up_gap",
+      "down_gap",
+      "same_row_gap",
+      "same_row_alpha",
+      "numeric_identifier",
+      "native_line_fraction",
+      "pp_text",
+      "pp_formula",
+      "pp_number",
+      "pp_header",
+      "pp_footer",
+      "pp_footnote",
+      "pp_paragraph_title",
+      "pp_doc_title",
+      "pp_figure_title",
+      "pp_table_title",
+      "pp_image",
+      "pp_table",
+      "pp_reference"
+    ],
+    "roles": [
+      "body",
+      "formula",
+      "auxiliary",
+      "other"
+    ],
+    "threshold": 1.1,
+    "parameters": 144,
+    "l2": 0.01,
+    "fit_success": true,
+    "fit_message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+    "iterations": 32,
+    "fit_seconds": 0.02423332900798414,
+    "train_lines_with_known_roles": 646,
+    "training_role_counts": [
+      285,
+      243,
+      16,
+      102
+    ],
+    "calibration": "zero observed wrong/unverifiable accepted and>=20 lines; otherwise reject all"
+  },
+  "summary": {
+    "train": {
+      "documents": 12,
+      "scores": {
+        "geometry": {
+          "native_lines": 665,
+          "known_role_lines": 646,
+          "unknown_or_mixed_lines": 19,
+          "accepted_lines": 464,
+          "correct_accepted_lines": 319,
+          "wrong_or_unverifiable_accepted_lines": 145,
+          "all_gold_body_glyphs": 14997,
+          "correctly_proposed_body_glyphs_not_reflow": 10715,
+          "formula_glyphs_falsely_body": 709,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 180,
+          "unknown_glyphs_proposed_body": 43,
+          "error95_wilson_independent_line_assumption_only": [
+            0.2720103148001333,
+            0.3560688203012993
+          ]
+        },
+        "learned_all": {
+          "native_lines": 665,
+          "known_role_lines": 646,
+          "unknown_or_mixed_lines": 19,
+          "accepted_lines": 665,
+          "correct_accepted_lines": 634,
+          "wrong_or_unverifiable_accepted_lines": 31,
+          "all_gold_body_glyphs": 14997,
+          "correctly_proposed_body_glyphs_not_reflow": 14721,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 252,
+          "unknown_glyphs_proposed_body": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.03303289315767605,
+            0.06540816182235798
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 665,
+          "known_role_lines": 646,
+          "unknown_or_mixed_lines": 19,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "all_gold_body_glyphs": 14997,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "error95_wilson_independent_line_assumption_only": null
+        }
+      }
+    },
+    "val": {
+      "documents": 6,
+      "scores": {
+        "geometry": {
+          "native_lines": 389,
+          "known_role_lines": 382,
+          "unknown_or_mixed_lines": 7,
+          "accepted_lines": 294,
+          "correct_accepted_lines": 140,
+          "wrong_or_unverifiable_accepted_lines": 154,
+          "all_gold_body_glyphs": 6971,
+          "correctly_proposed_body_glyphs_not_reflow": 4598,
+          "formula_glyphs_falsely_body": 718,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 84,
+          "unknown_glyphs_proposed_body": 4,
+          "error95_wilson_independent_line_assumption_only": [
+            0.4667820830983838,
+            0.5802227900829159
+          ]
+        },
+        "learned_all": {
+          "native_lines": 389,
+          "known_role_lines": 382,
+          "unknown_or_mixed_lines": 7,
+          "accepted_lines": 389,
+          "correct_accepted_lines": 350,
+          "wrong_or_unverifiable_accepted_lines": 39,
+          "all_gold_body_glyphs": 6971,
+          "correctly_proposed_body_glyphs_not_reflow": 6743,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 363,
+          "unknown_glyphs_proposed_body": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.07420990283840177,
+            0.13412212776341229
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 389,
+          "known_role_lines": 382,
+          "unknown_or_mixed_lines": 7,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "all_gold_body_glyphs": 6971,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "error95_wilson_independent_line_assumption_only": null
+        }
+      }
+    },
+    "test": {
+      "documents": 12,
+      "scores": {
+        "geometry": {
+          "native_lines": 1145,
+          "known_role_lines": 1133,
+          "unknown_or_mixed_lines": 12,
+          "accepted_lines": 955,
+          "correct_accepted_lines": 750,
+          "wrong_or_unverifiable_accepted_lines": 205,
+          "all_gold_body_glyphs": 21922,
+          "correctly_proposed_body_glyphs_not_reflow": 20005,
+          "formula_glyphs_falsely_body": 1241,
+          "auxiliary_glyphs_falsely_body": 92,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 4,
+          "error95_wilson_independent_line_assumption_only": [
+            0.1897893691981665,
+            0.24181635144900834
+          ]
+        },
+        "learned_all": {
+          "native_lines": 1145,
+          "known_role_lines": 1133,
+          "unknown_or_mixed_lines": 12,
+          "accepted_lines": 1145,
+          "correct_accepted_lines": 1031,
+          "wrong_or_unverifiable_accepted_lines": 114,
+          "all_gold_body_glyphs": 21922,
+          "correctly_proposed_body_glyphs_not_reflow": 21648,
+          "formula_glyphs_falsely_body": 185,
+          "auxiliary_glyphs_falsely_body": 92,
+          "other_role_glyphs_falsely_body": 1685,
+          "unknown_glyphs_proposed_body": 7,
+          "error95_wilson_independent_line_assumption_only": [
+            0.08353671229523732,
+            0.1182678596416803
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 1145,
+          "known_role_lines": 1133,
+          "unknown_or_mixed_lines": 12,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "all_gold_body_glyphs": 21922,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "error95_wilson_independent_line_assumption_only": null
+        }
+      }
+    }
+  },
+  "pages": [
+    {
+      "split": "train",
+      "collection": "arxiv_mediumspaced",
+      "page_hash": "e2b9da02d0f499d4a5a503e10e11c688cdbfcc8ab9bd18d1aa6ecfe4eb63936e",
+      "doc_name": "1002.1477.pdf",
+      "feature_seconds": 0.05441444199823309,
+      "classifier_inference_seconds": 0.0001837960007833317,
+      "all_annotated_objects": 8,
+      "annotated_text_formula_aux_objects": 8,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1878,
+      "unknown_role_glyphs": 1,
+      "scores": {
+        "geometry": {
+          "native_lines": 57,
+          "known_role_lines": 56,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 53,
+          "correct_accepted_lines": 39,
+          "wrong_or_unverifiable_accepted_lines": 14,
+          "error95_wilson_independent_line_assumption_only": [
+            0.16437353918463654,
+            0.395806644106185
+          ],
+          "all_gold_body_glyphs": 1773,
+          "correctly_proposed_body_glyphs_not_reflow": 1658,
+          "formula_glyphs_falsely_body": 55,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              27,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              14,
+              11,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 57,
+          "known_role_lines": 56,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 57,
+          "correct_accepted_lines": 55,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.009675664344932881,
+            0.11920781367625805
+          ],
+          "all_gold_body_glyphs": 1773,
+          "correctly_proposed_body_glyphs_not_reflow": 1702,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              28,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 57,
+          "known_role_lines": 56,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1773,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              29
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              26
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_mediumspaced",
+      "page_hash": "2df62d8e5f8e7e8dc389db3a7392996cc02e9a308eb076b611d5c1eca335f3df",
+      "doc_name": "1002.3309.pdf",
+      "feature_seconds": 0.07848600900615565,
+      "classifier_inference_seconds": 0.00012661000073421746,
+      "all_annotated_objects": 14,
+      "annotated_text_formula_aux_objects": 14,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1411,
+      "unknown_role_glyphs": 6,
+      "scores": {
+        "geometry": {
+          "native_lines": 102,
+          "known_role_lines": 95,
+          "unknown_or_mixed_lines": 7,
+          "accepted_lines": 85,
+          "correct_accepted_lines": 40,
+          "wrong_or_unverifiable_accepted_lines": 45,
+          "error95_wilson_independent_line_assumption_only": [
+            0.4243417305015005,
+            0.6319382998623788
+          ],
+          "all_gold_body_glyphs": 1124,
+          "correctly_proposed_body_glyphs_not_reflow": 1122,
+          "formula_glyphs_falsely_body": 176,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 2,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              23,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              39,
+              16,
+              0,
+              0,
+              15
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              4,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 102,
+          "known_role_lines": 95,
+          "unknown_or_mixed_lines": 7,
+          "accepted_lines": 102,
+          "correct_accepted_lines": 94,
+          "wrong_or_unverifiable_accepted_lines": 8,
+          "error95_wilson_independent_line_assumption_only": [
+            0.040276685867459944,
+            0.14718727241289134
+          ],
+          "all_gold_body_glyphs": 1124,
+          "correctly_proposed_body_glyphs_not_reflow": 1122,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              23,
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              70,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              7,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 102,
+          "known_role_lines": 95,
+          "unknown_or_mixed_lines": 7,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1124,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              24
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              70
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              7
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_mediumspaced",
+      "page_hash": "3185bbce6eaab16f6ca5cf101cb83d2fe3d2d169943bf687bd75517eae69e62b",
+      "doc_name": "1001.0993.pdf",
+      "feature_seconds": 0.0413150910026161,
+      "classifier_inference_seconds": 0.00012091099051758647,
+      "all_annotated_objects": 14,
+      "annotated_text_formula_aux_objects": 14,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1265,
+      "unknown_role_glyphs": 61,
+      "scores": {
+        "geometry": {
+          "native_lines": 59,
+          "known_role_lines": 49,
+          "unknown_or_mixed_lines": 10,
+          "accepted_lines": 46,
+          "correct_accepted_lines": 24,
+          "wrong_or_unverifiable_accepted_lines": 22,
+          "error95_wilson_independent_line_assumption_only": [
+            0.34124689434045685,
+            0.6186258692719597
+          ],
+          "all_gold_body_glyphs": 962,
+          "correctly_proposed_body_glyphs_not_reflow": 875,
+          "formula_glyphs_falsely_body": 107,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 41,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              18,
+              1,
+              0,
+              0,
+              3
+            ],
+            [
+              13,
+              5,
+              0,
+              0,
+              7
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              7,
+              1,
+              0,
+              0,
+              2
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 59,
+          "known_role_lines": 49,
+          "unknown_or_mixed_lines": 10,
+          "accepted_lines": 59,
+          "correct_accepted_lines": 46,
+          "wrong_or_unverifiable_accepted_lines": 13,
+          "error95_wilson_independent_line_assumption_only": [
+            0.13354197627929038,
+            0.3413269936763709
+          ],
+          "all_gold_body_glyphs": 962,
+          "correctly_proposed_body_glyphs_not_reflow": 926,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              19,
+              3,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              25,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              10,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 59,
+          "known_role_lines": 49,
+          "unknown_or_mixed_lines": 10,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 962,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              22
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              25
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              10
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_mediumspaced",
+      "page_hash": "2b53bf831f0191c3253c0ca6b0f8cbfc0c4301c3af9e1a07587d3c4b6f4561eb",
+      "doc_name": "1002.3936.pdf",
+      "feature_seconds": 0.04691911600821186,
+      "classifier_inference_seconds": 9.344999853055924e-05,
+      "all_annotated_objects": 11,
+      "annotated_text_formula_aux_objects": 11,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1532,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 75,
+          "known_role_lines": 75,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 69,
+          "correct_accepted_lines": 50,
+          "wrong_or_unverifiable_accepted_lines": 19,
+          "error95_wilson_independent_line_assumption_only": [
+            0.1839452163184169,
+            0.390472972143331
+          ],
+          "all_gold_body_glyphs": 1288,
+          "correctly_proposed_body_glyphs_not_reflow": 1288,
+          "formula_glyphs_falsely_body": 63,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              20,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              19,
+              29,
+              0,
+              0,
+              6
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 75,
+          "known_role_lines": 75,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 75,
+          "correct_accepted_lines": 75,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            3.469446951953614e-18,
+            0.04872384248280587
+          ],
+          "all_gold_body_glyphs": 1288,
+          "correctly_proposed_body_glyphs_not_reflow": 1288,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              20,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              54,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 75,
+          "known_role_lines": 75,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1288,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              20
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              54
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_doublespaced",
+      "page_hash": "54ed62a7e8cb0abec2d6cf3912955f61ab098bd8bf93b214b6c6712e688c318d",
+      "doc_name": "1211.7332.pdf",
+      "feature_seconds": 0.024042283999733627,
+      "classifier_inference_seconds": 7.839698810130358e-05,
+      "all_annotated_objects": 10,
+      "annotated_text_formula_aux_objects": 9,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 767,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 29,
+          "known_role_lines": 29,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 23,
+          "correct_accepted_lines": 17,
+          "wrong_or_unverifiable_accepted_lines": 6,
+          "error95_wilson_independent_line_assumption_only": [
+            0.12548616044986347,
+            0.4647000483742537
+          ],
+          "all_gold_body_glyphs": 408,
+          "correctly_proposed_body_glyphs_not_reflow": 329,
+          "formula_glyphs_falsely_body": 59,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              13,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              6,
+              2,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 29,
+          "known_role_lines": 29,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 29,
+          "correct_accepted_lines": 28,
+          "wrong_or_unverifiable_accepted_lines": 1,
+          "error95_wilson_independent_line_assumption_only": [
+            0.006113214292762653,
+            0.17175521879320288
+          ],
+          "all_gold_body_glyphs": 408,
+          "correctly_proposed_body_glyphs_not_reflow": 406,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              14,
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              12,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 29,
+          "known_role_lines": 29,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 408,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              15
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              12
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_doublespaced",
+      "page_hash": "386b368cbbf1e3dc7383824d55a0a4ad713fc9a826fc03436dce497b1f0d58c2",
+      "doc_name": "1507.01853.pdf",
+      "feature_seconds": 0.023859638997237198,
+      "classifier_inference_seconds": 8.25140014057979e-05,
+      "all_annotated_objects": 12,
+      "annotated_text_formula_aux_objects": 12,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 769,
+      "unknown_role_glyphs": 3,
+      "scores": {
+        "geometry": {
+          "native_lines": 43,
+          "known_role_lines": 42,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 36,
+          "correct_accepted_lines": 23,
+          "wrong_or_unverifiable_accepted_lines": 13,
+          "error95_wilson_independent_line_assumption_only": [
+            0.22475592946515371,
+            0.5242492451444196
+          ],
+          "all_gold_body_glyphs": 652,
+          "correctly_proposed_body_glyphs_not_reflow": 602,
+          "formula_glyphs_falsely_body": 49,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              13,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              12,
+              10,
+              0,
+              0,
+              5
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 43,
+          "known_role_lines": 42,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 43,
+          "correct_accepted_lines": 42,
+          "wrong_or_unverifiable_accepted_lines": 1,
+          "error95_wilson_independent_line_assumption_only": [
+            0.004117087274333769,
+            0.12058993440607177
+          ],
+          "all_gold_body_glyphs": 652,
+          "correctly_proposed_body_glyphs_not_reflow": 652,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              14,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              27,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 43,
+          "known_role_lines": 42,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 652,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              14
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              27
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_doublespaced",
+      "page_hash": "b1544082b703c10c2d39facc5081aeec6df3397dfac03b0a5a46325660310932",
+      "doc_name": "1407.2292.pdf",
+      "feature_seconds": 0.03922604399849661,
+      "classifier_inference_seconds": 7.534300675615668e-05,
+      "all_annotated_objects": 8,
+      "annotated_text_formula_aux_objects": 8,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1422,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 44,
+          "known_role_lines": 44,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 40,
+          "correct_accepted_lines": 19,
+          "wrong_or_unverifiable_accepted_lines": 21,
+          "error95_wilson_independent_line_assumption_only": [
+            0.3749736210669248,
+            0.670645298873211
+          ],
+          "all_gold_body_glyphs": 1145,
+          "correctly_proposed_body_glyphs_not_reflow": 992,
+          "formula_glyphs_falsely_body": 200,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              15,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              19,
+              4,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 44,
+          "known_role_lines": 44,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 44,
+          "correct_accepted_lines": 44,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.08029560375848066
+          ],
+          "all_gold_body_glyphs": 1145,
+          "correctly_proposed_body_glyphs_not_reflow": 1145,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              17,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              26,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 44,
+          "known_role_lines": 44,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1145,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              17
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              26
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "arxiv_doublespaced",
+      "page_hash": "c7c44e56cbfa590460a48e49d45d228b078e94a9aa780b84abc79ae0bd6e4dd3",
+      "doc_name": "1402.3405.pdf",
+      "feature_seconds": 0.037725279995356686,
+      "classifier_inference_seconds": 8.199299918487668e-05,
+      "all_annotated_objects": 7,
+      "annotated_text_formula_aux_objects": 5,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1123,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 68,
+          "known_role_lines": 68,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 52,
+          "correct_accepted_lines": 49,
+          "wrong_or_unverifiable_accepted_lines": 3,
+          "error95_wilson_independent_line_assumption_only": [
+            0.019814172112270614,
+            0.1564251136896076
+          ],
+          "all_gold_body_glyphs": 718,
+          "correctly_proposed_body_glyphs_not_reflow": 263,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 180,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              10,
+              0,
+              0,
+              0,
+              14
+            ],
+            [
+              0,
+              2,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              3,
+              0,
+              0,
+              37,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 68,
+          "known_role_lines": 68,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 68,
+          "correct_accepted_lines": 65,
+          "wrong_or_unverifiable_accepted_lines": 3,
+          "error95_wilson_independent_line_assumption_only": [
+            0.01511661970804156,
+            0.12187195182496394
+          ],
+          "all_gold_body_glyphs": 718,
+          "correctly_proposed_body_glyphs_not_reflow": 718,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 180,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              24,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              3,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              3,
+              0,
+              0,
+              37,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 68,
+          "known_role_lines": 68,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 718,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              24
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              40
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "manuals",
+      "page_hash": "c6c99b44cd613f7907636e23067749b5ac6c1292614e5766dab5ac6b2f64a321",
+      "doc_name": "refman-8.0-en.pdf",
+      "feature_seconds": 0.046643112000310794,
+      "classifier_inference_seconds": 7.769699732307345e-05,
+      "all_annotated_objects": 14,
+      "annotated_text_formula_aux_objects": 12,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1707,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 56,
+          "known_role_lines": 56,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 2,
+          "correct_accepted_lines": 2,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.6576197724933469
+          ],
+          "all_gold_body_glyphs": 1459,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              43
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              11
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 56,
+          "known_role_lines": 56,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 56,
+          "correct_accepted_lines": 54,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.00984942514823639,
+            0.12118780180490107
+          ],
+          "all_gold_body_glyphs": 1459,
+          "correctly_proposed_body_glyphs_not_reflow": 1393,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 72,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              42,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              10,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 56,
+          "known_role_lines": 56,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1459,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              43
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              11
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "manuals",
+      "page_hash": "5eff1f46840123a35e8a7587c1319f60a10c0a9efd6dc1aa20a269b8d5af45df",
+      "doc_name": "2021-skoda-fabia-116475.pdf",
+      "feature_seconds": 0.18198894399392884,
+      "classifier_inference_seconds": 7.516201003454626e-05,
+      "all_annotated_objects": 23,
+      "annotated_text_formula_aux_objects": 14,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 578,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 31,
+          "known_role_lines": 31,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 9,
+          "correct_accepted_lines": 7,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.06322510711784671,
+            0.5474110308930111
+          ],
+          "all_gold_body_glyphs": 413,
+          "correctly_proposed_body_glyphs_not_reflow": 181,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              6,
+              0,
+              0,
+              2,
+              14
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              7
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 31,
+          "known_role_lines": 31,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 31,
+          "correct_accepted_lines": 31,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.11025539546043596
+          ],
+          "all_gold_body_glyphs": 413,
+          "correctly_proposed_body_glyphs_not_reflow": 413,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              22,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              7,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 31,
+          "known_role_lines": 31,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 413,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              22
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              7
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "ann_reports_00_04_fancy",
+      "page_hash": "dc5992f7cd36e75c5af1498097387b3469e7b0a816f599c1cf8e60b1b5c014ff",
+      "doc_name": "NYSE_STZ_2004.pdf",
+      "feature_seconds": 0.09789146900584456,
+      "classifier_inference_seconds": 8.194299880415201e-05,
+      "all_annotated_objects": 15,
+      "annotated_text_formula_aux_objects": 9,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 3694,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 71,
+          "known_role_lines": 71,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 23,
+          "correct_accepted_lines": 23,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.14311661845042686
+          ],
+          "all_gold_body_glyphs": 3199,
+          "correctly_proposed_body_glyphs_not_reflow": 1712,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              17,
+              0,
+              0,
+              0,
+              16
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              5,
+              32
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 71,
+          "known_role_lines": 71,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 71,
+          "correct_accepted_lines": 70,
+          "wrong_or_unverifiable_accepted_lines": 1,
+          "error95_wilson_independent_line_assumption_only": [
+            0.002490603270544213,
+            0.07556050520249005
+          ],
+          "all_gold_body_glyphs": 3199,
+          "correctly_proposed_body_glyphs_not_reflow": 3100,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              32,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              37,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 71,
+          "known_role_lines": 71,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 3199,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              33
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              37
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "train",
+      "collection": "ann_reports_00_04_fancy",
+      "page_hash": "5e11fb1da5c8f0f59e991b4ac6c7c0a19521aecdf3cbe7457c8217ba03979de5",
+      "doc_name": "NYSE_MOV_2001.pdf",
+      "feature_seconds": 0.04745695399469696,
+      "classifier_inference_seconds": 7.276999531313777e-05,
+      "all_annotated_objects": 16,
+      "annotated_text_formula_aux_objects": 10,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 2002,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 30,
+          "known_role_lines": 30,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 26,
+          "correct_accepted_lines": 26,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.1287289218592153
+          ],
+          "all_gold_body_glyphs": 1856,
+          "correctly_proposed_body_glyphs_not_reflow": 1693,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              20,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              4,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 30,
+          "known_role_lines": 30,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 30,
+          "correct_accepted_lines": 30,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.11351339317396876
+          ],
+          "all_gold_body_glyphs": 1856,
+          "correctly_proposed_body_glyphs_not_reflow": 1856,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              22,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              6,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 30,
+          "known_role_lines": 30,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1856,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              22
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              6
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "val",
+      "collection": "arxiv_mediumspaced",
+      "page_hash": "5566279428b8cc75ccf57f5394c24a76ab586c7ccc6ad8f8d7954fa4670d2871",
+      "doc_name": "1002.4666.pdf",
+      "feature_seconds": 0.05228995200013742,
+      "classifier_inference_seconds": 7.249900954775512e-05,
+      "all_annotated_objects": 7,
+      "annotated_text_formula_aux_objects": 7,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 2103,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 43,
+          "known_role_lines": 43,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 41,
+          "correct_accepted_lines": 38,
+          "wrong_or_unverifiable_accepted_lines": 3,
+          "error95_wilson_independent_line_assumption_only": [
+            0.02519783063390993,
+            0.19427448537719041
+          ],
+          "all_gold_body_glyphs": 2072,
+          "correctly_proposed_body_glyphs_not_reflow": 2072,
+          "formula_glyphs_falsely_body": 8,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              36,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              3,
+              1,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 43,
+          "known_role_lines": 43,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 43,
+          "correct_accepted_lines": 43,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.08200980322579117
+          ],
+          "all_gold_body_glyphs": 2072,
+          "correctly_proposed_body_glyphs_not_reflow": 2072,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              36,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              6,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 43,
+          "known_role_lines": 43,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 2072,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              36
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              6
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "val",
+      "collection": "arxiv_mediumspaced",
+      "page_hash": "1f59c1023675db0823b0a47cb57e47b12a251511d87322b37d975bd145b89578",
+      "doc_name": "1001.4287.pdf",
+      "feature_seconds": 0.0501621760049602,
+      "classifier_inference_seconds": 0.00012462699669413269,
+      "all_annotated_objects": 9,
+      "annotated_text_formula_aux_objects": 6,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 801,
+      "unknown_role_glyphs": 3,
+      "scores": {
+        "geometry": {
+          "native_lines": 134,
+          "known_role_lines": 131,
+          "unknown_or_mixed_lines": 3,
+          "accepted_lines": 125,
+          "correct_accepted_lines": 25,
+          "wrong_or_unverifiable_accepted_lines": 100,
+          "error95_wilson_independent_line_assumption_only": [
+            0.7214100720202135,
+            0.8607006917547908
+          ],
+          "all_gold_body_glyphs": 174,
+          "correctly_proposed_body_glyphs_not_reflow": 139,
+          "formula_glyphs_falsely_body": 409,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 2,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              3,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              95,
+              21,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 134,
+          "known_role_lines": 131,
+          "unknown_or_mixed_lines": 3,
+          "accepted_lines": 134,
+          "correct_accepted_lines": 126,
+          "wrong_or_unverifiable_accepted_lines": 8,
+          "error95_wilson_independent_line_assumption_only": [
+            0.030559034028733424,
+            0.11338502308186452
+          ],
+          "all_gold_body_glyphs": 174,
+          "correctly_proposed_body_glyphs_not_reflow": 169,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 29,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              5,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              120,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              3,
+              0,
+              0
+            ],
+            [
+              0,
+              3,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 134,
+          "known_role_lines": 131,
+          "unknown_or_mixed_lines": 3,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 174,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              6
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              120
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "val",
+      "collection": "arxiv_doublespaced",
+      "page_hash": "1c41104632c917200c5817552e751e9134b5f1fbe24b8f0b8497ec151f0d3fc6",
+      "doc_name": "1510.01545.pdf",
+      "feature_seconds": 0.03867694899963681,
+      "classifier_inference_seconds": 0.00010300500434823334,
+      "all_annotated_objects": 9,
+      "annotated_text_formula_aux_objects": 8,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 864,
+      "unknown_role_glyphs": 4,
+      "scores": {
+        "geometry": {
+          "native_lines": 96,
+          "known_role_lines": 92,
+          "unknown_or_mixed_lines": 4,
+          "accepted_lines": 83,
+          "correct_accepted_lines": 37,
+          "wrong_or_unverifiable_accepted_lines": 46,
+          "error95_wilson_independent_line_assumption_only": [
+            0.44725016436737103,
+            0.656386970731692
+          ],
+          "all_gold_body_glyphs": 472,
+          "correctly_proposed_body_glyphs_not_reflow": 472,
+          "formula_glyphs_falsely_body": 301,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 2,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              20,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              43,
+              16,
+              0,
+              0,
+              9
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              0,
+              2
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 96,
+          "known_role_lines": 92,
+          "unknown_or_mixed_lines": 4,
+          "accepted_lines": 96,
+          "correct_accepted_lines": 90,
+          "wrong_or_unverifiable_accepted_lines": 6,
+          "error95_wilson_independent_line_assumption_only": [
+            0.028956674311051346,
+            0.12970946506441489
+          ],
+          "all_gold_body_glyphs": 472,
+          "correctly_proposed_body_glyphs_not_reflow": 471,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              19,
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              68,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              3,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              4,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 96,
+          "known_role_lines": 92,
+          "unknown_or_mixed_lines": 4,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 472,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              20
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              68
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              4
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "val",
+      "collection": "arxiv_doublespaced",
+      "page_hash": "48937d18053fbb11f9e87448548d2d670e8fdc6ac81f246fcb643715792b3838",
+      "doc_name": "1201.4397.pdf",
+      "feature_seconds": 0.03140357800293714,
+      "classifier_inference_seconds": 7.238799298647791e-05,
+      "all_annotated_objects": 7,
+      "annotated_text_formula_aux_objects": 6,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1286,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 30,
+          "known_role_lines": 30,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 29,
+          "correct_accepted_lines": 29,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.11696979849974075
+          ],
+          "all_gold_body_glyphs": 1245,
+          "correctly_proposed_body_glyphs_not_reflow": 1245,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              21,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              5,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 30,
+          "known_role_lines": 30,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 30,
+          "correct_accepted_lines": 29,
+          "wrong_or_unverifiable_accepted_lines": 1,
+          "error95_wilson_independent_line_assumption_only": [
+            0.005908590381612455,
+            0.16670390991409173
+          ],
+          "all_gold_body_glyphs": 1245,
+          "correctly_proposed_body_glyphs_not_reflow": 1244,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              20,
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              6,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 30,
+          "known_role_lines": 30,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1245,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              21
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              6
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "val",
+      "collection": "manuals",
+      "page_hash": "4c4977edebea791c5240f80ae579446d1f7e0c322d10a8367903994e201534df",
+      "doc_name": "perl-all-en-5.8.5.pdf",
+      "feature_seconds": 0.0735658999910811,
+      "classifier_inference_seconds": 7.731599907856435e-05,
+      "all_annotated_objects": 29,
+      "annotated_text_formula_aux_objects": 18,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 2849,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 48,
+          "known_role_lines": 48,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 11,
+          "correct_accepted_lines": 11,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.2588329669680317
+          ],
+          "all_gold_body_glyphs": 2480,
+          "correctly_proposed_body_glyphs_not_reflow": 670,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              9,
+              0,
+              0,
+              0,
+              25
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              11
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 48,
+          "known_role_lines": 48,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 48,
+          "correct_accepted_lines": 35,
+          "wrong_or_unverifiable_accepted_lines": 13,
+          "error95_wilson_independent_line_assumption_only": [
+            0.1656595762745644,
+            0.40996964982240613
+          ],
+          "all_gold_body_glyphs": 2480,
+          "correctly_proposed_body_glyphs_not_reflow": 2370,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 318,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              32,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              1,
+              0
+            ],
+            [
+              10,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 48,
+          "known_role_lines": 48,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 2480,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              34
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              11
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "val",
+      "collection": "ann_reports_00_04_fancy",
+      "page_hash": "40324a04ef097d9b04e77dd68a4769ae4e6a47ee677b15ed4dbb42c08d1edb96",
+      "doc_name": "NASDAQ_ABCB_2004.pdf",
+      "feature_seconds": 0.10935659600363579,
+      "classifier_inference_seconds": 0.00010300500434823334,
+      "all_annotated_objects": 14,
+      "annotated_text_formula_aux_objects": 8,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 660,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 38,
+          "known_role_lines": 38,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 5,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 5,
+          "error95_wilson_independent_line_assumption_only": [
+            0.5655175352168251,
+            1.0
+          ],
+          "all_gold_body_glyphs": 528,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 84,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              31
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              5,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 38,
+          "known_role_lines": 38,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 38,
+          "correct_accepted_lines": 27,
+          "wrong_or_unverifiable_accepted_lines": 11,
+          "error95_wilson_independent_line_assumption_only": [
+            0.17003277828483065,
+            0.44757137675752057
+          ],
+          "all_gold_body_glyphs": 528,
+          "correctly_proposed_body_glyphs_not_reflow": 417,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 16,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              21,
+              0,
+              2,
+              8,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              6,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 38,
+          "known_role_lines": 38,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 528,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              31
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              7
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "arxiv_two_columns",
+      "page_hash": "96ce8d5146864f307eb0545484164276763d198b5cdccd0ca2fa878705fd2e4d",
+      "doc_name": "1001.1732.pdf",
+      "feature_seconds": 0.14481923800485674,
+      "classifier_inference_seconds": 0.00011251898831687868,
+      "all_annotated_objects": 22,
+      "annotated_text_formula_aux_objects": 19,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 3066,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 136,
+          "known_role_lines": 136,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 89,
+          "correct_accepted_lines": 64,
+          "wrong_or_unverifiable_accepted_lines": 25,
+          "error95_wilson_independent_line_assumption_only": [
+            0.1980948950798778,
+            0.38183415283263744
+          ],
+          "all_gold_body_glyphs": 1918,
+          "correctly_proposed_body_glyphs_not_reflow": 1666,
+          "formula_glyphs_falsely_body": 164,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              43,
+              0,
+              0,
+              0,
+              9
+            ],
+            [
+              24,
+              18,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              2,
+              37
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 136,
+          "known_role_lines": 136,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 136,
+          "correct_accepted_lines": 93,
+          "wrong_or_unverifiable_accepted_lines": 43,
+          "error95_wilson_independent_line_assumption_only": [
+            0.24399413765382028,
+            0.39845810489529077
+          ],
+          "all_gold_body_glyphs": 1918,
+          "correctly_proposed_body_glyphs_not_reflow": 1913,
+          "formula_glyphs_falsely_body": 134,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 669,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              51,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              5,
+              38,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              20,
+              2,
+              15,
+              3,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 136,
+          "known_role_lines": 136,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1918,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              52
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              43
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              40
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "arxiv_two_columns",
+      "page_hash": "c6c922fd6e9fd0e6ff2241d176eecd2e253ef963a942dba59ed068047274d827",
+      "doc_name": "1001.0788.pdf",
+      "feature_seconds": 0.07922675200097729,
+      "classifier_inference_seconds": 9.68550011748448e-05,
+      "all_annotated_objects": 21,
+      "annotated_text_formula_aux_objects": 17,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1946,
+      "unknown_role_glyphs": 4,
+      "scores": {
+        "geometry": {
+          "native_lines": 109,
+          "known_role_lines": 108,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 74,
+          "correct_accepted_lines": 59,
+          "wrong_or_unverifiable_accepted_lines": 15,
+          "error95_wilson_independent_line_assumption_only": [
+            0.12687074804092585,
+            0.30787776943800643
+          ],
+          "all_gold_body_glyphs": 1455,
+          "correctly_proposed_body_glyphs_not_reflow": 1121,
+          "formula_glyphs_falsely_body": 83,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              35,
+              0,
+              0,
+              0,
+              16
+            ],
+            [
+              13,
+              18,
+              2,
+              0,
+              8
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              5,
+              10
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 109,
+          "known_role_lines": 108,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 109,
+          "correct_accepted_lines": 85,
+          "wrong_or_unverifiable_accepted_lines": 24,
+          "error95_wilson_independent_line_assumption_only": [
+            0.15266375510314167,
+            0.3067547898402605
+          ],
+          "all_gold_body_glyphs": 1455,
+          "correctly_proposed_body_glyphs_not_reflow": 1382,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 261,
+          "unknown_glyphs_proposed_body": 4,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              45,
+              2,
+              2,
+              2,
+              0
+            ],
+            [
+              0,
+              37,
+              3,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              6,
+              2,
+              5,
+              2,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 109,
+          "known_role_lines": 108,
+          "unknown_or_mixed_lines": 1,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1455,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              51
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              41
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              15
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "arxiv_two_columns",
+      "page_hash": "d88567ed64a8785ef70bbb7a5e9f6c662cdba783a79f0b295299697d1cfc0c4c",
+      "doc_name": "1001.0806.pdf",
+      "feature_seconds": 0.12853135999466758,
+      "classifier_inference_seconds": 8.785200770944357e-05,
+      "all_annotated_objects": 20,
+      "annotated_text_formula_aux_objects": 16,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 3355,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 96,
+          "known_role_lines": 96,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 85,
+          "correct_accepted_lines": 80,
+          "wrong_or_unverifiable_accepted_lines": 5,
+          "error95_wilson_independent_line_assumption_only": [
+            0.025385160033412506,
+            0.13041438450839762
+          ],
+          "all_gold_body_glyphs": 2984,
+          "correctly_proposed_body_glyphs_not_reflow": 2947,
+          "formula_glyphs_falsely_body": 43,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              75,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              5,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              3,
+              5
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 96,
+          "known_role_lines": 96,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 96,
+          "correct_accepted_lines": 90,
+          "wrong_or_unverifiable_accepted_lines": 6,
+          "error95_wilson_independent_line_assumption_only": [
+            0.028956674311051346,
+            0.12970946506441489
+          ],
+          "all_gold_body_glyphs": 2984,
+          "correctly_proposed_body_glyphs_not_reflow": 2982,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 179,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              75,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              9,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              1,
+              0
+            ],
+            [
+              4,
+              0,
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 96,
+          "known_role_lines": 96,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 2984,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              76
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              9
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              8
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "arxiv_two_columns",
+      "page_hash": "ef8e7bb788752de667777c85f98efe33732460beda7d6de962e47e7de1a8c749",
+      "doc_name": "1001.3103.pdf",
+      "feature_seconds": 0.2211797950003529,
+      "classifier_inference_seconds": 0.0002248679957119748,
+      "all_annotated_objects": 27,
+      "annotated_text_formula_aux_objects": 26,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 3005,
+      "unknown_role_glyphs": 1,
+      "scores": {
+        "geometry": {
+          "native_lines": 263,
+          "known_role_lines": 263,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 244,
+          "correct_accepted_lines": 143,
+          "wrong_or_unverifiable_accepted_lines": 101,
+          "error95_wilson_independent_line_assumption_only": [
+            0.3539342092080541,
+            0.4766026178432031
+          ],
+          "all_gold_body_glyphs": 2208,
+          "correctly_proposed_body_glyphs_not_reflow": 2051,
+          "formula_glyphs_falsely_body": 500,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              66,
+              0,
+              0,
+              0,
+              5
+            ],
+            [
+              101,
+              72,
+              0,
+              0,
+              14
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 263,
+          "known_role_lines": 263,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 263,
+          "correct_accepted_lines": 257,
+          "wrong_or_unverifiable_accepted_lines": 6,
+          "error95_wilson_independent_line_assumption_only": [
+            0.010496687314111446,
+            0.04886987023172665
+          ],
+          "all_gold_body_glyphs": 2208,
+          "correctly_proposed_body_glyphs_not_reflow": 2177,
+          "formula_glyphs_falsely_body": 5,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 1,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              70,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              4,
+              182,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              4,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 263,
+          "known_role_lines": 263,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 2208,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              71
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              187
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "arxiv_two_columns",
+      "page_hash": "c10636db4f55150c38592d38c10048a4defe3d69268de6abd3ec765e83776938",
+      "doc_name": "1001.0764.pdf",
+      "feature_seconds": 0.12822411800152622,
+      "classifier_inference_seconds": 0.0001769560039974749,
+      "all_annotated_objects": 22,
+      "annotated_text_formula_aux_objects": 21,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 2872,
+      "unknown_role_glyphs": 10,
+      "scores": {
+        "geometry": {
+          "native_lines": 151,
+          "known_role_lines": 143,
+          "unknown_or_mixed_lines": 8,
+          "accepted_lines": 128,
+          "correct_accepted_lines": 89,
+          "wrong_or_unverifiable_accepted_lines": 39,
+          "error95_wilson_independent_line_assumption_only": [
+            0.2316056151523922,
+            0.38915100839194705
+          ],
+          "all_gold_body_glyphs": 2333,
+          "correctly_proposed_body_glyphs_not_reflow": 2333,
+          "formula_glyphs_falsely_body": 296,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 4,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              70,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              31,
+              15,
+              1,
+              0,
+              22
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              3,
+              0
+            ],
+            [
+              2,
+              5,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 151,
+          "known_role_lines": 143,
+          "unknown_or_mixed_lines": 8,
+          "accepted_lines": 151,
+          "correct_accepted_lines": 137,
+          "wrong_or_unverifiable_accepted_lines": 14,
+          "error95_wilson_independent_line_assumption_only": [
+            0.05603272810127248,
+            0.14960637568401558
+          ],
+          "all_gold_body_glyphs": 2333,
+          "correctly_proposed_body_glyphs_not_reflow": 2318,
+          "formula_glyphs_falsely_body": 46,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 1,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              69,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              3,
+              64,
+              1,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              3,
+              0
+            ],
+            [
+              0,
+              8,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 151,
+          "known_role_lines": 143,
+          "unknown_or_mixed_lines": 8,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 2333,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              70
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              69
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              8
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "arxiv_two_columns",
+      "page_hash": "6db76d0a7f8a485592f9836c705dc8efb6bac66c6184fd63d4b51238ac4b1548",
+      "doc_name": "1001.2602.pdf",
+      "feature_seconds": 0.17561179801123217,
+      "classifier_inference_seconds": 0.00014109199400991201,
+      "all_annotated_objects": 22,
+      "annotated_text_formula_aux_objects": 22,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 4328,
+      "unknown_role_glyphs": 4,
+      "scores": {
+        "geometry": {
+          "native_lines": 155,
+          "known_role_lines": 152,
+          "unknown_or_mixed_lines": 3,
+          "accepted_lines": 147,
+          "correct_accepted_lines": 129,
+          "wrong_or_unverifiable_accepted_lines": 18,
+          "error95_wilson_independent_line_assumption_only": [
+            0.078875707383624,
+            0.18525233229579757
+          ],
+          "all_gold_body_glyphs": 4073,
+          "correctly_proposed_body_glyphs_not_reflow": 4073,
+          "formula_glyphs_falsely_body": 155,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              120,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              17,
+              9,
+              0,
+              0,
+              5
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0,
+              0,
+              2
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 155,
+          "known_role_lines": 152,
+          "unknown_or_mixed_lines": 3,
+          "accepted_lines": 155,
+          "correct_accepted_lines": 149,
+          "wrong_or_unverifiable_accepted_lines": 6,
+          "error95_wilson_independent_line_assumption_only": [
+            0.01785968478358388,
+            0.08187157516773984
+          ],
+          "all_gold_body_glyphs": 4073,
+          "correctly_proposed_body_glyphs_not_reflow": 4063,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 1,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              117,
+              1,
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              31,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              0,
+              1,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 155,
+          "known_role_lines": 152,
+          "unknown_or_mixed_lines": 3,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 4073,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              120
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              31
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "redbooks",
+      "page_hash": "7ca44781af85ae9fc78d77c99f35fc451ff2cb01be0b103d7d759a82b376bc3f",
+      "doc_name": "sg247938.pdf",
+      "feature_seconds": 0.030220781001844443,
+      "classifier_inference_seconds": 8.216399874072522e-05,
+      "all_annotated_objects": 15,
+      "annotated_text_formula_aux_objects": 12,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 790,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 24,
+          "known_role_lines": 24,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 10,
+          "correct_accepted_lines": 10,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.2775327998628892
+          ],
+          "all_gold_body_glyphs": 667,
+          "correctly_proposed_body_glyphs_not_reflow": 237,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              8,
+              0,
+              0,
+              0,
+              12
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 24,
+          "known_role_lines": 24,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 24,
+          "correct_accepted_lines": 21,
+          "wrong_or_unverifiable_accepted_lines": 3,
+          "error95_wilson_independent_line_assumption_only": [
+            0.04344334080123444,
+            0.31003881270500067
+          ],
+          "all_gold_body_glyphs": 667,
+          "correctly_proposed_body_glyphs_not_reflow": 558,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 27,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              18,
+              0,
+              1,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 24,
+          "known_role_lines": 24,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 667,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              20
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "redbooks",
+      "page_hash": "5b33f855dfe894719504170a88902f1ad7be38af6c3db79a61f1e0557fc2a229",
+      "doc_name": "sg248459.pdf",
+      "feature_seconds": 0.03511500099557452,
+      "classifier_inference_seconds": 7.611498585902154e-05,
+      "all_annotated_objects": 17,
+      "annotated_text_formula_aux_objects": 12,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1402,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 32,
+          "known_role_lines": 32,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 17,
+          "correct_accepted_lines": 17,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.1843181350088518
+          ],
+          "all_gold_body_glyphs": 1219,
+          "correctly_proposed_body_glyphs_not_reflow": 850,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              13,
+              0,
+              0,
+              0,
+              12
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              3,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              1,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 32,
+          "known_role_lines": 32,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 32,
+          "correct_accepted_lines": 29,
+          "wrong_or_unverifiable_accepted_lines": 3,
+          "error95_wilson_independent_line_assumption_only": [
+            0.032401551298366194,
+            0.24218154728387864
+          ],
+          "all_gold_body_glyphs": 1219,
+          "correctly_proposed_body_glyphs_not_reflow": 1190,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 74,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              24,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              4,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 32,
+          "known_role_lines": 32,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1219,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              25
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "ann_reports_10_14_fancy",
+      "page_hash": "393c206f4fc3992fd42bda52ff33a907eb42317d021a5c62ae744bfd8d9cf319",
+      "doc_name": "NYSE_CHK_2010.pdf",
+      "feature_seconds": 0.05952367399004288,
+      "classifier_inference_seconds": 7.657500100322068e-05,
+      "all_annotated_objects": 7,
+      "annotated_text_formula_aux_objects": 5,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 2034,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 35,
+          "known_role_lines": 35,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 30,
+          "correct_accepted_lines": 30,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.11351339317396876
+          ],
+          "all_gold_body_glyphs": 1767,
+          "correctly_proposed_body_glyphs_not_reflow": 1691,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              30,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 35,
+          "known_role_lines": 35,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 35,
+          "correct_accepted_lines": 33,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.015813161857108654,
+            0.1860705742016492
+          ],
+          "all_gold_body_glyphs": 1767,
+          "correctly_proposed_body_glyphs_not_reflow": 1767,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 244,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              32,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 35,
+          "known_role_lines": 35,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1767,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              32
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "ann_reports_10_14_fancy",
+      "page_hash": "e26f43d9f29b9b26d82089860c7a05b6decbb01d256b0621add41d5a44f6616c",
+      "doc_name": "ASX_SEA_2014.pdf",
+      "feature_seconds": 0.10381073800090235,
+      "classifier_inference_seconds": 8.536799577996135e-05,
+      "all_annotated_objects": 9,
+      "annotated_text_formula_aux_objects": 4,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 2449,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 83,
+          "known_role_lines": 83,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 79,
+          "correct_accepted_lines": 79,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.04637121165392266
+          ],
+          "all_gold_body_glyphs": 916,
+          "correctly_proposed_body_glyphs_not_reflow": 916,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              10,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              69,
+              3
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 83,
+          "known_role_lines": 83,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 83,
+          "correct_accepted_lines": 81,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.006633166140727599,
+            0.08366309243416317
+          ],
+          "all_gold_body_glyphs": 916,
+          "correctly_proposed_body_glyphs_not_reflow": 916,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 62,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              10,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              70,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 83,
+          "known_role_lines": 83,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 916,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              10
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              72
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "chinese_laws",
+      "page_hash": "c222705dbe82ddaf229742ac5e75d4431971544e968e653d1c434f1fdd524ccd",
+      "doc_name": "wang_luo_an_quan_fa_cybersecurity_law_.pdf",
+      "feature_seconds": 0.03027669500443153,
+      "classifier_inference_seconds": 7.280900899786502e-05,
+      "all_annotated_objects": 10,
+      "annotated_text_formula_aux_objects": 9,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 853,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 27,
+          "known_role_lines": 27,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 26,
+          "correct_accepted_lines": 24,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0213550884722762,
+            0.2414155377162906
+          ],
+          "all_gold_body_glyphs": 754,
+          "correctly_proposed_body_glyphs_not_reflow": 724,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 92,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              23,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 27,
+          "known_role_lines": 27,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 27,
+          "correct_accepted_lines": 25,
+          "wrong_or_unverifiable_accepted_lines": 2,
+          "error95_wilson_independent_line_assumption_only": [
+            0.020554654060988622,
+            0.23369592683023144
+          ],
+          "all_gold_body_glyphs": 754,
+          "correctly_proposed_body_glyphs_not_reflow": 754,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 92,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              24,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 27,
+          "known_role_lines": 27,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 754,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              24
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "split": "test",
+      "collection": "japanese_laws",
+      "page_hash": "88b848ed7babd104f41865198c37151c42496d9ebc25b3262d9317ad9f3a992a",
+      "doc_name": "s24Bc003781002en13.0_r01C168.pdf",
+      "feature_seconds": 0.04737020400352776,
+      "classifier_inference_seconds": 7.085700053721666e-05,
+      "all_annotated_objects": 13,
+      "annotated_text_formula_aux_objects": 9,
+      "annotated_text_formula_aux_objects_without_native_glyphs": 0,
+      "all_native_glyphs": 1860,
+      "unknown_role_glyphs": 0,
+      "scores": {
+        "geometry": {
+          "native_lines": 34,
+          "known_role_lines": 34,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 26,
+          "correct_accepted_lines": 26,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": [
+            0.0,
+            0.1287289218592153
+          ],
+          "all_gold_body_glyphs": 1628,
+          "correctly_proposed_body_glyphs_not_reflow": 1396,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              25,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_all": {
+          "native_lines": 34,
+          "known_role_lines": 34,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 34,
+          "correct_accepted_lines": 31,
+          "wrong_or_unverifiable_accepted_lines": 3,
+          "error95_wilson_independent_line_assumption_only": [
+            0.030465943674648555,
+            0.22960486562808868
+          ],
+          "all_gold_body_glyphs": 1628,
+          "correctly_proposed_body_glyphs_not_reflow": 1628,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 169,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              29,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              3,
+              0,
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "learned_calibrated": {
+          "native_lines": 34,
+          "known_role_lines": 34,
+          "unknown_or_mixed_lines": 0,
+          "accepted_lines": 0,
+          "correct_accepted_lines": 0,
+          "wrong_or_unverifiable_accepted_lines": 0,
+          "error95_wilson_independent_line_assumption_only": null,
+          "all_gold_body_glyphs": 1628,
+          "correctly_proposed_body_glyphs_not_reflow": 0,
+          "formula_glyphs_falsely_body": 0,
+          "auxiliary_glyphs_falsely_body": 0,
+          "other_role_glyphs_falsely_body": 0,
+          "unknown_glyphs_proposed_body": 0,
+          "confusion_true_rows_pred_columns_body_formula_aux_other_unknown": [
+            [
+              0,
+              0,
+              0,
+              0,
+              29
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "total_seconds": 2.333858283003792,
+  "peak_rss_kib": 102200,
+  "limits": [
+    "Line-role assignment is not source-pixel fidelity, reading order, formula-number ownership or actual text reflow.",
+    "Human layout labels are operational targets; >=90% glyph agreement does not certify semantic atomicity.",
+    "All missing/mixed lines and missing annotated objects are retained in denominators.",
+    "Wilson intervals assume independent lines and are descriptive only; lines cluster by document. Twelve held-out source-style documents do not certify a general risk bound.",
+    "Official detector upstream training overlap unknown.",
+    "No quality-driven parameter correction after locked test."
+  ],
+  "resource_monitor": {
+    "detector_total_seconds": 20.43638851500873,
+    "detector_peak_group_rss_kib": 585628,
+    "features_fit_evaluation_seconds": 2.828786967002088,
+    "features_fit_evaluation_peak_group_rss_kib": 102200,
+    "cpu_affinity": [
+      0
+    ],
+    "dedicated_cpu_quota_proven": false
+  },
+  "language_audit": {
+    "chinese_laws_test_page": "706 Han characters; real Chinese native text present",
+    "japanese_laws_test_page": "English translation; zero Han characters, no Japanese-language claim"
+  },
+  "source_transfer": {
+    "verified_pages": 30,
+    "verified_entries": 60,
+    "bytes_downloaded": 153548970,
+    "license": "CDLA-Permissive-1.0",
+    "official_source": "https://github.com/DS4SD/DocLayNet"
+  }
+}
