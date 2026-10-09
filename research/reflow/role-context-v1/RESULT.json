@@ -1,0 +1,116 @@
+{
+  "rows": [
+    {
+      "key": "ConvNeXt-v2-p03",
+      "partition": "diagnostic_regression",
+      "body_units": 4,
+      "all_body_glyphs": 3208,
+      "candidate_glyphs": 3208,
+      "candidate_complete_units": 4,
+      "source_ink": 1034375,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": null,
+      "semantic_mask": {
+        "visible_ink": 1034375,
+        "components": 3891,
+        "unseeded_components": 0,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 0,
+        "whole_page_refusal": false,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "seconds": 2.7594963449955685,
+      "peak_process_rss_kib": 300344
+    },
+    {
+      "key": "MobileNet-v1-p03",
+      "partition": "diagnostic_regression",
+      "body_units": 12,
+      "all_body_glyphs": 2615,
+      "candidate_glyphs": 2362,
+      "candidate_complete_units": 9,
+      "source_ink": 1391822,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": null,
+      "semantic_mask": {
+        "visible_ink": 1391822,
+        "components": 2969,
+        "unseeded_components": 0,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 0,
+        "whole_page_refusal": false,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "seconds": 2.4451923669985263,
+      "peak_process_rss_kib": 308108
+    },
+    {
+      "key": "Adiabatic-v1-p03",
+      "partition": "new_source_validation",
+      "body_units": 8,
+      "all_body_glyphs": 1517,
+      "candidate_glyphs": 461,
+      "candidate_complete_units": 2,
+      "source_ink": 306162,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": null,
+      "semantic_mask": {
+        "visible_ink": 306162,
+        "components": 2017,
+        "unseeded_components": 0,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 0,
+        "whole_page_refusal": false,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "seconds": 2.048395941994386,
+      "peak_process_rss_kib": 308460
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "new_source_validation",
+      "body_units": 7,
+      "all_body_glyphs": 2414,
+      "candidate_glyphs": 0,
+      "candidate_complete_units": 0,
+      "source_ink": 659595,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": "Physical coverage or unique semantic-mask ownership unproved: preserve whole original page",
+      "semantic_mask": {
+        "visible_ink": 659595,
+        "components": 3319,
+        "unseeded_components": 1,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 1137,
+        "whole_page_refusal": true,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "seconds": 2.153274753000005,
+      "peak_process_rss_kib": 331124
+    }
+  ],
+  "code_hashes_unchanged": true,
+  "new_sources_complete_prose_candidates": "2/15",
+  "label_audit": {
+    "MobileNet_seen": {
+      "accepted_correct": 2,
+      "accepted_false_roles": 0,
+      "formal_labels": 3
+    },
+    "Adiabatic_new": {
+      "candidate_formal_labels": 0,
+      "formal_labels": 9,
+      "reason": "section-number identifiers outside candidate grammar"
+    },
+    "Swin_new": {
+      "accepted_formal_labels": 2,
+      "formal_labels": 3,
+      "page_refused": true
+    }
+  },
+  "warning": "Candidate and pixel metrics do not certify reading relations or useful font size."
+}

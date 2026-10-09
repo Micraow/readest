@@ -1,0 +1,36 @@
+{
+  "inputs": [
+    {
+      "key": "ConvNeXt-v2-p03",
+      "partition": "diagnostic_regression",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/2201.03545v2",
+      "sha256": "1fde2340370d0eb8045bda97fc94da7adb2a7abe8e6ded1a473d22475b945e1a",
+      "pages": 15
+    },
+    {
+      "key": "MobileNet-v1-p03",
+      "partition": "diagnostic_regression",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/1704.04861v1",
+      "sha256": "9fd87b02ecc96c1ecf2b8c2166faf969a2acb187ab3e1e9333b26d226387ff55",
+      "pages": 9
+    },
+    {
+      "key": "Adiabatic-v1-p03",
+      "partition": "new_source_validation",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/quant-ph/0001106v1",
+      "sha256": "1009e50c14192e7ccce6be613e8857fd762ba4e063fb59b62a8dec16237116ff",
+      "pages": 24
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "new_source_validation",
+      "page_1based": 4,
+      "url": "https://arxiv.org/pdf/2103.14030v2",
+      "sha256": "dfdc7631fe2a35bb5892080b9c0eeadc4432d55cf1856f84bc88802efa877a7c",
+      "pages": 14
+    }
+  ]
+}

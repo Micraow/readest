@@ -1,0 +1,4 @@
+{
+  "reason": "Native rawdict image payload is bytes and cannot serialize as JSON. Removed binary payload from QA metadata only; no glyph metadata or processing algorithm changed. Already downloaded valid PDF reused; no repeated download.",
+  "algorithm_unchanged": true
+}

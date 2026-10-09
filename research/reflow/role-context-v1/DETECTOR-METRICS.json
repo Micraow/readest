@@ -1,0 +1,15 @@
+{
+  "load_seconds": 3.5080587980046403,
+  "pages": [
+    {
+      "key": "Adiabatic-v1-p03",
+      "inference_seconds": 0.5012148469977546,
+      "peak_rss_kib": 566000
+    },
+    {
+      "key": "Swin-v2-p04",
+      "inference_seconds": 0.25844876100018155,
+      "peak_rss_kib": 580084
+    }
+  ]
+}
