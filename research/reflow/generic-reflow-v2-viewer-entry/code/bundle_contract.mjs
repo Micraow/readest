@@ -15,6 +15,14 @@ function validateInputTree(value){
   for(const key of Object.keys(item)){need(!['__proto__','prototype','constructor'].includes(key),'forbidden prototype key');stack.push([item[key],depth+1]);}
  }
 }
+export function validateFailureBundle(bundle){
+ validateInputTree(bundle);
+ need(bundle?.schema==='readest-reflow-failure-v1','failure schema');
+ need(typeof bundle.reason==='string'&&bundle.reason.length>0&&bundle.reason.length<=2000,'failure reason');
+ need(typeof bundle.original_filename==='string'&&/^[^/\\]{1,200}\.pdf$/i.test(bundle.original_filename),'failure PDF filename');
+ need(typeof bundle.source_pdf==='string'&&/^data:application\/pdf;base64,JVBER[A-Za-z0-9+/]+=*$/.test(bundle.source_pdf),'failure embedded PDF only');
+ return bundle;
+}
 export function validateResearchBundle(bundle){
  validateInputTree(bundle);
  need(bundle?.schema==='readest-reflow-research-v1','schema');const pages=list(bundle.pages,BUNDLE_LIMITS.pages,'pages');need(pages.length>0,'empty pages');

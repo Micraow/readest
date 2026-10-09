@@ -93,3 +93,13 @@ exactly in RGBA at 20 px / 390 px / DPR 1. This checks the generated module's na
 painting, while its DOM still comes from jsdom. It does not certify a browser's
 selection geometry, font fallback used by the transparent layer, system clipboard,
 modal focus behaviour or CSP implementation. Keep those browser gates open.
+
+## Explicit failed-request source recovery
+
+`package_failure.py PDF EXECUTION_JSON OUT --reason TEXT` creates a local
+`readest-reflow-failure-v1` bundle only for an execution with `execution_pass:false`.
+Import it through the same local picker. The viewer exposes an inert reason and
+source-PDF download, without pretending a reader was produced or replacing an
+already loaded document. No PDF parser, iframe, external request or whole-page
+image fallback is introduced. Keep source-containing bundles private and check
+redistribution rights before delivery. Real browser acceptance remains pending.

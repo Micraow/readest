@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {performance} from 'node:perf_hooks';
-import {validateResearchBundle} from './bundle_contract.mjs';
+import {validateResearchBundle,validateFailureBundle} from './bundle_contract.mjs';
 import {layoutBlocks} from '../../generic-reflow-v2-formula-hierarchy/code/reader_engine.mjs';
 import {selectionGeometry} from '../../generic-reflow-v2-text-selection/code/selection_layer.mjs';
 const input=process.argv[2];if(!input)throw Error('Pass an existing private precomputed JSON bundle; never copy it into source.');
@@ -33,5 +33,8 @@ reject('excessive geometry',b=>b.pages[0].reader.blocks[0].tokens[0].width_em=10
 reject('excessive nesting',b=>{let x=b;for(let i=0;i<40;i++)x=x.extra={};});
 reject('fake PNG header',b=>b.pages[0].source.png=b.pages[0].source.png.replace('iVBOR','aVBOR'));
 reject('broken formula hierarchy',b=>{const f=b.pages[0].reader.blocks.find(x=>x.kind==='formula');f.tokens[0].formula_role='label';});
+const failure={schema:'readest-reflow-failure-v1',reason:'Ambiguous native order',original_filename:'source.pdf',source_pdf:bundle.pages[0].source.pdf};
+assert.equal(validateFailureBundle(failure),failure);
+for(const [name,change] of [['external PDF',b=>b.source_pdf='https://invalid.example/a.pdf'],['HTML',b=>b.source_pdf='data:text/html;base64,AAAA'],['path filename',b=>b.original_filename='../source.pdf'],['huge reason',b=>b.reason='x'.repeat(2001)],['prototype',b=>b.extra=JSON.parse('{"__proto__":{}}')],['nonfinite',b=>b.extra=NaN]]){const b=structuredClone(failure);change(b);assert.throws(()=>validateFailureBundle(b),name);negatives++;}
 assert.equal({}.polluted,undefined);
 console.log(JSON.stringify({passed:true,real_page_layouts:reports,negative_controls:negatives,timing_ms:{read:parsed-start,parse_and_validate:validated-parsed,layouts_and_geometry:complete-validated},cold_pdf_request:false,browser_verified:false},null,2));

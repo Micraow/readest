@@ -1,0 +1,42 @@
+{
+  "scope": "separate seen-page recovery, never a new holdout",
+  "candidate_commit": "103863c0fdd04b241d61ea63a1adde90b7f0c183",
+  "original_holdout": "fail 0/1; unchanged",
+  "execution": {
+    "command": [
+      "/workspace/scratch/9d5f314b8c8b/layout-evaluation/venv/bin/python",
+      "/workspace/scratch/9d5f314b8c8b/readest-research-checkpoint/research/reflow/generic-reflow-v2-integrated-paper-1/code/run_cold_page.py",
+      "/workspace/scratch/9d5f314b8c8b",
+      "/workspace/scratch/9d5f314b8c8b/generic-reflow-v2-public-holdout-local/H7-source-page-private.pdf",
+      "/workspace/scratch/9d5f314b8c8b/generic-reflow-v2-public-holdout-local/H7-seen-recovery/request"
+    ],
+    "wall_limit_seconds": 60,
+    "retries": 0,
+    "pipeline": "unchanged integrated-paper-1",
+    "wrapper_sha256": "909c5a38bf14f2bb8be35238ebf34e90e74b5957e64358499a23d35c45404d98",
+    "wall_seconds": 37.01892972699716,
+    "child_cpu_seconds": 36.65517,
+    "exit_code": 2,
+    "timed_out": false,
+    "execution_pass": false,
+    "browser_verified": false
+  },
+  "failed_stage": "region_column_line_tree",
+  "reader_produced": false,
+  "subsequent_stage_diagnosis": {
+    "displaced_baseline": "Full-size inline native glyph became a separate source line. Generic strict source-interval containment plus unique geometric host associates it without inspecting Unicode or font names.",
+    "remaining_blocker": "Initial foreground fraction support expands two thin strokes by 3 body em sideways and 1.25 body em vertically, collecting 38 glyphs from the starts of three prose lines into one protected unit. The source owner is already over-grouped before downstream fraction closure.",
+    "order_refusal_preserved": true,
+    "authored_order_controls": 28,
+    "local_geometry_controls": 21,
+    "existing_H5_H6_source_lines_identical": true
+  },
+  "product_fallback": {
+    "schema": "readest-reflow-failure-v1",
+    "source_pdf_explicit_download": true,
+    "no_reflow_claim": true,
+    "no_network": true,
+    "existing_reader_preserved": true,
+    "browser_verified": false
+  }
+}

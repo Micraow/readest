@@ -1,13 +1,31 @@
 import unittest,copy,json,pathlib,tempfile
 from bounded_inline import propose,InlineConfig
 from apply_region_priors import table_evidence,PriorConfig
-from diagnose_native_regions import make_lines
+from diagnose_native_regions import make_lines,associate_interior_lines,LineConfig
 
 def g(i,x,y,text='x',size=10,known=True,baseline=None):return dict(id='g'+str(i),source_index=i,object_id='p'+str(i),char=text,box=[x,y,x+2,y+2],baseline=y+2 if baseline is None else baseline,size=size,unicode_known=known,native_object_ink_observed=True)
 def u(i,glyphs,objects=(),kind='native_word'):
  b=[min(g['box'][0] for g in glyphs),min(g['box'][1] for g in glyphs),max(g['box'][2] for g in glyphs),max(g['box'][3] for g in glyphs)] if glyphs else [0,5,100,5.5]
  return dict(id='u'+str(i),kind=kind,box=b,glyphs=glyphs,objects=list(objects),text=''.join(g['char'] for g in glyphs),baseline=glyphs[0]['baseline'] if glyphs else 5.5)
 class NativeStructureTests(unittest.TestCase):
+ def test_displaced_known_glyph_joins_unique_native_interior_line(self):
+  a=g(0,10,50,baseline=58);b=g(2,25,50,baseline=58);c=g(1,20,49,baseline=50)
+  leaves,result=make_lines(dict(units=[u(0,[a]),u(1,[c]),u(2,[b])],page_size=[100,200]),10)
+  self.assertEqual(len(leaves),1);self.assertEqual(set(leaves[0]['unit_ids']),{'u0','u1','u2'})
+ def test_displaced_external_native_interval_is_not_absorbed(self):
+  a=g(0,10,50,baseline=58);b=g(2,25,50,baseline=58);c=g(3,20,49,baseline=50)
+  leaves,result=make_lines(dict(units=[u(0,[a]),u(1,[c]),u(2,[b])],page_size=[100,200]),10)
+  self.assertEqual(len(leaves),2)
+ def test_interior_interval_on_separate_row_is_not_absorbed(self):
+  a=g(0,10,50,baseline=58);b=g(2,25,50,baseline=58);c=g(1,20,44,baseline=46)
+  leaves,result=make_lines(dict(units=[u(0,[a]),u(1,[c]),u(2,[b])],page_size=[100,200]),10)
+  self.assertEqual(len(leaves),2)
+ def test_two_enclosing_hosts_remain_ambiguous(self):
+  def line(gs):return dict(units=[u(gs[0]['source_index'],gs)],box=[10,40,40,60],baseline=55)
+  candidate=line([g(5,20,50)]);candidate['box']=[20,50,22,52]
+  lines,trace=associate_interior_lines([line([g(0,10,50),g(9,40,50)]),line([g(1,10,50),g(10,40,50)]),candidate],10,LineConfig())
+  self.assertEqual(len(lines),3);self.assertFalse(next(t for t in trace if t['units']==['u5'])['accepted'])
+
  def test_graphic_only_fraction_seed_refuses_without_mutating(self):
   units=[dict(id='u9',kind='island',box=[1,5,5,5.5],glyphs=[],objects=['p9'])];objects=[dict(id='p9',type=3,box=[1,5,5,5.5],horizontal_stroke=True)];before=copy.deepcopy((units,objects))
   group,trace=propose({'u9'},units,[],objects,10,InlineConfig())

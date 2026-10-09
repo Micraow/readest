@@ -1,6 +1,7 @@
 """Reconstruct line envelopes before ordering; no text rendering or ink changes."""
 import argparse,json,pathlib,statistics,sys,re
 from dataclasses import dataclass,asdict
+from interior_lines import associate_interior_lines
 from region_tree import build_tree,AmbiguousOrder,OrderConfig
 @dataclass(frozen=True)
 class LineConfig:
@@ -72,7 +73,8 @@ def make_lines(plan,body,cfg=LineConfig()):
         match=next((other for other in reversed(merged) if abs(other['baseline']-line['baseline'])<=cfg.baseline_tolerance_em*body and xgap(other['box'],line['box'])<=cfg.horizontal_chunk_gap_em*body),None)
         if match is None:merged.append(line)
         else:match['units'].extend(line['units']);match['box']=union([match['box'],line['box']])
-    lines=merged
+    lines,interior_trace=associate_interior_lines(merged,body,cfg)
+    trace.extend(interior_trace)
     leaves=list(protected)
     for line in lines:
         us=sorted(line['units'],key=lambda u:u['box'][0]);indexes=sorted(g['source_index'] for u in us for g in u['glyphs'] if g.get('native_object_ink_observed',True))
