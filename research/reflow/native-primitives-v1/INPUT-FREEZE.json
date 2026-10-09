@@ -1,0 +1,28 @@
+{
+  "inputs": [
+    {
+      "key": "Adiabatic-v1-p03",
+      "partition": "diagnostic_regression",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/quant-ph/0001106v1",
+      "sha256": "1009e50c14192e7ccce6be613e8857fd762ba4e063fb59b62a8dec16237116ff",
+      "pages": 24
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "diagnostic_regression",
+      "page_1based": 4,
+      "url": "https://arxiv.org/pdf/2103.14030v2",
+      "sha256": "dfdc7631fe2a35bb5892080b9c0eeadc4432d55cf1856f84bc88802efa877a7c",
+      "pages": 14
+    },
+    {
+      "key": "ViT-v2-p03",
+      "url": "https://arxiv.org/pdf/2010.11929v2",
+      "page_1based": 3,
+      "partition": "new_source_validation",
+      "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "pages": 22
+    }
+  ]
+}

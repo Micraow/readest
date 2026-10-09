@@ -1,0 +1,10 @@
+{
+  "load_seconds": 3.576008666001144,
+  "pages": [
+    {
+      "key": "ViT-v2-p03",
+      "inference_seconds": 0.498697375995107,
+      "peak_rss_kib": 586596
+    }
+  ]
+}

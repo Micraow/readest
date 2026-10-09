@@ -1,0 +1,82 @@
+{
+  "rows": [
+    {
+      "key": "Adiabatic-v1-p03",
+      "partition": "diagnostic_regression",
+      "body_units": 8,
+      "candidate_complete_units": 2,
+      "body_glyphs": 1517,
+      "source_ink": 306162,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": null,
+      "semantic_mask": {
+        "visible_ink": 306162,
+        "components": 2017,
+        "unseeded_components": 0,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 0,
+        "whole_page_refusal": false,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "primitive_recoveries": 0,
+      "accepted_number_links": 9,
+      "seconds": 2.558213242999045,
+      "peak_process_rss_kib": 298100
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "diagnostic_regression",
+      "body_units": 7,
+      "candidate_complete_units": 0,
+      "body_glyphs": 2414,
+      "source_ink": 659595,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": "Physical coverage or unique semantic-mask ownership unproved: preserve whole original page",
+      "semantic_mask": {
+        "visible_ink": 659595,
+        "components": 3319,
+        "unseeded_components": 1,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 1137,
+        "whole_page_refusal": true,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "primitive_recoveries": 0,
+      "accepted_number_links": 2,
+      "seconds": 2.552806640000199,
+      "peak_process_rss_kib": 332880
+    },
+    {
+      "key": "ViT-v2-p03",
+      "partition": "new_source_validation",
+      "body_units": 5,
+      "candidate_complete_units": 0,
+      "body_glyphs": 1732,
+      "source_ink": 751537,
+      "uncovered": 0,
+      "duplicated": 0,
+      "failure": "Physical coverage or unique semantic-mask ownership unproved: preserve whole original page",
+      "semantic_mask": {
+        "visible_ink": 751537,
+        "components": 2130,
+        "unseeded_components": 1,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 4752,
+        "whole_page_refusal": true,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "primitive_recoveries": 0,
+      "accepted_number_links": 0,
+      "seconds": 2.411952751004719,
+      "peak_process_rss_kib": 335452
+    }
+  ],
+  "code_hashes_unchanged": true,
+  "new_page_quality": "ViT0/5 complete prose reflow; full original retained. No product or generalization success.",
+  "unseeded_diagnosis": {
+    "Swin": "native footnote stroke but no detector footnote candidate",
+    "ViT": "page header rule outside footnote-only recovery scope"
+  }
+}

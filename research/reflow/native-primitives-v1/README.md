@@ -1,0 +1,15 @@
+# Typed divider and identifier test: coverage remains inadequate
+
+The frozen code in commit d3e53ee32d0c531223ce58a23dfa3bf691d56c94 was already executed when work resumed. Existing PDFs, detector outputs and result images were inspected; nothing was downloaded, inferred or composed again for recovery. All frozen source hashes still match.
+
+The identifier schema now admits compact section-number, Roman and symbolic tags, with the same external-formula-core test. On the seen Adiabatic page it supplies all nine formal labels, (2.4)–(2.12), to accepted formula-parent links. Visual inspection finds their original expressions and labels retained together; several parents also contain surrounding prose and become too small at390pixels. Only2/8 complete prose units remain word-reflow candidates. This is candidate-schema recovery, not a new generalization result or a readable-page pass.
+
+The typed footnote-divider rule did not recover the seen Swin separator. It requires a detected region whose label is exactly footnote, but the actual detector supplies no footnote candidate. The native black horizontal stroke exists and its1,137visible pixels are covered by the physical paint envelope. They remain unseeded semantically, so the full page is retained and complete-body reflow stays0/7. The four positive/negative primitive controls were insufficient to predict this real missing-candidate case.
+
+The new ViT v2 page3 also falls back completely:4,752visible pixels in an independent page-header rule have no semantic seed. The frozen primitive rule covers footnote context only. Complete prose reflow is0/5. The original k2 output visibly wraps most prose, although one paragraph begins with a small retained multi-line fragment before larger wrapped text, and the two-panel architecture figure is rearranged. We do not claim character-exact baseline fidelity or full5/5 wrapping.
+
+All three final outputs have zero missing or duplicated source ink. Swin and ViT retain the original page precisely because the semantic guard refuses them; those refusals stay in the denominator and are failures for mobile reflow. Aggregate body candidate coverage for the only new source is0/5. Original RGB conservation is not semantic association or readable layout.
+
+Composition times were2.56,2.55 and2.41seconds, respectively. The external process-group monitor recorded335,452KiB peak; no page exceeded the single-CPU/1-GiB/60-second budget. Visual checking was self-audit, using saved source references and results. No app or Android validation ran.
+
+The next falsifiable hypothesis is broader than asking a detector to name a footnote: a complete final-ink component supported by one exact native line stroke may be retained as an unclassified graphic object if its source position has an unambiguous order slot. It must not claim neighbouring text or be counted as prose. Broad fills remain ineligible, and ambiguous graphic/text overlap still refuses. This requires independent controls and a new source; these three pages are now regressions. The source of semantic ownership and the source of drawing evidence remain separate.
