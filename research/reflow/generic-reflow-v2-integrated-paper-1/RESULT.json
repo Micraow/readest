@@ -1,0 +1,322 @@
+{
+  "candidate": "integrated-paper-1",
+  "new_holdouts_opened": 0,
+  "blind_result_unchanged": "0/2",
+  "cold_whole_requests_complete": 1,
+  "pages": [
+    {
+      "diagnostic": "H5",
+      "seen_page": true,
+      "cost": {
+        "wall_seconds": 41.72755239199978,
+        "request_family_cpu_seconds": 36.931548,
+        "supervisor_cpu_seconds": 3.3144883039999997,
+        "total_accounted_cpu_seconds": 40.246036304,
+        "peak_sampled_family_plus_supervisor_rss_mib": 513.33203125,
+        "exit_code": 0,
+        "failure": null,
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "load_before": [
+          6.33056640625,
+          5.7197265625,
+          4.66162109375
+        ],
+        "load_after": [
+          7.0966796875,
+          5.96630859375,
+          4.78759765625
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "execution_complete": true,
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 16.253764147000766,
+          "cpu_seconds": 14.758447994
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 7.62462515900188,
+          "cpu_seconds": 6.072510106999999
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.39314479300082894,
+          "cpu_seconds": 0.38420010000000104
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.29839641299986397,
+          "cpu_seconds": 0.28859535299999806
+        },
+        {
+          "name": "target_local_images",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 12.311621626999113,
+          "cpu_seconds": 11.065765093
+        },
+        {
+          "name": "update_local_images",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.5631613139994442,
+          "cpu_seconds": 0.549860178000003
+        },
+        {
+          "name": "vector_components",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.31942755399722955,
+          "cpu_seconds": 0.30850820300000237
+        },
+        {
+          "name": "flow_refinements",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 1.0422897019998345,
+          "cpu_seconds": 0.8586652619999953
+        },
+        {
+          "name": "formula_hierarchy",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.716834970000491,
+          "cpu_seconds": 0.6986620800000054
+        },
+        {
+          "name": "initial_render_28_dpr2",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 1.9086695709993364,
+          "cpu_seconds": 1.6995639649999958
+        },
+        {
+          "name": "research_html",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.11315200099852518,
+          "cpu_seconds": 0.11133719299999711
+        }
+      ],
+      "native_phases": [
+        {
+          "name": "isolated_cold_model_process_import_load_raster_inference",
+          "wall_seconds": 5.136364971000148
+        },
+        {
+          "name": "native_inventory_stable_ownership",
+          "wall_seconds": 4.935520259998157
+        },
+        {
+          "name": "graphic_printed_paint_and_text_closure",
+          "wall_seconds": 0.3600821569998516
+        },
+        {
+          "name": "cross_object_support_closure",
+          "wall_seconds": 1.3253970459991251
+        },
+        {
+          "name": "verified_weak_region_priors",
+          "wall_seconds": 0.29665900300096837
+        },
+        {
+          "name": "native_fraction_structure",
+          "wall_seconds": 0.28330216399990604
+        },
+        {
+          "name": "direct_native_baseline_evidence",
+          "wall_seconds": 0.36976330900142784
+        },
+        {
+          "name": "original_position_native_ownership_replay",
+          "wall_seconds": 0.9080606080024154
+        },
+        {
+          "name": "region_column_line_tree",
+          "wall_seconds": 0.11362413199822186
+        },
+        {
+          "name": "native_local_batch_render_encode",
+          "wall_seconds": 0.8181631100014783
+        },
+        {
+          "name": "paragraph_inline_bundle_reader",
+          "wall_seconds": 0.14943169799880707
+        },
+        {
+          "name": "main_flow_and_float_relations",
+          "wall_seconds": 0.07219417099986458
+        },
+        {
+          "name": "flow_relation_reader_rebuild",
+          "wall_seconds": 0.25134463799986406
+        }
+      ],
+      "source_replay_exact": true,
+      "source_support_failed_units": 0,
+      "source_unit_bijection": true,
+      "native_units": 316,
+      "paragraphs": 9,
+      "native_index_conflicts": 0,
+      "reading_acceptance": false
+    },
+    {
+      "diagnostic": "H6",
+      "seen_page": true,
+      "cost": {
+        "wall_seconds": 60.05582187500113,
+        "request_family_cpu_seconds": 55.498177999999996,
+        "supervisor_cpu_seconds": 3.675415979,
+        "total_accounted_cpu_seconds": 59.173593978999996,
+        "peak_sampled_family_plus_supervisor_rss_mib": 541.14453125,
+        "exit_code": -9,
+        "failure": "BUDGET_WALL",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "load_before": [
+          7.0966796875,
+          5.96630859375,
+          4.78759765625
+        ],
+        "load_after": [
+          8.16552734375,
+          6.427734375,
+          5.0185546875
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "execution_complete": false,
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 33.95387395999933,
+          "cpu_seconds": 31.498242841
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 7.815726875000109,
+          "cpu_seconds": 7.051342678999998
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.7506035440019332,
+          "cpu_seconds": 0.7356680369999964
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 1.1041561550009646,
+          "cpu_seconds": 0.9706029829999991
+        },
+        {
+          "name": "target_local_images",
+          "status": "running"
+        }
+      ],
+      "native_phases": [
+        {
+          "name": "isolated_cold_model_process_import_load_raster_inference",
+          "wall_seconds": 5.093882276996737
+        },
+        {
+          "name": "native_inventory_stable_ownership",
+          "wall_seconds": 8.516102402001707
+        },
+        {
+          "name": "graphic_printed_paint_and_text_closure",
+          "wall_seconds": 1.5273036810031044
+        },
+        {
+          "name": "cross_object_support_closure",
+          "wall_seconds": 5.139070175002416
+        },
+        {
+          "name": "verified_weak_region_priors",
+          "wall_seconds": 1.1252372430026298
+        },
+        {
+          "name": "native_fraction_structure",
+          "wall_seconds": 1.5231733440014068
+        },
+        {
+          "name": "direct_native_baseline_evidence",
+          "wall_seconds": 2.2430532459984533
+        },
+        {
+          "name": "original_position_native_ownership_replay",
+          "wall_seconds": 1.5760169409986702
+        },
+        {
+          "name": "region_column_line_tree",
+          "wall_seconds": 0.41847381000116
+        },
+        {
+          "name": "native_local_batch_render_encode",
+          "wall_seconds": 3.7047039110002515
+        },
+        {
+          "name": "paragraph_inline_bundle_reader",
+          "wall_seconds": 0.9034733020016574
+        },
+        {
+          "name": "main_flow_and_float_relations",
+          "wall_seconds": 0.2663585520022025
+        },
+        {
+          "name": "flow_relation_reader_rebuild",
+          "wall_seconds": 0.6961197269993136
+        }
+      ],
+      "source_replay_exact": true,
+      "source_support_failed_units": 0,
+      "source_unit_bijection": true,
+      "native_units": 749,
+      "paragraphs": 16,
+      "native_index_conflicts": 0,
+      "reading_acceptance": false
+    }
+  ],
+  "H5_output_equivalence": {
+    "payload_json_values_exact": true,
+    "all_block_pngs_byte_identical": {
+      "20": true,
+      "28": true
+    },
+    "reference_full_visual_review": "formula-hierarchy candidate 2, all 5 H5 CSS review bands, plus source page",
+    "20px_generation_outside_original_measured_request": true,
+    "browser_verified": false
+  },
+  "new_ci_runs": 0,
+  "browser_verified": false,
+  "text_selection_verified": false,
+  "local_zoom_interaction_verified": false,
+  "universal_budget_proven": false
+}

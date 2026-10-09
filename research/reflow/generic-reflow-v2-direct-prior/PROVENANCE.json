@@ -1,0 +1,28 @@
+{
+  "installed_paddlex_version": "3.7.2",
+  "installed_paddle_version": "3.3.1",
+  "reference_files": {
+    "inference/models/common/vision/processors.py": "e6010780c1221990c989a1ad599b39bc471b96c286c35af2200b9e0552a66063",
+    "inference/models/object_detection/predictor.py": "e7b1421d33c3f78d20e820c92df8c766ad978b8dbaeac8f0fdd1bbc3b1a9581e",
+    "inference/models/object_detection/processors.py": "de2bb4f14f01619435c65df09272d978619c045c915cba465990dc4c32ac3540",
+    "inference/models/runners/paddle_static/runner.py": "943d590638a4fb71e8d8ec6a61b0e913e9a6bc4a6e41fd586d466c7938982aa3"
+  },
+  "reference_license": "Apache-2.0",
+  "model_files": {
+    "inference.pdiparams": {
+      "bytes": 4804904,
+      "sha256": "491c3382d84ca04d2033afbee0c105942ed82fea392bb4a19170646adebe088a"
+    },
+    "inference.json": {
+      "bytes": 339876,
+      "sha256": "ac09e931895d4c442e5379ab3b7e9b583baf288e816ab7675ca519da9eb2a9d7"
+    },
+    "inference.yml": {
+      "bytes": 1579,
+      "sha256": "6f690098c438214c67822239a568f0bc2bbe97a8f02fba93e492d4f2c47523c3"
+    }
+  },
+  "new_model_downloads": 0,
+  "new_package_installs": 0,
+  "private_content_published": false
+}
