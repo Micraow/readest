@@ -68,3 +68,17 @@ semantic certificate. Cold H6 >60 s and earlier blind 0/2 results remain unchang
 Before normal-reader adoption: real mouse/keyboard copy, source-dialog focus,
 selection alignment, CSP/no-network observation, Readest full build and platform
 smoke tests. Do not retry the previously denied browser-launch route to obtain them.
+
+## Repeated-page resource reuse
+
+Decoded images and compiled native paths are retained in a WeakMap keyed by the
+unchanged in-memory page object. H5→H6→H5 tests with the actual prepared pages compile
+each page once and decode 38 unique local image assets total; returning to H5 adds
+zero compilations/decodes. Concurrent requests share one preparation promise, failed
+decodes can retry, and importing a new page object rebuilds its resources. There is
+no disk cache, font-name heuristic, cross-document asset alias or cold-time claim.
+
+Page changes check device canvas budget before replacing current reader/source
+state. Failed imports preflight and decode before committing the new bundle. Runtime
+controls verify that an over-budget H6 switch and an intentional image-decode failure
+leave the existing H5 reader and original PDF link coherent.
