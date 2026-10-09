@@ -1,0 +1,34 @@
+{
+  "native_primitives": [
+    {
+      "case": "horizontal_footnote",
+      "expected": true,
+      "accepted": true
+    },
+    {
+      "case": "white_background",
+      "expected": false,
+      "accepted": false
+    },
+    {
+      "case": "vertical_stroke",
+      "expected": false,
+      "accepted": false
+    },
+    {
+      "case": "line_above_prose",
+      "expected": false,
+      "accepted": false
+    }
+  ],
+  "identifier_schema": {
+    "(2.4)": true,
+    "[A.1]": true,
+    "(iii)": true,
+    "(*)": true,
+    "3": true,
+    "1/N": false,
+    "(x+y)": false,
+    "3.2. Heading": false
+  }
+}

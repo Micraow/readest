@@ -1,0 +1,47 @@
+{
+  "frozen_at_utc": "2026-10-09T00:25:31.755531+00:00",
+  "scope": "Only typed native footnote-divider recovery and general compact formal-identifier schema; all geometry/prose/mask rules inherited unchanged.",
+  "inputs": [
+    {
+      "key": "Adiabatic-v1-p03",
+      "partition": "diagnostic_regression",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/quant-ph/0001106v1",
+      "sha256": "1009e50c14192e7ccce6be613e8857fd762ba4e063fb59b62a8dec16237116ff",
+      "pages": 24
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "diagnostic_regression",
+      "page_1based": 4,
+      "url": "https://arxiv.org/pdf/2103.14030v2",
+      "sha256": "dfdc7631fe2a35bb5892080b9c0eeadc4432d55cf1856f84bc88802efa877a7c",
+      "pages": 14
+    },
+    {
+      "key": "ViT-v2-p03",
+      "url": "https://arxiv.org/pdf/2010.11929v2",
+      "page_1based": 3,
+      "partition": "new_source_validation"
+    }
+  ],
+  "divider_rule": "One nonwhite horizontal native line stroke,length>=5bodyems,width<=.1bodyem. An unseeded final component must lie entirely in its one-pixel-supported stroke envelope, touch no other semantic seed, and have one detected footnote below within2ems with>=half horizontal overlap and no competing region overlap. All other unknown ink still refuses.",
+  "identifier_schema": "Delimited decimal/section-decimal with optional letter prefix/suffix, Roman or symbolic tag; bare integer remains margin-constrained. External glyph-core requirement unchanged.",
+  "stop": "One pass on2seenregressions+1newsource; no post-output rules. Controls do not count as real generalization.",
+  "limits": {
+    "cpu": 1,
+    "memory_bytes": 1073741824,
+    "per_page_seconds": 60,
+    "disk_bytes": 1073741824
+  },
+  "hashes": {
+    "code/masks.py": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+    "code/monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "code/compose.py": "ab06db0b3866fec1edd3c779d3c9ae80f0fdc40375411f0d1a97363709bf1605",
+    "code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "code/detect.py": "81ae1fbc7ae4120df30e5aab8298a3d8004e3da0a9f02b0ff054e29a3b34a12a",
+    "code/roles.py": "261ab798aa667e0e7aa313171f3a318fa945d22d16714acf571e006bad3e299a",
+    "code/controls.py": "afcfaca4cb69a629f867d10b89c448be97bdc53dac2df007a63d184d5c3ec3f9",
+    "code/primitives.py": "75b0d4e571facf1a9d07fd7281e6632e4be02dbeda23ddbf39afd7cd649f38c3"
+  }
+}
