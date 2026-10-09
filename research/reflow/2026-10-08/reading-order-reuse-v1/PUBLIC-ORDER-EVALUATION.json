@@ -1,0 +1,102 @@
+{
+  "rows": [
+    {
+      "key": "RMSNorm-v1-p03",
+      "partition": "new_source_batch",
+      "complete_units": 8,
+      "units_with_single_candidate90pct": 5,
+      "all_unit_pairs": 28,
+      "scored_pairs": 10,
+      "unscorable_pairs": 18,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "BatchNorm-v1-p03",
+      "partition": "new_source_batch",
+      "complete_units": 8,
+      "units_with_single_candidate90pct": 5,
+      "all_unit_pairs": 28,
+      "scored_pairs": 10,
+      "unscorable_pairs": 18,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "DenseNet-v1-p03",
+      "partition": "new_source_batch",
+      "complete_units": 7,
+      "units_with_single_candidate90pct": 7,
+      "all_unit_pairs": 21,
+      "scored_pairs": 21,
+      "unscorable_pairs": 0,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "UNet-v1-p02",
+      "partition": "new_source_batch",
+      "complete_units": 1,
+      "units_with_single_candidate90pct": 1,
+      "all_unit_pairs": 0,
+      "scored_pairs": 0,
+      "unscorable_pairs": 0,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "GAN-v1-p03",
+      "partition": "new_source_batch",
+      "complete_units": 5,
+      "units_with_single_candidate90pct": 4,
+      "all_unit_pairs": 10,
+      "scored_pairs": 6,
+      "unscorable_pairs": 4,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "NISQ-v1-p03",
+      "partition": "new_source_batch",
+      "complete_units": 5,
+      "units_with_single_candidate90pct": 5,
+      "all_unit_pairs": 10,
+      "scored_pairs": 10,
+      "unscorable_pairs": 0,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "mechanism_regression",
+      "complete_units": 7,
+      "units_with_single_candidate90pct": 7,
+      "all_unit_pairs": 21,
+      "scored_pairs": 21,
+      "unscorable_pairs": 0,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    },
+    {
+      "key": "ViT-v2-p03",
+      "partition": "mechanism_regression",
+      "complete_units": 5,
+      "units_with_single_candidate90pct": 5,
+      "all_unit_pairs": 10,
+      "scored_pairs": 10,
+      "unscorable_pairs": 0,
+      "geometric_pair_errors": 0,
+      "learned_pair_errors": 0
+    }
+  ],
+  "new_source_total": {
+    "complete_units": 34,
+    "units_with_single_candidate90pct": 27,
+    "all_unit_pairs": 97,
+    "scored_pairs": 57,
+    "unscorable_pairs": 40,
+    "geometric_pair_errors": 0,
+    "learned_pair_errors": 0
+  },
+  "scope": "Conditional proposal-order comparison. Missing/split/coalesced candidates are unscorable, not correct. Reference source annotations preceded composition; quality protocol fixed after inference, before inspecting predictions. No training/test-overlap guarantee for upstream pretrained model."
+}
