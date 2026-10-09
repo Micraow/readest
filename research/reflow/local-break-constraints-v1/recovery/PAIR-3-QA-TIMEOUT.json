@@ -1,0 +1,6 @@
+{
+  "scope": "Offline CSS screenshot QA, not engine execution",
+  "D3-P1_390_20": "WeasyPrint/PDF raster screenshot exceeded60sec; timeout retained. EngineAB/E/CD finished normally.",
+  "comparison": "The old pre-reset screenshot existed; do not claim it persisted or the restored screenshot succeeded.",
+  "next_QA": "Use source-atlas blits at independent CSS-layout coordinates, explicitly a QA visualization rather than browser screenshot. Preserve original pipeline and timeout."
+}

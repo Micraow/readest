@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-09T04:01:45.626044+00:00",
+  "effective": "Subsequent recovery pairs and QA only; completed runtimes retained",
+  "one_allowed_cpu": 3,
+  "reason": "Old harness picks minimum allowed CPU0; observed shared CPU0/1 continuously busy while CPU3 idle in a short /proc/stat sample. Isolate one available logical CPU, do not add threads.",
+  "limitations": "Logical affinity does not establish a guaranteed CPU quota. Resource-condition change is reported separately; algorithm, inputs and output settings stay frozen."
+}

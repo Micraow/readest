@@ -1,0 +1,10 @@
+{
+  "validation_branch": "validate/hybrid-reader-chromium-20261008",
+  "head": "892e08ba765767d97d1409c39c30d0b9dd3e2bd5",
+  "workflow_id": 379180272,
+  "workflow_path": ".github/workflows/validate-native-source-reader.yml",
+  "one_dispatch_attempt": true,
+  "http_status": 422,
+  "message": "Actions has been disabled for this repository.",
+  "conclusion": "Browser validation blocked by service; no new browser acceptance, no settings change, no alternate browser route."
+}

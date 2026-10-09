@@ -1,0 +1,16 @@
+"""QA visualization from CSS box layout and source atlas crops. NOT a browser screenshot."""
+import pathlib,json,re,base64,sys,time,os
+from PIL import Image
+W=pathlib.Path(__file__).resolve().parents[1];B=W/'local-break-constraints-v1';key,family,arm=sys.argv[1:4];width,font=map(int,sys.argv[4:6]);O=B/'evidence'/(key+'-'+('E' if family=='E' else arm));O.mkdir(exist_ok=True);os.environ['XDG_CACHE_HOME']=str(W/'readest-recovery/font-cache');os.sched_setaffinity(0,{min(os.sched_getaffinity(0))})
+from weasyprint import HTML
+start=time.monotonic();root=B/'evidence'/(key.split('-')[0]+'-assets');p=B/'output'/(key+'-'+family)/(arm+f'-{width}-{font}.html');text=p.read_text();text=re.sub(r'asset://([a-f0-9]+)\.png',lambda m:'data:image/png;base64,'+base64.b64encode((root/(m.group(1)+'.png')).read_bytes()).decode(),text);text=re.sub(r'<script[^>]*>[\s\S]*?</script>','',text);text=re.sub(r'<dialog[\s\S]*?</dialog>','',text)
+css=f'@page{{size:{width}px 12000px;margin:0}}body{{--reader-width:{width}px!important;--reader-font:{font}px!important;background:white}}.shell{{width:{width}px;max-width:none;min-height:0}}header,.notice,dialog{{display:none}}.object,.wide-local{{overflow:hidden}}';text=text.replace('</style>','</style><style>'+css+'</style>',1);doc=HTML(string=text).render();positions=[]
+for pg,page in enumerate(doc.pages):
+ for box in page._page_box.descendants():
+  el=getattr(box,'element',None)
+  if el is not None and el.get('data-unit') and type(box).__name__ in {'InlineBlockBox','BlockBox'}:positions.append({'id':el.get('data-unit'),'page':pg,'x':box.position_x,'y':box.position_y+pg*12000,'width':box.width,'height':box.height,'font_size':box.style['font_size']})
+layout_seconds=time.monotonic()-start;(O/f'{width}-{font}-qa-positions.json').write_text(json.dumps({'scope':'CSS box geometry only; not browser or final raster paint','width':width,'font':font,'units':positions,'layout_seconds':layout_seconds},indent=2));data=json.loads((B/'output'/(key+'-'+family)/(arm+'-atoms.json')).read_text());atoms={key+'-'+a['id']:a for a in data['atoms']};atlas=Image.open(B/'output'/(key+'-'+family)/(arm+'-atlas.png')).convert('RGBA');height=int(max([p['y']+p['height'] for p in positions]+[1]))+20;canvas=Image.new('RGBA',(width,height),'white')
+for position in positions:
+ a=atoms[position['id']];x,y,w,h=a['atlas_box'];source=atlas.crop((x,y,x+w,y+h));scale=position['font_size']/(4*a['font_reference']);patch=source.resize((max(1,round(w*scale)),max(1,round(h*scale))),Image.Resampling.LANCZOS);destx=round(position['x']+a['left_em']*position['font_size']);desty=round(position['y']);left=max(destx,14);right=min(destx+patch.width,width-14)
+ if right>left:canvas.alpha_composite(patch.crop((left-destx,0,right-destx,patch.height)),(left,desty))
+canvas.convert('RGB').save(O/f'{width}-{font}-qa-blit.png');r={'scope':'Source crop blit at WeasyPrint layout coordinates; UI labels/borders omitted, initial horizontal viewport clipping only. Not a browser screenshot or a latency claim for production.','units':len(positions),'seconds':time.monotonic()-start,'layout_seconds':layout_seconds,'image_size':[width,height]};(O/f'{width}-{font}-qa-blit.json').write_text(json.dumps(r,indent=2));print(json.dumps(r))

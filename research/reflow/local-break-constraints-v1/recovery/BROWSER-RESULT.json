@@ -1,0 +1,77 @@
+{
+  "scope": "Original controls and sandboxed Chromium only; no real-paper semantic or Android acceptance",
+  "status": "passed",
+  "run": "https://github.com/Micraow/readest/actions/runs/37882285419",
+  "head": "892e08ba765767d97d1409c39c30d0b9dd3e2bd5",
+  "checks": [
+    "shared textures decode and every source atom is linked",
+    "all six width/font settings change real line wrapping",
+    "equation subject and number share a row without source whitespace",
+    "source mapping, zoom, escape and focus remain stable",
+    "mobile viewport avoids page-wide scrolling and supports local objects"
+  ],
+  "layouts": [
+    {
+      "width": 320,
+      "font": 20,
+      "lines": 7,
+      "docWidth": 600,
+      "viewport": 600,
+      "fontSizes": [
+        "20px"
+      ]
+    },
+    {
+      "width": 320,
+      "font": 28,
+      "lines": 11,
+      "docWidth": 600,
+      "viewport": 600,
+      "fontSizes": [
+        "28px"
+      ]
+    },
+    {
+      "width": 390,
+      "font": 20,
+      "lines": 6,
+      "docWidth": 600,
+      "viewport": 600,
+      "fontSizes": [
+        "20px"
+      ]
+    },
+    {
+      "width": 390,
+      "font": 28,
+      "lines": 8,
+      "docWidth": 600,
+      "viewport": 600,
+      "fontSizes": [
+        "28px"
+      ]
+    },
+    {
+      "width": 430,
+      "font": 20,
+      "lines": 5,
+      "docWidth": 600,
+      "viewport": 600,
+      "fontSizes": [
+        "20px"
+      ]
+    },
+    {
+      "width": 430,
+      "font": 28,
+      "lines": 7,
+      "docWidth": 600,
+      "viewport": 600,
+      "fontSizes": [
+        "28px"
+      ]
+    }
+  ],
+  "chromium": "148.0.7778.96",
+  "old_422_block": "Resolved by user. Exactly one retry dispatch used."
+}

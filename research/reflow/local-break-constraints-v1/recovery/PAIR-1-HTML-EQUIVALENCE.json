@@ -1,0 +1,22 @@
+[
+  {
+    "key": "D1-P1",
+    "interactive_sha256": {
+      "A": "04c118efd07bd2b8d81e54f0d66c66078dc939b02b53ae4049285cf4e25c5c94",
+      "B": "a248959e69259c05514b9ce415ec05861600267e3d9510e8a092d8ebb601a103",
+      "E": "6df753fc94729fffb9dc5199e88ea5e07632cbf6c6f808cfe32ed3571493b435"
+    },
+    "A_equals_E": false,
+    "A_equals_B": false
+  },
+  {
+    "key": "D1-P2",
+    "interactive_sha256": {
+      "A": "f1fa618134d6fa7b972db70917a7c4c0a26d5b6e1c8ab75efb9c8c5f087e97e8",
+      "B": "f1fa618134d6fa7b972db70917a7c4c0a26d5b6e1c8ab75efb9c8c5f087e97e8",
+      "E": "f1fa618134d6fa7b972db70917a7c4c0a26d5b6e1c8ab75efb9c8c5f087e97e8"
+    },
+    "A_equals_E": true,
+    "A_equals_B": true
+  }
+]
