@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "key": "ConvNeXt-v2-p03",
+      "url": "https://arxiv.org/pdf/2201.03545v2",
+      "page_1based": 3,
+      "partition": "seen_mechanism_regression",
+      "sha256": "1fde2340370d0eb8045bda97fc94da7adb2a7abe8e6ded1a473d22475b945e1a"
+    },
+    {
+      "key": "MobileNet-v1-p03",
+      "url": "https://arxiv.org/pdf/1704.04861v1",
+      "page_1based": 3,
+      "partition": "new_page_validation",
+      "sha256": "9fd87b02ecc96c1ecf2b8c2166faf969a2acb187ab3e1e9333b26d226387ff55",
+      "bytes": 941241,
+      "pages": 9
+    }
+  ]
+}

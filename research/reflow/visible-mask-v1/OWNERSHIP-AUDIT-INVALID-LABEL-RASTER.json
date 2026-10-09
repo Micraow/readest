@@ -1,0 +1,27 @@
+{
+  "scope": "Deterministic post-run oracle verification on the same three accepted original fixtures. No rule changes, new training or generalization claim. Negative fixtures retain their prior refusal results.",
+  "algorithm_sha256": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+  "rows": [
+    {
+      "case": "wide_white_background",
+      "oracle_visible_ink_disagreement": 139,
+      "wrong_semantic_owner_pixels": 139,
+      "hidden_ink_resurrected": 0,
+      "refused": false
+    },
+    {
+      "case": "white_overpaint",
+      "oracle_visible_ink_disagreement": 139,
+      "wrong_semantic_owner_pixels": 139,
+      "hidden_ink_resurrected": 0,
+      "refused": false
+    },
+    {
+      "case": "late_separate_text",
+      "oracle_visible_ink_disagreement": 463,
+      "wrong_semantic_owner_pixels": 463,
+      "hidden_ink_resurrected": 0,
+      "refused": false
+    }
+  ]
+}

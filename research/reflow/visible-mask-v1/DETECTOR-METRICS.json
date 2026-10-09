@@ -1,0 +1,10 @@
+{
+  "load_seconds": 3.5388847809954314,
+  "pages": [
+    {
+      "key": "MobileNet-v1-p03",
+      "inference_seconds": 0.49367582699051127,
+      "peak_rss_kib": 579436
+    }
+  ]
+}

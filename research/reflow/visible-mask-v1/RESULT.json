@@ -1,0 +1,63 @@
+{
+  "rows": [
+    {
+      "key": "ConvNeXt-v2-p03",
+      "partition": "seen_mechanism_regression",
+      "source_ink": 1034375,
+      "uncovered_ink": 0,
+      "duplicate_ink": 0,
+      "mask": {
+        "visible_ink": 1034375,
+        "components": 3891,
+        "unseeded_components": 0,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 0,
+        "whole_page_refusal": false,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "complete_prose_denominator": 4,
+      "complete_prose_candidate": 2,
+      "confirmed_visually_wrapped_complete_units": 2,
+      "short_unit_insufficient_wrap_evidence": 0,
+      "body_glyph_denominator": 3208,
+      "candidate_body_glyphs": 2495,
+      "seconds": 2.727702528005466,
+      "process_peak_rss_kib": 300064
+    },
+    {
+      "key": "MobileNet-v1-p03",
+      "partition": "new_page_validation",
+      "source_ink": 1391822,
+      "uncovered_ink": 0,
+      "duplicate_ink": 0,
+      "mask": {
+        "visible_ink": 1391822,
+        "components": 2969,
+        "unseeded_components": 0,
+        "ambiguous_components": 0,
+        "unassigned_visible_ink": 0,
+        "whole_page_refusal": false,
+        "changed_rgb_pixels_after_guard": 0
+      },
+      "complete_prose_denominator": 12,
+      "complete_prose_candidate": 10,
+      "confirmed_visually_wrapped_complete_units": 9,
+      "short_unit_insufficient_wrap_evidence": 1,
+      "body_glyph_denominator": 2615,
+      "candidate_body_glyphs": 2418,
+      "seconds": 2.7790833829931216,
+      "process_peak_rss_kib": 307704
+    }
+  ],
+  "algorithm_hashes_unchanged": true,
+  "MobileNet_formula_role_audit": {
+    "formal_labels": 3,
+    "correct_formal_label_links": 2,
+    "missed_formal_label": 1,
+    "internal_operands_falsely_typed_as_labels": 2,
+    "accepted_formula_number_role_precision": "2/4",
+    "formal_label_recall": "2/3",
+    "observed_visual_displacement_from_these_false_roles": false
+  },
+  "warning": "Coverage and oracle-seed fixture passes do not certify true semantic parents. One new page is limited validation, not corpus/product acceptance."
+}
