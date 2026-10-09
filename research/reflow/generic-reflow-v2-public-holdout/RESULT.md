@@ -22,3 +22,12 @@ green. A later generic fix declines interval proposals without native glyphs and
 retains the original paint owner. Five authored regression controls reproduce the
 empty-collection assumptions; they are separate from the failed holdout. The valid
 fraction controls remain in the suite. Real browser acceptance is still open.
+
+## Separate post-failure diagnostic
+
+The repaired fraction-closure function was applied once to the retained partial
+plan, explicitly as **seen-data diagnosis**, not a cold request. It considered
+seven geometric bar candidates, declined the one glyph-free proposal, and retained
+all three glyph-free units. Source glyph multiset and paint-ID set are unchanged;
+no new groups, native renders, model runs or reader output were produced. The
+original failed request and **0/1** result remain immutable.

@@ -54,7 +54,23 @@
       "wall_seconds": 0.545074007997755
     }
   ],
-  "post_failure_fix_scope": "A later generic guard declines glyph-free interval proposals and retains original paints; only authored controls are run. H7 is not retried or reclassified.",
+  "post_failure_fix_scope": "A later generic guard declines glyph-free interval proposals and retains original paints. Authored controls pass; a separate seen-data fraction-stage diagnostic reuses the failed run partial plan without native rendering or model inference. No cold rerun or reclassification.",
   "browser_verified": false,
-  "source_stderr_sha256": "133111c047758529a0e9759bcaae66229f49dcb24d3380c7331bd0893717ddda"
+  "source_stderr_sha256": "133111c047758529a0e9759bcaae66229f49dcb24d3380c7331bd0893717ddda",
+  "seen_fraction_diagnostic": {
+    "source_commit": "eb73a3bbf118d94bca12506492d30bcb007835b8",
+    "scope": "post-failure seen-data diagnostic of fraction closure only",
+    "reuses_first_run_partial_plan": true,
+    "full_cold_request": false,
+    "first_holdout_outcome_unchanged": "fail 0/1",
+    "wall_seconds": 3.531863357005932,
+    "candidate_bars": 7,
+    "new_groups": 0,
+    "glyph_multiset_unchanged": true,
+    "paint_id_set_unchanged": true,
+    "glyph_free_units_retained": 3,
+    "declined_empty_glyph_proposals": 1,
+    "browser_verified": false,
+    "reading_result_produced": false
+  }
 }
