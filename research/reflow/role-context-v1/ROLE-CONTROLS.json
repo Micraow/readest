@@ -1,0 +1,32 @@
+[
+  {
+    "case": "internal numerator1",
+    "expected": false,
+    "observed": false
+  },
+  {
+    "case": "parenthesized internal operand",
+    "expected": false,
+    "observed": false
+  },
+  {
+    "case": "bare distant no column",
+    "expected": false,
+    "observed": false
+  },
+  {
+    "case": "short near-core number",
+    "expected": false,
+    "observed": false
+  },
+  {
+    "case": "external parentheses",
+    "expected": true,
+    "observed": true
+  },
+  {
+    "case": "external bare margin",
+    "expected": true,
+    "observed": true
+  }
+]

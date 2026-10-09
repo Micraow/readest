@@ -1,0 +1,58 @@
+{
+  "frozen_at_utc": "2026-10-09T00:11:12.200631+00:00",
+  "scope": "Formal-label role and conservative native prose recovery; mask, columns, engine and renderer unchanged. No training.",
+  "inputs": [
+    {
+      "key": "ConvNeXt-v2-p03",
+      "partition": "diagnostic_regression",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/2201.03545v2"
+    },
+    {
+      "key": "MobileNet-v1-p03",
+      "partition": "diagnostic_regression",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/1704.04861v1"
+    },
+    {
+      "key": "Adiabatic-v1-p03",
+      "partition": "new_source_validation",
+      "page_1based": 3,
+      "url": "https://arxiv.org/pdf/quant-ph/0001106v1"
+    },
+    {
+      "key": "Swin-v2-p04",
+      "partition": "new_source_validation",
+      "page_1based": 4,
+      "url": "https://arxiv.org/pdf/2103.14030v2"
+    }
+  ],
+  "formal_label": "Outside glyph-derived formula core. Parenthesized/bracketed label:gap>=.5em. Bare numeric:gap>=1.5em and within2em of same-column prose edge. Existing same-column/alignment/uniqueness constraints remain.",
+  "prose_promotion": "Only text+unknown-native-parent; >=90% glyphs intersect text detection score>=.8; font10th/90thpercentiles within.75..1.3x body; >=6 prose words; no detached display-like mathematical line. All conditions fixed before new-page downloads.",
+  "mixed_math_refusal": "A native line with>=6glyphs, <=2words(length>=3), >=2operators or>.4math-font fraction, no overlapping prose line in same region: protect mixed text region. No generated math or source-paper exceptions.",
+  "negative_controls": [
+    "internal numerator1",
+    "parenthesized internal operand",
+    "bare distant number without column evidence",
+    "short near-core number"
+  ],
+  "positive_controls": [
+    "external parenthesized label",
+    "external bare label at column margin"
+  ],
+  "stop": "Exactly1 invocation each on2oldregressions and2new-source pages. No page-informed changes; record true source ink, formal-label precision/recall, reading order, true body reflow and refusals separately.",
+  "limits": {
+    "cpu": 1,
+    "memory_bytes": 1073741824,
+    "page_seconds": 60,
+    "additional_disk_bytes": 1073741824
+  },
+  "hashes": {
+    "code/masks.py": "0a865fed9092a5b958783d736e8a3679c601cecc0461f0d693fd86c3f7631723",
+    "code/monitor.py": "0326b26a303f71192ecc016f34883b0e56f1f657101805df5041c32b7da5ee49",
+    "code/compose.py": "7b02ab77dd5b40ded614c9ee5e88fc4845f660b0c007232867df1f9886477544",
+    "code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "code/detect.py": "81ae1fbc7ae4120df30e5aab8298a3d8004e3da0a9f02b0ff054e29a3b34a12a",
+    "code/roles.py": "9c8a1b1f3efc33b656e8af39933987bb0edaa58c23b69bf2b65b602dfb61ed71"
+  }
+}
