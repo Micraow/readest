@@ -1,0 +1,7 @@
+# Indexed native bridge, decision-equivalent optimization
+
+The old bridge visits every source glyph for every native paint event. This candidate changes candidate retrieval only. Source-origin tolerance, reverse uniqueness, ownership, unsupported-mode checks, native-paint order and all fallback reasons remain unchanged. Output decision JSON must be byte-identical to the old implementation for the same input. No Unicode is used to draw or infer missing text.
+
+Cells have the existing origin tolerance width. Query two cells in each direction, including one safety cell around the mathematical one-cell neighborhood for floating-division boundaries; apply the exact original absolute-difference tests afterwards. Preserve original source glyph insertion order. Nonfinite coordinates remain unmatched. Extremely large cell magnitudes use the original exhaustive candidate path, avoiding unsafe float-to-cell assumptions. Zero tolerance uses an exact coordinate key. These are numeric indexing guards, not font/document heuristics.
+
+Before real inputs: authored exact-boundary/adjacent-float, negative, duplicate, seeded perturbation, zero-tolerance, nonfinite and extreme-coordinate checks. After that, compare full results on already-seen D4/H5/H6. Paired A-B-B-A process measurements include input load, bridge, JSON write and Python startup on the same CPU. They are cached bridge stages, not a whole cold page or a new blind evaluation. A mismatch rejects the optimization.

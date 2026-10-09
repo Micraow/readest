@@ -1,0 +1,8 @@
+"""Full decision equivalence and paired fresh-process timings on seen inputs."""
+import argparse,hashlib,json,os,pathlib,resource,subprocess,sys,time
+p=argparse.ArgumentParser();p.add_argument('plan');p.add_argument('events');p.add_argument('out');a=p.parse_args();out=pathlib.Path(a.out);out.mkdir(parents=True,exist_ok=False);root=pathlib.Path(__file__).resolve().parents[2];old=root/'generic-reflow-v2-paragraph-vector/code/bridge.py';new=pathlib.Path(__file__).with_name('bridge.py');rows=[];cpu=min(os.sched_getaffinity(0));os.sched_setaffinity(0,{cpu})
+for i,kind in enumerate(['old','indexed','indexed','old']):
+ target=out/f'{i}-{kind}-bridge-private.json';start=time.perf_counter();before=resource.getrusage(resource.RUSAGE_CHILDREN);load=os.getloadavg()
+ with (out/f'{i}.stdout').open('w') as so,(out/f'{i}.stderr').open('w') as se:subprocess.run([sys.executable,str(old if kind=='old' else new),a.plan,a.events,str(target)],check=True,stdout=so,stderr=se)
+ after=resource.getrusage(resource.RUSAGE_CHILDREN);rows.append({'kind':kind,'wall_seconds':time.perf_counter()-start,'cpu_seconds':after.ru_utime+after.ru_stime-before.ru_utime-before.ru_stime,'output_sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'load_before':list(load),'load_after':list(os.getloadavg())})
+result={'full_json_byte_identical':len({r['output_sha256'] for r in rows})==1,'pairs':rows,'cpu_affinity':[cpu],'scope':'seen-page cached bridge stage including fresh process, input parsing and output encoding','whole_cold_page':False};(out/'result.json').write_text(json.dumps(result,indent=2));print(json.dumps(result));assert result['full_json_byte_identical']

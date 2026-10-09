@@ -1,0 +1,230 @@
+{
+  "authored_test_methods_passed": 6,
+  "comparison_order": "A-B-B-A",
+  "whole_cold_page_measured": false,
+  "source_decision_outputs_byte_identical_all_pages": true,
+  "seen_pages": {
+    "D4": {
+      "full_json_byte_identical": true,
+      "pairs": [
+        {
+          "kind": "old",
+          "wall_seconds": 3.8097501320007723,
+          "cpu_seconds": 3.6098559999999997,
+          "output_sha256": "2230d7f36fba885603d8e4d2e2b005de1c15590360f915c19307958727adc980",
+          "load_before": [
+            4.44775390625,
+            3.5859375,
+            4.96484375
+          ],
+          "load_after": [
+            4.44775390625,
+            3.5859375,
+            4.96484375
+          ]
+        },
+        {
+          "kind": "indexed",
+          "wall_seconds": 1.5487150640001346,
+          "cpu_seconds": 1.4349870000000002,
+          "output_sha256": "2230d7f36fba885603d8e4d2e2b005de1c15590360f915c19307958727adc980",
+          "load_before": [
+            4.44775390625,
+            3.5859375,
+            4.96484375
+          ],
+          "load_after": [
+            5.052734375,
+            3.72607421875,
+            5.0029296875
+          ]
+        },
+        {
+          "kind": "indexed",
+          "wall_seconds": 1.2052142569991702,
+          "cpu_seconds": 1.1293389999999999,
+          "output_sha256": "2230d7f36fba885603d8e4d2e2b005de1c15590360f915c19307958727adc980",
+          "load_before": [
+            5.052734375,
+            3.72607421875,
+            5.0029296875
+          ],
+          "load_after": [
+            5.052734375,
+            3.72607421875,
+            5.0029296875
+          ]
+        },
+        {
+          "kind": "old",
+          "wall_seconds": 3.716876302001765,
+          "cpu_seconds": 3.4065629999999985,
+          "output_sha256": "2230d7f36fba885603d8e4d2e2b005de1c15590360f915c19307958727adc980",
+          "load_before": [
+            5.052734375,
+            3.72607421875,
+            5.0029296875
+          ],
+          "load_after": [
+            5.76953125,
+            3.89697265625,
+            5.05126953125
+          ]
+        }
+      ],
+      "cpu_affinity": [
+        0
+      ],
+      "scope": "seen-page cached bridge stage including fresh process, input parsing and output encoding",
+      "whole_cold_page": false
+    },
+    "H5": {
+      "full_json_byte_identical": true,
+      "pairs": [
+        {
+          "kind": "old",
+          "wall_seconds": 0.8496553619988845,
+          "cpu_seconds": 0.8230109999999999,
+          "output_sha256": "0d776c68997cdd6640882b4c3029a2368b5f37a9c6df0f7102cc4d5574d22d23",
+          "load_before": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ],
+          "load_after": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ]
+        },
+        {
+          "kind": "indexed",
+          "wall_seconds": 0.38044591400102945,
+          "cpu_seconds": 0.3708910000000001,
+          "output_sha256": "0d776c68997cdd6640882b4c3029a2368b5f37a9c6df0f7102cc4d5574d22d23",
+          "load_before": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ],
+          "load_after": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ]
+        },
+        {
+          "kind": "indexed",
+          "wall_seconds": 0.40944349200071883,
+          "cpu_seconds": 0.398443,
+          "output_sha256": "0d776c68997cdd6640882b4c3029a2368b5f37a9c6df0f7102cc4d5574d22d23",
+          "load_before": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ],
+          "load_after": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ]
+        },
+        {
+          "kind": "old",
+          "wall_seconds": 0.769894736000424,
+          "cpu_seconds": 0.7451789999999998,
+          "output_sha256": "0d776c68997cdd6640882b4c3029a2368b5f37a9c6df0f7102cc4d5574d22d23",
+          "load_before": [
+            4.13818359375,
+            3.51123046875,
+            4.9482421875
+          ],
+          "load_after": [
+            4.44775390625,
+            3.5859375,
+            4.96484375
+          ]
+        }
+      ],
+      "cpu_affinity": [
+        0
+      ],
+      "scope": "seen-page cached bridge stage including fresh process, input parsing and output encoding",
+      "whole_cold_page": false
+    },
+    "H6": {
+      "full_json_byte_identical": true,
+      "pairs": [
+        {
+          "kind": "old",
+          "wall_seconds": 15.096553094001138,
+          "cpu_seconds": 11.451852,
+          "output_sha256": "508353b65269cc18dd131de75b42215be91eb88007d6ad2afe23473184b14e29",
+          "load_before": [
+            2.57421875,
+            3.09521484375,
+            4.95361328125
+          ],
+          "load_after": [
+            3.96484375,
+            3.3828125,
+            5.0185546875
+          ]
+        },
+        {
+          "kind": "indexed",
+          "wall_seconds": 3.200957796001603,
+          "cpu_seconds": 2.6894160000000005,
+          "output_sha256": "508353b65269cc18dd131de75b42215be91eb88007d6ad2afe23473184b14e29",
+          "load_before": [
+            3.96484375,
+            3.3828125,
+            5.0185546875
+          ],
+          "load_after": [
+            3.96484375,
+            3.3828125,
+            5.0185546875
+          ]
+        },
+        {
+          "kind": "indexed",
+          "wall_seconds": 0.9266644780000206,
+          "cpu_seconds": 0.8823509999999994,
+          "output_sha256": "508353b65269cc18dd131de75b42215be91eb88007d6ad2afe23473184b14e29",
+          "load_before": [
+            3.96484375,
+            3.3828125,
+            5.0185546875
+          ],
+          "load_after": [
+            3.96484375,
+            3.3828125,
+            5.0185546875
+          ]
+        },
+        {
+          "kind": "old",
+          "wall_seconds": 4.560919372997887,
+          "cpu_seconds": 4.343393000000002,
+          "output_sha256": "508353b65269cc18dd131de75b42215be91eb88007d6ad2afe23473184b14e29",
+          "load_before": [
+            3.96484375,
+            3.3828125,
+            5.0185546875
+          ],
+          "load_after": [
+            3.9677734375,
+            3.39306640625,
+            5.0126953125
+          ]
+        }
+      ],
+      "cpu_affinity": [
+        0
+      ],
+      "scope": "seen-page cached bridge stage including fresh process, input parsing and output encoding",
+      "whole_cold_page": false
+    }
+  }
+}

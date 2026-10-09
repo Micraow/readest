@@ -1,0 +1,9 @@
+# Native baseline evidence, after local-geometry checkpoint
+
+H5/H6 remain seen diagnostic pages. Predecessor 76fe1699 preserves their improved source replay and failed reader/budget results. This layer changes no source glyph, image, native object, support mask, paint order or word membership.
+
+The native source glyph origins are primary baseline evidence. Derived word/line baselines are caches and cannot override contradictory direct origins. For native words, select the dominant baseline cluster among substantial-size glyphs; preserve the actual native values and report stale cache deltas. Equally supported distinct clusters remain ambiguous rather than averaged into a fictional row. Closed mathematical/graphic groups may span several baselines and keep their full geometry; they are not reinterpreted as ordinary words.
+
+Rebuild line/order evidence and only the associated ascent/descent metadata from the corrected word baseline. Source native assets stay byte-identical. For paragraph continuation, repeated source baseline spacing stays in force. An outdent beyond the old fixed allowance can be a first-line return only when a long source line starts at a bounded positive indent and the next line returns to the repeated local column edge with compatible font and normal leading. Unrelated columns, short centered titles, a new positive indent, font changes and large gaps remain negative controls. Each accepted return records geometric evidence. This is still a hypothesis, not universal semantic paragraph truth.
+
+Before seen-page checks: authored stale-cache, script/main-baseline, tied-cluster ambiguity, multi-baseline protected group, first-line-return and wrong-return controls. Afterwards inspect the same complete 20/28 px outputs. No new holdout is opened. Full cold costs remain failed until a new complete timed request actually finishes.

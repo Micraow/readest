@@ -1,0 +1,92 @@
+{
+  "authored_controls_passed": 8,
+  "predecessor": "76fe1699e7c4cd0586d1ee17962dd5967ba98e07",
+  "blind": false,
+  "new_holdouts_opened": 0,
+  "pages": [
+    {
+      "sample": "H5",
+      "scope": "cached seen-page layout rebuild only",
+      "baseline_changes": {
+        "native_words": 314,
+        "stale_baselines_repaired": 0
+      },
+      "native_asset_pixels_unchanged": true,
+      "paragraphs": 9,
+      "objects": 2,
+      "source_unit_bijection": true,
+      "accepted_first_line_returns": 2,
+      "elapsed_seconds": 2.900027326999407,
+      "cold_page_cost": false,
+      "reading_acceptance": false,
+      "output_geometry": [
+        {
+          "font_css": 20,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        },
+        {
+          "font_css": 28,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        }
+      ],
+      "unique_native_paint_ledger_pass": true,
+      "native_paints": 1384,
+      "payload_sha256": "50cdde409b20576d1f694b237cd7b917ecd90bb1d6bfc0dc77bbc4b8e822c584",
+      "complete_review_sizes": [
+        20,
+        28
+      ],
+      "reviewed_bands": 5,
+      "paragraph_defects_targeted_in_this_stage_visually_resolved": true,
+      "overall_reading_acceptance": false,
+      "new_cold_pipeline_measured": false
+    },
+    {
+      "sample": "H6",
+      "scope": "cached seen-page layout rebuild only",
+      "baseline_changes": {
+        "native_words": 746,
+        "stale_baselines_repaired": 332
+      },
+      "native_asset_pixels_unchanged": true,
+      "paragraphs": 16,
+      "objects": 2,
+      "source_unit_bijection": true,
+      "accepted_first_line_returns": 0,
+      "elapsed_seconds": 6.524133298997185,
+      "cold_page_cost": false,
+      "reading_acceptance": false,
+      "output_geometry": [
+        {
+          "font_css": 20,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        },
+        {
+          "font_css": 28,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        }
+      ],
+      "unique_native_paint_ledger_pass": true,
+      "native_paints": 4091,
+      "payload_sha256": "1de4fc81940ec67677b5b6f2aa905c40b68b2377eae522521021a060e9522825",
+      "complete_review_sizes": [
+        20,
+        28
+      ],
+      "reviewed_bands": 12,
+      "paragraph_defects_targeted_in_this_stage_visually_resolved": true,
+      "overall_reading_acceptance": false,
+      "new_cold_pipeline_measured": false
+    }
+  ],
+  "ci_runs": 0,
+  "browser_verified": false
+}
