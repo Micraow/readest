@@ -1,0 +1,36 @@
+{
+  "scope": "D4 seen development page, geometry-supported relation not universal semantic certification",
+  "accepted_float_caption_pairs": 1,
+  "accepted_relations": 1,
+  "caption_model_confidence": 0.772479236125946,
+  "paragraphs": 7,
+  "native_units": 707,
+  "source_unit_bijection": true,
+  "known_terminal_semantics": false,
+  "original_unit_asset_bytes_unchanged": 707,
+  "mechanism_tests": 13,
+  "static_qa_seconds": 12.099923551000757,
+  "width_css_px": 390,
+  "font_sizes_css_px": [
+    20,
+    28
+  ],
+  "whole_20px_flow_visually_reviewed": true,
+  "reading_acceptance": false,
+  "holdouts_opened": 0,
+  "failed_cold_measurement": {
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 60.044011025000145,
+    "sampled_peak_family_rss_mib": 667.34765625,
+    "sampled_cpu_seconds": 40.21,
+    "exit_code": -9,
+    "failure": "wall_timeout",
+    "process_cpu_seconds": 57.700919,
+    "process_peak_rss_mib": 624.01171875,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, PDF open per phase, native inventory/planning, stable text alpha extraction and encoding, bounded within/cross-object and graphic/fraction closure, optional cold live layout inference, full native masked replay, hierarchical region/paragraph flow, all local unit native render/encode and inline composition, HTML and final audit writes; excludes ink annotations by amended user scope",
+    "excluded": "browser startup/load/paint and interactive audit; cannot claim interactive-page budget"
+  }
+}

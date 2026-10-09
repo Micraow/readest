@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-09",
+  "previous_commit": "781ecd349e2da6ce0aa060f6f0ac4da850eb8ca9",
+  "prior_frozen_directories_changed": false,
+  "tests": {
+    "order_and_prior": 19,
+    "flow_relations": 13,
+    "ink_ownership": 10
+  },
+  "holdouts_opened": 0,
+  "sha256": {
+    "generic-reflow-v2-flow-relations/.gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "generic-reflow-v2-flow-relations/README.md": "6c0f72023bc44583e9498ef5824b2412346e2cf7897b25c53055a3a28e610a8b",
+    "generic-reflow-v2-flow-relations/PUBLIC-RESULT.json": "648c1855d1a740e78c955e47a99822165962912dc2859e178c8cac69bbbc5de9",
+    "generic-reflow-v2-flow-relations/CONTRACT.md": "6f1c1b06a2eb2f365fa7cecabd3b6fbe49f4904e19807e6d36c0cd970e950856",
+    "generic-reflow-v2-flow-relations/code/measure_page.py": "63066f7df54dfef775775c975e8ac82d3b72a9da7dc9c1866695bee4c48991c6",
+    "generic-reflow-v2-flow-relations/code/diagnose_flow.py": "7a8f3fdeae0521a6ed7d5a6b99ffc5b93b11b34a93648572c39d4533f271734f",
+    "generic-reflow-v2-flow-relations/code/page_pipeline.py": "41d1dc6fc144a666fde0815ae517288f6e3ec4388cd7d0817d66a321029a0432",
+    "generic-reflow-v2-flow-relations/code/flow_relations.py": "3009f11a3074ba3170dedd504cd3c9b931d2894b18d91633a3c9071e9c62f30d",
+    "generic-reflow-v2-flow-relations/code/build_flow_reader.py": "2f398661bc7f978b170eb7e0345e6fee3b3f9a633831b917871d62902757c840",
+    "generic-reflow-v2-flow-relations/code/test_flow_relations.py": "702d9c34de3b87560fd5e16a1a4ff1b04f29bec443832c0a921d4ca2b2ec5ac0",
+    "generic-reflow-v2-localcanvas/.gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "generic-reflow-v2-localcanvas/README.md": "c4b66af095c38757b13b67b27ff21e74d4f269386b3a2637e10509f0e1b1fab3",
+    "generic-reflow-v2-localcanvas/PUBLIC-RESULT.json": "59110f6cb2e25c41dc9c73f2e44eb607b3ab19136905570879d4806f6c97a313",
+    "generic-reflow-v2-localcanvas/CONTRACT.md": "0392011bd8b6f96860e68c2fa7de23e1c844d162701e9e38d1bce5dac5adb10d",
+    "generic-reflow-v2-localcanvas/code/render_native_localcanvas.py": "b07392d9cb027eb2395cecc46baad3f578023faa31c58d993e6659850637bfb6",
+    "generic-reflow-v2-localcanvas/code/measure_page.py": "ddf7d7037f356a5a8b7c93444a2aedd3e9ef112ae216488c3f5f7312d79bc211",
+    "generic-reflow-v2-localcanvas/code/page_pipeline.py": "9ff78a9083c08c567b8a8c80eb13d843be1968591b187f408beaecbe535452b6",
+    "generic-reflow-v2-localcanvas/code/measure_native_pair.py": "481ed072389c7c16308234b0edfe3a05ad57ad641de9543fb8e132fd3fdc17f1"
+  }
+}
