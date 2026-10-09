@@ -28,7 +28,7 @@ python research/reflow/generic-reflow-v2-viewer-entry/code/build_entry.py apps/r
 Open the entry from a normal Readest development build, or open the generated HTML
 locally, then choose a private precomputed JSON bundle with schema
 `readest-reflow-research-v1`. Import is explicit and memory-only. A standalone
-private recovery package contains both original PDFs, reference images, native
+private recovery package contains both one-page source PDF fixtures, reference images, native
 reader payloads, mapping inputs and one self-contained bundle; none belong here.
 
 The supported scope is at most two already prepared pages and 16 MiB per bundle.
