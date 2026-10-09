@@ -10,7 +10,7 @@ The model proposes 21648 of21922 annotated body glyphs as body, but also propose
 
 The pre-frozen calibration sweep is thresholds0.50 through0.99, requiring zero observed incorrect/unverifiable acceptances and at least20 accepted lines. No threshold in that declared set qualifies; the learned accepted coverage is therefore zero. This is a failed usefulness gate, not a zero-error success. Higher thresholds or class-specific policies were not tested and must not be inferred to succeed.
 
-The two highest-confidence calibration mistakes, independently viewed against the original source, confuse an appendix heading and a section heading with page-edge auxiliary content (confidence0.99150 and0.99076). This is a real hierarchy/role error, not a raster alignment failure. Training has only16 auxiliary lines, and the feature set does not describe full heading scope. No threshold or feature was changed after test inspection.
+The two highest-confidence calibration mistakes, self-audited against the original source, confuse an appendix heading and a section heading with page-edge auxiliary content (confidence0.99150 and0.99076). This is a real hierarchy/role error, not a raster alignment failure. Training has only16 auxiliary lines, and the feature set does not describe full heading scope. No threshold or feature was changed after test inspection.
 
 ## Scope and resources
 
