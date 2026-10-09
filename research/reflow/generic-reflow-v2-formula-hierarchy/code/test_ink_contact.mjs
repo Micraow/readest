@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import {inkContact} from './ink_contact.mjs';
+let count=0;const mask=xs=>{const a=new Uint8ClampedArray(4*4*4);for(const [x,y,alpha=255] of xs)a[(y*4+x)*4+3]=alpha;return a;};const test=(name,fn)=>{fn();count++;console.log('PASS',name);};
+test('intersecting contour boxes with disjoint actual shapes do not merge',()=>{const a=mask([[0,0],[2,0],[0,2],[2,2]]),b=mask([[1,1]]),r=inkContact(a,b,4,4);assert.equal(r.disjoint_nonzero_alpha,true);assert.equal(r.automatic_merge_authorized,false);});
+test('one actual overlapping pixel stays a collision',()=>assert.equal(inkContact(mask([[1,1]]),mask([[1,1]]),4,4).overlap_pixels,1));
+test('faint nonzero alpha is never rounded away',()=>assert.equal(inkContact(mask([[1,1,1]]),mask([[1,1,1]]),4,4).overlap_pixels,1));
+test('touching pixel boundaries are not shared pixels',()=>assert.equal(inkContact(mask([[1,1]]),mask([[2,1]]),4,4).disjoint_nonzero_alpha,true));
+test('empty mask does not certify separation',()=>assert.equal(inkContact(mask([]),mask([[2,1]]),4,4).disjoint_nonzero_alpha,false));
+test('dimension mismatch refuses',()=>assert.throws(()=>inkContact(mask([]),new Uint8Array(4),4,4),/dimensions/));
+test('oversized allocation refuses before reading',()=>assert.throws(()=>inkContact(mask([]),mask([]),100000,100000),/budget/));
+test('overlap result is symmetric',()=>{const a=mask([[1,1],[2,2]]),b=mask([[1,1]]);assert.equal(inkContact(a,b,4,4).overlap_pixels,inkContact(b,a,4,4).overlap_pixels);});
+console.log(JSON.stringify({controls:count,all_passed:true,automatic_merges:0}));

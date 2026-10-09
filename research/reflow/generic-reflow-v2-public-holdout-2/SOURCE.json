@@ -1,0 +1,19 @@
+{
+  "source_url": "https://proceedings.mlr.press/v119/chen20j/chen20j.pdf",
+  "source_metadata_url": "https://proceedings.mlr.press/v119/chen20j.html",
+  "full_document_sha256": "cc620e511bafe8b4b11ca3415f6d7bcf127a05818087bfa49905de3a2e50bc2d",
+  "fixture_sha256": "e37cdab95b403ab53bce7bcfe9ff9fabdb240d04f812003d5d5f3d31076611e0",
+  "full_document_pages": 11,
+  "original_pdf_page_index": 3,
+  "fixture_pdf_page_index": 0,
+  "bytes": 3328680,
+  "acquisition_seconds": 6.909063120998326,
+  "page_size": [
+    0.0,
+    0.0,
+    612.0,
+    792.0
+  ],
+  "selection_changed": false,
+  "source_content_inspected_before_freeze": false
+}
