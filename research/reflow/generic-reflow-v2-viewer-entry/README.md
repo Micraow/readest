@@ -82,3 +82,14 @@ Page changes check device canvas budget before replacing current reader/source
 state. Failed imports preflight and decode before committing the new bundle. Runtime
 controls verify that an over-budget H6 switch and an intentional image-decode failure
 leave the existing H5 reader and original PDF link coherent.
+
+## Packaged native-painter equivalence check
+
+The runtime harness can use actual Node Canvas and PNG decoding by setting
+`SELECTION_NATIVE_CANVAS=1`. Pass a fourth CLI argument containing the private
+`H5-candidate-2/reader-20` and `H6-candidate-2/reader-20` reference directories.
+All 30 resulting paragraph/formula canvases match the existing reference PNGs
+exactly in RGBA at 20 px / 390 px / DPR 1. This checks the generated module's native
+painting, while its DOM still comes from jsdom. It does not certify a browser's
+selection geometry, font fallback used by the transparent layer, system clipboard,
+modal focus behaviour or CSP implementation. Keep those browser gates open.
