@@ -1,0 +1,10 @@
+2026-10-09T09:31:24Z
+Python 3.12.14
+v24.19.0
+pypdfium2 5.13.0
+paddlepaddle 3.3.1
+paddlex 3.7.2
+Pillow 12.3.0
+numpy 2.3.5
+scipy 1.17.0
+psutil 7.2.2
