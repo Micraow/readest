@@ -6,7 +6,7 @@ import fitz
 from PIL import Image
 start=time.monotonic();text=pathlib.Path(a.html).read_text();text=re.sub(r'<script[^>]*>[\s\S]*?</script>','',text);text=re.sub(r'<dialog[\s\S]*?</dialog>','',text)
 css=f'@page{{size:{a.width}px 12000px;margin:0}}body{{--reader-width:{a.width}px!important;--reader-font:{a.font}px!important;background:white}}.shell{{width:{a.width}px;max-width:none;min-height:0}}header,.notice,dialog{{display:none}}.object,.wide-local{{overflow:hidden}}'
-text=text.replace('</style>','</style><style>'+css+'</style>',1);doc=HTML(string=text).render();pdf=doc.write_pdf();(B/f'{a.width}-{a.font}.pdf').write_bytes(pdf);positions=[]
+text=text.replace('</style>','</style><style>'+css+'</style>',1);doc=HTML(string=text).render();pdf=doc.write_pdf();positions=[]
 for pg,page in enumerate(doc.pages):
  for box in page._page_box.descendants():
   el=getattr(box,'element',None)

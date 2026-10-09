@@ -1,0 +1,23 @@
+{
+  "scope": "Original development controls, self visual inspection; not independent or new-document acceptance",
+  "passed_local_checks": [
+    "Exact source-visible-component assignment for original English, Chinese and ligature inputs",
+    "Uniform target-scale flowing body at390/20 and320/28 snapshots",
+    "Script2/i local relative geometry",
+    "Numerator/rule/denominator local geometry and separately associated equation number",
+    "Matrix all4cells and both brackets visible after composite-origin correction",
+    "Actual native \ufb01/\ufb03 ligature forms retained as source images",
+    "All174original source atoms appear once in combined HTML accounting"
+  ],
+  "development_failures_retained": [
+    "One60secondPP-S cold-initialization timeout; later identical cold call4.49seconds; cause unknown",
+    "Initial PDF-input detector call not comparable to4x raster; retained as exploratory",
+    "Initial local graph missed an unrecognized fraction rule and tightened away matrix brackets",
+    "Initial composite display origin clipped a left bracket despite complete source-atlas accounting",
+    "Initial render accounting omitted equation identifier units from declared display sum, while HTML links included them"
+  ],
+  "raw_source_ink": 201930,
+  "declared_display_source_ink_after_fix": 201930,
+  "browser_status": "awaiting actualCI trigger/run; not claimed passed",
+  "unsupported": "Search/selection/accessibility and Android not implemented/accepted"
+}

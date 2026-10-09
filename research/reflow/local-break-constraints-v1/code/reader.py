@@ -35,11 +35,13 @@ def events(atoms,state):
  return sorted(items,key=lambda e:e['order'])
 
 def render(pages,width=390,font=20,interactive=True):
- defs=[];parts=[];sources={};layout=[]
+ defs=[];parts=[];sources={};layout=[];deferred_aux=[]
  for p in pages:
-  key=p['key'];state=p['state'];atoms=p['atoms'];atlas=p.get('atlas') or pack(atoms);p['atlas']=atlas;defs.append('.texture-'+key+'{background-image:url("'+uri(atlas)+'")}');source=Image.fromarray(state['rgb']);sources[key]={'image':uri(source),'width':source.width/4,'height':source.height/4};parts.append(f'<div class="page-separator">第 {E(str(p.get("page_label",key)))} 页</div>');openflow=None;last=None;auxshown=False
+  key=p['key'];state=p['state'];atoms=p['atoms'];atlas=p.get('atlas') or pack(atoms);p['atlas']=atlas;defs.append('.texture-'+key+'{background-image:url("'+uri(atlas)+'")}');source=Image.fromarray(state['rgb']);sources[key]={'image':uri(source),'width':source.width/4,'height':source.height/4};openflow=None;last=None;auxshown=False
   for event in events(atoms,state):
-   a=event['atom'];u=unit(a,key);protected=a['role']=='object' or a['display_math'] or a['parent_role'] in {'image','chart','table','algorithm','graphic'};wide=a['advance_em']*font>width-28;whole=area_fraction(a['source_box'],state['size'])>.8 and a['parent_role'] not in {'image','table','chart','algorithm'}
+   a=event['atom']
+   if event['aux']:deferred_aux.append((key,a));continue
+   u=unit(a,key);protected=a['role']=='object' or a['display_math'] or a['parent_role'] in {'image','chart','table','algorithm','graphic'};wide=a['advance_em']*font>width-28;whole=area_fraction(a['source_box'],state['size'])>.8 and (not state['words'] or a['parent_role'] not in {'image','table','chart','algorithm'})
    if whole:
     if openflow:parts.append('</div>');openflow=None
     parts.append('<p class="rejected">本页局部依赖范围过大，未达到正文重排要求。原版可从对照入口查看。</p>');layout.append({'id':a['id'],'status':'primary_reading_rejected','source_ink':a['source_ink']});continue
@@ -48,7 +50,9 @@ def render(pages,width=390,font=20,interactive=True):
     parts.append('<p class="note-label auxiliary">页边信息与脚注</p>');auxshown=True
    if protected or wide:
     if openflow:parts.append('</div>');openflow=None
-    if event['number_atoms']:parts.append('<div class="equation-row"><div class="object">'+u+'</div><div class="equation-number">'+''.join(unit(n,key) for n in event['number_atoms'])+'</div></div>')
+    if event['number_atoms']:
+     parts.append('<div class="equation-row"><div class="object">'+u+'</div><div class="equation-number">'+''.join(unit(n,key) for n in event['number_atoms'])+'</div></div>')
+     for number in event['number_atoms']:layout.append({'key':key,'id':number['id'],'status':'shown_equation_identifier','source_ink':number['source_ink']})
     else:parts.append('<div class="'+('object' if protected else 'wide-local')+'">'+u+'</div>')
     parts.append('<p class="note-label">局部原字形，宽对象可左右查看</p>');last=None
    else:
@@ -63,6 +67,17 @@ def render(pages,width=390,font=20,interactive=True):
     parts.append(u);last=a
    layout.append({'id':a['id'],'parent':a['parent'],'advance_em':a['advance_em'],'wide':wide,'protected':protected,'source_ink':a['source_ink'],'status':'shown'})
   if openflow:parts.append('</div>')
+ if deferred_aux:
+  parts.append('<section class="auxiliary"><p class="note-label">页边信息与脚注</p>');previous=None
+  for key,a in deferred_aux:
+   parent=(key,a['parent'])
+   if previous!=parent:
+    if previous:parts.append('</div>')
+    parts.append('<div class="flow">');previous=parent
+   else:parts.append(' ')
+   parts.append(unit(a,key));layout.append({'id':a['id'],'status':'shown_auxiliary','source_ink':a['source_ink']})
+  if previous:parts.append('</div>')
+  parts.append('</section>')
  payload=json.dumps(sources,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c');toolbar='<header><h1>原字形流式试读</h1><button data-font="20">20 px</button> <button data-font="28">28 px</button> <select id="width" aria-label="阅读宽度"><option>320</option><option selected>390</option><option>430</option></select> <button id="original">原页对照</button></header><p class="notice">实验候选：正文按可用宽度换行；数学和图表只保留必要局部。关系与完整性仍需核对。图像文字的选择、搜索与无障碍尚未实现。</p>' if interactive else ''
  doc='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src data:; style-src \'unsafe-inline\'; script-src \'unsafe-inline\'; connect-src \'none\'; object-src \'none\'; base-uri \'none\'"><style>'+CSS+'</style><body style="--reader-width:'+str(width)+'px;--reader-font:'+str(font)+'px"><style>'+''.join(defs)+'</style><main class="shell">'+toolbar+'<div class="reading">'+''.join(parts)+'</div></main>'
  if interactive:doc+='<dialog id="source"><button id="close">返回阅读</button> <button id="zoom">放大/适应</button><p class="source-status"></p><div class="source-scroll"><div class="source-plane"><img alt="原页对照"><div class="mark"></div></div></div></dialog><script id="source-data" type="application/json">'+payload+'</script><script>'+JS+'</script>'

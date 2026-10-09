@@ -22,5 +22,11 @@ c.save();doc=fitz.open(stream=b.getvalue(),filetype='pdf');doc.save(D/'geometry.
 d=fitz.open();p=d.new_page(width=480,height=480);font=fitz.Font('cjk');tw=fitz.TextWriter(p.rect)
 for i,text in enumerate(['局部关系存在歧义时，只保留附近原子的相对位置。','其余正文应当按照手机屏幕宽度自动换行，不能缩成小图。','图表和数学表达式可以局部查看，原页仅作为可选对照。']):tw.append((35,70+i*23),text,font=font,fontsize=11)
 tw.write_text(p);font2=fitz.Font('Times-Roman');tw=fitz.TextWriter(p.rect);tw.append((35,180),'Office words and ligature forms must keep their marks.',font=font2,fontsize=11);tw.write_text(p);d.save(D/'cjk.pdf')
+
+# Genuine Unicode ligature glyphs, using an already-installed font; no font download.
+d=fitz.open();p=d.new_page(width=400,height=260);font=fitz.Font(fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf');tw=fitz.TextWriter(p.rect)
+for i,text in enumerate(['Native ligatures stay visible: ofﬁce and oﬃce.','Changing width must not paint a ligature twice.']):tw.append((25,65+i*20),text,font=font,fontsize=11)
+tw.write_text(p);d.save(D/'ligature.pdf')
+
 manifest={'scope':'Original development controls only, never new-paper evidence','pdfs':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in D.glob('*.pdf')},'expected_relations':['script2 and i stay with authored local x geometry; neighboring body not globally refused','fraction numerator/bar/denominator preserved as a local object','matrix all four cells and both brackets remain spatially coherent','equation2 association without locking blank gap','fill/stroke does not duplicate visible source word','CJK ordinary glyphs can rewrap without treating a whole native line as one unbreakable word']};(D/'MANIFEST.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))

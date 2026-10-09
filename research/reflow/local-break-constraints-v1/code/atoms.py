@@ -75,6 +75,9 @@ def build(page,predictions):
  # Figure/table rectangles propose support; overlapping rectangles never merge parents.
  for p in parents.values():
   if p['role'] in OBJECT:dummy.append({'box':p['box'][:],'parent':p['id'],'role':p['role'],'word_ids':[w['id'] for w in words if w['parent']==p['id']]})
+ prelines=collections.defaultdict(list)
+ for word in words:prelines[word['native_line']].append(word)
+ preliminary_columns=infer_columns([{'bbox':union([w['box'] for w in ws]),'text':' '.join(w['text'] for w in ws)} for ws in prelines.values()],page.rect.width)
  for f in [p for p in det if p['label']=='formula']:
   members=[w for w in words if contains(f['box'],(w['box'][0]+w['box'][2])/2,(w['box'][1]+w['box'][3])/2)];numbers=[]
   for w in members:
@@ -83,7 +86,10 @@ def build(page,predictions):
    if not rest:continue
    core=union([z['box'] for z in rest]);gap=max(w['box'][0]-core[2],core[0]-w['box'][2],0)
    if gap>body and min(w['box'][3],core[3])>max(w['box'][1],core[1]):numbers.append(w)
-  corewords=[w for w in members if w not in numbers];box=union([w['box'] for w in corewords]) if corewords else f['box'][:]
+  corewords=[w for w in members if w not in numbers];corebox=union([w['box'] for w in corewords]) if corewords else f['box'][:];box=f['box'][:]
+  for number in numbers:
+   if number['box'][0]>corebox[2]:box[2]=(number['box'][0]+corebox[2])/2
+   elif number['box'][2]<corebox[0]:box[0]=(number['box'][2]+corebox[0])/2
   # Detached equation identifiers are association candidates, not geometry edges.
   for w in words:
    if w in members or not re.fullmatch(r'\((?:\d+(?:\.\d+)*(?:[a-z])?|[IVX]+)\)',w['text']):continue
@@ -92,7 +98,8 @@ def build(page,predictions):
     q=other['box'];dy=max(q[1]-y,y-q[3],0);gap=max(w['box'][0]-q[2],q[0]-w['box'][2],0)
     corridor=[min(w['box'][2],q[2]),y-.3*body,max(w['box'][0],q[0]),y+.3*body]
     intervening=any(z is not w and z not in members and sum(c.isalpha() for c in z['text'])>=2 and overlap(z['box'],corridor) for z in words)
-    if dy<=.25*body and gap>body and not intervening:compatible.append(other['id'])
+    same_lane=preliminary_columns['count']==1 or int((q[0]+q[2])/2>=preliminary_columns['cut'])==int((w['box'][0]+w['box'][2])/2>=preliminary_columns['cut'])
+    if dy<=.25*body and gap>body and same_lane and not intervening:compatible.append(other['id'])
    if compatible==[f['id']]:numbers.append(w)
   ps=collections.Counter(w['parent'] for w in corewords);parent=ps.most_common(1)[0][0] if ps else 'f'+str(f['id']);intext=parent in parents and parents[parent]['role'] in TEXT
   outside=[w for w in words if w not in members and w['parent']==parent and not w['math'] and sum(c.isalpha() for c in w['text'])>=2 and box[1]-.1*body<=w['baseline']<=box[3]+.1*body]
@@ -156,6 +163,26 @@ def build(page,predictions):
     if k:holders[int(k)].add(node)
  for w in words:seed(w['id'],[w['origin'],w['baseline']-.7*w['size'],w['box'][2],w['baseline']+.2*w['size']])
  for d in dummy:seed(d['id'],d['box'])
+ # An unowned thin rule with possible operands on both sides is a local
+ # geometry dependency. This does not assert that the rule is semantically a fraction.
+ for k,sl in enumerate(slices,1):
+  if holders[k]:continue
+  yy,xx=sl;rb=[xx.start/SCALE,yy.start/SCALE,xx.stop/SCALE,yy.stop/SCALE]
+  if not (rb[2]-rb[0]>1.5*body and rb[3]-rb[1]<.2*body):continue
+  above=[w['id'] for w in words if min(w['box'][2],rb[2])-max(w['box'][0],rb[0])>0 and w['box'][3]<=rb[1]+.2*body and rb[1]-w['box'][3]<=1.3*body]
+  below=[w['id'] for w in words if min(w['box'][2],rb[2])-max(w['box'][0],rb[0])>0 and w['box'][1]>=rb[3]-.2*body and w['box'][1]-rb[3]<=1.3*body]
+  if above and below:
+   ids=sorted(set(above+below));parent=words[ids[0]]['parent'];di=n+len(dummy);box=union([rb]+[words[i]['box'] for i in ids]);d={'id':di,'box':box,'parent':parent,'role':'possible_fraction','word_ids':ids,'number_ids':[],'display':True};dummy.append(d);uf.p.append(di);uf.join([di]+ids);holders[k].add(di);ambiguous.append(ids);edges.append({'kind':'possible_rule_operand_geometry','nodes':[di]+ids})
+ # Associate detached identifiers with one supported local displayed object.
+ for w in words:
+  if any(r['number']==w['id'] for r in associations) or not re.fullmatch(r'\((?:\d+(?:\.\d+)*(?:[a-z])?|[IVX]+)\)',w['text']):continue
+  candidates=[];cy=(w['box'][1]+w['box'][3])/2
+  for j,d in enumerate(dummy):
+   if not d.get('display') or w['id'] in d['word_ids']:continue
+   q=d['box'];gap=max(w['box'][0]-q[2],q[0]-w['box'][2],0);same_lane=columns['count']==1 or int((q[0]+q[2])/2>=columns['cut'])==int((w['box'][0]+w['box'][2])/2>=columns['cut'])
+   corridor=[min(w['box'][2],q[2]),cy-.3*body,max(w['box'][0],q[0]),cy+.3*body];intervening=any(z['id'] not in d['word_ids']+[w['id']] and sum(c.isalpha() for c in z['text'])>=2 and overlap(z['box'],corridor) for z in words)
+   if q[1]-.25*body<=cy<=q[3]+.25*body and gap>body and same_lane and not intervening:candidates.append(j)
+  if len(candidates)==1:associations.append({'kind':'formula_number','number':w['id'],'formula_dummy':candidates[0],'geometry_locked':False})
  unknown=[]
  for k,s in enumerate(slices,1):
   y,x=s;box=[x.start/SCALE,y.start/SCALE,x.stop/SCALE,y.stop/SCALE]
@@ -207,6 +234,9 @@ def materialize(state,arm):
   for k in g['components']:
    y,x=state['slices'][k-1];boxes.append([x.start,y.start,x.stop,y.stop])
   box=union(boxes);a,b,c,d=box;crop=state['rgb'][b:d,a:c].copy();mask=np.isin(state['cc'][b:d,a:c],g['components']);rgba=np.dstack([crop,(mask*255).astype(np.uint8)]);rgba[~mask,:3]=255;assigned+=int(mask.sum());ws=[words[i] for i in g['words']];parents=collections.Counter(w['parent'] for w in ws);pid=parents.most_common(1)[0][0] if parents else g['dummies'][0]['parent'] if g['dummies'] else 'u'+str(gid)
-  parent=state['parents'].get(pid,{'role':'graphic','font':state['font'],'box':[v/SCALE for v in box]});font=parent['font'];ordered=state['ordered'].get(pid,[]);position=min([ordered.index(w['id']) for w in ws if w['id'] in ordered],default=0);row=min([w.get('row',0) for w in ws if w['parent']==pid],default=0);baselines=state['rows'].get(pid,[{'y':d/SCALE}]);baseline=baselines[min(row,len(baselines)-1)]['y'];origin=min([w['origin'] for w in ws],default=a/SCALE);right=max([w['box'][2] for w in ws],default=c/SCALE);objects={v['role'] for v in g['dummies']};role='object' if objects&OBJECT or parent['role']=='formula' else 'island' if len(ws)>1 else 'word';advance=max(right-origin,(c-a)/SCALE if role!='word' else .1)
+  parent=state['parents'].get(pid,{'role':'graphic','font':state['font'],'box':[v/SCALE for v in box]});font=parent['font'];ordered=state['ordered'].get(pid,[]);position=min([ordered.index(w['id']) for w in ws if w['id'] in ordered],default=0);row=min([w.get('row',0) for w in ws if w['parent']==pid],default=0);baselines=state['rows'].get(pid,[{'y':d/SCALE}]);baseline=baselines[min(row,len(baselines)-1)]['y'];origin=min([w['origin'] for w in ws],default=a/SCALE);right=max([w['box'][2] for w in ws],default=c/SCALE);objects={v['role'] for v in g['dummies']};role='object' if objects&OBJECT or parent['role']=='formula' else 'island' if len(ws)>1 else 'word';# Composite geometry has no single text advance origin: reserve its entire
+  # painted support so left brackets/accents cannot sit outside a scroll viewport.
+  if role!='word':origin=min(origin,a/SCALE);right=max(right,c/SCALE)
+  advance=max(right-origin,.1)
   atoms.append({'id':str(gid),'parent':pid,'parent_role':parent['role'],'position':position,'source_box':[v/SCALE for v in box],'baseline':baseline,'advance_em':advance/font,'image_width_em':(c-a)/SCALE/font,'height_em':(d-b)/SCALE/font,'descent_em':(d/SCALE-baseline)/font,'left_em':(a/SCALE-origin)/font,'font_reference':font,'role':role,'words':g['words'],'native_ids':[i for w in ws for i in w['native_ids']],'native_blocks':sorted({b for w in ws for b in w['native_blocks']}),'native_text':' '.join(w['text'] for w in sorted(ws,key=lambda z:(z.get('row',0),z['origin']))),'source_ink':int(mask.sum()),'rgba':Image.fromarray(rgba),'component_ids':g['components'],'dummy_ids':[d['id'] for d in g['dummies']],'lanes':sorted({w['lane'] for w in ws}),'parent_ids':sorted(parents),'display_math':any(v.get('display',False) for v in g['dummies']),'number_words':[a['number'] for a in state['associations'] if a['number'] in g['words']],'sort_y':min([w.get('math_anchor_y') if w.get('math_anchor_y') is not None else state['rows'][w['parent']][w['row']]['y'] for w in ws],default=b/SCALE),'ambiguous':any(set(g['words'])&set(e) for e in state['ambiguous'])})
  return atoms,{'arm':arm,'source_ink':int((state['cc']>0).sum()),'assigned_ink':assigned,'unassigned_ink':int((state['cc']>0).sum())-assigned,'duplicate_native_aliases':sum(max(0,len(w['native_blocks'])-1) for w in words),'atoms':len(atoms),'ambiguous_local_sets':len(state['ambiguous']),'ordinary_word_count':len(words),'island_word_count':sum(len(a['words']) for a in atoms if a['role']=='island'),'max_island_words':max([len(a['words']) for a in atoms if a['role']=='island'] or [0])}

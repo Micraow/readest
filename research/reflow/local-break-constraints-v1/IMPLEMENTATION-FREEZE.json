@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-09T02:58:13.360024+00:00",
+  "input_selection_sha256": "efab3f329ae32a9870129c0d6d37e0804e268064db7690fce472087676c7ebc2",
+  "plan_sha256": "6ef0155067d433a25f13b342594e808ff0fead7fc07b16535c1d3c344613e249",
+  "code_sha256": {
+    "local-break-constraints-v1/code/baseline_cd.py": "074c5c9e51fb3fca4652f3cce5ffc0c0f5d1303ee308ab981f1b5bba6fba507a",
+    "local-break-constraints-v1/code/build_original_demo.py": "7aabee3a53a02c259797346b3c64bb95dd4c99ceee3fc492e1b64b17bfab361c",
+    "local-break-constraints-v1/code/select_inputs.py": "8d673f29698479cfc4cfa7df005b92684ff9d39e5644839e81cdbd7a8feaa691",
+    "local-break-constraints-v1/code/create_controls.py": "fd022fcc36380c88cc41d9e23717ef9baabb6dbce3b1c1a6a1f1c04d651fbb8f",
+    "local-break-constraints-v1/code/fetch_inputs.py": "c4e7a5c978b17c63cc2d1343332991d21f56de2a03b02c41f649f7b9ce787235",
+    "local-break-constraints-v1/code/run_page.py": "577afb1006028b4ee23d80f7794415052a9cc52c964acbc1aa672f8273407b07",
+    "local-break-constraints-v1/code/reader.py": "86756856ba645c03b936100ab14693dfd5aed4df3a1d9eaf1abc903972833e6e",
+    "local-break-constraints-v1/code/snapshots.py": "2b678177959f0b7eb8a4ab8286144ee1a1e47fe0309f31795acf7b9b83e99fac",
+    "local-break-constraints-v1/code/atoms.py": "dfcf81b7bfe06b8485565a495b09e5d5db87a5d9dd9bfcaa5644912456845658",
+    "local-break-constraints-v1/code/detect_registered.py": "14cf92dd670edf3708afa2864ebbe9bd8663d355239b4d5348cfdeb1e370201c",
+    "stroke-object-batch-v1/code/compose.py": "ab06db0b3866fec1edd3c779d3c9ae80f0fdc40375411f0d1a97363709bf1605",
+    "stroke-object-batch-v1/code/helpers.py": "fbc9bcaaacd07c7156443c5bea0c70f726eb557ea74737e417b0fd5932958c2c",
+    "stencil-paint-v1/code/envelope.py": "e2329abd8b2b11594639474075a09c0819e385754a5f5996b779ed72a28d3dbd"
+  },
+  "constraint": "No registered source page has been viewed or processed by this algorithm before this freeze. Source annotation is QA-only. Do not change algorithms/thresholds after seeing output. If browser integration needs correction from original controls only, preserve explicit amendment and original result.",
+  "k2_harness_sha256": "688ca0f6130f6ff15bc5164f07ac5b70d1f0f739f0faabdbbf320aeed29077f2"
+}
