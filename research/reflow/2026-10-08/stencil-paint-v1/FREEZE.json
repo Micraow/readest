@@ -1,0 +1,12 @@
+{
+  "frozen_utc": "2026-10-09T01:23:24.016396+00:00",
+  "hypothesis": "fill-imgmask is a native stencil paint event; including its physical envelope closes omitted raster support without changing semantic ownership or order.",
+  "change": "Only add fill-imgmask to physical PAINT_TYPES. No thresholds, roles, ordering or k2 settings changed.",
+  "validation": "Six original native-stencil controls; one BatchNorm seen-page mechanism regression with cached PP-S detections. No unseen-paper quality claim.",
+  "stop": "If controls fail, stop; otherwise one regression. No per-page corrections.",
+  "code_sha256": {
+    "fixtures.py": "7134f58b77fbc45c01b0a1a10d8735e5ca0dad589494e0420483aae5f7db1c94",
+    "envelope.py": "e2329abd8b2b11594639474075a09c0819e385754a5f5996b779ed72a28d3dbd",
+    "regression.py": "97b730fad954fbfdd82b7088a714723c59a09a55a2752f93279b95a21e448de9"
+  }
+}

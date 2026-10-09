@@ -1,0 +1,63 @@
+[
+  {
+    "case": "black",
+    "pdf_sha256": "19ce75df0101b3249757c00a6b22f8a9c6fb6a28d62eb872abf86c17658f6ef7",
+    "native_paint_types": [
+      "fill-imgmask"
+    ],
+    "source_ink": 172800,
+    "outside_physical_paint_envelopes": 0,
+    "changed_rgb_pixels": 0
+  },
+  {
+    "case": "red",
+    "pdf_sha256": "c87d1a549c44106aa7b8bb9a195040f158b61aec159546a60a28ecd26a51169a",
+    "native_paint_types": [
+      "fill-imgmask"
+    ],
+    "source_ink": 172800,
+    "outside_physical_paint_envelopes": 0,
+    "changed_rgb_pixels": 0
+  },
+  {
+    "case": "rotated",
+    "pdf_sha256": "401dbf33684a4772ba6bc2876a1a2daee0befe7532d2c6609defc581fa82af98",
+    "native_paint_types": [
+      "fill-imgmask"
+    ],
+    "source_ink": 172800,
+    "outside_physical_paint_envelopes": 0,
+    "changed_rgb_pixels": 0
+  },
+  {
+    "case": "inverse",
+    "pdf_sha256": "5a26dbe37848bd7eafd02e91c906b9cdc39e9cfd9bc8a9078f0d23179fb3b261",
+    "native_paint_types": [
+      "fill-imgmask"
+    ],
+    "source_ink": 57600,
+    "outside_physical_paint_envelopes": 0,
+    "changed_rgb_pixels": 0
+  },
+  {
+    "case": "white-overpaint",
+    "pdf_sha256": "235bd45cae0ec97101c49a70d0a9673dc335cdcdceed635de31cf49715455651",
+    "native_paint_types": [
+      "fill-imgmask",
+      "fill-path"
+    ],
+    "source_ink": 0,
+    "outside_physical_paint_envelopes": 0,
+    "changed_rgb_pixels": 0
+  },
+  {
+    "case": "clipped-origin",
+    "pdf_sha256": "19ce75df0101b3249757c00a6b22f8a9c6fb6a28d62eb872abf86c17658f6ef7",
+    "native_paint_types": [
+      "fill-imgmask"
+    ],
+    "source_ink": 89200,
+    "outside_physical_paint_envelopes": 0,
+    "changed_rgb_pixels": 0
+  }
+]

@@ -1,0 +1,67 @@
+{
+  "scope": "Seen-page mechanism regression; no generalization claim",
+  "controls_passed": 6,
+  "previous_missing_physical_support_pixels": 2055,
+  "corrected_missing_physical_support_pixels": 0,
+  "uncovered_ink": 0,
+  "duplicate_ink": 0,
+  "whole_page_refusal": null,
+  "complete_body_units": [
+    {
+      "id": "1",
+      "glyphs": 224,
+      "candidate_glyphs": 164,
+      "complete": false
+    },
+    {
+      "id": "2",
+      "glyphs": 607,
+      "candidate_glyphs": 0,
+      "complete": false
+    },
+    {
+      "id": "3",
+      "glyphs": 401,
+      "candidate_glyphs": 0,
+      "complete": false
+    },
+    {
+      "id": "4",
+      "glyphs": 520,
+      "candidate_glyphs": 167,
+      "complete": false
+    },
+    {
+      "id": "5",
+      "glyphs": 385,
+      "candidate_glyphs": 385,
+      "complete": true
+    },
+    {
+      "id": "6",
+      "glyphs": 220,
+      "candidate_glyphs": 0,
+      "complete": false
+    },
+    {
+      "id": "7",
+      "glyphs": 420,
+      "candidate_glyphs": 0,
+      "complete": false
+    },
+    {
+      "id": "8",
+      "glyphs": 426,
+      "candidate_glyphs": 0,
+      "complete": false
+    }
+  ],
+  "visual_findings": [
+    "Algorithm frame and all source ink preserved; whole-page rejection removed.",
+    "Most prose still protected because inline formula detections merge with paragraphs.",
+    "Page number remains an unclassified source fragment inserted between left and right columns: auxiliary-role reading-order failure.",
+    "No change to original batch result."
+  ],
+  "seconds": 3.2331940720032435,
+  "peak_group_rss_kib": 299580
+}
