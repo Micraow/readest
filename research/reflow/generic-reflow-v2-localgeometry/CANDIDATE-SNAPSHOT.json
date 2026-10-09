@@ -1,0 +1,27 @@
+{
+  "created_utc": "2026-10-09T09:58:51.927685+00:00",
+  "blind": false,
+  "base_candidate": "0444ceee51ca20e55e643426cfd7bcb08a375f54",
+  "preserved_blind_failure_checkpoint": "b47ff6e618a8d5618da19a1da31ea9b1dcf4a715",
+  "authored_geometry_controls_passed": 21,
+  "authored_native_source_replay_changed_pixels": 0,
+  "files": {
+    "code/apply_region_priors.py": "6f7cd51bb290d904cd74954262ea065e09e5ddb061f26323d613e131a90bfca5",
+    "code/build_flow_reader.py": "80671945debbefe775cbeb64ce2e7563548be4594ac0dcf2d590cb4931430330",
+    "code/build_tree_reader.py": "54dd2bfa9d239ae6c5dba805bef58669a091c2212be14cc4227eeec14bc72737",
+    "code/continue_reader.py": "c3f5dc74357e9e149f9c3776669ba6ed5aac124d1943167af370fb848e9b559e",
+    "code/control_native_alpha.py": "13357332330250e32defc5e9667c07931c40ab783aaabf3fce4fe534dbeb6d8b",
+    "code/diagnose_native_regions.py": "587806e1a612f43f96df97654dd0a0db14881e643027f728fc270d5ad34c9fb3",
+    "code/direction_groups.py": "6721e9748a029c1c831a28981ccb7372d2afcceb3e71d10607defada946e9ca2",
+    "code/geometry_evidence.py": "e93c3c0897d37e7f97a2bd2370c038a08facacf96223d1fb53bffdb4661fda24",
+    "code/global_alpha.py": "7a182b4d30c8e05315875c2706ee5bdba42650f896a12291635c72ac958bb2f8",
+    "code/measure_request.py": "a8ae3ac350e2fb2beb0641ac01205ce2d5b292a6a1dd25c9b2f6ce42c9096fc7",
+    "code/page_pipeline.py": "f8bc5ea05fbc07086ebbd55eca1540b0f86c78111202b8bfc6a6da025749cf04",
+    "code/paragraph_geometry.py": "af3e205837a492f3960dfb9526aee682882fba82b4996e667e0f1e35f9b0d137",
+    "code/resume_cached_images.py": "03d50827a04896ab07c12a8f91aee70d4fb6fa655e97ca242a8b027e7e160727",
+    "code/run_cold_page.py": "bdd36e37d16bfd21b44c6eaacc523e999ee15f61e8f70f59929a674ac40a044b",
+    "code/test_geometry.py": "273f03c932daf01ff97277949ba1ccc78415b633684c6bfd74ad59c253926ac4",
+    "code/test_paragraphs.py": "6c7364f21c43ad38a2aed5764e118dbaea711dbc0ec23fb8802c6637a7fae3a4",
+    "code/warm_reader.py": "7a603f9553ca1ee23d8679d272339aba89f7ae8537f6d206fc8425e5c947ff0a"
+  }
+}

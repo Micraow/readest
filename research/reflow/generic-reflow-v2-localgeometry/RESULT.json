@@ -1,0 +1,252 @@
+{
+  "status": "SOURCE_MECHANISMS_IMPROVED_READING_AND_BUDGET_STILL_FAIL",
+  "authored_geometry_tests_passed": 21,
+  "authored_native_control_changed_pixels": 0,
+  "original_blind_results_unchanged": true,
+  "new_holdouts_consumed": 0,
+  "pages": [
+    {
+      "sample": "H5",
+      "blind": false,
+      "source_replay_changed_pixels": 0,
+      "source_support_failed_units": 0,
+      "native_source_unit_bijection": true,
+      "native_units": 316,
+      "unresolved_native_units": 0,
+      "native_index_boundary_conflicts": 0,
+      "direction_groups": 0,
+      "paragraphs": 11,
+      "protected_objects": 2,
+      "auxiliary_blocks": 1,
+      "native_glyph_paints": 1384,
+      "unique_native_paint_ledger_pass": true,
+      "source_contour_crop_frame_overflows": 86,
+      "output_geometry": [
+        {
+          "font_css": 20,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        },
+        {
+          "font_css": 28,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        }
+      ],
+      "vector_tokens": 300,
+      "native_image_tokens": 10,
+      "local_image_encoded_bytes": 139424,
+      "local_image_decoded_bytes": 4771080,
+      "reader_payload_bytes": 604479,
+      "reader_payload_sha256": "172ec837edc28141ffc85efe65d71ebd8fc0a445b749cbbfc32982f133093a76",
+      "full_visual_review_sizes": [
+        20,
+        28
+      ],
+      "visual_review_bands": 5,
+      "visual_reading_acceptance": false,
+      "browser_verified": false,
+      "selection_verified": false,
+      "zoom_interaction_verified": false,
+      "cold_request": {
+        "wall_seconds": 60.10255691800194,
+        "request_family_cpu_seconds": 52.386404999999996,
+        "supervisor_cpu_seconds": 5.49544193,
+        "total_accounted_cpu_seconds": 57.881846929999995,
+        "peak_sampled_family_plus_supervisor_rss_mib": 696.0546875,
+        "exit_code": -9,
+        "failure": "BUDGET_WALL",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 6,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 48.771367
+          },
+          {
+            "pid": 201,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 3.615038
+          }
+        ],
+        "load_before": [
+          5.23486328125,
+          7.255859375,
+          7.3935546875
+        ],
+        "load_after": [
+          4.79052734375,
+          6.80078125,
+          7.2294921875
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "cold_stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "started_epoch": 1791539949.3941722,
+          "exit_code": 0,
+          "wall_seconds": 49.40890991700144,
+          "cpu_seconds": 42.742774765
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "started_epoch": 1791539998.805417,
+          "exit_code": 0,
+          "wall_seconds": 5.349725643998681,
+          "cpu_seconds": 4.7572466850000055
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "started_epoch": 1791540004.1566033,
+          "exit_code": 0,
+          "wall_seconds": 0.5473140889989736,
+          "cpu_seconds": 0.5365679399999905
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "started_epoch": 1791540004.706203,
+          "exit_code": 0,
+          "wall_seconds": 0.5622310110011313,
+          "cpu_seconds": 0.44972163799999265
+        },
+        {
+          "name": "target_local_images",
+          "status": "running",
+          "started_epoch": 1791540005.2714217
+        }
+      ],
+      "cold_budget_pass": false
+    },
+    {
+      "sample": "H6",
+      "blind": false,
+      "source_replay_changed_pixels": 0,
+      "source_support_failed_units": 0,
+      "native_source_unit_bijection": true,
+      "native_units": 749,
+      "unresolved_native_units": 0,
+      "native_index_boundary_conflicts": 0,
+      "direction_groups": 1,
+      "paragraphs": 19,
+      "protected_objects": 2,
+      "auxiliary_blocks": 1,
+      "native_glyph_paints": 4091,
+      "unique_native_paint_ledger_pass": true,
+      "source_contour_crop_frame_overflows": 237,
+      "output_geometry": [
+        {
+          "font_css": 20,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        },
+        {
+          "font_css": 28,
+          "viewport_css": 390,
+          "contour_or_asset_boxes_outside_canvas": [],
+          "contour_or_asset_box_contacts": []
+        }
+      ],
+      "vector_tokens": 719,
+      "native_image_tokens": 26,
+      "local_image_encoded_bytes": 213709,
+      "local_image_decoded_bytes": 3056412,
+      "reader_payload_bytes": 1305437,
+      "reader_payload_sha256": "c552b700c59b8fb3ebde2892bbcb81f9af231e1b5b73c553ea96a5f75a236bf8",
+      "full_visual_review_sizes": [
+        20,
+        28
+      ],
+      "visual_review_bands": 13,
+      "visual_reading_acceptance": false,
+      "browser_verified": false,
+      "selection_verified": false,
+      "zoom_interaction_verified": false,
+      "cold_request": {
+        "wall_seconds": 60.09053015700192,
+        "request_family_cpu_seconds": 52.199974999999995,
+        "supervisor_cpu_seconds": 5.083937357,
+        "total_accounted_cpu_seconds": 57.28391235699999,
+        "peak_sampled_family_plus_supervisor_rss_mib": 684.9921875,
+        "exit_code": -9,
+        "failure": "BUDGET_WALL",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 202,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 51.184493999999994
+          },
+          {
+            "pid": 396,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 1.0154809999999999
+          }
+        ],
+        "load_before": [
+          4.79052734375,
+          6.80078125,
+          7.2294921875
+        ],
+        "load_after": [
+          4.31787109375,
+          6.28955078125,
+          7.02490234375
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "cold_stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "started_epoch": 1791540009.4679935,
+          "exit_code": 0,
+          "wall_seconds": 41.04585275199861,
+          "cpu_seconds": 36.34726003000001
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "started_epoch": 1791540050.5163214,
+          "exit_code": 0,
+          "wall_seconds": 9.550380559998302,
+          "cpu_seconds": 8.113115673999992
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "started_epoch": 1791540060.0745742,
+          "exit_code": 0,
+          "wall_seconds": 7.9778325150000455,
+          "cpu_seconds": 6.59660790400001
+        },
+        {
+          "name": "prepare_reader",
+          "status": "running",
+          "started_epoch": 1791540068.0541987
+        }
+      ],
+      "cold_budget_pass": false
+    }
+  ],
+  "new_ci_runs": 0
+}
