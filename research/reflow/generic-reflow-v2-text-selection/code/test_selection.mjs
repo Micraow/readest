@@ -16,7 +16,7 @@ check('source link retained',()=>assert.equal(selectionGeometry(reader,layout,ma
 check('token identity mismatch refuses',()=>{const m=structuredClone(mapping);m.tokens[0].id='wrong';assert.throws(()=>selectionGeometry(reader,layout,m));});
 check('text mismatch refuses',()=>{const m=structuredClone(mapping);m.tokens[0].text='bad';assert.throws(()=>selectionGeometry(reader,layout,m));});
 check('invalid glyph geometry refuses',()=>{const m=structuredClone(mapping);m.tokens[0].characters[0].box_pdf[0]=NaN;assert.throws(()=>selectionGeometry(reader,layout,m));});
-root.append(mountSelectionLayer(doc,reader,layout,mapping));
+root.append(mountSelectionLayer(doc,reader,layout,mapping,()=>10));
 const spans=[...root.querySelectorAll('[data-selection-piece]')];
 function select(a,ao,b,bo){const s=doc.getSelection();s.removeAllRanges();const r=doc.createRange();r.setStart(a,ao);r.setEnd(b,bo);s.addRange(r);return s;}
 check('ordinary full token',()=>assert.deepEqual(readSelection(root,select(spans[0].firstChild,0,spans[1].firstChild,1)),{ok:true,text:'AB'}));
@@ -40,6 +40,8 @@ check('source glyph data attribute',()=>assert.equal(spans[0].dataset.sourceGlyp
 check('selected glyph returns original source box',()=>{select(spans[1].firstChild,0,spans[1].firstChild,1);assert.deepEqual(selectionSourceBoxes(root,doc.getSelection(),2),[[40,40,60,60]]);});
 check('unresolved formula can return to original source',()=>{select(spans[3].firstChild,0,spans[3].firstChild,1);assert.deepEqual(selectionSourceBoxes(root,doc.getSelection(),2),[[20,40,60,60]]);});
 check('selection clearing invalidates old range',()=>{doc.getSelection().removeAllRanges();assert.equal(readSelection(root,doc.getSelection()).ok,false);});
-check('cross-block logical order and newline',()=>{const next=mountSelectionLayer(doc,reader,layout,mapping);root.append(next);const first=next.querySelector('[data-selection-piece]').firstChild;assert.equal(readSelection(root,select(spans[5].firstChild,0,first,1)).text,'C\nA');});
+check('cross-block logical order and newline',()=>{const next=mountSelectionLayer(doc,reader,layout,mapping,()=>10);root.append(next);const first=next.querySelector('[data-selection-piece]').firstChild;assert.equal(readSelection(root,select(spans[5].firstChild,0,first,1)).text,'C\nA');});
 check('partial surrogate refuses',()=>assert.equal(copyPieces([{text:'\uD835'}]).ok,false));
+check('measured character advance scales to native glyph width',()=>{const layer=mountSelectionLayer(doc,reader,layout,mapping,()=>5),span=layer.firstChild;assert.equal(span.style.width,'5px');assert.equal(span.style.transform,'scaleX(2)');});
+check('unknown selection metrics refuse copy',()=>{const layer=mountSelectionLayer(doc,reader,layout,mapping,()=>0);root.append(layer);const t=layer.firstChild.firstChild;assert.equal(readSelection(root,select(t,0,t,1)).ok,false);});
 remove();console.log(JSON.stringify({passed:count,browserVerified:false}));

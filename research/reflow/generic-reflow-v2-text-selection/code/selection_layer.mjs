@@ -22,7 +22,15 @@ export function copyPieces(pieces) {
  if([...text].some(c=>{const n=c.codePointAt(0);return n>=0xD800&&n<=0xDFFF;}))return {ok:false,reason:'选区截断了 Unicode 字符；请重新选择。'};
  return {ok:true,text};
 }
-export function mountSelectionLayer(doc,reader,layout,mapping) {
+export function createSelectionTextMeasure(doc) {
+ let context;try{context=doc.createElement('canvas').getContext('2d');}catch{return ()=>null;}
+ const cache=new Map();return (text,height)=>{
+  if(!context)return null;const key=height+':'+text;if(cache.has(key))return cache.get(key);
+  context.font=height+'px monospace';const width=context.measureText(text).width,result=Number.isFinite(width)&&width>0?width:null;
+  if(cache.size>=4096)cache.clear();cache.set(key,result);return result;
+ };
+}
+export function mountSelectionLayer(doc,reader,layout,mapping,measure) {
  const layer=doc.createElement('div');layer.className='selection-layer';layer.style.width=layout.width+'px';layer.style.height=layout.height+'px';
  for (const token of selectionGeometry(reader,layout,mapping)) {
   const chars=token.eligible?token.characters:[{text:'\uFFFC',x:token.x,y:token.y,width:token.width,height:token.height}];
@@ -30,7 +38,9 @@ export function mountSelectionLayer(doc,reader,layout,mapping) {
    const span=doc.createElement('span');span.dataset.selectionPiece='character';span.dataset.token=token.id;
    if (!token.eligible) {span.dataset.unresolved='true';span.title='此处文字或公式未确认，跨越此处的复制会被拒绝。';}
    if(c.source_glyph)span.dataset.sourceGlyph=c.source_glyph;
-   span.dataset.sourceBox=JSON.stringify(c.box_pdf||token.source_box_pdf);span.textContent=c.text;Object.assign(span.style,{left:c.x+'px',top:c.y+'px',width:c.width+'px',height:c.height+'px',fontSize:c.height+'px',lineHeight:c.height+'px'});layer.append(span);
+   const advance=token.eligible&&typeof measure==='function'?measure(c.text,c.height):null;
+   if(token.eligible&&!(Number.isFinite(advance)&&advance>0)){span.dataset.unresolved='true';span.title='无法确定该字符的选择范围；复制会被拒绝。';}
+   span.dataset.sourceBox=JSON.stringify(c.box_pdf||token.source_box_pdf);span.textContent=c.text;Object.assign(span.style,{left:c.x+'px',top:c.y+'px',width:(advance||c.width)+'px',height:c.height+'px',fontFamily:'monospace',transform:advance?`scaleX(${c.width/advance})`:'none',transformOrigin:'top left',fontSize:c.height+'px',lineHeight:c.height+'px'});layer.append(span);
   }
   if(token.separator){const space=doc.createElement('span');space.dataset.selectionPiece='separator';space.textContent=' ';Object.assign(space.style,{left:(token.x+token.width)+'px',top:token.y+'px',width:'1px',height:token.height+'px'});layer.append(space);}
  }

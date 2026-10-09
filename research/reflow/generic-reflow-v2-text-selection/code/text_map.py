@@ -8,6 +8,7 @@ class TextSelectionConfig:
     minimum_size_ratio:float=.86
     maximum_direction_error_radians:float=.00001
     allowed_unicode_categories:tuple[str,...]=('Lu','Ll','Lt','Lm','Lo','Nd','Pc','Pd','Ps','Pe','Pi','Pf','Po','Sc')
+    allowed_bidirectional_classes:tuple[str,...]=('L','EN','ES','ET','CS','ON')
     replacement_codepoint:int=0xFFFD
     def json(self):return asdict(self)
 def classify_token(token,units,glyphs,events,bridge,cfg=TextSelectionConfig()):
@@ -35,6 +36,7 @@ def classify_token(token,units,glyphs,events,bridge,cfg=TextSelectionConfig()):
         if not g.get('unicode_known') or g.get('map_error'):reasons.append('native_unicode_unknown_or_mapping_error')
         if not valid_char or candidate!=char:reasons.append('extractor_unicode_disagreement')
         if not valid_char or ord(char)==cfg.replacement_codepoint or unicodedata.category(char) not in cfg.allowed_unicode_categories:reasons.append('unsupported_unicode_category_or_replacement')
+        if valid_char and unicodedata.bidirectional(char) not in cfg.allowed_bidirectional_classes:reasons.append('unsupported_bidirectional_text')
         angle=g.get('native_angle_radians');err=abs(math.remainder(angle,2*math.pi)) if isinstance(angle,(int,float)) and math.isfinite(angle) else math.inf
         if err>cfg.maximum_direction_error_radians:reasons.append('nonhorizontal_or_unknown_native_direction')
         box=g.get('box');

@@ -37,4 +37,7 @@ for field in ['size','baseline']:
 case('nonfinite glyph box',lambda a:(a[1]['w']['glyphs'][0].update(box=[0,0,float('inf'),10]),a[2]['g0'].update(box=[0,0,float('inf'),10])),False,'invalid_or_missing_glyph_geometry')
 case('unknown null character',lambda a:(a[1]['w']['glyphs'][0].update(char=None),a[2]['g0'].update(char=None)),False,'extractor_unicode_disagreement')
 case('changed source metric',lambda a:a[1]['w']['glyphs'][0].update(baseline=10.001),False,'immutable_source_record_mismatch')
+case('Arabic needs directional proof',lambda a:None,False,'unsupported_bidirectional_text',text='كتاب')
+case('Hebrew needs directional proof',lambda a:None,False,'unsupported_bidirectional_text',text='שלום')
+case('Arabic directional number',lambda a:None,False,'unsupported_bidirectional_text',text='١')
 p=pathlib.Path(sys.argv[1]);p.mkdir(parents=True,exist_ok=False);(p/'result.json').write_text(json.dumps({'cases':cases,'all_passed':True,'semantic_certification_claimed':False},indent=2));print(json.dumps({'cases':len(cases),'all_passed':True}))

@@ -54,3 +54,14 @@ cover keyboard selection across a visual line break, unresolved-content refusal,
 detached selections, dialog cleanup/focus, reset, repeated close and late events.
 All 27 earlier selection controls still pass. These checks simulate dialog state;
 they do not certify actual browser modality, keyboard gestures or clipboard access.
+
+## Measured selection advances and direction limit
+
+Transparent character spans now use measured monospace advances scaled horizontally
+to the native glyph box width. Missing/zero/non-finite advances mark that character
+unresolved, so copying refuses rather than relying on an unverified hit area. This
+is an implementation correction, not proof of browser selection rectangle alignment.
+The current left-to-right layout now explicitly refuses unsupported RTL/bidirectional
+classes. Horizontal glyph angle alone does not establish reading direction.
+Mapping controls: 34 pass. Selection controls: 29 pass. These policy changes are
+frozen before selecting the next independent public-paper page.
