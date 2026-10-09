@@ -14,6 +14,9 @@ class GeometryConfig:
     maximum_script_vertical_em:float=1.5
     script_horizontal_gap_em:float=.4
     minimum_script_fraction:float=.08
+    maximum_fraction_bar_width_em:float=3.
+    maximum_fraction_region_height_em:float=2.5
+    fraction_vertical_reach_em:float=.8
     tall_glyph_height_ratio:float=1.8
     main_row_alignment_em:float=2.
     rule_maximum_height_em:float=.15
@@ -52,6 +55,23 @@ def local_anchor_ids(units,body,cfg=GeometryConfig()):
             if ok:accepted.update(u['id'] for u in us)
     return accepted,trace
 
+def bounded_script_fraction(gs,objects,paints,body,scripts,cfg):
+    # An explicit compact stacked fraction is structural evidence independent
+    # of how many ordinary-size glyphs surround it. Global script density alone
+    # shrinks when an otherwise unchanged expression gains baseline symbols.
+    if not gs or not scripts:return []
+    bounds=union([g['box'] for g in gs])
+    if bounds[3]-bounds[1]>cfg.maximum_fraction_region_height_em*body:return []
+    from fraction_support import propose_support
+    accepted=[]
+    for paint in objects:
+        if paint['id'] not in paints or not paint.get('horizontal_stroke'):continue
+        b=paint['box'];w,h=b[2]-b[0],b[3]-b[1]
+        if not (cfg.rule_minimum_width_em*body<=w<=cfg.maximum_fraction_bar_width_em*body and 0<h<=cfg.rule_maximum_height_em*body and w/h>=cfg.rule_minimum_aspect):continue
+        local=propose_support(b,gs,cfg.fraction_vertical_reach_em*body,body=body)
+        if local and set(scripts)&{g['id'] for g in local}:accepted.append(paint['id'])
+    return accepted
+
 def formula_evidence(units,objects,body,cfg=GeometryConfig()):
     gs=[g for u in units for g in u['glyphs'] if g.get('native_object_ink_observed',True)];main=[g for g in gs if g['size']>=cfg.small_script_ratio*body];scripts=[]
     for g in gs:
@@ -64,8 +84,8 @@ def formula_evidence(units,objects,body,cfg=GeometryConfig()):
         else:r['glyphs'].append(g)
     rows=[r for r in rows if len(r['glyphs'])>=2];starts=[min(g['box'][0] for g in r['glyphs']) for r in rows];aligned=len(rows)>=2 and max(starts)-min(starts)<=cfg.main_row_alignment_em*body
     paints={o for u in units for o in u.get('objects',[])};rules=[o['id'] for o in objects if o['id'] in paints and o.get('type')!=1 and o['box'][2]-o['box'][0]>=cfg.rule_minimum_width_em*body and o['box'][3]-o['box'][1]<=cfg.rule_maximum_height_em*body and (o['box'][2]-o['box'][0])/max(o['box'][3]-o['box'][1],1e-9)>=cfg.rule_minimum_aspect]
-    fraction=len(scripts)/max(len(gs),1);ok=fraction>=cfg.minimum_script_fraction and bool(tall or rules or (aligned and len(scripts)>=2))
-    return {'pass_native_structure':ok,'script_glyphs':len(scripts),'glyphs':len(gs),'script_fraction':fraction,'tall_glyphs':len(tall),'native_rules':len(rules),'main_baseline_rows':len(rows),'aligned_rows':aligned,'semantic_unicode_used':False}
+    fraction=len(scripts)/max(len(gs),1);bounded=bounded_script_fraction(gs,objects,paints,body,scripts,cfg);ok=(fraction>=cfg.minimum_script_fraction and bool(tall or rules or (aligned and len(scripts)>=2))) or bool(bounded)
+    return {'pass_native_structure':ok,'script_glyphs':len(scripts),'glyphs':len(gs),'script_fraction':fraction,'tall_glyphs':len(tall),'native_rules':len(rules),'main_baseline_rows':len(rows),'aligned_rows':aligned,'semantic_unicode_used':False,'bounded_script_fraction_rules':bounded}
 
 def label_extension_ok(units,seed,allunits,body,cfg=GeometryConfig()):
     core=[u for u in units if seed[0]<=(u['box'][0]+u['box'][2])/2<=seed[2] and seed[1]<=(u['box'][1]+u['box'][3])/2<=seed[3]];outside=[u for u in units if u not in core];trace=[]
@@ -84,7 +104,7 @@ def label_extension_ok(units,seed,allunits,body,cfg=GeometryConfig()):
         rb=union([v['box'] for v in rows]) if rows else None
         corridor=[min(b[0],rb[2]),min(b[1],rb[1]),max(b[0],rb[2]),max(b[3],rb[3])] if rb else None
         intruders=[v['id'] for v in allunits if v not in units and corridor and min(v['box'][2],corridor[2])>max(v['box'][0],corridor[0]) and min(v['box'][3],corridor[3])>max(v['box'][1],corridor[1])]
-        ok=bool(all(g['unicode_known'] for g in gs) and len(text)<=cfg.maximum_equation_label_characters and re.fullmatch(r'\(?[0-9]+[a-z]?\)?',text) and rb and b[0]>=rb[2] and gap(b,rb)<=cfg.maximum_equation_label_gap_em*body and not intruders)
+        ok=bool(all(g['unicode_known'] for g in gs) and len(text)<=cfg.maximum_equation_label_characters and re.fullmatch(r'(?:[0-9]+[a-z]?|\([0-9]+[a-z]?\))',text) and rb and b[0]>=rb[2] and gap(b,rb)<=cfg.maximum_equation_label_gap_em*body and not intruders)
         trace.append({'unit':u['id'],'accepted':ok,'intervening_units':intruders,'certified_numeric_label_only':True})
         if not ok:return False,trace
     return True,trace

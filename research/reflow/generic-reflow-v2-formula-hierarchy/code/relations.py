@@ -42,7 +42,7 @@ def relation(core,label,units,glyphs,regions,page,body,formula_proof,cfg=Formula
     gs=label.get('glyphs',[]);cg=core.get('glyphs',[])
     if label.get('kind')!='native_word' or not gs or not cg or label.get('objects'):return fail('children_not_independent_native_core_and_word')
     text=''.join(g.get('char','') for g in gs)
-    if not all(g.get('unicode_known',False) for g in gs) or len(gs)>cfg.maximum_label_glyphs or not re.fullmatch(r'\(?[0-9]+[a-z]?\)?',text):return fail('mapped_numeric_candidate_unavailable')
+    if not all(g.get('unicode_known',False) for g in gs) or len(gs)>cfg.maximum_label_glyphs or not re.fullmatch(r'(?:[0-9]+[a-z]?|\([0-9]+[a-z]?\))',text):return fail('mapped_numeric_candidate_unavailable')
     lb=label['box'];cb=core['box'];union=bbox([core,label]);r=regions.get(core['id']);lr=regions.get(label['id'])
     region_reason='same_region_tree_column'
     if not r or not lr:return fail('different_or_unknown_column')

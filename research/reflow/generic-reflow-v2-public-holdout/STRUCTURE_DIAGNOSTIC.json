@@ -1,0 +1,175 @@
+{
+  "scope": "seen cached-model native rebuild plus separate reader continuation",
+  "original_holdout": "failed 0/1, unchanged",
+  "prior_timeout": "retained; separate 60-second final-render timeout",
+  "model_inferences": 0,
+  "cold_request": false,
+  "native_stage_seconds": 36.57032535097096,
+  "reader_stage_seconds": 24.763977742011775,
+  "separate_external_caps_seconds": [
+    60,
+    60
+  ],
+  "combined_cold_time_claimed": false,
+  "reader": {
+    "blocks": 16,
+    "native_units": 372,
+    "glyph_and_paint_multisets_conserved": true,
+    "independent_continuation_byte_identical": true,
+    "sha256": "9f7da4ff7edf5b0940e02a730683ce9c617a64e1a030999b7747701e95116c5d"
+  },
+  "native_safety": {
+    "exact_replay": true,
+    "resolved_order": true,
+    "unsupported_units": 0
+  },
+  "formula": {
+    "global_script_fraction": 0.06060606060606061,
+    "unchanged_minimum_script_fraction": 0.08,
+    "compact_fraction_witness": true,
+    "unique_label_relation": true
+  },
+  "mapping": {
+    "eligible_tokens": 341,
+    "refused_tokens": 26,
+    "refusal_reasons": {
+      "native_image_has_no_verified_text_layer": 11,
+      "no_source_glyphs": 9,
+      "no_unique_geometry_bridge": 11,
+      "not_ordinary_native_word": 8,
+      "extractor_unicode_disagreement": 2,
+      "native_unicode_unknown_or_mapping_error": 2,
+      "unsupported_bidirectional_text": 1,
+      "unsupported_unicode_category_or_replacement": 3,
+      "incomplete_glyph_paint_bijection": 2,
+      "mixed_or_invalid_glyph_sizes": 12
+    },
+    "semantic_unicode_certified": false,
+    "browser_selection_verified": false,
+    "copy_across_refused_content_allowed": false
+  },
+  "render": {
+    "font": 28,
+    "dpr": 2,
+    "viewport": 390,
+    "undersampled_images": 0,
+    "reviewed_bands": 4
+  },
+  "responsive_layout": {
+    "cases": [
+      {
+        "font": 20,
+        "width": 320,
+        "formula_mode": "number_following_row",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 20,
+        "width": 390,
+        "formula_mode": "number_following_row",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 20,
+        "width": 800,
+        "formula_mode": "side_by_side",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 24,
+        "width": 320,
+        "formula_mode": "number_following_row",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 24,
+        "width": 390,
+        "formula_mode": "number_following_row",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 24,
+        "width": 800,
+        "formula_mode": "side_by_side",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 28,
+        "width": 320,
+        "formula_mode": "number_following_row",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 28,
+        "width": 390,
+        "formula_mode": "number_following_row",
+        "placements_in_bounds": true
+      },
+      {
+        "font": 28,
+        "width": 800,
+        "formula_mode": "side_by_side",
+        "placements_in_bounds": true
+      }
+    ],
+    "browser_verified": false
+  },
+  "geometry": {
+    "source_contour_box_overflows": 38,
+    "output_canvas_overflows": [
+      0,
+      0
+    ],
+    "output_contour_box_contacts": [
+      1,
+      1
+    ],
+    "mixed_engine_pixel_ownership_proven": false
+  },
+  "viewer_smoke": {
+    "pages": 1,
+    "blocks": 16,
+    "eligible_paragraph_copy": true,
+    "refused_paragraph_copy_blocked": true,
+    "font_selection_cleanup": true,
+    "network_attempts": 0,
+    "paint_calls": 3994,
+    "browser_verified": false,
+    "renderer": "native Node canvas"
+  },
+  "H5_H6_regression": {
+    "module_initialization": true,
+    "real_pages_imported": 2,
+    "paragraph_copy": true,
+    "font_change_selection_cleared": true,
+    "page_change": true,
+    "invalid_import_preserves_reader": true,
+    "overbudget_page_preserves_reader_and_source": true,
+    "decode_failure_import_preserves_reader": true,
+    "failure_bundle_source_fallback": true,
+    "network_attempts": 0,
+    "paint_calls": 8303,
+    "renderer": "native Node canvas",
+    "native_canvas_reference_blocks": 30,
+    "compiled_paths": 405,
+    "decoded_images": 39,
+    "return_to_first_page_resource_work": 0,
+    "browser_verified": false
+  },
+  "controls": {
+    "local_geometry": 58,
+    "formula_relations": 19,
+    "order_native": 33,
+    "baseline_evidence": 8,
+    "mapping": 34,
+    "selection": 29,
+    "interaction": 10,
+    "hostile_bundle": 27,
+    "failure_handoff": 3,
+    "formula_layout": 18
+  },
+  "reading_acceptance": false,
+  "browser_verified": false,
+  "full_app_build_verified": false,
+  "CI_run": false
+}

@@ -18,6 +18,9 @@ class RelationsTest(unittest.TestCase):
  def test_numbered_display(self):self.assertTrue(relation(**fixture())['accepted'])
  def test_multiline_core(self):
   d=fixture();d['core']['glyphs'][0]['baseline']=20;self.assertTrue(relation(**d)['accepted'])
+ def test_unbalanced_label_parentheses_refuse(self):
+  for index in [0,-1]:
+   d=fixture();del d['label']['glyphs'][index];self.assertFalse(relation(**d)['accepted'])
  def test_no_label(self):
   d=fixture();d['label']['glyphs']=[];self.assertEqual(relation(**d)['reason'],'children_not_independent_native_core_and_word')
  def test_unknown_mapping(self):

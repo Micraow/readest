@@ -37,6 +37,9 @@ class Controls(unittest.TestCase):
     def test_unknown_prose_not_auto_formula(self):self.assertFalse(formula_evidence([unit('p',20,100,10,known=False)],[],10)['pass_native_structure'])
     def test_far_equation_label(self):
         a=unit('a',20,100,text='abc');n=unit('n',80,100,text='(2)',start=3);ok,_=label_extension_ok([a,n],[18,88,45,102],[a,n],10);self.assertTrue(ok)
+    def test_label_unbalanced_parentheses_rejected(self):
+        for text in ['(2','2)']:
+            a=unit('a',20,100);n=unit('n',80,100,text=text,start=4);self.assertFalse(label_extension_ok([a,n],[18,88,45,102],[a,n],10)[0])
     def test_label_unknown_unicode_rejected(self):
         a=unit('a',20,100);n=unit('n',80,100,text='(2)',known=False,start=4);self.assertFalse(label_extension_ok([a,n],[18,88,45,102],[a,n],10)[0])
     def test_label_intervening_prose_rejected(self):
