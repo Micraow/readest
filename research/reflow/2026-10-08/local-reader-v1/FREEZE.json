@@ -1,0 +1,16 @@
+{
+  "frozen_at_utc": "2026-10-09T01:27:44.756485+00:00",
+  "purpose": "Local experimental reader with source inspection; not production quality acceptance",
+  "pipeline": "Unchanged stroke-object batch plus validated fill-imgmask support",
+  "inputs": "Original synthetic two-page PDF: native content and raster-only counterpart. No generalization claim.",
+  "ui_tests": "Existing permitted sandboxed Chromium CI only; no local browser attempt. Test source zoom, location, page switching, refusal, offline-only requests, mobile overflow and escaped input.",
+  "stop": "Single functional run; repair integration bugs only, never quality-tune frozen parsing.",
+  "code_sha256": {
+    "reader.html": "e2d8033a312f5451cadb9cb47d2d5b22dc68dd8a23b26649f8f8cd8a6fbc2abb",
+    "compose_one.py": "9f2f124b97fa7f340723c94ded5ba1a7e5674df160f339e449135c95bcbe5e68",
+    "create_fixture.py": "e23ab3aa7860743eee4229f12e44ea8be13e0f9bc54c3889885d4dd7ad283846",
+    "detect_one.py": "f259ce7dee042b34fbefc8705efdf26d3afb5edff4defc31d56f0165ab3860ed",
+    "run.py": "49bc86feab2ac4a96162a75f534aa112fd1e3a964ad67ea9297cbd349bbf8cec",
+    "export.py": "9e9303b35310189a5c385b87fb43d7a5dead22bd7d0f8da094041ccfa9ea776f"
+  }
+}

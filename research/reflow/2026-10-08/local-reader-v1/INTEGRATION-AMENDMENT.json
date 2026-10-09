@@ -1,0 +1,8 @@
+{
+  "time_utc": "2026-10-09T01:28:06.820774+00:00",
+  "problem": "Resolving a virtualenv interpreter symlink invoked the global interpreter, losing installed PaddleX. Native page correctly fell back; no detector or compositor ran.",
+  "fix": "Preserve virtualenv executable path using absolute() without resolve(). No parsing/model parameter change.",
+  "original_attempt": "output/demo preserved",
+  "next_attempt": "output/demo-v2",
+  "run_sha256": "3ffe2cc45d084093f6cd580ed6af0129d7a064606ef8568b493628bb8bd6f972"
+}

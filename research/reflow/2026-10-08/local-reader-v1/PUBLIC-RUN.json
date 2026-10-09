@@ -1,0 +1,39 @@
+{
+  "input_sha256": "3da50b1cde85be71e1a720e4a3c4379b326cf6a80f734356cf2ab6597f387b47",
+  "selected_pages": [
+    {
+      "page": 1,
+      "seconds": 6.640617415992892,
+      "whole_page_preserved": false,
+      "processing_exception": null,
+      "quality_acceptance": "unverified; must audit source, relation and actual wrapping separately"
+    },
+    {
+      "page": 2,
+      "seconds": 0.4482769039896084,
+      "whole_page_preserved": true,
+      "processing_exception": "ValueError: No native text; preserve whole page. Scan processing not qualified.",
+      "quality_acceptance": "unverified; must audit source, relation and actual wrapping separately"
+    }
+  ],
+  "source_local_only": true,
+  "viewer": "fixed390 image reflow with high-resolution source zoom; no text selection/search/accessibility acceptance",
+  "pipeline": "frozen stroke-object-batch-v1 plus stencil-paint-v1 event support",
+  "default_order": "frozen geometry; official learned order head excluded after no measured gain",
+  "peak_self_rss_kib": 122236,
+  "external_resource_monitor": {
+    "seconds": 7.24747271600063,
+    "peak_group_rss_kib": 644484,
+    "returncode": 0,
+    "cpu_affinity": [
+      0
+    ]
+  },
+  "synthetic_quality": {
+    "native_complete_prose": 3,
+    "genuinely_rewrapped": 2,
+    "protected_small": 1,
+    "scan_page": "whole original fallback; not successful reflow"
+  },
+  "browser_status": "pending permitted Chromium CI"
+}
