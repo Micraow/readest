@@ -1,0 +1,23 @@
+/** Execute the actual shipped module with real H5/H6 data; fake painting, not browser QA. */
+import fs from 'node:fs';import assert from 'node:assert/strict';import {createRequire} from 'node:module';import {pathToFileURL} from 'node:url';
+const [entry,bundlePath,scriptPath]=process.argv.slice(2),require=createRequire(process.env.SELECTION_TEST_PACKAGE||import.meta.url),{JSDOM}=require('jsdom');
+const html=fs.readFileSync(entry,'utf8'),bundle=fs.readFileSync(bundlePath,'utf8');const dom=new JSDOM(html,{url:'https://readest.invalid/research/reflow-viewer.html'}),doc=dom.window.document;
+globalThis.document=doc;globalThis.window=dom.window;Object.defineProperty(doc.documentElement,'clientWidth',{value:390});window.scrollTo=()=>{};
+let networkAttempts=0,paints=0;
+globalThis.fetch=()=>{networkAttempts++;throw Error('network forbidden');};globalThis.XMLHttpRequest=class{constructor(){networkAttempts++;throw Error('network forbidden');}};globalThis.WebSocket=globalThis.XMLHttpRequest;
+const methods=['moveTo','lineTo','bezierCurveTo','quadraticCurveTo','closePath'];globalThis.Path2D=class{};for(const name of methods)Path2D.prototype[name]=()=>{};
+dom.window.HTMLCanvasElement.prototype.getContext=function(){const ctx={canvas:this};for(const name of ['save','restore','setTransform','fillRect','translate','scale','rotate','transform'])ctx[name]=()=>{};ctx.fill=()=>{paints++;};ctx.drawImage=()=>{paints++;};return ctx;};
+globalThis.Image=function(){const image=doc.createElement('img');image.decode=async()=>{assert.match(image.src,/^data:image\/png;base64,/);Object.defineProperty(image,'naturalWidth',{value:100,configurable:true});};return image;};
+dom.window.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};dom.window.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');this.dispatchEvent(new window.Event('close'));};
+fs.writeFileSync(scriptPath,html.match(/<script type="module">([\s\S]*?)<\/script>/)[1]);await import(pathToFileURL(scriptPath).href);
+assert.match(doc.querySelector('#status').textContent,/导入/);assert.equal(doc.querySelectorAll('canvas').length,0);
+const picker=doc.querySelector('#research-bundle'),page=doc.querySelector('#page'),font=doc.querySelector('#font');
+function importFile(text){Object.defineProperty(picker,'files',{configurable:true,value:[{size:text.length,text:async()=>text}]});picker.dispatchEvent(new window.Event('change'));}
+async function settle(test){for(let i=0;i<100;i++){if(test())return;await new Promise(r=>setTimeout(r,20));}throw Error('runtime did not settle');}
+importFile(bundle);await settle(()=>doc.querySelectorAll('canvas').length===11);assert.equal(page.options.length,2);assert.ok(paints>1000);
+const eligible=[...doc.querySelectorAll('section')].find(s=>!s.querySelector('[data-unresolved]'));assert.ok(eligible);eligible.querySelector('button').click();assert.equal(doc.getSelection().isCollapsed,false);
+const copied={},event=new window.Event('copy',{cancelable:true});Object.defineProperty(event,'clipboardData',{value:{setData:(key,value)=>{copied[key]=value;}}});doc.dispatchEvent(event);assert.equal(copied['text/plain'],eligible.querySelector('.selection-layer').textContent);
+font.value='24';font.dispatchEvent(new window.Event('change'));assert.equal(doc.getSelection().rangeCount,0);
+page.value='1';page.dispatchEvent(new window.Event('change'));await settle(()=>doc.querySelectorAll('canvas').length===19);
+const oldCount=doc.querySelectorAll('canvas').length;importFile('{"schema":"wrong"}');await settle(()=>doc.querySelector('#status').textContent.startsWith('未载入'));assert.equal(doc.querySelectorAll('canvas').length,oldCount);
+assert.equal(networkAttempts,0);console.log(JSON.stringify({module_initialization:true,real_pages_imported:2,paragraph_copy:true,font_change_selection_cleared:true,page_change:true,invalid_import_preserves_reader:true,network_attempts:networkAttempts,paint_calls_with_fake_canvas:paints,browser_verified:false}));

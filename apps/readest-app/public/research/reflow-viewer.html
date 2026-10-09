@@ -1,0 +1,212 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-nyX31OLKZohMmta8Hg7GgRM4z00v8TFK/K/qx0khfGI='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Readest 论文重排研究预览</title><style>*{box-sizing:border-box}body{margin:0;background:#edf0f2;color:#18222b;font:14px/1.55 system-ui,sans-serif}header{padding:16px;max-width:740px;margin:auto}h1{font-size:22px;margin:0 0 8px}p{margin:8px 0}label{display:inline-block;margin-right:12px}select,button,a{font:inherit}button,select{border:1px solid #bac7cf;border-radius:5px;padding:4px 8px;background:#fff}a{color:#17628a}main{max-width:390px;margin:auto;background:#fff}canvas{display:block}.reading-surface{position:relative}.selection-layer{position:absolute;inset:0;user-select:text;color:transparent;font-family:monospace;white-space:pre;cursor:text}.selection-layer span{position:absolute;display:block;overflow:visible}.selection-layer span::selection{background:rgba(40,120,210,.3);color:transparent}.sourcebar{user-select:none}section{border-top:1px solid #edf0f2}.sourcebar{min-height:29px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;padding:2px 10px}.sourcebar button{font-size:11px;border:0;color:#526a78}#status{font-size:12px}#limitations{padding:8px;border-left:3px solid #b88b35;background:#fff9e9}dialog{width:90vw;max-width:1000px;max-height:92vh;border:1px solid #bbc6cc;border-radius:10px;background:#fff}.focus{overflow:auto;max-height:74vh}.focus img{display:block}#dialog-title{font-size:13px}</style><header><p><label>导入本地研究数据 <input id="research-bundle" type="file" accept=".json,application/json"></label></p><h1>论文重排研究预览</h1><p>仅接收本地预计算研究 JSON，不接收任意 PDF，也不运行提取或模型。可换字号、查看局部公式，并从段落回到原页。实验选择层可用“选择本段”按钮及 Ctrl+C / Command+C 操作。正文不是整页图片。</p><label>样本 <select id="page"></select></label><label>正文字号 <select id="font"><option value="20">20 px</option><option value="24">24 px</option><option value="28">28 px</option></select></label><a id="original">保存原始 PDF</a><p id="limitations"></p><p>当前边界：如载入文字映射，选择/复制为实验功能，遇未确认内容会拒绝复制；浏览器交互与任意放大尚未验收；这是独立研究入口，未接入常规阅读模式。导入数据仅在本页内存使用，关闭页面即释放；不上传、不写入书库。</p><p id="status" role="status" aria-live="polite"></p></header><main></main><dialog aria-labelledby="dialog-title"><button id="close-dialog">关闭</button><p id="dialog-title"></p><div class="focus"></div></dialog><script id="trial-data" type="application/json">{"pages":[]}</script><script type="module">/** Shared browser/native-canvas layout implementation; selection is not certified. */
+/** @typedef {{paddingCssPx:number,lineHeightEm:number,minimumAscentEm:number,minimumDescentEm:number,paragraphGapEm:number,maximumCanvasPixels:number}} LayoutConfig */
+/** @type {Readonly<LayoutConfig>} */
+const DEFAULT_LAYOUT=Object.freeze({paddingCssPx:12,lineHeightEm:1.5,minimumAscentEm:.8,minimumDescentEm:.2,paragraphGapEm:.8,maximumCanvasPixels:32000000});
+function glyphPath(commands,Path2D){const p=new Path2D();for(let i=0;i<commands.length;){switch(commands[i++]){case 0:p.moveTo(commands[i++],commands[i++]);break;case 1:p.lineTo(commands[i++],commands[i++]);break;case 2:p.bezierCurveTo(...commands.slice(i,i+=6));break;case 3:p.quadraticCurveTo(...commands.slice(i,i+=4));break;case 4:p.closePath();break;default:throw Error('unsupported native glyph path command');}}return p;}
+function compileResources(data,Path2D){return data.resources.map(c=>glyphPath(c,Path2D));}
+function ordinaryLayout(data,fontCss,widthCss,cfg=DEFAULT_LAYOUT){if(!(fontCss>0&&widthCss>2*cfg.paddingCssPx))throw Error('invalid reading size');const usable=widthCss-2*cfg.paddingCssPx;return data.blocks.map((block,index)=>{let y=cfg.paddingCssPx,placed=[];if(block.kind==='object'){for(const token of block.tokens){const f=Math.min(1,usable/(token.width_em*fontCss));placed.push({token,x:cfg.paddingCssPx+(usable-token.width_em*fontCss*f)/2,y,width:token.width_em*fontCss*f,height:token.height_em*fontCss*f,fontScale:fontCss*f});y+=token.height_em*fontCss*f;}}else{let line=[],used=0;const flush=()=>{if(!line.length)return;const ascent=Math.max(cfg.minimumAscentEm*fontCss,...line.map(x=>(x.token.height_em+x.token.vertical_em)*fontCss)),descent=Math.max(cfg.minimumDescentEm*fontCss,...line.map(x=>-x.token.vertical_em*fontCss)),height=Math.max(cfg.lineHeightEm*fontCss,ascent+descent),baseline=y+(height-ascent-descent)/2+ascent;for(const x of line)placed.push({token:x.token,x:cfg.paddingCssPx+x.x,y:baseline-(x.token.height_em+x.token.vertical_em)*fontCss,width:x.token.width_em*fontCss,height:x.token.height_em*fontCss,fontScale:fontCss});y+=height;line=[];used=0;};for(const token of block.tokens){const w=token.width_em*fontCss;if(line.length&&used+w>usable)flush();line.push({token,x:used});used+=w+token.gap_em*fontCss;}flush();}return {index,kind:block.kind,width:widthCss,height:Math.ceil(y+cfg.paragraphGapEm*fontCss),placements:placed,fontCss,source_token_count:block.tokens.length};});}
+function drawBlock(ctx,layout,data,paths,images,dpr,cfg=DEFAULT_LAYOUT){if(layout.width*layout.height*dpr*dpr>cfg.maximumCanvasPixels)throw Error('block canvas pixel budget exceeded');ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='white';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore();let paints=0,imagesDrawn=0,underSampled=0;for(const p of layout.placements){const t=p.token;const scale=p.fontScale/data.body_font_pdf/data.source_capture_scale*dpr;if(t.kind==='vector'){for(const id of t.native_event_ids){const e=data.events[id],state=data.states[e.state];ctx.save();ctx.setTransform(scale,0,0,scale,p.x*dpr-scale*t.source_pixel_box[0],p.y*dpr-scale*t.source_pixel_box[1]);for(const op of data.affine_programs[e.program]){if(!['translate','scale','rotate','transform'].includes(op.name))throw Error('unsupported affine program');ctx[op.name](...op.args);}ctx.fillStyle=state.fillStyle;ctx.globalAlpha=state.alpha;ctx.globalCompositeOperation=state.blend;ctx.filter=state.filter;ctx.translate(e.x,e.y);ctx.scale(e.fontSize,-e.fontSize);ctx.fill(paths[e.resource]);ctx.restore();paints++;}}else{const image=images.get(t.id);if(!image)throw Error('local native image unavailable');const cssPerPdf=p.fontScale/data.body_font_pdf,dx=(t.asset_pixel_box[0]/t.asset_scale-t.source_pixel_box[0]/data.source_capture_scale)*cssPerPdf,dy=(t.asset_pixel_box[1]/t.asset_scale-t.source_pixel_box[1]/data.source_capture_scale)*cssPerPdf;ctx.drawImage(image,(p.x+dx)*dpr,(p.y+dy)*dpr,image.width/t.asset_scale*cssPerPdf*dpr,image.height/t.asset_scale*cssPerPdf*dpr);imagesDrawn++;if(t.asset_scale+1e-9<cssPerPdf*dpr)underSampled++;}}return {glyph_paints:paints,local_image_paints:imagesDrawn,undersampled_local_images:underSampled};}
+
+/** Bounded formula children; predecessor glyph/image painter is unchanged. */
+/** @typedef {{minimumChildGapEm:number,followingNumberGapEm:number}} FormulaLayoutConfig */
+/** @type {Readonly<FormulaLayoutConfig>} */
+const FORMULA_LAYOUT=Object.freeze({minimumChildGapEm:1,followingNumberGapEm:.15});
+function layoutBlocks(data,font,width,cfg=DEFAULT_LAYOUT,formula=FORMULA_LAYOUT){
+ const layouts=ordinaryLayout(data,font,width,cfg),usable=width-2*cfg.paddingCssPx;
+ for(let index=0;index<data.blocks.length;index++){
+  const block=data.blocks[index];if(block.kind!=='formula')continue;
+  if(block.tokens.length!==2||block.tokens[0].formula_role!=='core'||block.tokens[1].formula_role!=='label')throw Error('invalid formula hierarchy');
+  const [core,label]=block.tokens;let y=cfg.paddingCssPx;const requestedCore=core.width_em*font,labelWidth=label.width_em*font,labelHeight=label.height_em*font,gap=formula.minimumChildGapEm*font;
+  if(labelWidth>usable)throw Error('formula label exceeds viewport');
+  const side=requestedCore+gap+labelWidth<=usable,coreFont=side?font:Math.min(font,usable/core.width_em),coreWidth=core.width_em*coreFont,coreHeight=core.height_em*coreFont;
+  const coreX=cfg.paddingCssPx+(usable-(side?labelWidth+gap:0)-coreWidth)/2,labelX=width-cfg.paddingCssPx-labelWidth;
+  let labelY=side?y+block.label_anchor_em*coreFont-(label.height_em+label.vertical_em)*font:y+coreHeight+formula.followingNumberGapEm*font;
+  if(labelY<y){y+=cfg.paddingCssPx-labelY;labelY=cfg.paddingCssPx;}
+  const placements=[{token:core,x:coreX,y,width:coreWidth,height:coreHeight,fontScale:coreFont},{token:label,x:labelX,y:labelY,width:labelWidth,height:labelHeight,fontScale:font}];
+  layouts[index]={index,kind:'formula',width,height:Math.ceil(Math.max(y+coreHeight,labelY+labelHeight)+cfg.paragraphGapEm*font),placements,fontCss:font,source_token_count:2,formula_layout:{mode:side?'side_by_side':'number_following_row',core_scale_ratio:coreFont/font,core_and_label_native_geometry_preserved:true}};
+ }
+ return layouts;
+}
+/** Experimental semantic overlay. Native paint remains the only visible text. */
+function selectionGeometry(reader, layout, mapping) {
+ if (!mapping || mapping.tokens.length !== layout.placements.length) throw Error('selection token count mismatch');
+ const scale = layout.placements.length ? reader.source_capture_scale : 1;
+ return layout.placements.map((p, i) => {
+  const m = mapping.tokens[i], t = p.token;
+  if (m.id !== t.id) throw Error('selection token identity mismatch');
+  const ratio = p.fontScale / reader.body_font_pdf;
+  const characters = m.eligible ? m.characters.map(c => {
+   const b=c.box_pdf;
+   if (!Array.isArray(b)||b.length!==4||!b.every(Number.isFinite)||b[2]<=b[0]||b[3]<=b[1]||typeof c.text!=='string'||[...c.text].length!==1) throw Error('invalid selection glyph');
+   return {...c,x:p.x+(b[0]-t.source_pixel_box[0]/scale)*ratio,y:p.y+(b[1]-t.source_pixel_box[1]/scale)*ratio,width:(b[2]-b[0])*ratio,height:(b[3]-b[1])*ratio};
+  }) : [];
+  if (m.eligible && (!characters.length || characters.map(c=>c.text).join('')!==m.text)) throw Error('selection text mismatch');
+  return {id:t.id,source_box_pdf:t.source_pixel_box.map(v=>v/scale),eligible:m.eligible===true,reasons:m.reasons,characters,x:p.x,y:p.y,width:p.width,height:p.height,separator:i+1<layout.placements.length&&t.gap_em>0?' ':''};
+ });
+}
+function copyPieces(pieces) {
+ if (!pieces.length) return {ok:false,reason:'未选中可复制的正文。'};
+ if (pieces.some(p=>p.unresolved)) return {ok:false,reason:'选区包含未确认文字、图片或公式；未复制，请回原页核对。'};
+ const text=pieces.map(p=>p.text).join('');
+ if([...text].some(c=>{const n=c.codePointAt(0);return n>=0xD800&&n<=0xDFFF;}))return {ok:false,reason:'选区截断了 Unicode 字符；请重新选择。'};
+ return {ok:true,text};
+}
+function mountSelectionLayer(doc,reader,layout,mapping) {
+ const layer=doc.createElement('div');layer.className='selection-layer';layer.style.width=layout.width+'px';layer.style.height=layout.height+'px';
+ for (const token of selectionGeometry(reader,layout,mapping)) {
+  const chars=token.eligible?token.characters:[{text:'\uFFFC',x:token.x,y:token.y,width:token.width,height:token.height}];
+  for (const c of chars) {
+   const span=doc.createElement('span');span.dataset.selectionPiece='character';span.dataset.token=token.id;
+   if (!token.eligible) {span.dataset.unresolved='true';span.title='此处文字或公式未确认，跨越此处的复制会被拒绝。';}
+   if(c.source_glyph)span.dataset.sourceGlyph=c.source_glyph;
+   span.dataset.sourceBox=JSON.stringify(c.box_pdf||token.source_box_pdf);span.textContent=c.text;Object.assign(span.style,{left:c.x+'px',top:c.y+'px',width:c.width+'px',height:c.height+'px',fontSize:c.height+'px',lineHeight:c.height+'px'});layer.append(span);
+  }
+  if(token.separator){const space=doc.createElement('span');space.dataset.selectionPiece='separator';space.textContent=' ';Object.assign(space.style,{left:(token.x+token.width)+'px',top:token.y+'px',width:'1px',height:token.height+'px'});layer.append(space);}
+ }
+ const end=doc.createElement('span');end.dataset.selectionPiece='paragraph';end.textContent='\n';Object.assign(end.style,{left:'0px',top:(layout.height-1)+'px',width:'1px',height:'1px'});layer.append(end);
+ return layer;
+}
+function readSelection(root,selection) {
+ if(!selection||selection.rangeCount!==1||selection.isCollapsed)return copyPieces([]);
+ const range=selection.getRangeAt(0);
+ if(!root.contains(range.startContainer)||!root.contains(range.endContainer))return {ok:false,reason:'请只选择阅读正文后复制。'};
+ const pieces=[];
+ for(const span of root.querySelectorAll('[data-selection-piece]')) {
+  if(!range.intersectsNode(span))continue;
+  const text=span.firstChild;
+  let start=range.startContainer===text?range.startOffset:0,end=range.endContainer===text?range.endOffset:text.length;
+  // Exact element-boundary selections can intersect a parent without selecting its text.
+  if(range.comparePoint(text,0)===1||range.comparePoint(text,text.length)===-1)continue;
+  if(start>=end)continue;
+  pieces.push({text:text.data.slice(start,end),unresolved:span.dataset.unresolved==='true'});
+ }
+ return copyPieces(pieces);
+}
+function installCopyGuard(doc,root,status) {
+ const handler=event=>{
+  const selection=doc.getSelection();if(!selection||!selection.rangeCount)return;
+  if(!Array.from({length:selection.rangeCount},(_,i)=>selection.getRangeAt(i)).some(r=>r.intersectsNode(root)))return;
+  event.preventDefault();const result=readSelection(root,selection);
+  if(!result.ok){status.textContent=result.reason;return;}
+  if(!event.clipboardData){status.textContent='当前浏览器未提供复制接口；未复制。';return;}
+  event.clipboardData.setData('text/plain',result.text);status.textContent='已复制选中正文；Unicode 映射仍需按原页核对。';
+ };
+ doc.addEventListener('copy',handler);return ()=>doc.removeEventListener('copy',handler);
+}
+
+function selectionSourceBoxes(root,selection,scale) {
+ if(!selection||selection.rangeCount!==1||selection.isCollapsed)return [];
+ const range=selection.getRangeAt(0);
+ if(!root.contains(range.startContainer)||!root.contains(range.endContainer))return [];
+ return [...root.querySelectorAll('[data-source-box]')].filter(span=>{
+  if(!range.intersectsNode(span))return false;const t=span.firstChild;
+  const start=range.startContainer===t?range.startOffset:0,end=range.endContainer===t?range.endOffset:t.length;
+  return start<end&&range.comparePoint(t,0)!==1&&range.comparePoint(t,t.length)!==-1;
+ }).map(span=>JSON.parse(span.dataset.sourceBox).map(v=>v*scale));
+}
+
+/** Small DOM helpers; deterministic tests are not browser interaction acceptance. */
+function selectParagraph(layer,status) {
+ const doc=layer.ownerDocument,selection=doc.getSelection();
+ if(!layer.isConnected||!selection){status.textContent='当前段落已更新，请重新选择。';return false;}
+ selection.removeAllRanges();const range=doc.createRange();range.selectNodeContents(layer);selection.addRange(range);
+ status.textContent=layer.querySelector('[data-unresolved]')?'已选中本段；含未确认文字或公式，复制会被拒绝。可回原页核对。':'已选中本段。按 Ctrl+C 或 Command+C 复制实验映射正文。';
+ return true;
+}
+function createDialogController(dialog,title,focusArea,closeButton,fallbackFocus) {
+ let opener=null;
+ const cleanup=()=>{focusArea.replaceChildren();title.textContent='';const target=opener?.isConnected?opener:fallbackFocus;opener=null;target?.focus();};
+ const cleanupIfClosed=()=>{if(!dialog.open&&(opener||focusArea.childNodes.length))cleanup();};
+ const close=()=>{if(dialog.open)dialog.close();cleanupIfClosed();};
+ dialog.addEventListener('close',cleanupIfClosed);
+ closeButton.onclick=close;
+ return {
+  open(text,node,trigger=dialog.ownerDocument.activeElement){if(!dialog.open)opener=trigger;title.textContent=text;focusArea.replaceChildren(node);if(!dialog.open)dialog.showModal();closeButton.focus();},
+  close,
+  reset(){if(dialog.open)close();else {focusArea.replaceChildren();title.textContent='';opener=null;}},
+ };
+}
+
+const bundle=JSON.parse(document.querySelector('#trial-data').textContent);
+const pageSelect=document.querySelector('#page'),fontSelect=document.querySelector('#font'),main=document.querySelector('main'),status=document.querySelector('#status'),limitations=document.querySelector('#limitations'),dialog=document.querySelector('dialog');
+let current=null,paths=null,images=null,generation=0,acceptedFont=20;
+const sourceDialog=createDialogController(dialog,document.querySelector('#dialog-title'),dialog.querySelector('.focus'),document.querySelector('#close-dialog'),fontSelect);
+function showDialog(title,node){sourceDialog.open(title,node);}
+function sourceView(block,selectedBoxes=[]){
+ const {source,reader}=current,boxes=selectedBoxes.length?selectedBoxes:block.tokens.map(t=>t.source_pixel_box),NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
+ const union=[Math.max(0,Math.min(...boxes.map(b=>b[0]))-20),Math.max(0,Math.min(...boxes.map(b=>b[1]))-20),Math.min(source.width,Math.max(...boxes.map(b=>b[2]))+20),Math.min(source.height,Math.max(...boxes.map(b=>b[3]))+20)];
+ const setBox=b=>svg.setAttribute('viewBox',`${b[0]} ${b[1]} ${b[2]-b[0]} ${b[3]-b[1]}`);setBox(union);svg.setAttribute('width','100%');svg.style.display='block';svg.style.maxHeight='70vh';svg.setAttribute('role','img');svg.setAttribute('aria-label','原页原生渲染及本段落对应位置');
+ const image=document.createElementNS(NS,'image');image.setAttribute('href',source.png);image.setAttribute('width',source.width);image.setAttribute('height',source.height);svg.append(image);
+ for(const b of boxes){const r=document.createElementNS(NS,'rect');for(const [key,value] of Object.entries({x:b[0],y:b[1],width:b[2]-b[0],height:b[3]-b[1],fill:'none',stroke:'#d44','stroke-width':1.2}))r.setAttribute(key,value);svg.append(r);}
+ const wrap=document.createElement('div'),full=document.createElement('button');full.textContent='查看整页位置';full.onclick=()=>setBox([0,0,source.width,source.height]);wrap.append(full,svg);showDialog('回原页：红框对应当前段落的源位置',wrap);
+}
+async function focusImage(token){const version=generation,page=current,original=images.get(token.id);if(!original)return;const image=original.cloneNode();await image.decode();if(version!==generation||page!==current)return;image.style.width=(original.naturalWidth/(window.devicePixelRatio||1))+'px';image.style.maxWidth='none';image.alt='已有目标字号采样的局部图或公式';showDialog('局部原生采样；超出窗口可滚动，任意放大尚未支持',image);}
+function render(){
+ if(!current)return;const font=Number(fontSelect.value),dpr=window.devicePixelRatio||1,width=Math.min(390,document.documentElement.clientWidth),layouts=layoutBlocks(current.reader,font,width);
+ if(layouts.reduce((n,b)=>n+Math.ceil(b.width*dpr)*Math.ceil(b.height*dpr),0)>DEFAULT_LAYOUT.maximumCanvasPixels){fontSelect.value=String(acceptedFont);status.textContent='所选字号与设备像素比超过当前画布预算，保留上一字号。';return;}
+ document.getSelection()?.removeAllRanges();const fragment=document.createDocumentFragment();let under=0;
+ for(const block of layouts){const section=document.createElement('section'),bar=document.createElement('div'),back=document.createElement('button'),canvas=document.createElement('canvas');bar.className='sourcebar';back.textContent='回原页';back.onclick=()=>sourceView(current.reader.blocks[block.index],selectionSourceBoxes(section,document.getSelection(),current.reader.source_capture_scale));bar.append(back);canvas.width=Math.ceil(block.width*dpr);canvas.height=Math.ceil(block.height*dpr);canvas.style.width=block.width+'px';canvas.style.height=block.height+'px';canvas.setAttribute('aria-label',current.text_map?'原生字形段落；实验文字选择':'原生字形段落；文字选择尚未支持');
+ const report=drawBlock(canvas.getContext('2d'),block,current.reader,paths,images,dpr);under+=report.undersampled_local_images;canvas.onclick=event=>{const r=canvas.getBoundingClientRect(),x=(event.clientX-r.left)*block.width/r.width,y=(event.clientY-r.top)*block.height/r.height,p=block.placements.find(p=>p.token.kind==='native_image'&&x>=p.x&&x<=p.x+p.width&&y>=p.y&&y<=p.y+p.height);if(p)focusImage(p.token).catch(error=>{status.textContent='局部查看失败：'+error.message;});};const surface=document.createElement('div');surface.className='reading-surface';surface.append(canvas);if(current.text_map){const layer=mountSelectionLayer(document,current.reader,block,current.text_map.blocks[block.index]);layer.ondblclick=canvas.onclick;surface.append(layer);const select=document.createElement('button');select.textContent='选择本段';select.setAttribute('aria-label',`选择第 ${block.index+1} 段正文`);select.onclick=()=>selectParagraph(layer,status);bar.prepend(select);}for(const [index,p] of block.placements.filter(p=>p.token.kind==='native_image').entries()){const focus=document.createElement('button');focus.textContent=`查看局部 ${index+1}`;focus.setAttribute('aria-label',`查看第 ${block.index+1} 段的第 ${index+1} 个局部图或公式`);focus.onclick=()=>focusImage(p.token).catch(error=>{status.textContent='局部查看失败：'+error.message;});bar.append(focus);}section.append(bar,surface);fragment.append(section);}
+ main.replaceChildren(fragment);acceptedFont=font;status.textContent=under?`${under} 个局部图像在当前设备像素比下采样不足；文字仍按原生矢量绘制。`:(current.text_map?'已载入实验文字选择层；跨越未确认文字或公式将拒绝复制。浏览器交互尚未验收。':'已载入预计算阅读流。正文按原生矢量绘制；文字选择尚未支持。');
+}
+async function changePage(){const version=++generation;sourceDialog.reset();document.getSelection()?.removeAllRanges();status.textContent='正在载入本地预计算资源…';const next=bundle.pages[Number(pageSelect.value)],nextPaths=compileResources(next.reader,Path2D),nextImages=new Map();for(const b of next.reader.blocks)for(const t of b.tokens)if(t.kind==='native_image'&&!nextImages.has(t.id)){const image=new Image();image.src=t.data_uri;await image.decode();nextImages.set(t.id,image);}if(version!==generation)return;current=next;paths=nextPaths;images=nextImages;limitations.textContent=next.limitations;const original=document.querySelector('#original');original.href=next.source.pdf;original.download=next.original_filename;acceptedFont=20;fontSelect.value='20';render();window.scrollTo(0,0);}
+installCopyGuard(document,main,status);
+pageSelect.onchange=()=>changePage().catch(error=>{status.textContent='载入失败：'+error.message;});fontSelect.onchange=render;let timer;window.addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(render,100);});if(bundle.pages.length)await changePage();else status.textContent='请导入本地预计算研究数据；常规 PDF 阅读不受影响。';
+
+/** Local precomputed research bundles only. No script, URL or PDF-parser import. */
+const BUNDLE_LIMITS=Object.freeze({bytes:16*1024*1024,pages:2,blocks:256,tokens:20000,events:50000,resources:5000,commands:2000000,imagePixels:32000000});
+const finite=n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=1e7;
+const index=(n,a)=>Number.isInteger(n)&&n>=0&&Object.hasOwn(a,n);
+function need(ok,message){if(!ok)throw Error('Invalid research bundle: '+message);}
+function list(value,max,name){need(Array.isArray(value)&&value.length<=max,name);return value;}
+function png(uri){need(typeof uri==='string'&&/^data:image\/png;base64,[A-Za-z0-9+/]+=*$/.test(uri),'embedded PNG only');const header=atob(uri.slice(uri.indexOf(',')+1,uri.indexOf(',')+1+44));need(header.slice(0,8)==='\x89PNG\r\n\x1a\n'&&header.slice(12,16)==='IHDR'&&header.length>=24,'PNG header');const n=i=>((header.charCodeAt(i)*16777216)+(header.charCodeAt(i+1)<<16)+(header.charCodeAt(i+2)<<8)+header.charCodeAt(i+3));const width=n(16),height=n(20);need(width>0&&height>0&&width*height<=BUNDLE_LIMITS.imagePixels,'PNG pixel budget');return {width,height};}
+function validateInputTree(value){
+ const stack=[[value,0]];let nodes=0,stringBytes=0;
+ while(stack.length){const [item,depth]=stack.pop();need(++nodes<=1000000&&depth<=32,'tree budget');
+  if(typeof item==='number'){need(finite(item),'nonfinite or excessive number');continue;}
+  if(typeof item==='string'){stringBytes+=item.length;need(stringBytes<=BUNDLE_LIMITS.bytes,'string budget');continue;}
+  if(item===null||typeof item==='boolean')continue;
+  need(item&&typeof item==='object'&&(Array.isArray(item)||Object.getPrototypeOf(item)===Object.prototype||Object.getPrototypeOf(item)===null),'JSON value');
+  for(const key of Object.keys(item)){need(!['__proto__','prototype','constructor'].includes(key),'forbidden prototype key');stack.push([item[key],depth+1]);}
+ }
+}
+function validateResearchBundle(bundle){
+ validateInputTree(bundle);
+ need(bundle?.schema==='readest-reflow-research-v1','schema');const pages=list(bundle.pages,BUNDLE_LIMITS.pages,'pages');need(pages.length>0,'empty pages');
+ for(const page of pages){
+  need(typeof page.label==='string'&&page.label.length<=200&&typeof page.limitations==='string'&&page.limitations.length<=2000,'page labels');
+  need(typeof page.original_filename==='string'&&/^[^/\\]{1,200}\.pdf$/i.test(page.original_filename),'PDF filename');
+  const source=page.source;need(source&&finite(source.width)&&finite(source.height)&&source.width<=16384&&source.height<=16384,'source dimensions');const dims=png(source.png);need(dims.width===source.width&&dims.height===source.height,'source PNG dimensions');need(typeof source.pdf==='string'&&/^data:application\/pdf;base64,JVBER[A-Za-z0-9+/]+=*$/.test(source.pdf),'embedded PDF only');
+  const r=page.reader;need(r&&r.schema===1&&finite(r.body_font_pdf)&&r.body_font_pdf>0&&r.body_font_pdf<=1000&&finite(r.source_capture_scale)&&r.source_capture_scale>0&&r.source_capture_scale<=16,'reader scale');
+  const resources=list(r.resources,BUNDLE_LIMITS.resources,'resources'),events=r.events,states=list(r.states,1000,'states'),programs=list(r.affine_programs,50000,'affine programs');let commands=0,tokens=0,characters=0;need(events&&typeof events==='object'&&!Array.isArray(events)&&Object.keys(events).length<=BUNDLE_LIMITS.events&&Object.keys(events).every(k=>/^(0|[1-9][0-9]*)$/.test(k)),'events');
+  for(const path of resources){list(path,BUNDLE_LIMITS.commands,'glyph path');commands+=path.length;need(commands<=BUNDLE_LIMITS.commands,'total command budget');for(let i=0;i<path.length;){const op=path[i++],count=({0:2,1:2,2:6,3:4,4:0})[op];need(count!==undefined&&i+count<=path.length,'path opcode/length');need(path.slice(i,i+count).every(finite),'path values');i+=count;}}
+  for(const state of states)need(state&&typeof state.fillStyle==='string'&&/^(#[a-f0-9]{3,8}|rgba?\([\d., %]+\))$/i.test(state.fillStyle)&&finite(state.alpha)&&state.alpha>=0&&state.alpha<=1&&state.blend==='source-over'&&state.filter==='none','paint state');
+  for(const program of programs)for(const op of list(program,100,'program length')){const n=({translate:2,scale:2,rotate:1,transform:6})[op.name];need(n!==undefined&&Array.isArray(op.args)&&op.args.length===n&&op.args.every(finite),'affine operation');}
+  for(const e of Object.values(events))need(e&&index(e.resource,resources)&&index(e.state,states)&&index(e.program,programs)&&[e.x,e.y,e.fontSize].every(finite)&&e.fontSize>0,'event');
+  for(const block of list(r.blocks,BUNDLE_LIMITS.blocks,'blocks')){
+   need(['paragraph','object','formula','auxiliary'].includes(block.kind),'block kind');if(block.kind==='formula')need(Array.isArray(block.tokens)&&block.tokens.length===2&&block.tokens[0]?.formula_role==='core'&&block.tokens[1]?.formula_role==='label'&&finite(block.label_anchor_em),'formula hierarchy');
+   for(const t of list(block.tokens,BUNDLE_LIMITS.tokens,'tokens')){tokens++;need(tokens<=BUNDLE_LIMITS.tokens,'total token budget');need(t&&typeof t.id==='string'&&t.id.length<=200&&[t.width_em,t.height_em,t.vertical_em,t.gap_em].every(finite)&&t.width_em>0&&t.width_em<=256&&t.height_em>0&&t.height_em<=256&&Math.abs(t.vertical_em)<=256&&t.gap_em>=0&&t.gap_em<=32,'token geometry');const box=t.source_pixel_box;need(Array.isArray(box)&&box.length===4&&box.every(finite)&&box[0]>=0&&box[1]>=0&&box[2]>box[0]&&box[3]>box[1]&&box[2]<=source.width&&box[3]<=source.height,'source box');
+    if(t.kind==='vector')need(list(t.native_event_ids,10000,'event IDs').every(i=>index(i,events)),'event ID range');
+    else {need(t.kind==='native_image'&&finite(t.asset_scale)&&t.asset_scale>0&&Array.isArray(t.asset_pixel_box)&&t.asset_pixel_box.length===4&&t.asset_pixel_box.every(finite),'native image');png(t.data_uri);}
+   }
+  }
+  if(page.text_map){need(Array.isArray(page.text_map.blocks)&&page.text_map.blocks.length===r.blocks.length,'map blocks');for(let i=0;i<r.blocks.length;i++){const a=r.blocks[i].tokens,b=page.text_map.blocks[i].tokens;need(Array.isArray(b)&&a.length===b.length&&b.every((m,j)=>m.id===a[j].id&&typeof m.eligible==='boolean'&&Array.isArray(m.characters)),'map identities');for(const m of b){characters+=m.characters.length;need(characters<=50000&&m.characters.length<=512,'map character budget');if(m.eligible){need(m.characters.length>0&&typeof m.text==='string'&&m.text===m.characters.map(c=>c.text).join(''),'map text');for(const c of m.characters)need(typeof c.text==='string'&&[...c.text].length===1&&index(c.native_event,events)&&Array.isArray(c.box_pdf)&&c.box_pdf.length===4&&c.box_pdf.every(finite)&&c.box_pdf[2]>c.box_pdf[0]&&c.box_pdf[3]>c.box_pdf[1],'map character');}}}}
+ }
+ return bundle;
+}
+
+// Same-document trusted module, importing data only. Never evaluate imported code.
+let importGeneration=0;
+const picker=document.querySelector('#research-bundle');
+picker.addEventListener('change',async()=>{
+ const version=++importGeneration,file=picker.files?.[0];if(!file)return;
+ try {
+  if(file.size>BUNDLE_LIMITS.bytes)throw Error('本地研究数据超过 16 MiB 上限。');
+  const candidate=validateResearchBundle(JSON.parse(await file.text()));if(version!==importGeneration)return;
+  // Preflight every offered font before replacing an already working document.
+  for(const next of candidate.pages)for(const font of [20,24,28]){const layouts=layoutBlocks(next.reader,font,Math.min(390,document.documentElement.clientWidth));if(layouts.reduce((n,b)=>n+b.width*b.height,0)>DEFAULT_LAYOUT.maximumCanvasPixels)throw Error('研究数据超出画布预算。');if(next.text_map)for(const layout of layouts)selectionGeometry(next.reader,layout,next.text_map.blocks[layout.index]);}
+  bundle.pages=candidate.pages;pageSelect.replaceChildren(...candidate.pages.map((page,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=page.label;return option;}));pageSelect.value='0';await changePage();
+ } catch(error){if(version===importGeneration)status.textContent='未载入研究数据：'+error.message;}
+ finally {if(version===importGeneration)picker.value='';}
+});
+</script></html>

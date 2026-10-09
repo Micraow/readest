@@ -1,4 +1,4 @@
-const bundle=JSON.parse(document.querySelector('#trial-data').textContent());
+const bundle=JSON.parse(document.querySelector('#trial-data').textContent);
 const pageSelect=document.querySelector('#page'),fontSelect=document.querySelector('#font'),main=document.querySelector('main'),status=document.querySelector('#status'),limitations=document.querySelector('#limitations'),dialog=document.querySelector('dialog');
 let current=null,paths=null,images=null,generation=0,acceptedFont=20;
 const sourceDialog=createDialogController(dialog,document.querySelector('#dialog-title'),dialog.querySelector('.focus'),document.querySelector('#close-dialog'),fontSelect);
@@ -22,4 +22,4 @@ function render(){
 }
 async function changePage(){const version=++generation;sourceDialog.reset();document.getSelection()?.removeAllRanges();status.textContent='正在载入本地预计算资源…';const next=bundle.pages[Number(pageSelect.value)],nextPaths=compileResources(next.reader,Path2D),nextImages=new Map();for(const b of next.reader.blocks)for(const t of b.tokens)if(t.kind==='native_image'&&!nextImages.has(t.id)){const image=new Image();image.src=t.data_uri;await image.decode();nextImages.set(t.id,image);}if(version!==generation)return;current=next;paths=nextPaths;images=nextImages;limitations.textContent=next.limitations;const original=document.querySelector('#original');original.href=next.source.pdf;original.download=next.original_filename;acceptedFont=20;fontSelect.value='20';render();window.scrollTo(0,0);}
 installCopyGuard(document,main,status);
-pageSelect.onchange=()=>changePage().catch(error=>{status.textContent='载入失败：'+error.message;});fontSelect.onchange=render;let timer;window.addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(render,100);});await changePage();
+pageSelect.onchange=()=>changePage().catch(error=>{status.textContent='载入失败：'+error.message;});fontSelect.onchange=render;let timer;window.addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(render,100);});if(bundle.pages.length)await changePage();else status.textContent='请导入本地预计算研究数据；常规 PDF 阅读不受影响。';
