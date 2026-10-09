@@ -25,7 +25,7 @@ def verify_unbundle(old,children):
     return {'target_grid_rgba_different_pixels':diff,'overlapping_support_pixels':0,'source_composite_dimensions':list(expected.shape[:2]),'proof_scope':'same-coordinate existing native assets only'}
 
 def build(data,plan,order,source,target):
-    start=time.perf_counter();data=copy.deepcopy(data);source={a['id']:a for a in source['results']};target=target['assets'];units={u['id']:u for u in plan['units']};body=data['body_font_pdf'];scale=data['source_capture_scale'];regions=region_members(order['tree'],body);cores=[u for u in plan['units'] if u.get('prior_source',{}).get('label')=='formula'];records=[]
+    start=time.perf_counter();data=copy.deepcopy(data);source={a['id']:a for a in source['results']};target=target['assets'];units={u['id']:u for u in plan['units']};body=data['body_font_pdf'];scale=data['source_capture_scale'];regions=region_members(order['tree'],body);cores=[u for u in plan['units'] if isinstance(u.get('prior_source'),dict) and u['prior_source'].get('label')=='formula'];records=[]
     for core in cores:
         proof=formula_evidence([core],plan['objects'],body)['pass_native_structure']
         for u in plan['units']:

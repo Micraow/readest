@@ -1,0 +1,80 @@
+{
+  "scope": "Seen-data staged recovery after failed frozen holdout and failed bounded recovery; not a new cold request",
+  "original_holdout": "fail 0/1, unchanged",
+  "registered_recovery": "fail: replay mismatch and unresolved order, unchanged",
+  "native_safety": {
+    "scope": "seen stage only",
+    "model_inferences": 0,
+    "seconds": 2.974819832998037,
+    "merged_units": 2,
+    "source_replay_exact": true,
+    "order_built": true,
+    "unsupported_units": [],
+    "reader_generated": false
+  },
+  "reader": {
+    "blocks": 18,
+    "native_units": 379,
+    "source_unit_multiset_unchanged": true,
+    "payload_bytes": 786591
+  },
+  "text_mapping": {
+    "eligible_tokens": 342,
+    "refused_tokens": 32,
+    "refusal_reasons": {
+      "native_image_has_no_verified_text_layer": 16,
+      "no_source_glyphs": 14,
+      "no_unique_geometry_bridge": 16,
+      "not_ordinary_native_word": 8,
+      "mixed_or_invalid_glyph_sizes": 13,
+      "extractor_unicode_disagreement": 2,
+      "native_unicode_unknown_or_mapping_error": 2,
+      "unsupported_bidirectional_text": 1,
+      "unsupported_unicode_category_or_replacement": 3,
+      "incomplete_glyph_paint_bijection": 2
+    },
+    "semantic_unicode_certified": false,
+    "browser_selection_verified": false,
+    "copy_across_refused_content_allowed": false
+  },
+  "render": {
+    "font_css": 28,
+    "dpr": 2,
+    "width_css": 390,
+    "blocks": 18,
+    "undersampled_local_images": 0,
+    "renderer": "native Node canvas with the same reader layout module; not browser evidence"
+  },
+  "visual_review": {
+    "bands_reviewed": 4,
+    "body_and_diagrams_visible": true,
+    "defects": [
+      "Inline radical and radicand separated after flow placement",
+      "Equation number placed on a separate line",
+      "Paragraph boundaries include unwanted source-line breaks"
+    ],
+    "reading_acceptance": false
+  },
+  "browser_verified": false,
+  "normal_reader_default_changed": false,
+  "experimental_fraction_selector_default": false,
+  "model_inferences_in_continuation": 0,
+  "viewer_smoke": {
+    "pages": 1,
+    "blocks": 18,
+    "eligible_paragraph_copy": true,
+    "refused_paragraph_copy_blocked": true,
+    "font_selection_cleanup": true,
+    "network_attempts": 0,
+    "paint_calls": 4014,
+    "browser_verified": false,
+    "renderer": "native Node canvas"
+  },
+  "focused_controls": {
+    "order_native": 33,
+    "local_geometry": 33,
+    "formula_relations": 18,
+    "hostile_bundle": 27,
+    "failure_handoff": 3
+  }
+}

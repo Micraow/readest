@@ -36,5 +36,9 @@ reject('broken formula hierarchy',b=>{const f=b.pages[0].reader.blocks.find(x=>x
 const failure={schema:'readest-reflow-failure-v1',reason:'Ambiguous native order',original_filename:'source.pdf',source_pdf:bundle.pages[0].source.pdf};
 assert.equal(validateFailureBundle(failure),failure);
 for(const [name,change] of [['external PDF',b=>b.source_pdf='https://invalid.example/a.pdf'],['HTML',b=>b.source_pdf='data:text/html;base64,AAAA'],['path filename',b=>b.original_filename='../source.pdf'],['huge reason',b=>b.reason='x'.repeat(2001)],['prototype',b=>b.extra=JSON.parse('{"__proto__":{}}')],['nonfinite',b=>b.extra=NaN]]){const b=structuredClone(failure);change(b);assert.throws(()=>validateFailureBundle(b),name);negatives++;}
+const overlap=structuredClone(bundle),ob=overlap.pages[0].reader.blocks.find(b=>b.tokens.length>1&&b.tokens[0].kind==='vector'&&b.tokens[1].kind==='vector'),den=overlap.pages[0].reader.source_capture_scale*overlap.pages[0].reader.body_font_pdf;
+ob.tokens[0].source_pixel_box=[10,10,30,20];ob.tokens[0].width_em=20/den;ob.tokens[0].gap_em=-5/den;ob.tokens[1].source_pixel_box=[25,10,40,20];validateResearchBundle(overlap);
+const forged=structuredClone(overlap);forged.pages[0].reader.blocks[overlap.pages[0].reader.blocks.indexOf(ob)].tokens[0].gap_em=-6/den;assert.throws(()=>validateResearchBundle(forged),/negative gap/);negatives++;
+const reversed=structuredClone(overlap);reversed.pages[0].reader.blocks[overlap.pages[0].reader.blocks.indexOf(ob)].tokens[0].gap_em=-20/den;assert.throws(()=>validateResearchBundle(reversed),/token geometry/);negatives++;
 assert.equal({}.polluted,undefined);
 console.log(JSON.stringify({passed:true,real_page_layouts:reports,negative_controls:negatives,timing_ms:{read:parsed-start,parse_and_validate:validated-parsed,layouts_and_geometry:complete-validated},cold_pdf_request:false,browser_verified:false},null,2));

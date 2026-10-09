@@ -38,7 +38,7 @@ def relation(core,label,units,glyphs,regions,page,body,formula_proof,cfg=Formula
     record={'rule':'independent_formula_label','core':core['id'],'label':label['id'],'accepted':False,'semantic_unicode_certified':False}
     def fail(reason,**extra):return record|{'reason':reason}|extra
     prior=core.get('prior_source',{})
-    if core.get('kind')!='closed_graphic' or prior.get('label')!='formula' or prior.get('score',0)<cfg.minimum_prior_score or not formula_proof:return fail('no_independent_formula_evidence')
+    if core.get('kind')!='closed_graphic' or not isinstance(prior,dict) or prior.get('label')!='formula' or prior.get('score',0)<cfg.minimum_prior_score or not formula_proof:return fail('no_independent_formula_evidence')
     gs=label.get('glyphs',[]);cg=core.get('glyphs',[])
     if label.get('kind')!='native_word' or not gs or not cg or label.get('objects'):return fail('children_not_independent_native_core_and_word')
     text=''.join(g.get('char','') for g in gs)

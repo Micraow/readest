@@ -8,6 +8,13 @@ def fixture():
  region={'key':'column','box':[10,0,180,200]}
  return {'core':core,'label':label,'units':[core,label],'glyphs':core['glyphs']+label['glyphs'],'regions':{'core':region,'label':region},'page':[200,220],'body':10,'formula_proof':True}
 class RelationsTest(unittest.TestCase):
+ def test_nonmapping_provenance_keeps_native_tokens(self):
+  from build_hierarchy import build
+  for prior in ['native geometry',None,[],0]:
+   unit={'id':'u','prior_source':prior};data={'body_font_pdf':10,'source_capture_scale':2,'blocks':[{'kind':'paragraph','tokens':[{'id':'t','members':['u']}]}]};plan={'units':[unit]};order={'tree':{'kind':'leaf','box':[0,0,20,20],'unit_ids':['u']}}
+   result,trace=build(data,plan,order,{'results':[]},{'assets':{}});self.assertEqual(result['blocks'],data['blocks']);self.assertEqual(trace['native_unit_count'],1);self.assertFalse(trace['applied'])
+ def test_string_provenance_is_not_formula_prior(self):
+  d=fixture();d['core']['prior_source']='native paint';self.assertEqual(relation(**d)['reason'],'no_independent_formula_evidence')
  def test_numbered_display(self):self.assertTrue(relation(**fixture())['accepted'])
  def test_multiline_core(self):
   d=fixture();d['core']['glyphs'][0]['baseline']=20;self.assertTrue(relation(**d)['accepted'])

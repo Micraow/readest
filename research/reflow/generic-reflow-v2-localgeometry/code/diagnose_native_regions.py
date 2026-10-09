@@ -2,7 +2,7 @@
 import argparse,json,pathlib,statistics,sys,re
 from dataclasses import dataclass,asdict
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[2]/'generic-reflow-v2-order-tree/code'))
-from interior_lines import associate_interior_lines
+from interior_lines import associate_interior_lines,associate_bridged_lines
 from region_tree import build_tree,AmbiguousOrder,OrderConfig
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
 from geometry_evidence import local_anchor_ids
@@ -80,6 +80,8 @@ def make_lines(plan,body,cfg=LineConfig()):
         else:match['units'].extend(line['units']);match['box']=union([match['box'],line['box']])
     lines,interior_trace=associate_interior_lines(merged,body,cfg)
     trace.extend(interior_trace)
+    lines,bridge_trace=associate_bridged_lines(lines,body,cfg)
+    trace.extend(bridge_trace)
     leaves=list(protected)
     for line in lines:
         us=sorted(line['units'],key=lambda u:u['box'][0]);indexes=sorted(g['source_index'] for u in us for g in u['glyphs'] if g.get('native_object_ink_observed',True))
