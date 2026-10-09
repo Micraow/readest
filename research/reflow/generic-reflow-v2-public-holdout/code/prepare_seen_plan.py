@@ -4,7 +4,7 @@ Run with an external process bound, e.g. timeout 60s. Each stage executes once;
 one rendered-support closure is allowed only after a concrete asset mismatch.
 """
 import argparse,importlib.util,pathlib,sys,json,time
-p=argparse.ArgumentParser();p.add_argument('pdf');p.add_argument('cached_model');p.add_argument('out');a=p.parse_args();R=pathlib.Path(__file__).resolve().parents[2];out=pathlib.Path(a.out).resolve();out.mkdir(exist_ok=False)
+p=argparse.ArgumentParser();p.add_argument('pdf');p.add_argument('cached_model');p.add_argument('out');p.add_argument('--overhead-support',action='store_true');a=p.parse_args();R=pathlib.Path(__file__).resolve().parents[2];out=pathlib.Path(a.out).resolve();out.mkdir(exist_ok=False)
 sp=importlib.util.spec_from_file_location('candidate',R/'generic-reflow-v2-integrated-paper-1/code/page_pipeline.py');m=importlib.util.module_from_spec(sp);sys.modules[sp.name]=m;sp.loader.exec_module(m)
 sys.path.insert(0,str(R/'generic-reflow-v2-localgeometry/code'));from rendered_support import close
 pdf=pathlib.Path(a.pdf).resolve();model=pathlib.Path(a.cached_model).resolve();cost=json.loads((model/'model-costs.json').read_text());rows=[]
@@ -27,4 +27,10 @@ assets=verify('initial');tag='initial'
 if assets['unsupported_source_support_units']:
  stage('rendered_support_closure',lambda:close(source,out/'rendered-support'));source=out/'rendered-support';tag='closed';assets=verify(tag)
 if assets['unsupported_source_support_units']:raise RuntimeError('independent source support still fails')
+if a.overhead_support:
+ from overhead_support import seeds
+ current=json.loads((source/'plan-private.json').read_text());proposals=seeds(current['units'],current['objects'])
+ if proposals:
+  stage('overhead_support_closure',lambda:close(source,out/'overhead-support',additional_seeds=proposals));source=out/'overhead-support';tag='overhead';assets=verify(tag)
+  if assets['unsupported_source_support_units']:raise RuntimeError('overhead source support fails')
 (out/'verified-plan.json').write_text(json.dumps(dict(plan=str(source),order=str(out/(tag+'-order')),model_inferences=0,cold_request=False,reader_generated=False,browser_verified=False),indent=2))

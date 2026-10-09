@@ -1,0 +1,55 @@
+{
+  "scope": "separate seen overhead-support repair",
+  "geometry_controls": 5,
+  "native_gate_result": {
+    "scope": "seen overhead geometry repair, not cold",
+    "seconds": 7.6232853589972365,
+    "source_replay_exact": true,
+    "order_built": true,
+    "unsupported_units": [],
+    "glyph_multiset_unchanged": true,
+    "paint_multiset_unchanged": true,
+    "merged_units": 2,
+    "reader_generated": false
+  },
+  "continuation_helper": {
+    "wall_limit_seconds": 60,
+    "exit_code": 124,
+    "completed": false,
+    "last_completed_stage": "formula_hierarchy",
+    "reader_payload_produced": true,
+    "full_final_render_completed": false,
+    "model_inferences": 0
+  },
+  "focused_visual": {
+    "block_index": 5,
+    "render": {
+      "font_css": 28,
+      "dpr": 2,
+      "viewport_css": 390,
+      "renderer": "native Node canvas with the same reader layout module; not browser evidence",
+      "resource_load_seconds": 0.02660419900000011,
+      "layout_draw_and_evidence_seconds": 0.030736440999999785,
+      "blocks": [
+        {
+          "block": 0,
+          "kind": "paragraph",
+          "width": 780,
+          "height": 406,
+          "tokens": 20,
+          "glyph_paints": 83,
+          "local_image_paints": 1,
+          "undersampled_local_images": 0
+        }
+      ],
+      "whole_page_cold_pipeline": false,
+      "source_preprocessing_reused": true,
+      "selection_verified": false
+    },
+    "inspected": true,
+    "radicand_under_overhead_stroke": true,
+    "whole_reader_acceptance": false
+  },
+  "original_holdout_unchanged": "fail 0/1",
+  "browser_verified": false
+}

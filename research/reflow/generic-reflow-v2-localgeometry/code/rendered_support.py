@@ -22,7 +22,7 @@ def edges(folder,assets):
         masks.append((asset['id'],box,mask))
     return out
 
-def close(folder,out):
+def close(folder,out,additional_seeds=()):
     root=pathlib.Path(__file__).resolve().parents[2];sys.path.insert(0,str(root/'generic-reflow-v2-order-tree/code'))
     from bounded_inline import propose,InlineConfig
     folder=pathlib.Path(folder);out=pathlib.Path(out);out.mkdir(exist_ok=False)
@@ -35,11 +35,14 @@ def close(folder,out):
         while todo:
             for n in neighbors[todo.pop()]-group:group.add(n);pending.discard(n);todo.append(n)
         if group&failed:components.append(group)
+    components.extend(set(seed) for seed in additional_seeds)
     units=plan['units'];replacements={};decisions=[]
     for component in components:
         group,trace=propose(component,units,plan['glyphs'],plan['objects'],summary['body_font'],InlineConfig(math_neighbor_gap_em=0,short_identifier_characters=0));decisions.append(dict(owners=sorted(component),accepted=group is not None,trace=trace))
         if group is None:continue
         owned=set(group['former_units']);units=[u for u in units if u['id'] not in owned]+[group];replacements.update({uid:group['id'] for uid in owned})
+    if collections.Counter(g['id'] for u in units for g in u['glyphs'])!=collections.Counter(g['id'] for u in plan['units'] for g in u['glyphs']):raise RuntimeError('source glyph conservation failed')
+    if collections.Counter(o for u in units for o in u.get('objects',[]))!=collections.Counter(o for u in plan['units'] for o in u.get('objects',[])):raise RuntimeError('source paint conservation failed')
     patches=collections.defaultdict(list)
     for uid,ps in plan['patches'].items():
         patches[replacements.get(uid,uid)].extend({**p,'file':str((folder/p['file']).resolve())} for p in ps)
