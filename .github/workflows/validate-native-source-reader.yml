@@ -1,6 +1,7 @@
 name: Native source reader synthetic Chromium validation
 
 on:
+  workflow_dispatch:
   push:
     branches: ['validate/hybrid-reader-chromium-20261008']
     paths:
