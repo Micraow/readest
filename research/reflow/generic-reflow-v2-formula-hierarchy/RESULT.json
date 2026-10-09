@@ -1,0 +1,167 @@
+{
+  "candidate": "formula-hierarchy-2",
+  "controls": {
+    "relations": 16,
+    "layout_cases": 18
+  },
+  "new_holdouts_opened": 0,
+  "blind_batch_result_unchanged": "0/2",
+  "pages": [
+    {
+      "diagnostic": "H5",
+      "previously_seen": true,
+      "formula_hierarchies": 2,
+      "native_units": 316,
+      "native_unit_multiset_unchanged": true,
+      "exact_original_composite_reconstructions": 1,
+      "composite_different_pixels": 0,
+      "payload_bytes": 598781,
+      "previous_payload_bytes": 604447,
+      "blocks": 11,
+      "vector_tokens": 300,
+      "local_image_tokens": 11,
+      "local_image_png_bytes": 134300,
+      "shared_contours": 98,
+      "glyph_paints": 1384,
+      "hierarchy_builder_measured_wall_seconds_only": 0.24683660199661972,
+      "cold_page_cost_measured": false,
+      "core_scales": [
+        {
+          "font_css": 20,
+          "formula_ordinal": 0,
+          "prior_core_font_scale": 11.98795416845034,
+          "new_core_font_scale": 16.66896484375,
+          "relative_linear_scale": 1.3904761904761909,
+          "number_mode": "number_following_row"
+        },
+        {
+          "font_css": 20,
+          "formula_ordinal": 1,
+          "prior_core_font_scale": 20,
+          "new_core_font_scale": 20,
+          "relative_linear_scale": 1.0,
+          "number_mode": "side_by_side"
+        },
+        {
+          "font_css": 28,
+          "formula_ordinal": 0,
+          "prior_core_font_scale": 11.987954168450342,
+          "new_core_font_scale": 16.66896484375,
+          "relative_linear_scale": 1.3904761904761906,
+          "number_mode": "number_following_row"
+        },
+        {
+          "font_css": 28,
+          "formula_ordinal": 1,
+          "prior_core_font_scale": 28,
+          "new_core_font_scale": 28,
+          "relative_linear_scale": 1.0,
+          "number_mode": "side_by_side"
+        }
+      ],
+      "integer_translation_different_pixels": [
+        15,
+        0,
+        0,
+        0,
+        42,
+        0,
+        15,
+        0
+      ],
+      "integer_translation_max_channel_delta": 1,
+      "strict_integer_translation_pass": false,
+      "actual_scale_sampling_pass": true,
+      "output_geometry": [
+        {
+          "font_css": 20,
+          "outside_canvas": 0,
+          "contacts": 0
+        },
+        {
+          "font_css": 28,
+          "outside_canvas": 0,
+          "contacts": 0
+        }
+      ],
+      "source_vector_contour_overflow_count_retained": 86,
+      "full_visual_review_bands": {
+        "20": 2,
+        "28": 3
+      },
+      "mixed_engine_pixel_ownership_proven": false,
+      "browser_verified": false,
+      "selection_verified": false,
+      "whole_page_acceptance": false
+    },
+    {
+      "diagnostic": "H6",
+      "previously_seen": true,
+      "formula_hierarchies": 1,
+      "native_units": 749,
+      "native_unit_multiset_unchanged": true,
+      "exact_original_composite_reconstructions": 1,
+      "composite_different_pixels": 0,
+      "payload_bytes": 1304864,
+      "previous_payload_bytes": 1305387,
+      "blocks": 19,
+      "vector_tokens": 719,
+      "local_image_tokens": 27,
+      "local_image_png_bytes": 212559,
+      "shared_contours": 209,
+      "glyph_paints": 4091,
+      "hierarchy_builder_measured_wall_seconds_only": 1.5603075389990408,
+      "cold_page_cost_measured": false,
+      "core_scales": [
+        {
+          "font_css": 20,
+          "formula_ordinal": 0,
+          "prior_core_font_scale": 18.051119653305204,
+          "new_core_font_scale": 20,
+          "relative_linear_scale": 1.1079645132338343,
+          "number_mode": "number_following_row"
+        },
+        {
+          "font_css": 28,
+          "formula_ordinal": 0,
+          "prior_core_font_scale": 18.051119653305207,
+          "new_core_font_scale": 22.577871021471523,
+          "relative_linear_scale": 1.2507739938080493,
+          "number_mode": "number_following_row"
+        }
+      ],
+      "integer_translation_different_pixels": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "integer_translation_max_channel_delta": 0,
+      "strict_integer_translation_pass": true,
+      "actual_scale_sampling_pass": true,
+      "output_geometry": [
+        {
+          "font_css": 20,
+          "outside_canvas": 0,
+          "contacts": 0
+        },
+        {
+          "font_css": 28,
+          "outside_canvas": 0,
+          "contacts": 0
+        }
+      ],
+      "source_vector_contour_overflow_count_retained": 237,
+      "full_visual_review_bands": {
+        "20": 4,
+        "28": 8
+      },
+      "mixed_engine_pixel_ownership_proven": false,
+      "browser_verified": false,
+      "selection_verified": false,
+      "whole_page_acceptance": false
+    }
+  ],
+  "new_ci_runs": 0,
+  "full_cold_page_previous_failures_unchanged": true
+}
