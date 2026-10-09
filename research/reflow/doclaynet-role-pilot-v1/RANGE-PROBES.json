@@ -1,0 +1,22 @@
+[
+  {
+    "name": "core",
+    "url": "https://codait-cos-dax.s3.us.cloud-object-storage.appdomain.cloud/dax-doclaynet/1.0.0/DocLayNet_core.zip",
+    "started_utc": "2026-10-09T01:38:33.015696+00:00",
+    "status": 206,
+    "etag": "\"52242220284e12538949c5b06eb2777c-448\"",
+    "content_range": "bytes 30012018114-30012083649/30012083650",
+    "bytes": 65536,
+    "sha256": "584d0348b14a15ac1712b9d5ed8b518a496a9a158b798067f62751b1ba0d8e2c"
+  },
+  {
+    "name": "extra",
+    "url": "https://codait-cos-dax.s3.us.cloud-object-storage.appdomain.cloud/dax-doclaynet/1.0.0/DocLayNet_extra.zip",
+    "started_utc": "2026-10-09T01:38:41.223500+00:00",
+    "status": 206,
+    "etag": "\"56a63e0408a7076bceaac038ab9842ca-120\"",
+    "content_range": "bytes 8008812662-8008878197/8008878198",
+    "bytes": 65536,
+    "sha256": "06d332cae1802b863a99e00ca505e90a6b5eeba3cddd454126ccccc99b522d0c"
+  }
+]

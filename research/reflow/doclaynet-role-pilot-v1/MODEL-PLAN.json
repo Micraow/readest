@@ -1,0 +1,12 @@
+{
+ "hypothesis": "A tiny geometry/font/context classifier can improve real native-line role assignments under held-out document/source-style groups; this may reduce unnecessary paragraph fallback but is not yet actual reflow improvement.",
+ "inputs": "Actual native PDF text lines/glyph geometry, fonts, neighboring lines and frozen PP-S detection scores; no text tokens, native order assumption, OCR or VLM.",
+ "targets": {"0":"Text/List-item", "1":"Formula", "2":"Page-header/Page-footer/Footnote", "3":"Caption/Section-header/Title/Table/Picture"},
+ "label_rule": "At least90% nonspace glyph centers must have one consistent human-annotated role. Unknown/mixed lines excluded from fit but remain unscorable failures in evaluation denominators. All annotated objects without native support count as missing candidates.",
+ "model": "4-class softmax, standardized training features only, fixed inverse-frequency class weighting, L2=0.01, scipy L-BFGS-B max150 iterations. No hyperparameter search.",
+ "calibration": "Choose threshold from0.50..0.99 with greatest accepted count on six calibration documents, requiring zero observed wrong-role or unscorable accepted lines and at least20 accepted; otherwise reject all. Report finite-sample95% intervals, not risk guarantees.",
+ "comparators": "Unchanged frozen geometric/PP-label classifier in features.py; raw PP roles are supporting features, not ground truth.",
+ "quality": "Role confusion, false prose on formulas/auxiliary, all-native-glyph role coverage, missing/mixed candidates and per-source errors. No real text-wrap percentage is inferred from role predictions. No formula-number parent labels are available in this dataset.",
+ "stopping": "One fit and one locked test evaluation, no correction based on test pages. Only integration/data-shape bugs may be repaired with explicit amendment; parser or threshold improvements require new source-held-out pages.",
+ "resource": "One CPU affinity, process group under1GiB, each page under60sec; no new model download/training service. Existing raw data budget unchanged."
+}

@@ -1,0 +1,7 @@
+{
+  "time_utc": "2026-10-09T01:49:19.017906+00:00",
+  "feature_source_sha256": "8f5e40a9cd8323ecaf0e271f4eb0198f810e6a6410e3b46b96e6da14c73925e7",
+  "fit_source_sha256": "9e56858a3fba0e78198cd3bc5598dd99ddc48abeaf17dd8204cd2d7a59144e05",
+  "detector_source_sha256": "411821edb131e89967107ae1ddad86e63ea74007cf68ecdc626593d3d6e910a0",
+  "note": "Before all detector inference or fitting; two train-only source alignment overlays inspected. No test-page prediction inspected."
+}

@@ -1,0 +1,641 @@
+{
+  "selection_rule": "Lexicographic SHA256 seeded filename ordering within declared collection quotas; >=2 annotated Text objects, scientific pages >=1 Formula; native PDF entry <=2MiB; distinct doc_name globally; known diagnostic paper IDs excluded. No output inspection or replacement.",
+  "quotas": {
+    "train": [
+      [
+        "arxiv_mediumspaced",
+        4
+      ],
+      [
+        "arxiv_doublespaced",
+        4
+      ],
+      [
+        "manuals",
+        2
+      ],
+      [
+        "ann_reports_00_04_fancy",
+        2
+      ]
+    ],
+    "val": [
+      [
+        "arxiv_mediumspaced",
+        2
+      ],
+      [
+        "arxiv_doublespaced",
+        2
+      ],
+      [
+        "manuals",
+        1
+      ],
+      [
+        "ann_reports_00_04_fancy",
+        1
+      ]
+    ],
+    "test": [
+      [
+        "arxiv_two_columns",
+        6
+      ],
+      [
+        "redbooks",
+        2
+      ],
+      [
+        "ann_reports_10_14_fancy",
+        2
+      ],
+      [
+        "chinese_laws",
+        1
+      ],
+      [
+        "japanese_laws",
+        1
+      ]
+    ]
+  },
+  "pages": [
+    {
+      "split": "train",
+      "id": 26951,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "e2b9da02d0f499d4a5a503e10e11c688cdbfcc8ab9bd18d1aa6ecfe4eb63936e.png",
+      "collection": "arxiv_mediumspaced",
+      "doc_name": "1002.1477.pdf",
+      "page_no": 17,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 5,
+        "3": 2,
+        "5": 1
+      }
+    },
+    {
+      "split": "train",
+      "id": 31390,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "2df62d8e5f8e7e8dc389db3a7392996cc02e9a308eb076b611d5c1eca335f3df.png",
+      "collection": "arxiv_mediumspaced",
+      "doc_name": "1002.3309.pdf",
+      "page_no": 3,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 6,
+        "5": 1,
+        "3": 7
+      }
+    },
+    {
+      "split": "train",
+      "id": 31135,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "3185bbce6eaab16f6ca5cf101cb83d2fe3d2d169943bf687bd75517eae69e62b.png",
+      "collection": "arxiv_mediumspaced",
+      "doc_name": "1001.0993.pdf",
+      "page_no": 185,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 7,
+        "5": 1,
+        "3": 5,
+        "2": 1
+      }
+    },
+    {
+      "split": "train",
+      "id": 30542,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "2b53bf831f0191c3253c0ca6b0f8cbfc0c4301c3af9e1a07587d3c4b6f4561eb.png",
+      "collection": "arxiv_mediumspaced",
+      "doc_name": "1002.3936.pdf",
+      "page_no": 23,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 6,
+        "5": 1,
+        "3": 4
+      }
+    },
+    {
+      "split": "train",
+      "id": 23696,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "54ed62a7e8cb0abec2d6cf3912955f61ab098bd8bf93b214b6c6712e688c318d.png",
+      "collection": "arxiv_doublespaced",
+      "doc_name": "1211.7332.pdf",
+      "page_no": 19,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "8": 1,
+        "10": 4,
+        "3": 4,
+        "5": 1
+      }
+    },
+    {
+      "split": "train",
+      "id": 25649,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "386b368cbbf1e3dc7383824d55a0a4ad713fc9a826fc03436dce497b1f0d58c2.png",
+      "collection": "arxiv_doublespaced",
+      "doc_name": "1507.01853.pdf",
+      "page_no": 6,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 7,
+        "5": 1,
+        "3": 4
+      }
+    },
+    {
+      "split": "train",
+      "id": 24033,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "b1544082b703c10c2d39facc5081aeec6df3397dfac03b0a5a46325660310932.png",
+      "collection": "arxiv_doublespaced",
+      "doc_name": "1407.2292.pdf",
+      "page_no": 121,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 4,
+        "5": 1,
+        "3": 3
+      }
+    },
+    {
+      "split": "train",
+      "id": 25465,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "c7c44e56cbfa590460a48e49d45d228b078e94a9aa780b84abc79ae0bd6e4dd3.png",
+      "collection": "arxiv_doublespaced",
+      "doc_name": "1402.3405.pdf",
+      "page_no": 5,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "9": 1,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "10": 3
+      }
+    },
+    {
+      "split": "train",
+      "id": 59751,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "c6c99b44cd613f7907636e23067749b5ac6c1292614e5766dab5ac6b2f64a321.png",
+      "collection": "manuals",
+      "doc_name": "refman-8.0-en.pdf",
+      "page_no": 2957,
+      "precedence": 0,
+      "doc_category": "manuals",
+      "class_counts": {
+        "6": 1,
+        "10": 8,
+        "5": 1,
+        "4": 2,
+        "1": 1,
+        "9": 1
+      }
+    },
+    {
+      "split": "train",
+      "id": 63389,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "5eff1f46840123a35e8a7587c1319f60a10c0a9efd6dc1aa20a269b8d5af45df.png",
+      "collection": "manuals",
+      "doc_name": "2021-skoda-fabia-116475.pdf",
+      "page_no": 140,
+      "precedence": 0,
+      "doc_category": "manuals",
+      "class_counts": {
+        "6": 1,
+        "8": 6,
+        "4": 10,
+        "7": 3,
+        "10": 3
+      }
+    },
+    {
+      "split": "train",
+      "id": 205,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "dc5992f7cd36e75c5af1498097387b3469e7b0a816f599c1cf8e60b1b5c014ff.png",
+      "collection": "ann_reports_00_04_fancy",
+      "doc_name": "NYSE_STZ_2004.pdf",
+      "page_no": 28,
+      "precedence": 0,
+      "doc_category": "financial_reports",
+      "class_counts": {
+        "10": 8,
+        "8": 5,
+        "5": 1,
+        "9": 1
+      }
+    },
+    {
+      "split": "train",
+      "id": 7525,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "5e11fb1da5c8f0f59e991b4ac6c7c0a19521aecdf3cbe7457c8217ba03979de5.png",
+      "collection": "ann_reports_00_04_fancy",
+      "doc_name": "NYSE_MOV_2001.pdf",
+      "page_no": 45,
+      "precedence": 0,
+      "doc_category": "financial_reports",
+      "class_counts": {
+        "6": 1,
+        "10": 8,
+        "5": 1,
+        "8": 6
+      }
+    },
+    {
+      "split": "val",
+      "id": 2175,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "5566279428b8cc75ccf57f5394c24a76ab586c7ccc6ad8f8d7954fa4670d2871.png",
+      "collection": "arxiv_mediumspaced",
+      "doc_name": "1002.4666.pdf",
+      "page_no": 69,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 5,
+        "3": 1,
+        "5": 1
+      }
+    },
+    {
+      "split": "val",
+      "id": 2184,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "1f59c1023675db0823b0a47cb57e47b12a251511d87322b37d975bd145b89578.png",
+      "collection": "arxiv_mediumspaced",
+      "doc_name": "1001.4287.pdf",
+      "page_no": 12,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "8": 1,
+        "1": 1,
+        "10": 3,
+        "6": 1,
+        "3": 2,
+        "7": 1
+      }
+    },
+    {
+      "split": "val",
+      "id": 1896,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "1c41104632c917200c5817552e751e9134b5f1fbe24b8f0b8497ec151f0d3fc6.png",
+      "collection": "arxiv_doublespaced",
+      "doc_name": "1510.01545.pdf",
+      "page_no": 19,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "6": 1,
+        "8": 1,
+        "10": 3,
+        "5": 2,
+        "3": 2
+      }
+    },
+    {
+      "split": "val",
+      "id": 2041,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "48937d18053fbb11f9e87448548d2d670e8fdc6ac81f246fcb643715792b3838.png",
+      "collection": "arxiv_doublespaced",
+      "doc_name": "1201.4397.pdf",
+      "page_no": 121,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "10": 4,
+        "8": 1,
+        "3": 1,
+        "5": 1
+      }
+    },
+    {
+      "split": "val",
+      "id": 4382,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "4c4977edebea791c5240f80ae579446d1f7e0c322d10a8367903994e201534df.png",
+      "collection": "manuals",
+      "doc_name": "perl-all-en-5.8.5.pdf",
+      "page_no": 1211,
+      "precedence": 0,
+      "doc_category": "manuals",
+      "class_counts": {
+        "6": 2,
+        "10": 15,
+        "5": 1,
+        "8": 11
+      }
+    },
+    {
+      "split": "val",
+      "id": 561,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "40324a04ef097d9b04e77dd68a4769ae4e6a47ee677b15ed4dbb42c08d1edb96.png",
+      "collection": "ann_reports_00_04_fancy",
+      "doc_name": "NASDAQ_ABCB_2004.pdf",
+      "page_no": 7,
+      "precedence": 0,
+      "doc_category": "financial_reports",
+      "class_counts": {
+        "7": 4,
+        "8": 1,
+        "10": 8,
+        "1": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2738,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "96ce8d5146864f307eb0545484164276763d198b5cdccd0ca2fa878705fd2e4d.png",
+      "collection": "arxiv_two_columns",
+      "doc_name": "1001.1732.pdf",
+      "page_no": 14,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "6": 1,
+        "10": 13,
+        "7": 1,
+        "3": 5,
+        "1": 1,
+        "8": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2730,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "c6c922fd6e9fd0e6ff2241d176eecd2e253ef963a942dba59ed068047274d827.png",
+      "collection": "arxiv_two_columns",
+      "doc_name": "1001.0788.pdf",
+      "page_no": 4,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "1": 2,
+        "10": 10,
+        "3": 6,
+        "8": 1,
+        "6": 1,
+        "7": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2528,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "d88567ed64a8785ef70bbb7a5e9f6c662cdba783a79f0b295299697d1cfc0c4c.png",
+      "collection": "arxiv_two_columns",
+      "doc_name": "1001.0806.pdf",
+      "page_no": 2,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "6": 2,
+        "10": 11,
+        "1": 1,
+        "8": 2,
+        "3": 2,
+        "5": 1,
+        "7": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2656,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "ef8e7bb788752de667777c85f98efe33732460beda7d6de962e47e7de1a8c749.png",
+      "collection": "arxiv_two_columns",
+      "doc_name": "1001.3103.pdf",
+      "page_no": 6,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "6": 1,
+        "10": 15,
+        "3": 10,
+        "8": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2495,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "c10636db4f55150c38592d38c10048a4defe3d69268de6abd3ec765e83776938.png",
+      "collection": "arxiv_two_columns",
+      "doc_name": "1001.0764.pdf",
+      "page_no": 3,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "6": 1,
+        "10": 11,
+        "3": 9,
+        "8": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2702,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "6db76d0a7f8a485592f9836c705dc8efb6bac66c6184fd63d4b51238ac4b1548.png",
+      "collection": "arxiv_two_columns",
+      "doc_name": "1001.2602.pdf",
+      "page_no": 1,
+      "precedence": 0,
+      "doc_category": "scientific_articles",
+      "class_counts": {
+        "6": 1,
+        "10": 15,
+        "3": 6
+      }
+    },
+    {
+      "split": "test",
+      "id": 5126,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "7ca44781af85ae9fc78d77c99f35fc451ff2cb01be0b103d7d759a82b376bc3f.png",
+      "collection": "redbooks",
+      "doc_name": "sg247938.pdf",
+      "page_no": 751,
+      "precedence": 0,
+      "doc_category": "manuals",
+      "class_counts": {
+        "4": 6,
+        "10": 5,
+        "7": 1,
+        "1": 1,
+        "8": 1,
+        "5": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 5123,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "5b33f855dfe894719504170a88902f1ad7be38af6c3db79a61f1e0557fc2a229.png",
+      "collection": "redbooks",
+      "doc_name": "sg248459.pdf",
+      "page_no": 62,
+      "precedence": 0,
+      "doc_category": "manuals",
+      "class_counts": {
+        "6": 2,
+        "8": 1,
+        "10": 3,
+        "1": 2,
+        "4": 6,
+        "5": 1,
+        "7": 2
+      }
+    },
+    {
+      "split": "test",
+      "id": 964,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "393c206f4fc3992fd42bda52ff33a907eb42317d021a5c62ae744bfd8d9cf319.png",
+      "collection": "ann_reports_10_14_fancy",
+      "doc_name": "NYSE_CHK_2010.pdf",
+      "page_no": 11,
+      "precedence": 0,
+      "doc_category": "financial_reports",
+      "class_counts": {
+        "10": 4,
+        "7": 1,
+        "1": 1,
+        "6": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 1348,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "e26f43d9f29b9b26d82089860c7a05b6decbb01d256b0621add41d5a44f6616c.png",
+      "collection": "ann_reports_10_14_fancy",
+      "doc_name": "ASX_SEA_2014.pdf",
+      "page_no": 34,
+      "precedence": 0,
+      "doc_category": "financial_reports",
+      "class_counts": {
+        "10": 3,
+        "8": 3,
+        "9": 2,
+        "5": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 2831,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "c222705dbe82ddaf229742ac5e75d4431971544e968e653d1c434f1fdd524ccd.png",
+      "collection": "chinese_laws",
+      "doc_name": "wang_luo_an_quan_fa_cybersecurity_law_.pdf",
+      "page_no": 9,
+      "precedence": 0,
+      "doc_category": "laws_and_regulations",
+      "class_counts": {
+        "10": 8,
+        "8": 1,
+        "5": 1
+      }
+    },
+    {
+      "split": "test",
+      "id": 3873,
+      "width": 1025,
+      "height": 1025,
+      "file_name": "88b848ed7babd104f41865198c37151c42496d9ebc25b3262d9317ad9f3a992a.png",
+      "collection": "japanese_laws",
+      "doc_name": "s24Bc003781002en13.0_r01C168.pdf",
+      "page_no": 19,
+      "precedence": 0,
+      "doc_category": "laws_and_regulations",
+      "class_counts": {
+        "10": 2,
+        "5": 1,
+        "4": 6,
+        "8": 4
+      }
+    }
+  ],
+  "excluded_old_paper_ids": [
+    "09042557",
+    "14062661",
+    "14126980",
+    "150203167",
+    "150504597",
+    "150601497",
+    "151203385",
+    "160706450",
+    "160806993",
+    "170404861",
+    "170603762",
+    "180100862",
+    "180308494",
+    "181004805",
+    "191007467",
+    "201011929",
+    "210314030",
+    "210409864",
+    "220103545",
+    "240206787"
+  ],
+  "split_scope": "Official train/val/test split plus disjoint document names. Test collections absent from train/calibration. Collection is a dataset source/style grouping, not proof of absent near-duplicates or unseen upstream-detector training.",
+  "budgets": "Keep all downloads within initial256MiB cumulative range budget and512MiB disk; no full archive.",
+  "missing_input_rule": "Selected missing/invalid page stays a recorded failure; no replacement after outputs."
+}

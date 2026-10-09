@@ -1,0 +1,13 @@
+{
+  "purpose": "Bounded data-feasibility gate for a real candidate-role baseline; no training or quality claim yet",
+  "official_reference": "https://github.com/DS4SD/DocLayNet",
+  "license": "https://github.com/DS4SD/DocLayNet/blob/main/LICENSE",
+  "license_name": "CDLA-Permissive-1.0",
+  "core_url": "https://codait-cos-dax.s3.us.cloud-object-storage.appdomain.cloud/dax-doclaynet/1.0.0/DocLayNet_core.zip",
+  "extra_url": "https://codait-cos-dax.s3.us.cloud-object-storage.appdomain.cloud/dax-doclaynet/1.0.0/DocLayNet_extra.zip",
+  "initial_action": "Read at most 65536 trailing ZIP bytes per official object to verify HTTP range support, archive central directory size and stable object identity.",
+  "subsequent_budget": {"network_bytes": 268435456, "disk_bytes": 536870912, "process_memory_bytes": 1073741824, "cpu_affinity_count": 1},
+  "stop": "Refuse non-206 range responses, changed ETag, unbounded reads, any access denial or total-budget excess. Do not download full archives or switch mirrors.",
+  "data_split_intent": "Select native-page samples by immutable official document identity and dataset split, freeze selection/features before fit. Existing diagnostic papers excluded. Source-family overlap must be reported, never inferred absent.",
+  "measurement": "All annotated objects form recall denominator, including missing/mixed candidate matches. Separate conditional role accuracy from end-to-end reflow. No formula-number relation claim from layout-only labels."
+}

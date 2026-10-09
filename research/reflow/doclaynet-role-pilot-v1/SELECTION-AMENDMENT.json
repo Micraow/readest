@@ -1,0 +1,7 @@
+{
+  "when_utc": "2026-10-09T01:44:01.054132+00:00",
+  "before_any_page_download_or_inference": true,
+  "reason": "Official test chinese_laws collection contains12pages but only1document, incompatible with 2 distinct-document quota.",
+  "change": "Use1 chinese_laws and1 japanese_laws document; all other criteria unchanged.",
+  "does_not_claim": "Language coverage is provisional until native page inspection; a collection label alone is not language verification."
+}

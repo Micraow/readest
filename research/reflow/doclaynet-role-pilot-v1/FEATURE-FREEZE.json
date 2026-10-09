@@ -1,0 +1,14 @@
+{
+  "time_utc": "2026-10-09T01:47:34.466440+00:00",
+  "sha256": {
+    "probe_ranges.py": "faae054e15843ea2d68d05102e767a81a238d997c68ed38ffd6a7f96b5694749",
+    "remote_zip.py": "d7500a09a14352f69997736302bf203b4c43ad9ee43a705b1066dded3cfc56e9",
+    "detect_subset.py": "411821edb131e89967107ae1ddad86e63ea74007cf68ecdc626593d3d6e910a0",
+    "select_pages.py": "11a8fd15742a81b19bb28c2300dd2563209cde40b49aa0eed06d26735e59fab9",
+    "features.py": "8f5e40a9cd8323ecaf0e271f4eb0198f810e6a6410e3b46b96e6da14c73925e7",
+    "get_subset.py": "89e4b2bdf8559dea0b5cebf09934b62cf432c41c811b075038ca43893f74cb44",
+    "stream_annotations.py": "03c90eaceef4c73854e5c1ef0c50907af61056c89ea9f03c67a841a2de8e36a1"
+  },
+  "selection_sha256": "250e59bdb625708eb1ac22419f3f274054fff9b68c05bfccfeb5cbfe70d845ba",
+  "model_plan_sha256": "b2fc800d020ae0e5ccdb69d2d1926e55ad21b242e2c41a15c271b62cb0303c94"
+}

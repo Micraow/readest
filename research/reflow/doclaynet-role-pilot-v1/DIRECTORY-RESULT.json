@@ -1,0 +1,34 @@
+{
+  "core": {
+    "entries": 81478,
+    "annotation_entries": {
+      "COCO/test.json": {
+        "method": 8,
+        "crc32": 2240894405,
+        "compressed": 5792451,
+        "expanded": 39851786,
+        "offset": 493
+      },
+      "COCO/train.json": {
+        "method": 8,
+        "crc32": 502442167,
+        "compressed": 81816237,
+        "expanded": 565443929,
+        "offset": 5793036
+      },
+      "COCO/val.json": {
+        "method": 8,
+        "crc32": 4144450310,
+        "compressed": 8441685,
+        "expanded": 59467367,
+        "offset": 87609366
+      }
+    },
+    "largest_entry_bytes": 565443929
+  },
+  "extra": {
+    "entries": 162946,
+    "annotation_entries": null,
+    "largest_entry_bytes": 18458670
+  }
+}
