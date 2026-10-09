@@ -44,4 +44,9 @@ check('cross-block logical order and newline',()=>{const next=mountSelectionLaye
 check('partial surrogate refuses',()=>assert.equal(copyPieces([{text:'\uD835'}]).ok,false));
 check('measured character advance scales to native glyph width',()=>{const layer=mountSelectionLayer(doc,reader,layout,mapping,()=>5),span=layer.firstChild;assert.equal(span.style.width,'5px');assert.equal(span.style.transform,'scaleX(2)');});
 check('unknown selection metrics refuse copy',()=>{const layer=mountSelectionLayer(doc,reader,layout,mapping,()=>0);root.append(layer);const t=layer.firstChild.firstChild;assert.equal(readSelection(root,select(t,0,t,1)).ok,false);});
+for(const unresolved of [false,true])check(unresolved?'zero separator does not bypass uncertain prefix refusal':'retained source hyphen copies without inserted space',()=>{
+ const texts=['(ab-','cd)'],placements=texts.map((s,i)=>({token:{id:'hyphen-'+i,gap_em:0,source_pixel_box:[0,0,s.length*10,20]},x:12+i*40,y:12,width:s.length*10,height:20,fontScale:10}));
+ const m={tokens:texts.map((s,i)=>({id:'hyphen-'+i,eligible:!(unresolved&&i===0),text:unresolved&&i===0?null:s,reasons:[],characters:unresolved&&i===0?[]:[...s].map((c,j)=>({text:c,source_glyph:'hyphen-'+i+'-'+j,box_pdf:[j*5,0,(j+1)*5,10]}))}))};
+ const layer=mountSelectionLayer(doc,reader,{width:200,height:50,placements},m,()=>5);root.append(layer);const s=doc.getSelection(),r=doc.createRange();r.selectNodeContents(layer);s.removeAllRanges();s.addRange(r);const result=readSelection(root,s);assert.equal(result.ok,!unresolved);if(!unresolved)assert.equal(result.text,'(ab-cd)\n');layer.remove();
+});
 remove();console.log(JSON.stringify({passed:count,browserVerified:false}));

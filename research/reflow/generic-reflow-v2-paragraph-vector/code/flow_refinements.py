@@ -16,6 +16,10 @@ class FlowRefinementConfig:
     maximum_script_run_size_difference_em:float=.12
     minimum_hyphen_prefix_letters:int=2
     hyphen_characters:tuple=('-', '\u2010')
+    hyphen_opening_punctuation:tuple=('(', '[')
+    maximum_source_line_shift_em:float=3.
+    maximum_hyphen_font_ratio:float=1.12
+    source_line_return_tolerance_em:float=.5
     minimum_source_line_shift_em:float=.5
     minimum_dash_aspect_ratio:float=2.5
     minimum_dash_width_em:float=.15
@@ -66,7 +70,7 @@ def scripted_argument_relation(left,right,all_glyphs,body,cfg=FlowRefinementConf
     if len(indices)>cfg.maximum_group_glyphs or (box[2]-box[0])/body>cfg.maximum_group_width_em or (box[3]-box[1])/body>cfg.maximum_group_height_em:return result|{'reason':'bounded_group_limit'}
     return result|{'accepted':True,'reason':'continuous_bounded_scripted_argument','baseline_pdf':anchor['baseline']}
 
-def hyphen_relation(left,right,body,cfg=FlowRefinementConfig()):
+def hyphen_relation(left,right,body,cfg=FlowRefinementConfig(),all_glyphs=None):
     result={'rule':'source_line_hyphen_kept_with_zero_separator','accepted':False,'printed_hyphen_deleted':False}
     if not left or not right:return result|{'reason':'empty_interval'}
     if not all(g.get('unicode_known') and not g.get('map_error') for g in left[:-1]+[right[0]]):return result|{'reason':'unreliable_lexical_prefix_candidate'}
@@ -76,10 +80,22 @@ def hyphen_relation(left,right,body,cfg=FlowRefinementConfig()):
         secondary=last.get('secondary_native_unicode_candidate') in cfg.hyphen_characters and h>0 and w/h>=cfg.minimum_dash_aspect_ratio and cfg.minimum_dash_width_em<=w<=cfg.maximum_dash_width_em and h<=cfg.maximum_dash_height_em and cfg.minimum_dash_baseline_lift_em<=lift<=cfg.maximum_dash_baseline_lift_em
         if not secondary:return result|{'reason':'unknown_terminal_not_corroborated_by_native_candidate_and_bar_geometry'}
         terminal=last['secondary_native_unicode_candidate']
-    chars=[g['char'] for g in left[:-1]]+[terminal]
-    result|={'secondary_native_candidate_used':secondary,'semantic_selection_certified':False}
-    if chars[-1] not in cfg.hyphen_characters or len(chars[:-1])<cfg.minimum_hyphen_prefix_letters or not all(x.isalpha() for x in chars[:-1]) or not right[0]['char'].islower():return result|{'reason':'not_lexical_hyphen_continuation'}
-    if abs(left[-1]['baseline']-right[0]['baseline'])<cfg.minimum_source_line_shift_em*body:return result|{'reason':'same_source_line'}
+    if last.get('map_error'):return result|{'reason':'terminal_mapping_error'}
+    chars=[g['char'] for g in left[:-1]];opening=chars[0] if chars and chars[0] in cfg.hyphen_opening_punctuation else None
+    prefix=chars[1:] if opening else chars
+    result|={'secondary_native_candidate_used':secondary,'semantic_selection_certified':False,'opening_punctuation_retained':opening is not None}
+    if terminal not in cfg.hyphen_characters or len(prefix)<cfg.minimum_hyphen_prefix_letters or not all(x.isalpha() for x in prefix) or not right[0]['char'].islower():return result|{'reason':'not_lexical_hyphen_continuation'}
+    # A source line transition is directional and local, not any baseline change.
+    delta=(right[0]['baseline']-last['baseline'])/body
+    if not cfg.minimum_source_line_shift_em<=delta<=cfg.maximum_source_line_shift_em:return result|{'reason':'not_next_local_source_line'}
+    if right[0]['box'][0]>left[0]['box'][0]+cfg.source_line_return_tolerance_em*body:return result|{'reason':'not_source_line_return'}
+    sizes=[g['size'] for g in left]+[right[0]['size']]
+    if min(sizes)<=0 or max(sizes)/min(sizes)>cfg.maximum_hyphen_font_ratio:return result|{'reason':'incompatible_source_type_size'}
+    indices=[g['source_index'] for g in left+right]
+    if any(a>=b for a,b in zip(indices,indices[1:])):return result|{'reason':'nonmonotone_source_interval'}
+    if all_glyphs is not None:
+        ids=set(indices);foreign=[g for g in all_glyphs if min(ids)<=g['source_index']<=max(ids) and g['source_index'] not in ids and g.get('native_object_ink_observed',True) and g['box'][2]>g['box'][0] and g['box'][3]>g['box'][1]]
+        if foreign:return result|{'reason':'foreign_visible_source_interval'}
     return result|{'accepted':True,'reason':'source_line_transition_with_retained_lexical_hyphen'}
 
 def refine(data,plan,cfg=FlowRefinementConfig()):
@@ -99,7 +115,7 @@ def refine(data,plan,cfg=FlowRefinementConfig()):
                 trace.append(r)
             tokens.append(token)
         for left,right in zip(tokens,tokens[1:]):
-            r=hyphen_relation(glyphs(left),glyphs(right),body,cfg);r|={'left':left['id'],'right':right['id'],'previous_gap_em':left['gap_em']}
+            r=hyphen_relation(glyphs(left),glyphs(right),body,cfg,all_glyphs=plan['glyphs']);r|={'left':left['id'],'right':right['id'],'previous_gap_em':left['gap_em']}
             if r['accepted']:left['gap_em']=0.
             trace.append(r)
         block['tokens']=tokens

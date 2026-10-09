@@ -1,0 +1,49 @@
+{
+  "scope": "seen source-line separator refinement; existing native components reused",
+  "original_holdout": "failed 0/1, unchanged",
+  "original_timeout_retained": true,
+  "reading_acceptance": false,
+  "browser_verified": false,
+  "model_or_extraction_rerun": false,
+  "changed_tokens": 1,
+  "changed_fields": [
+    "gap_em"
+  ],
+  "all_other_token_fields_identical": true,
+  "native_resource_tables_identical": true,
+  "printed_glyphs_deleted_or_replaced": 0,
+  "text_mapping_unchanged": true,
+  "mapping": {
+    "eligible_tokens": 341,
+    "refused_tokens": 26
+  },
+  "actual_changed_token_copy_still_refused": true,
+  "controls": {
+    "flow_bridge_components": 36,
+    "new_hyphen_boundary_controls": 14,
+    "selection": 31,
+    "mapping": 35
+  },
+  "focused_render": {
+    "changed_paragraphs": 1,
+    "font": 28,
+    "dpr": 2,
+    "viewport": 390,
+    "visual_extra_space_removed": true,
+    "source_hyphen_preserved": true,
+    "undersampled_images": 0
+  },
+  "reader_sha256": "63f2d9e935f189734c3655b4aaef08110c98f4cf02a2e0d56054c9168f4a4286",
+  "viewer_smoke": {
+    "pages": 1,
+    "blocks": 16,
+    "changed_unknown_hyphen_copy_refused": true,
+    "eligible_paragraph_copy": true,
+    "refused_paragraph_copy_blocked": true,
+    "font_selection_cleanup": true,
+    "network_attempts": 0,
+    "paint_calls": 3994,
+    "browser_verified": false,
+    "renderer": "native Node canvas"
+  }
+}
