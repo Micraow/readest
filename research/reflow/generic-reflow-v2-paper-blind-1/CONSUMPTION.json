@@ -1,0 +1,17 @@
+{
+  "recorded_utc": "2026-10-09T09:38:23.593345+00:00",
+  "original_registry_unchanged": true,
+  "consumed": [
+    {
+      "sample": "H5",
+      "source_sha256": "0e3019e439e75b12be6fbc80bd3c074b8a23fbf78d80fc54b7ca07291567288b",
+      "status": "FIRST_BLIND_RUN_FAILED_SUBSEQUENT_WORK_IS_SEEN_DIAGNOSIS"
+    },
+    {
+      "sample": "H6",
+      "source_sha256": "789a4e674a23feb77c5d19186e44dc84aa0c6a4393f0e89bfa3ecc2affae58cf",
+      "status": "FIRST_BLIND_RUN_FAILED_SUBSEQUENT_WORK_IS_SEEN_DIAGNOSIS"
+    }
+  ],
+  "nonpaper_holdouts_opened": 0
+}

@@ -1,0 +1,148 @@
+{
+  "status": "BLIND_BATCH_FAILED_0_OF_2_ACCEPTED",
+  "candidate_commit": "0444ceee51ca20e55e643426cfd7bcb08a375f54",
+  "freeze_commit": "377b83d1ec1a7b21f992278cbaccaf082a27ee41",
+  "consumed_in_order": [
+    "H5",
+    "H6"
+  ],
+  "untouched_nonpaper_entries": [
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H7"
+  ],
+  "first_run_snapshot_sha256": "b465cb4b644b286440100e002f0f2d41eded4a8d8bd50ca22de3b224f1094c36",
+  "measurement_limitations": [
+    "Only the request process family was pinned to one CPU. The external 10 ms supervisor ran outside that affinity and used additional CPU, reported separately. This is not a strict one-CPU whole-system benchmark.",
+    "Both failures exited normally and were reaped: wait4 request CPU includes their waited model children. A killed process tree can lose unreaped descendant CPU; this frozen supervisor must not be reused for certified timeout CPU reporting.",
+    "RSS is sampled sum, not PSS; shared pages may be counted more than once.",
+    "Wall and CPU are failure-to-refusal costs, not complete-page costs. No preprocessing cache was supplied; OS filesystem cache was not flushed."
+  ],
+  "pages": [
+    {
+      "sample": "H5",
+      "source_sha256": "0e3019e439e75b12be6fbc80bd3c074b8a23fbf78d80fc54b7ca07291567288b",
+      "first_attempt": {
+        "sample": "H5",
+        "candidate_commit": "0444ceee51ca20e55e643426cfd7bcb08a375f54",
+        "freeze_sha256": "8f09c3ad1ce3cd191c8d172c46c1887ca2c9c8b8039c801b2aa9edcbdd305887",
+        "wall_seconds": 29.084656194998388,
+        "request_family_cpu_seconds": 26.016678,
+        "supervisor_cpu_seconds": 4.488594859,
+        "peak_sampled_family_plus_supervisor_rss_mib": 695.81640625,
+        "rss_samples": 2310,
+        "exit_code": 2,
+        "failure": "EXECUTION_OR_GATE",
+        "cpu_affinity": [
+          0
+        ],
+        "load_before": [
+          6.6796875,
+          7.5458984375,
+          7.2919921875
+        ],
+        "load_after": [
+          6.18896484375,
+          7.34765625,
+          7.23388671875
+        ],
+        "cold_whole_page_pipeline_attempt": true,
+        "source_preprocessing_cache_reused": false,
+        "filesystem_cache_flushed": false,
+        "acquisition_and_dependency_install_excluded": true,
+        "canonical_holdout_consumed": "H5",
+        "historical_component_holdout_zero_fields_invalid_for_this_run": true,
+        "accepted_reading_result": false,
+        "browser_tested": false,
+        "selection_verified": false
+      },
+      "terminal_exception": "RuntimeError: unresolved native inline units",
+      "failure_classes": [
+        "EXECUTION",
+        "UNSUPPORTED",
+        "OWNERSHIP"
+      ],
+      "unresolved_units": 10,
+      "provisional_region_leaves": 29,
+      "native_boundary_conflicts": 0,
+      "native_units_rendered": 346,
+      "native_unit_source_support_failures": 0,
+      "source_replay_changed_pixels": 49,
+      "source_replay_max_delta": 56,
+      "duplicated_mask_pixels": 0,
+      "unowned_live_ink_pixels": 49,
+      "rotated_glyphs_observed_after_blind_run": 0,
+      "full_global_alpha_contains_all_previously_unowned_pixels": true,
+      "reading_order_pass": false,
+      "formula_completeness_pass": false,
+      "initial_28px_reader_ran": false,
+      "qa_20px_reader_ran": false,
+      "cold_complete_page_budget_pass": false
+    },
+    {
+      "sample": "H6",
+      "source_sha256": "789a4e674a23feb77c5d19186e44dc84aa0c6a4393f0e89bfa3ecc2affae58cf",
+      "first_attempt": {
+        "sample": "H6",
+        "candidate_commit": "0444ceee51ca20e55e643426cfd7bcb08a375f54",
+        "freeze_sha256": "8f09c3ad1ce3cd191c8d172c46c1887ca2c9c8b8039c801b2aa9edcbdd305887",
+        "wall_seconds": 34.432869561998814,
+        "request_family_cpu_seconds": 34.002061,
+        "supervisor_cpu_seconds": 5.207691748,
+        "peak_sampled_family_plus_supervisor_rss_mib": 706.6875,
+        "rss_samples": 2824,
+        "exit_code": 2,
+        "failure": "EXECUTION_OR_GATE",
+        "cpu_affinity": [
+          0
+        ],
+        "load_before": [
+          6.18896484375,
+          7.34765625,
+          7.23388671875
+        ],
+        "load_after": [
+          5.39404296875,
+          7.02294921875,
+          7.12890625
+        ],
+        "cold_whole_page_pipeline_attempt": true,
+        "source_preprocessing_cache_reused": false,
+        "filesystem_cache_flushed": false,
+        "acquisition_and_dependency_install_excluded": true,
+        "canonical_holdout_consumed": "H6",
+        "historical_component_holdout_zero_fields_invalid_for_this_run": true,
+        "accepted_reading_result": false,
+        "browser_tested": false,
+        "selection_verified": false
+      },
+      "terminal_exception": "RuntimeError: unresolved native inline units",
+      "failure_classes": [
+        "EXECUTION",
+        "UNSUPPORTED",
+        "OWNERSHIP"
+      ],
+      "unresolved_units": 5,
+      "provisional_region_leaves": 128,
+      "native_boundary_conflicts": 38,
+      "native_units_rendered": 795,
+      "native_unit_source_support_failures": 0,
+      "source_replay_changed_pixels": 3,
+      "source_replay_max_delta": 8,
+      "duplicated_mask_pixels": 0,
+      "unowned_live_ink_pixels": 3,
+      "rotated_glyphs_observed_after_blind_run": 46,
+      "full_global_alpha_contains_all_previously_unowned_pixels": true,
+      "reading_order_pass": false,
+      "formula_completeness_pass": false,
+      "initial_28px_reader_ran": false,
+      "qa_20px_reader_ran": false,
+      "cold_complete_page_budget_pass": false
+    }
+  ],
+  "new_ci_runs": 0,
+  "browser_tested": false,
+  "private_content_published": false
+}
