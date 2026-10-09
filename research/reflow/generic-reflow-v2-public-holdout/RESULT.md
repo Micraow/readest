@@ -31,3 +31,9 @@ seven geometric bar candidates, declined the one glyph-free proposal, and retain
 all three glyph-free units. Source glyph multiset and paint-ID set are unchanged;
 no new groups, native renders, model runs or reader output were produced. The
 original failed request and **0/1** result remain immutable.
+
+The acquisition helper reconstructs the registered one-page fixture from its
+verified official URL and rejects a changed source/hash. Its `--source-pdf` option
+was checked against the already downloaded document: the derived page SHA256 is
+identical. This is input-reproduction validation, not another holdout execution.
+The paper itself is not embedded in the public source tree.
