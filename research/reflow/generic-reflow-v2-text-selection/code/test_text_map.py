@@ -31,4 +31,10 @@ case('immutable mapping corruption',lambda a:a[1]['w']['glyphs'][0].update(char=
 case('image formula',lambda a:a[0].update(kind='native_image'),False,'native_image_has_no_verified_text_layer')
 case('nonword native group',lambda a:a[1]['w'].update(kind='inline_native_group'),False,'not_ordinary_native_word')
 case('changed logical character order',lambda a:a[1]['w']['glyphs'].reverse(),False,'nonmonotone_native_character_order')
+for field in ['size','baseline']:
+    for value in [float('nan'),float('inf'),None]:
+        case(f'invalid {field} {value}',lambda a,f=field,v=value:(a[1]['w']['glyphs'][0].update({f:v}),a[2]['g0'].update({f:v})),False,'nonfinite_or_missing_native_metrics')
+case('nonfinite glyph box',lambda a:(a[1]['w']['glyphs'][0].update(box=[0,0,float('inf'),10]),a[2]['g0'].update(box=[0,0,float('inf'),10])),False,'invalid_or_missing_glyph_geometry')
+case('unknown null character',lambda a:(a[1]['w']['glyphs'][0].update(char=None),a[2]['g0'].update(char=None)),False,'extractor_unicode_disagreement')
+case('changed source metric',lambda a:a[1]['w']['glyphs'][0].update(baseline=10.001),False,'immutable_source_record_mismatch')
 p=pathlib.Path(sys.argv[1]);p.mkdir(parents=True,exist_ok=False);(p/'result.json').write_text(json.dumps({'cases':cases,'all_passed':True,'semantic_certification_claimed':False},indent=2));print(json.dumps({'cases':len(cases),'all_passed':True}))

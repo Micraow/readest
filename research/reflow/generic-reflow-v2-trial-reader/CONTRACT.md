@@ -22,3 +22,9 @@ font resources are committed publicly. A local native-renderer equivalence check
 and JS syntax check are not a browser pass. The next useful milestone is reliable
 ordinary-text selection plus bounded source return, tested in one original-only
 browser fixture batch rather than further serial single-page timing tweaks.
+
+Experimental mapped previews may expose native keyboard buttons for paragraph
+selection and local image focus. Announce copy refusal in a live status region.
+Source-dialog close/Escape must release its content and return focus to a connected
+trigger (or font selector if layout replacement removed it). Discard delayed views
+from a superseded page. Simulated DOM lifecycle checks are not browser evidence.

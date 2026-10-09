@@ -35,3 +35,22 @@ Run `node code/test_selection.mjs` with jsdom resolvable, or set
 `SELECTION_TEST_PACKAGE` to an absolute package.json path in a local installation
 that already has jsdom. Packaging optionally reads `text_map` from each private
 input-manifest entry; without it the no-selection rendering still works.
+
+## Usability and validation hardening follow-up
+
+A concrete fail-open validation case was fixed: non-finite or missing native size /
+baseline values could bypass numeric comparisons. Mapping now rejects those values,
+invalid glyph boxes and malformed characters, and compares source metric fields
+against the immutable native records. Mapping controls expand to 31 passing cases.
+Rebuilding both private H5/H6 maps produces exactly the previous JSON data after
+serialization, so this stricter validation does not reduce seen-paper coverage.
+
+The viewer now provides keyboard-operable paragraph-selection and local image /
+formula-view buttons, a live status region and labelled source dialog. Dialog close
+and Escape clean up source content and restore focus; a removed opener falls back
+to the font selector. Page changes reset the old dialog, and delayed image decoding
+cannot open a view belonging to a superseded page. Ten additional jsdom controls
+cover keyboard selection across a visual line break, unresolved-content refusal,
+detached selections, dialog cleanup/focus, reset, repeated close and late events.
+All 27 earlier selection controls still pass. These checks simulate dialog state;
+they do not certify actual browser modality, keyboard gestures or clipboard access.
