@@ -12,3 +12,14 @@ with (out/'stdout.log').open('w') as stdout,(out/'stderr.log').open('w') as stde
   except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);code=child.wait()
 usage=resource.getrusage(resource.RUSAGE_CHILDREN);record.update(wall_seconds=time.perf_counter()-start,child_cpu_seconds=usage.ru_utime+usage.ru_stime,exit_code=code,timed_out=timed_out,execution_pass=not timed_out and code==0,browser_verified=False)
 (out/'execution.json').write_text(json.dumps(record,indent=2));print(json.dumps(record))
+
+if not record['execution_pass']:
+ helper=pathlib.Path(__file__).resolve().parents[2]/'generic-reflow-v2-viewer-entry/code/package_failure.py'
+ gates_path=out/'request/native/failure-gates.json'
+ failed=[]
+ if gates_path.is_file():
+  gates=json.loads(gates_path.read_text());failed=[name for name in ['source_replay_exact','region_order_resolved'] if gates.get(name) is False]
+ reason='原生安全检查未通过：'+', '.join(failed) if failed else '提取过程未完成或超过时间预算；未生成可用重排。'
+ with (out/'fallback-package.log').open('w') as log:
+  result=subprocess.run([str(root/'layout-evaluation/venv/bin/python'),str(helper),a.pdf,str(out/'execution.json'),str(out/'source-fallback-private.json'),'--reason',reason],stdout=log,stderr=log)
+ (out/'fallback-status.json').write_text(json.dumps(dict(source_fallback_generated=result.returncode==0,reflow_produced=False,browser_verified=False),indent=2))

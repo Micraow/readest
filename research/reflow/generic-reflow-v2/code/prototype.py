@@ -149,7 +149,7 @@ def spatial_order(items,body,cfg,trace):
             return spatial_order(ordered[:n],body,cfg,trace)+spatial_order(ordered[n:],body,cfg,trace)
     return sorted(items,key=lambda q:(q['box'][1],q['box'][0]))
 
-def plan(objects,glyphs,W,H,body,cfg,trace):
+def plan(objects,glyphs,W,H,body,cfg,trace,fraction_support_selector=None):
     backgrounds=[o for o in objects if o['kind']=='background'];nontext=[o for o in objects if o['type']!=raw.FPDF_PAGEOBJ_TEXT and o['kind']!='background']
     visible=[g for g in glyphs if not g['char'].isspace() and area(g['box'])>0]
     # Foreground objects join foreground only. Never feed a background into this union.
@@ -165,6 +165,10 @@ def plan(objects,glyphs,W,H,body,cfg,trace):
             if fraction:
                 support=[b[0]-cfg.fraction_side_reach_em*body,b[1]-cfg.fraction_vertical_reach_em*body,b[2]+cfg.fraction_side_reach_em*body,b[3]+cfg.fraction_vertical_reach_em*body]
                 near=[g for g in visible if inside(support,center(g['box']))]
+                if fraction_support_selector is not None:
+                    selected=fraction_support_selector(b,visible,cfg.fraction_vertical_reach_em*body,body=body)
+                    near=selected if selected is not None else []
+                    reason(trace,group[0]['id'],'projected_fraction_support',selected is not None,glyphs=len(near))
             reason(trace,group[0]['id'],'fraction_rule_local_support',fraction,above=above,below=below,glyphs=len(near))
         margin=(b[2]<content_bounds[0] or b[0]>content_bounds[2]) and b[2]-b[0]<cfg.margin_mark_width_em*body
         item=dict(id='o'+group[0]['id'][1:],kind='aux' if margin else 'island',objects=[o['id'] for o in group],fraction_support=fraction,glyphs=[] if margin else near,box=b)

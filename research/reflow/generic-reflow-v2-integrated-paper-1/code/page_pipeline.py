@@ -31,7 +31,10 @@ def run(pdf,out,model_dir=None,cached_detector=None,image_size=None):
     baseline=phase('direct_native_baseline_evidence',lambda:baseline_run(source))
     composition=phase('original_position_native_ownership_replay',lambda:replay(pdf,source))
     order=phase('region_column_line_tree',lambda:diagnose(source,out/'order'))
-    if not order['order_tree_built']:raise RuntimeError('region order unresolved; no successful reader generated')
+    gates=dict(source_replay_exact=bool(composition['ownership_and_replay_pass']),region_order_resolved=bool(order['order_tree_built']),reader_generated=False)
+    (out/'failure-gates.json').write_text(json.dumps(gates,indent=2))
+    failed=[name for name in ['source_replay_exact','region_order_resolved'] if not gates[name]]
+    if failed:raise RuntimeError('native safety gates failed: '+', '.join(failed)+'; no successful reader generated')
     assets=phase('native_local_batch_render_encode',lambda:render_units(pdf,source));reader=phase('paragraph_inline_bundle_reader',lambda:build(source,out/'order'))
     result=dict(scope='paper-priority printed content; ink annotations excluded by user scope amendment',model_mode='live cold offline PP-S' if model else ('historical cached PP-S' if detector else 'no model'),phases=phases,native_initial_renders=ownership['native_renders'],native_final_replay_renders=composition['native_renders'],native_unit_renders=assets['native_renders'],source_replay_exact=composition['ownership_and_replay_pass'],source_support_failed_units=len(assets['unsupported_source_support_units']),source_unit_bijection=reader['source_unit_bijection'],native_units=reader['emitted_native_units'],paragraphs=reader['paragraphs'],protected_blocks=reader['objects'],reading_tree_leaves=order['leaf_count'],native_index_boundary_conflicts=len(order['native_index_boundary_conflicts']),output_folder=str(source),elapsed_before_final_write=time.perf_counter()-start,parent_process_cpu_seconds=time.process_time(),waited_children_cpu_seconds=resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,reading_acceptance=False,browser_tested=False,holdout_accounting='registry external; this candidate diagnoses already seen pages',baseline=baseline)
     (out/'pipeline-result.json').write_text(json.dumps(result,indent=2));return result

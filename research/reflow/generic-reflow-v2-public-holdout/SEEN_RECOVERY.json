@@ -38,5 +38,31 @@
     "no_network": true,
     "existing_reader_preserved": true,
     "browser_verified": false
-  }
+  },
+  "ownership_replay_also_failed": {
+    "changed_pixels": 108,
+    "exact_equal": false,
+    "quarantined_ink_pixels": 108
+  },
+  "opt_in_support_experiment": {
+    "default_enabled": false,
+    "model_inferences": 0,
+    "initial_extraction_wall_seconds": 6.06333820400323,
+    "local_fraction_glyphs_before": 38,
+    "local_fraction_glyphs_after": 4,
+    "changed_replay_pixels": 45,
+    "quarantined_ink_pixels": 45,
+    "exact_equal": false,
+    "order_built": false,
+    "reader_produced": false,
+    "remaining_order_issue": "Centered equation fraction and surrounding baseline fragments remain separate.",
+    "authored_selector_controls": 7
+  },
+  "additional_unreplayed_support_control": {
+    "long_separator_declined_by_existing_3em_bar_width_bound": true,
+    "selector_controls": 8,
+    "local_geometry_controls": 29,
+    "additional_native_replay_run": false
+  },
+  "failure_handoff_controls": 3
 }

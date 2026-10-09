@@ -24,23 +24,27 @@ def global_layer(page,handle,box,config,cfg=GlobalAlphaConfig()):
         outside=len(xs)-int(np.count_nonzero(rgba[:,:,3]));assert outside==0
     finally:ink.active(handle,False);bitmap.close()
     return rgba,pbox,dict(stable=True,native_renders=1,attempts=[],mask_source='full_integer_device_canvas_alpha_then_array_crop',full_global_ink_outside_crop=outside,config=cfg.json())
-def extract(pdf,out,config=ink.InkConfig(),page_index=0):
+def extract(pdf,out,config=ink.InkConfig(),page_index=0,experimental_fraction_support=False):
     from direction_groups import group
     import json
-    previous=ink.stable_native_layer;previous_inventory=ink.frozen.native_inventory;previous_units=ink.ownership_units;context={}
+    previous=ink.stable_native_layer;previous_inventory=ink.frozen.native_inventory;previous_units=ink.ownership_units;previous_plan=ink.frozen.plan;context={}
     def inventory(page,cfg,trace):
         result=previous_inventory(page,cfg,trace);tp=page.get_textpage()
         try:
             for g in result[2]:g['native_angle_radians']=float(raw.FPDFText_GetCharAngle(tp,g['source_index']))
         finally:tp.close()
         context.update(page_size=list(page.get_size()),glyphs=result[2]);return result
+    def plan(*args,**kwargs):
+        from fraction_support import propose_support
+        if experimental_fraction_support:kwargs['fraction_support_selector']=propose_support
+        return previous_plan(*args,**kwargs)
     def units(items):
         us,owners=previous_units(items)
         grouped,trace=group({'units':us,'glyphs':context['glyphs'],'page_size':context['page_size'],'patches':{}})
         context['direction_trace']=trace
         if any(not t['accepted'] and t.get('changes_required',True) for t in trace):raise RuntimeError('mixed/nonclosed native direction cannot be safely partitioned')
         us=grouped['units'];return us,{g['id']:u['id'] for u in us for g in u['glyphs']}
-    ink.stable_native_layer=global_layer;ink.frozen.native_inventory=inventory;ink.ownership_units=units
+    ink.stable_native_layer=global_layer;ink.frozen.native_inventory=inventory;ink.ownership_units=units;ink.frozen.plan=plan
     try:
         result=ink.extract_partitioned_layers(pdf,out,config,page_index);(pathlib.Path(out)/'direction-trace-private.json').write_text(json.dumps(context.get('direction_trace',[]),indent=2));return result
-    finally:ink.stable_native_layer=previous;ink.frozen.native_inventory=previous_inventory;ink.ownership_units=previous_units
+    finally:ink.stable_native_layer=previous;ink.frozen.native_inventory=previous_inventory;ink.ownership_units=previous_units;ink.frozen.plan=previous_plan
