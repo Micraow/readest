@@ -1,0 +1,140 @@
+{
+  "schema": "region-tree-diagnostic-20261009",
+  "development_only": true,
+  "paper_acceptance": false,
+  "holdouts_opened": 0,
+  "live_browser_runs": 0,
+  "new_remote_ci_runs": 0,
+  "mechanism_tests": {
+    "order_tree_and_prior_native_tests": 19,
+    "prior_ownership_tests": 10,
+    "all_passed": true
+  },
+  "old_page_cold_live_failed": {
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 60.0773725070012,
+    "sampled_peak_family_rss_mib": 628.328125,
+    "sampled_cpu_seconds": 57.18000000000001,
+    "exit_code": -9,
+    "failure": "wall_timeout",
+    "process_cpu_seconds": 58.182443,
+    "process_peak_rss_mib": 628.515625,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, PDF open per phase, native inventory/planning, stable text alpha extraction and encoding, bounded within/cross-object and graphic/fraction closure, optional cold live layout inference, full native masked replay, hierarchical region/paragraph flow, all local unit native render/encode and inline composition, HTML and final audit writes; excludes ink annotations by amended user scope",
+    "excluded": "browser startup/load/paint and interactive audit; cannot claim interactive-page budget"
+  },
+  "old_page_cold_live_isolated": {
+    "cpu_affinity": [
+      0
+    ],
+    "cold_page_process_wall_seconds": 52.66948895099995,
+    "sampled_peak_family_rss_mib": 676.2578125,
+    "sampled_cpu_seconds": 32.67,
+    "exit_code": 0,
+    "failure": null,
+    "process_cpu_seconds": 51.674153000000004,
+    "process_peak_rss_mib": 628.18359375,
+    "inputs": "already-local PDF bytes; no download cost; OS file cache not flushed",
+    "included": "fresh Python/imports, PDF open per phase, native inventory/planning, stable text alpha extraction and encoding, bounded within/cross-object and graphic/fraction closure, optional cold live layout inference, full native masked replay, hierarchical region/paragraph flow, all local unit native render/encode and inline composition, HTML and final audit writes; excludes ink annotations by amended user scope",
+    "excluded": "browser startup/load/paint and interactive audit; cannot claim interactive-page budget",
+    "pipeline": {
+      "scope": "paper-priority printed content; ink annotations excluded by user scope amendment",
+      "model_mode": "live cold offline PP-S",
+      "phases": [
+        {
+          "name": "isolated_cold_model_process_import_load_raster_inference",
+          "wall_seconds": 19.471079345999897
+        },
+        {
+          "name": "native_inventory_stable_ownership",
+          "wall_seconds": 8.215785027001402
+        },
+        {
+          "name": "within_object_interval_closure",
+          "wall_seconds": 6.926789732000543
+        },
+        {
+          "name": "graphic_printed_paint_and_text_closure",
+          "wall_seconds": 1.8984170219991938
+        },
+        {
+          "name": "cross_object_support_closure",
+          "wall_seconds": 3.309152427000299
+        },
+        {
+          "name": "verified_weak_region_priors",
+          "wall_seconds": 1.3030473229991912
+        },
+        {
+          "name": "native_fraction_structure",
+          "wall_seconds": 1.4644065070006036
+        },
+        {
+          "name": "original_position_native_ownership_replay",
+          "wall_seconds": 1.962722717998986
+        },
+        {
+          "name": "region_column_line_tree",
+          "wall_seconds": 0.3523891000004369
+        },
+        {
+          "name": "native_local_batch_render_encode",
+          "wall_seconds": 5.288706847999492
+        },
+        {
+          "name": "paragraph_inline_bundle_reader",
+          "wall_seconds": 0.7308430679986486
+        }
+      ],
+      "native_initial_renders": 1777,
+      "native_final_replay_renders": 3088,
+      "native_unit_renders": 716,
+      "source_replay_exact": true,
+      "source_support_failed_units": 0,
+      "source_unit_bijection": true,
+      "native_units": 707,
+      "paragraphs": 8,
+      "protected_blocks": 3,
+      "reading_tree_leaves": 67,
+      "native_index_boundary_conflicts": 0,
+      "elapsed_before_final_write": 50.93306294699869,
+      "parent_process_cpu_seconds": 32.510561933,
+      "waited_children_cpu_seconds": 18.9826,
+      "reading_acceptance": false,
+      "browser_tested": false,
+      "holdouts_opened": 0
+    }
+  },
+  "static_qa": {
+    "renderer": "WeasyPrint to PDFium, not browser",
+    "width_css_px": 390,
+    "font_sizes_css_px": [
+      20,
+      28
+    ],
+    "seconds": 12.413199513001018,
+    "all_tested_inline_affine_dimensions_pass": true,
+    "duplicate_dom_units": false,
+    "visual_full_page_review_completed": true,
+    "readability_acceptance": false
+  },
+  "actual_reader_resources": {
+    "dom_image_units": 642,
+    "requestable_pngs": 642,
+    "png_bytes": 872809,
+    "decoded_rgba_bytes": 3280036,
+    "html_bytes": 186497
+  },
+  "open_failures": [
+    "cross-column sentence interrupted by floating figure/caption",
+    "source-line hyphenation and awkward word spacing",
+    "target font/DPR native rerasterization absent",
+    "small fit-to-width table has no validated zoom",
+    "selection semantics not complete or browser-tested",
+    "dark backgrounds unsupported",
+    "browser loading and interactive page budget unknown",
+    "no source-disjoint paper validation"
+  ]
+}
