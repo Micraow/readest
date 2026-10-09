@@ -1,0 +1,39 @@
+{
+  "before_cold_requests": true,
+  "attempt": 2,
+  "previous_freeze_preserved": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793"
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "f752b63a31aee857261995e7ec160cb75b719e64b90df6079f04886a2b3d3578"
+    },
+    {
+      "path": "code/compact_wire.py",
+      "sha256": "ba5c1a01677cde0c567b072e6e998e2cec0d1af7a5ef2e47aaa0cab050b5f145"
+    },
+    {
+      "path": "code/compare_wire.py",
+      "sha256": "d01ae79c543c73bf6c9a720a9ef61b019ab547909ac5bba5bc04bbbee111d7ed"
+    },
+    {
+      "path": "code/page_pipeline.py",
+      "sha256": "826882fd875763be3f08f3ecbbaec29d5dfd0e2d281099212f3e973f342e6294"
+    },
+    {
+      "path": "code/request_local_images.py",
+      "sha256": "0c2ab3e2368e941ec47414eca609262c70624bae6591e2618f13595843e8f259"
+    },
+    {
+      "path": "code/run_cold_page.py",
+      "sha256": "48bf870780cb1dbca6e870771a0673aee3974e3a6cb8d3fb53fa5d09af64e225"
+    },
+    {
+      "path": "code/test_module_scope.py",
+      "sha256": "b0882516b1f5d4de7718c4d386aa74cfed8e60650b4f04b22f0557cff455a3fd"
+    }
+  ]
+}

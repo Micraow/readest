@@ -1,0 +1,14 @@
+{
+  "opencv_package": "4.10.0.84",
+  "opencv_runtime": "4.10.0",
+  "scipy_reference_version": "1.17.0",
+  "numpy": "2.3.5",
+  "opencv_shared_library": {
+    "cv2.abi3.so": {
+      "bytes": 78819177,
+      "sha256": "460fa53b0fcf667a433a262ea45e42226bea7e87d58ed424fd8d3c62c60130dd"
+    }
+  },
+  "ownership_import_only_variant": true,
+  "new_installations": 0
+}

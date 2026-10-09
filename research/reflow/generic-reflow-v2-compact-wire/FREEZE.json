@@ -1,0 +1,35 @@
+{
+  "before_cold_requests": true,
+  "predecessor_remote": "a8de47ce8be9e777c058b8f8a9874f62a06334e2",
+  "changes_only_here": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793"
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "8b8c84123f1f9d76fd13d5563f65523c0299476ed4313d14ff5ab4716f482018"
+    },
+    {
+      "path": "code/compact_wire.py",
+      "sha256": "ba5c1a01677cde0c567b072e6e998e2cec0d1af7a5ef2e47aaa0cab050b5f145"
+    },
+    {
+      "path": "code/compare_wire.py",
+      "sha256": "d01ae79c543c73bf6c9a720a9ef61b019ab547909ac5bba5bc04bbbee111d7ed"
+    },
+    {
+      "path": "code/page_pipeline.py",
+      "sha256": "826882fd875763be3f08f3ecbbaec29d5dfd0e2d281099212f3e973f342e6294"
+    },
+    {
+      "path": "code/request_local_images.py",
+      "sha256": "96071defa3eed7ebe64e01139fd0ce9172db8e72ed2debbe4e73249960d8ac7d"
+    },
+    {
+      "path": "code/run_cold_page.py",
+      "sha256": "48bf870780cb1dbca6e870771a0673aee3974e3a6cb8d3fb53fa5d09af64e225"
+    }
+  ]
+}

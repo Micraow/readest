@@ -1,0 +1,676 @@
+{
+  "status": "seen-page performance diagnosis; overall reading acceptance remains false",
+  "blind_batch_original_passed": 0,
+  "blind_batch_original_total": 2,
+  "new_holdouts_opened": 0,
+  "fresh_complete_requests": [
+    {
+      "attempt": "H5-cold",
+      "measurement": {
+        "wall_seconds": 31.625112250996608,
+        "request_family_cpu_seconds": 27.696939,
+        "supervisor_cpu_seconds": 2.486896615,
+        "total_accounted_cpu_seconds": 30.183835615,
+        "peak_sampled_family_plus_supervisor_rss_mib": 540.203125,
+        "exit_code": 2,
+        "failure": "process_exit",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 8,
+            "exit_code": 2,
+            "wait4_cpu_seconds_including_waited_descendants": 27.696939
+          }
+        ],
+        "load_before": [
+          4.2685546875,
+          5.52197265625,
+          5.154296875
+        ],
+        "load_after": [
+          4.29833984375,
+          5.408203125,
+          5.1279296875
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 18.726056887000595,
+          "cpu_seconds": 16.756549203
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 3.0580397350022395,
+          "cpu_seconds": 2.787051991000002
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.2366559080001025,
+          "cpu_seconds": 0.22972147800000187
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.2114387590008846,
+          "cpu_seconds": 0.2086829690000016
+        },
+        {
+          "name": "target_local_images",
+          "status": "failed",
+          "exit_code": 1,
+          "wall_seconds": 9.19137056299951,
+          "cpu_seconds": 7.558718933999998
+        }
+      ],
+      "request_result": {
+        "execution_complete": false,
+        "accepted_reading_result": false,
+        "failure": "EXECUTION: target_local_images"
+      }
+    },
+    {
+      "attempt": "H6-cold",
+      "measurement": {
+        "wall_seconds": 60.07951257199966,
+        "request_family_cpu_seconds": 50.368075,
+        "supervisor_cpu_seconds": 5.881143076000001,
+        "total_accounted_cpu_seconds": 56.249218076,
+        "peak_sampled_family_plus_supervisor_rss_mib": 508.4375,
+        "exit_code": -9,
+        "failure": "BUDGET_WALL",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 201,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 40.952751
+          },
+          {
+            "pid": 393,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 9.415324
+          }
+        ],
+        "load_before": [
+          4.29833984375,
+          5.408203125,
+          5.1279296875
+        ],
+        "load_after": [
+          3.3134765625,
+          4.98291015625,
+          5.0009765625
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 41.166674199001136,
+          "cpu_seconds": 33.38101502599999
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 7.1996568360009405,
+          "cpu_seconds": 6.088053760000008
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 1.0949486540012003,
+          "cpu_seconds": 0.8587243429999916
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.5011372219996701,
+          "cpu_seconds": 0.49144031000000155
+        },
+        {
+          "name": "target_local_images",
+          "status": "running"
+        }
+      ],
+      "request_result": {
+        "execution_complete": false,
+        "failure": "BUDGET_WALL"
+      }
+    },
+    {
+      "attempt": "H5-cold-2",
+      "measurement": {
+        "wall_seconds": 29.297744621002494,
+        "request_family_cpu_seconds": 26.979266,
+        "supervisor_cpu_seconds": 1.435202954,
+        "total_accounted_cpu_seconds": 28.414468954,
+        "peak_sampled_family_plus_supervisor_rss_mib": 536.27734375,
+        "exit_code": 0,
+        "failure": null,
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 12,
+            "exit_code": 0,
+            "wait4_cpu_seconds_including_waited_descendants": 26.979266
+          }
+        ],
+        "load_before": [
+          3.275390625,
+          4.34423828125,
+          4.7568359375
+        ],
+        "load_after": [
+          4.33642578125,
+          4.48876953125,
+          4.79052734375
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 14.253794749998633,
+          "cpu_seconds": 13.226991189000001
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 3.842112319001899,
+          "cpu_seconds": 3.603484649000002
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.2793998909983202,
+          "cpu_seconds": 0.2691207389999981
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.2229716379988531,
+          "cpu_seconds": 0.21835807300000099
+        },
+        {
+          "name": "target_local_images",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 6.257539939000708,
+          "cpu_seconds": 5.956691338999999
+        },
+        {
+          "name": "update_local_images",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.9448275529975945,
+          "cpu_seconds": 0.7066693440000016
+        },
+        {
+          "name": "vector_components",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.23937926800135756,
+          "cpu_seconds": 0.2351392720000014
+        },
+        {
+          "name": "flow_refinements",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.3709194180009945,
+          "cpu_seconds": 0.36385901400000265
+        },
+        {
+          "name": "formula_hierarchy",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.5522301079981844,
+          "cpu_seconds": 0.5437609009999953
+        },
+        {
+          "name": "initial_render_28_dpr2",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 2.029998120997334,
+          "cpu_seconds": 1.6205552489999988
+        },
+        {
+          "name": "research_html",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.09209178799937945,
+          "cpu_seconds": 0.09051995700000148
+        }
+      ],
+      "request_result": {
+        "execution_complete": true,
+        "accepted_reading_result": false,
+        "visual_review_pending": true,
+        "seen_page_diagnosis": true,
+        "candidate": "compact-wire"
+      }
+    },
+    {
+      "attempt": "H6-cold-2",
+      "measurement": {
+        "wall_seconds": 60.079490847998386,
+        "request_family_cpu_seconds": 53.571463,
+        "supervisor_cpu_seconds": 4.0288841479999995,
+        "total_accounted_cpu_seconds": 57.600347148,
+        "peak_sampled_family_plus_supervisor_rss_mib": 536.92578125,
+        "exit_code": -9,
+        "failure": "BUDGET_WALL",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 223,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 34.684251
+          },
+          {
+            "pid": 415,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 18.887211999999998
+          }
+        ],
+        "load_before": [
+          4.33642578125,
+          4.48876953125,
+          4.79052734375
+        ],
+        "load_after": [
+          4.72265625,
+          4.5673828125,
+          4.7998046875
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 33.27328598399981,
+          "cpu_seconds": 28.452246154999997
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 5.29477518099884,
+          "cpu_seconds": 4.9451928139999985
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.7313211139990017,
+          "cpu_seconds": 0.7079431029999981
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.5124935299973004,
+          "cpu_seconds": 0.4962298700000076
+        },
+        {
+          "name": "target_local_images",
+          "status": "running"
+        }
+      ],
+      "request_result": {
+        "execution_complete": false,
+        "failure": "BUDGET_WALL"
+      }
+    }
+  ],
+  "H5_output_equivalence": {
+    "scope": "same seen H5 payload and native-renderer output comparison; no additional reading/browser/copy claim",
+    "payload_json_equal": true,
+    "png_files": 11,
+    "png_name_set_equal": true,
+    "all_png_bytes_identical": true
+  },
+  "browser_selection_zoom_verified": false,
+  "filesystem_cache_flushed": false,
+  "all_versions_and_failed_attempts_preserved": true,
+  "wire_microbenchmark": {
+    "authored_cases": 14,
+    "negative_zero_preserved": true,
+    "nonfinite_error_preserved": true,
+    "runs": [
+      {
+        "mode": "pretty",
+        "wall_seconds": 3.09999317799884,
+        "cpu_seconds": 2.803996623,
+        "bytes": 10491688,
+        "decoded_values_exact": true,
+        "load": [
+          6.04443359375,
+          5.9716796875,
+          5.2578125
+        ]
+      },
+      {
+        "mode": "compact",
+        "wall_seconds": 1.1972785719990497,
+        "cpu_seconds": 1.0591209660000005,
+        "bytes": 5913095,
+        "decoded_values_exact": true,
+        "load": [
+          6.04443359375,
+          5.9716796875,
+          5.2578125
+        ]
+      },
+      {
+        "mode": "compact",
+        "wall_seconds": 0.661194357999193,
+        "cpu_seconds": 0.6330486840000003,
+        "bytes": 5913095,
+        "decoded_values_exact": true,
+        "load": [
+          6.04443359375,
+          5.9716796875,
+          5.2578125
+        ]
+      },
+      {
+        "mode": "pretty",
+        "wall_seconds": 1.6785591400002886,
+        "cpu_seconds": 1.5633758649999994,
+        "bytes": 10491688,
+        "decoded_values_exact": true,
+        "load": [
+          6.04052734375,
+          5.97216796875,
+          5.26220703125
+        ]
+      }
+    ],
+    "full_page_cost": false
+  },
+  "module_scope_control": "standard json and outside modules remain untouched; check code/test_module_scope.py",
+  "target_profile": {
+    "scope": "cached H6 native plan, complete target-asset stage under cProfile; NOT a full cold page",
+    "measurement": {
+      "wall_seconds": 42.46200888699968,
+      "request_family_cpu_seconds": 37.170774,
+      "supervisor_cpu_seconds": 4.854910784,
+      "total_accounted_cpu_seconds": 42.025684784,
+      "peak_sampled_family_plus_supervisor_rss_mib": 369.7421875,
+      "exit_code": 0,
+      "failure": null,
+      "request_and_supervisor_cpu_affinity": [
+        0
+      ],
+      "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+      "sampling_interval_seconds": 0.05,
+      "reaped_processes": [
+        {
+          "pid": 5,
+          "exit_code": 0,
+          "wait4_cpu_seconds_including_waited_descendants": 37.170774
+        }
+      ],
+      "load_before": [
+        5.798828125,
+        5.201171875,
+        5.00439453125
+      ],
+      "load_after": [
+        6.607421875,
+        5.501953125,
+        5.11669921875
+      ],
+      "cold_complete_page_request": false,
+      "cached_or_partial_stage": true,
+      "filesystem_cache_flushed": false
+    },
+    "top_cumulative_functions": [
+      {
+        "file": "~",
+        "function": "<built-in method builtins.exec>",
+        "primitive_calls": 1,
+        "total_calls": 429,
+        "self_seconds": 0.34622721900000003,
+        "cumulative_seconds": 41.109086239
+      },
+      {
+        "file": "request_local_images.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.008411584,
+        "cumulative_seconds": 41.109058296
+      },
+      {
+        "file": "asset_service.py",
+        "function": "request",
+        "primitive_calls": 4,
+        "total_calls": 4,
+        "self_seconds": 0.176225299,
+        "cumulative_seconds": 23.844465597000003
+      },
+      {
+        "file": "render_request.py",
+        "function": "run",
+        "primitive_calls": 4,
+        "total_calls": 4,
+        "self_seconds": 0.568935108,
+        "cumulative_seconds": 23.521699856
+      },
+      {
+        "file": "<frozen importlib._bootstrap>",
+        "function": "_find_and_load",
+        "primitive_calls": 8,
+        "total_calls": 947,
+        "self_seconds": 0.067112193,
+        "cumulative_seconds": 13.143771407000001
+      },
+      {
+        "file": "<frozen importlib._bootstrap>",
+        "function": "_find_and_load_unlocked",
+        "primitive_calls": 8,
+        "total_calls": 452,
+        "self_seconds": 0.040450449,
+        "cumulative_seconds": 13.102296284000001
+      },
+      {
+        "file": "<frozen importlib._bootstrap>",
+        "function": "_load_unlocked",
+        "primitive_calls": 8,
+        "total_calls": 437,
+        "self_seconds": 0.038866948000000005,
+        "cumulative_seconds": 13.087842376000001
+      },
+      {
+        "file": "<frozen importlib._bootstrap_external>",
+        "function": "exec_module",
+        "primitive_calls": 8,
+        "total_calls": 371,
+        "self_seconds": 0.010779490000000001,
+        "cumulative_seconds": 13.087408304
+      },
+      {
+        "file": "<frozen importlib._bootstrap>",
+        "function": "_call_with_frames_removed",
+        "primitive_calls": 16,
+        "total_calls": 1057,
+        "self_seconds": 0.027206009000000003,
+        "cumulative_seconds": 13.036167362
+      },
+      {
+        "file": "asset_service.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 3.4962e-05,
+        "cumulative_seconds": 12.826950585
+      },
+      {
+        "file": "render_request.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.00015147,
+        "cumulative_seconds": 12.613911566
+      },
+      {
+        "file": "ink_ownership.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.004229562,
+        "cumulative_seconds": 12.187737543
+      },
+      {
+        "file": "render_native_localcanvas.py",
+        "function": "render_units",
+        "primitive_calls": 4,
+        "total_calls": 4,
+        "self_seconds": 1.588225605,
+        "cumulative_seconds": 11.028769904
+      },
+      {
+        "file": "__init__.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.0013037720000000001,
+        "cumulative_seconds": 10.883247676
+      },
+      {
+        "file": "_support_alternative_backends.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.035822255000000004,
+        "cumulative_seconds": 10.700309092000001
+      },
+      {
+        "file": "_array_api.py",
+        "function": "decorator",
+        "primitive_calls": 169,
+        "total_calls": 169,
+        "self_seconds": 0.062458819000000006,
+        "cumulative_seconds": 8.229645268
+      },
+      {
+        "file": "_docscrape.py",
+        "function": "__init__",
+        "primitive_calls": 169,
+        "total_calls": 169,
+        "self_seconds": 0.017339871,
+        "cumulative_seconds": 7.283814641
+      },
+      {
+        "file": "bitmap.py",
+        "function": "new_native",
+        "primitive_calls": 133,
+        "total_calls": 133,
+        "self_seconds": 6.634240676,
+        "cumulative_seconds": 6.643871333000001
+      },
+      {
+        "file": "_docscrape.py",
+        "function": "__init__",
+        "primitive_calls": 169,
+        "total_calls": 169,
+        "self_seconds": 0.295227098,
+        "cumulative_seconds": 6.54287025
+      },
+      {
+        "file": "<frozen importlib._bootstrap>",
+        "function": "_handle_fromlist",
+        "primitive_calls": 484,
+        "total_calls": 757,
+        "self_seconds": 0.009239205,
+        "cumulative_seconds": 5.671544358
+      },
+      {
+        "file": "_docscrape.py",
+        "function": "_parse",
+        "primitive_calls": 169,
+        "total_calls": 169,
+        "self_seconds": 0.252910003,
+        "cumulative_seconds": 4.851551963
+      },
+      {
+        "file": "~",
+        "function": "<built-in method builtins.hasattr>",
+        "primitive_calls": 9599,
+        "total_calls": 10640,
+        "self_seconds": 0.015511287,
+        "cumulative_seconds": 4.68894666
+      },
+      {
+        "file": "native_target_layer.py",
+        "function": "full_object_reference",
+        "primitive_calls": 23,
+        "total_calls": 23,
+        "self_seconds": 0.9703799590000001,
+        "cumulative_seconds": 4.539880577
+      },
+      {
+        "file": "_ndimage_api.py",
+        "function": "<module>",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.0035257920000000002,
+        "cumulative_seconds": 4.31144566
+      },
+      {
+        "file": "compact_wire.py",
+        "function": "install",
+        "primitive_calls": 1,
+        "total_calls": 1,
+        "self_seconds": 0.0755358,
+        "cumulative_seconds": 4.057607096
+      }
+    ]
+  }
+}

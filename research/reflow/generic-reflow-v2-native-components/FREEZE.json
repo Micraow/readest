@@ -1,0 +1,51 @@
+{
+  "before_cold_requests": true,
+  "predecessor": "a8de47ce8be9e777c058b8f8a9874f62a06334e2",
+  "compact_wire_predecessor_local_freeze": "generic-reflow-v2-compact-wire/FREEZE-2.json",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793"
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "c9ce0787dccec24765b68d78244862b1591c0da9667e260e09c1fc2a4de50664"
+    },
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "6f0273c9bfbd8bf963cfbc79bb0b4cd3412dd4782db7dd21926f3865b8f18410"
+    },
+    {
+      "path": "code/backend_loader.py",
+      "sha256": "063324b6df0eeefdfdc49fb9776a4c0667999d66d1c103c0e1f7966a89b7391b"
+    },
+    {
+      "path": "code/components.py",
+      "sha256": "45a1b5582180c4f4466eabfb67d4d9669448cd5241363aecde9fc32c98aef60f"
+    },
+    {
+      "path": "code/ink_ownership.py",
+      "sha256": "e1f979072d15c80a440cefc91e1b7e71c8c790e2b84467268aba5b39ea1612ea"
+    },
+    {
+      "path": "code/page_pipeline.py",
+      "sha256": "28d75ddea844fee909e1c4ab1f40149a6034a853e08f6d11b451893fc5f9ca17"
+    },
+    {
+      "path": "code/request_local_images.py",
+      "sha256": "751e91fe52c41c4279fea8feea1349f0facc2bd282adea1a30bf114db04665ac"
+    },
+    {
+      "path": "code/run_cold_page.py",
+      "sha256": "1f1ed5158ce234edb44c7e547c5211c47c349d7f1dd4f0f49d006f85c8a09d52"
+    },
+    {
+      "path": "code/safe_wire.py",
+      "sha256": "e6619c6f1c96531dc20277b198c8f79a030cc971e33d5f82e3ab8381699cc3ec"
+    },
+    {
+      "path": "code/test_components.py",
+      "sha256": "8ab40fef8f93c49d5459c6a20e840fc36910e4a1fab7c53526c64d0f7d89eead"
+    }
+  ]
+}

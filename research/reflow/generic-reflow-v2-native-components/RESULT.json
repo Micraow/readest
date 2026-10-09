@@ -1,0 +1,214 @@
+{
+  "status": "seen-page performance diagnosis; overall reading acceptance remains false",
+  "blind_batch_original_passed": 0,
+  "blind_batch_original_total": 2,
+  "new_holdouts_opened": 0,
+  "fresh_complete_requests": [
+    {
+      "attempt": "H5-cold",
+      "measurement": {
+        "wall_seconds": 46.94289740000022,
+        "request_family_cpu_seconds": 41.785515,
+        "supervisor_cpu_seconds": 3.079206736,
+        "total_accounted_cpu_seconds": 44.864721736,
+        "peak_sampled_family_plus_supervisor_rss_mib": 540.1484375,
+        "exit_code": 0,
+        "failure": null,
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 8,
+            "exit_code": 0,
+            "wait4_cpu_seconds_including_waited_descendants": 41.785515
+          }
+        ],
+        "load_before": [
+          5.77880859375,
+          5.94970703125,
+          5.49853515625
+        ],
+        "load_after": [
+          6.37353515625,
+          6.06982421875,
+          5.56103515625
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 24.82731656499891,
+          "cpu_seconds": 21.718942152000004
+        },
+        {
+          "name": "glyph_capture",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 5.2771160369993595,
+          "cpu_seconds": 4.954174181999999
+        },
+        {
+          "name": "native_bridge",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.9292451729997993,
+          "cpu_seconds": 0.6510611349999955
+        },
+        {
+          "name": "prepare_reader",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.33729170199876535,
+          "cpu_seconds": 0.32017474300000615
+        },
+        {
+          "name": "target_local_images",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 9.598609647000558,
+          "cpu_seconds": 8.682967188999996
+        },
+        {
+          "name": "update_local_images",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 1.1549403050012188,
+          "cpu_seconds": 1.0035454229999985
+        },
+        {
+          "name": "vector_components",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.40807918599966797,
+          "cpu_seconds": 0.39125040400000444
+        },
+        {
+          "name": "flow_refinements",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.6803788969991729,
+          "cpu_seconds": 0.657112811999994
+        },
+        {
+          "name": "formula_hierarchy",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 1.2640934369992465,
+          "cpu_seconds": 1.133799758000002
+        },
+        {
+          "name": "initial_render_28_dpr2",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 2.110366745000647,
+          "cpu_seconds": 1.9788397139999958
+        },
+        {
+          "name": "research_html",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 0.11945011299758335,
+          "cpu_seconds": 0.1166691719999946
+        }
+      ],
+      "request_result": {
+        "execution_complete": true,
+        "accepted_reading_result": false,
+        "visual_review_pending": true,
+        "seen_page_diagnosis": true,
+        "candidate": "native-components"
+      }
+    },
+    {
+      "attempt": "H6-cold",
+      "measurement": {
+        "wall_seconds": 60.075291706001735,
+        "request_family_cpu_seconds": 48.745623,
+        "supervisor_cpu_seconds": 6.9069355980000005,
+        "total_accounted_cpu_seconds": 55.652558598,
+        "peak_sampled_family_plus_supervisor_rss_mib": 544.359375,
+        "exit_code": -9,
+        "failure": "BUDGET_WALL",
+        "request_and_supervisor_cpu_affinity": [
+          0
+        ],
+        "cpu_accounting": "wait4 of root and subreaper-adopted orphan descendants; each waited subtree counted once, plus supervisor process time",
+        "sampling_interval_seconds": 0.05,
+        "reaped_processes": [
+          {
+            "pid": 219,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 36.142707
+          },
+          {
+            "pid": 396,
+            "exit_code": -9,
+            "wait4_cpu_seconds_including_waited_descendants": 12.602916
+          }
+        ],
+        "load_before": [
+          6.34326171875,
+          6.068359375,
+          5.5634765625
+        ],
+        "load_after": [
+          8.43603515625,
+          6.72509765625,
+          5.82177734375
+        ],
+        "cold_complete_page_request": true,
+        "cached_or_partial_stage": false,
+        "filesystem_cache_flushed": false
+      },
+      "stages": [
+        {
+          "name": "native_model_plan",
+          "status": "complete",
+          "exit_code": 0,
+          "wall_seconds": 43.74150687099973,
+          "cpu_seconds": 35.997367458
+        },
+        {
+          "name": "glyph_capture",
+          "status": "running"
+        }
+      ],
+      "request_result": {
+        "execution_complete": false,
+        "failure": "BUDGET_WALL"
+      }
+    }
+  ],
+  "H5_output_equivalence": {
+    "scope": "same seen H5 payload and native-renderer output comparison; no additional reading/browser/copy claim",
+    "payload_json_equal": true,
+    "png_files": 11,
+    "png_name_set_equal": true,
+    "all_png_bytes_identical": true
+  },
+  "browser_selection_zoom_verified": false,
+  "filesystem_cache_flushed": false,
+  "all_versions_and_failed_attempts_preserved": true,
+  "components_controls": {
+    "authored_patterns": 14,
+    "seeded_arrays": 400,
+    "existing_alpha_masks": 1265,
+    "connectivities": [
+      4,
+      8
+    ],
+    "exact_array_count_and_slices_comparisons": 3358,
+    "unsupported_cases_refused": 4,
+    "outside_lazy_module_not_touched": true,
+    "all_passed": true,
+    "new_holdouts_opened": 0
+  }
+}
