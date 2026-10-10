@@ -1,6 +1,6 @@
 """Explicit seen-only local native-region grouping; default cold policy unchanged."""
 import argparse,pathlib,json,sys,shutil,hashlib,importlib.util,time
-p=argparse.ArgumentParser();p.add_argument('pdf');p.add_argument('native');p.add_argument('out');p.add_argument('--image-priors',action='store_true');a=p.parse_args();R=pathlib.Path(__file__).resolve().parents[2];sys.path.insert(0,str(R/'generic-reflow-v2-localgeometry/code'))
+p=argparse.ArgumentParser();p.add_argument('pdf');p.add_argument('native');p.add_argument('out');p.add_argument('--image-priors',action='store_true');p.add_argument('--caption-delimited',action='store_true');a=p.parse_args();R=pathlib.Path(__file__).resolve().parents[2];sys.path.insert(0,str(R/'generic-reflow-v2-localgeometry/code'))
 from atomic_native_regions import build,native_interval_conflicts,verify_native_graphic_support
 native=pathlib.Path(a.native).resolve();out=pathlib.Path(a.out).resolve();out.mkdir(exist_ok=False);pdf=pathlib.Path(a.pdf).resolve();plan=json.loads((native/'fractions/plan-private.json').read_text());summary=json.loads((native/'fractions/ownership-summary.json').read_text());source=json.loads((native/'fractions/masked-native-replay.json').read_text());old=json.loads((native/'order/order-tree-private.json').read_text());leaves=json.loads((native/'order/source-leaves-private.json').read_text());start=time.perf_counter()
 if hashlib.sha256(pdf.read_bytes()).hexdigest()!=summary['input_sha256'] or not source['ownership_and_replay_pass']:raise RuntimeError('exact verified source replay required')
@@ -8,7 +8,11 @@ priors=[]
 if a.image_priors:
  pred=json.loads((native/'model/prediction-private.json').read_text());size=json.loads((native/'model/model-costs.json').read_text())['native_model_input_size'];W,H=plan['page_size']
  priors=[dict(label=v['label'],score=v['score'],box=[v['coordinate'][0]*W/size[0],v['coordinate'][1]*H/size[1],v['coordinate'][2]*W/size[0],v['coordinate'][3]*H/size[1]]) for v in pred['res']['boxes']]
-tree,new,decisions=build(leaves,plan['page_size'],summary['body_font'],image_priors=priors);report=dict(scope='seen native-region diagnostic; not a new holdout or cold request',model_inferences=0,source_replay_exact=True,order_built=tree is not None,decisions=decisions,reader_generated=False,reading_acceptance=False,browser_verified=False)
+tree,new,decisions=build(leaves,plan['page_size'],summary['body_font'],image_priors=priors)
+if a.caption_delimited and tree is not None:
+ from caption_delimited_region import close
+ tree,new,extra=close(new,tree,leaves,priors,plan['page_size'],summary['body_font']);decisions.extend(extra)
+report=dict(scope='seen native-region diagnostic; not a new holdout or cold request',model_inferences=0,source_replay_exact=True,order_built=tree is not None,decisions=decisions,reader_generated=False,reading_acceptance=False,browser_verified=False)
 (out/'grouping-result-private.json').write_text(json.dumps(report,indent=2))
 if tree is None:raise RuntimeError('atomic native region evidence insufficient; source PDF fallback remains')
 conflicts=native_interval_conflicts(tree['sequence'],new)

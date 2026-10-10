@@ -1,0 +1,6 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {validateResearchBundle} from './bundle_contract.mjs';
+const bundle=JSON.parse(fs.readFileSync(process.argv[2]));validateResearchBundle(bundle);let count=1;
+const indices=bundle.pages[0].reader.blocks.flatMap((b,i)=>b.tokens.flatMap((t,j)=>t.retained_source_break_after?[i,j]:[]));const [bi,ti]=indices;assert(Number.isInteger(bi)&&Number.isInteger(ti));
+function reject(change){const d=structuredClone(bundle),r=d.pages[0].reader,b=r.blocks[bi],t=b.tokens[ti];change(r,b,t);assert.throws(()=>validateResearchBundle(d),/native source-break/);count++;}
+reject(r=>delete r.retained_source_break_policy);reject(r=>r.retained_source_break_policy='unknown');reject((r,b,t)=>t.retained_source_break_after='true');reject((r,b,t)=>t.gap_em=.2);reject((r,b)=>b.kind='object');reject((r,b,t)=>{const n=b.tokens[ti+1],height=n.source_pixel_box[3]-n.source_pixel_box[1];n.source_pixel_box[1]=t.source_pixel_box[1];n.source_pixel_box[3]=n.source_pixel_box[1]+height;});reject((r,b)=>{const t=b.tokens.at(-1);t.retained_source_break_after=true;t.gap_em=0;});
+console.log(JSON.stringify({source_break_bundle_controls:count,marked_bundle_accepted:true,malformed_boundaries_rejected:true,browser_verified:false}));

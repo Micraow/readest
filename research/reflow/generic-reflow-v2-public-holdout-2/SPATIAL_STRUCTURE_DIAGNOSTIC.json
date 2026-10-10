@@ -1,0 +1,250 @@
+{
+  "scope": "seen native spatial/title structure refinement; no new holdout",
+  "original_H8_holdout": {
+    "passes": 0,
+    "total": 1,
+    "wall_seconds": 17.728822860997752,
+    "unchanged": true
+  },
+  "default_cold_policy_unchanged": true,
+  "model_inferences": 0,
+  "reader_blocks": {
+    "before_atomic": 16,
+    "title_only": 15,
+    "caption_delimited_before_title": 11,
+    "final": 10
+  },
+  "visible_improvements": {
+    "title_unwanted_paragraph_gap_removed": true,
+    "lower_panel_labels_restored_to_native_spatial_row": true,
+    "main_caption_still_reflowable": true,
+    "whole_reader_and_changed_regions_visually_reviewed": true
+  },
+  "caption_boundary": {
+    "independent_image_and_figure_caption_priors": true,
+    "repeated_native_panel_columns": 5,
+    "matching_native_text_blocks": 5,
+    "shared_native_baseline": true,
+    "source_leaf_count": 17,
+    "source_units": 49,
+    "internal_semantic_order_inferred": false,
+    "native_graphic_support": {
+      "native_graphic_support_pixels": 278879,
+      "region_pixel_area": 363132,
+      "native_graphic_coverage": 0.7679824416465638,
+      "accepted": true
+    },
+    "new_opt_in_flag": "--caption-delimited",
+    "existing_geometry_thresholds_unchanged": true
+  },
+  "title": {
+    "independent_paragraph_title_prior": true,
+    "complete_native_lines": 2,
+    "same_verified_column": true,
+    "existing_closure_font_and_line_gap_bounds_unchanged": true,
+    "changed_token_gap_count": 1,
+    "boundary_gap_source": "existing paragraph native source-gap median",
+    "all_other_token_fields_identical_to_caption_stage": true
+  },
+  "conservation": {
+    "scope": "seen cached-plan diagnostic; no blind or cold-request claim",
+    "blocks": 10,
+    "source_units": 529,
+    "native_glyphs": 3072,
+    "source_plan_byte_identical": true,
+    "source_unit_bijection": true,
+    "native_glyph_bijection": true,
+    "vector_paints": 2806,
+    "vector_paint_bijection": true,
+    "native_vector_geometry_resources_and_state_unchanged": true,
+    "native_image_tokens": 16,
+    "independent_native_composite_pixel_equality": true,
+    "composite_supported_pixels": 3430900,
+    "unsupported_source_units": 0,
+    "target_requests_accepted": true,
+    "source_replay_exact": true,
+    "observer_pixel_difference": 0,
+    "serialized_clip_replay_pixel_difference": 0,
+    "native_clip_replay_pixel_difference": 20,
+    "native_character_bijection": true,
+    "native_interval_conflicts": 0,
+    "reader_sha256": "d8ed0aff84f661e5bb0c808474c7621cafa044d0bbc31d90075265fc08030e9d",
+    "mixed_engine_pixel_ownership_proven": false,
+    "browser_verified": false,
+    "reading_acceptance": false
+  },
+  "mapping": {
+    "eligible_tokens": 454,
+    "refused_tokens": 27,
+    "refusal_reasons": {
+      "native_image_has_no_verified_text_layer": 16,
+      "no_source_glyphs": 15,
+      "no_unique_geometry_bridge": 16,
+      "not_ordinary_native_word": 3,
+      "incomplete_glyph_paint_bijection": 1,
+      "mixed_or_invalid_glyph_sizes": 3,
+      "nonmonotone_native_character_order": 1,
+      "unsupported_unicode_category_or_replacement": 10,
+      "extractor_unicode_disagreement": 9,
+      "native_unicode_unknown_or_mapping_error": 9,
+      "unsupported_bidirectional_text": 9
+    },
+    "semantic_unicode_certified": false,
+    "browser_selection_verified": false,
+    "copy_across_refused_content_allowed": false
+  },
+  "render": {
+    "scope": "actual native Node Canvas renders; not browser evidence",
+    "cases": [
+      {
+        "font": 20,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 20,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 24,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 24,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 28,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 28,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      }
+    ],
+    "browser_verified": false,
+    "reading_acceptance": false,
+    "mixed_engine_pixel_ownership_proven": false
+  },
+  "viewer_smoke": {
+    "pages": 1,
+    "blocks": 10,
+    "eligible_paragraph_copy": true,
+    "refused_paragraph_copy_blocked": true,
+    "font_selection_cleanup": true,
+    "network_attempts": 0,
+    "paint_calls": 5644,
+    "browser_verified": false,
+    "renderer": "native Node canvas"
+  },
+  "native_focus_usability": {
+    "scope": "actual shipped-module jsdom/native Canvas usability smoke",
+    "figure_focus_contains_exact_native_composite": true,
+    "focus_native_width_pixels": 2747,
+    "focus_larger_than_mobile_width": true,
+    "source_region_contains_whole_composite": true,
+    "source_full_page_action": true,
+    "close_cleans_and_restores_focus": true,
+    "reader_preserved": true,
+    "browser_verified": false
+  },
+  "h5h6_regression": {
+    "module_initialization": true,
+    "real_pages_imported": 2,
+    "paragraph_copy": true,
+    "font_change_selection_cleared": true,
+    "page_change": true,
+    "invalid_import_preserves_reader": true,
+    "overbudget_page_preserves_reader_and_source": true,
+    "decode_failure_import_preserves_reader": true,
+    "failure_bundle_source_fallback": true,
+    "network_attempts": 0,
+    "paint_calls": 8303,
+    "renderer": "native Node canvas",
+    "native_canvas_reference_blocks": 30,
+    "compiled_paths": 405,
+    "decoded_images": 39,
+    "return_to_first_page_resource_work": 0,
+    "browser_verified": false
+  },
+  "controls": {
+    "title": 14,
+    "caption_delimited": 13,
+    "atomic": 38,
+    "pixel_provenance_mutations": 5,
+    "python_unittest_total": 222,
+    "local_geometry_total": 123,
+    "selection": 31,
+    "mapping": 35,
+    "interaction": 10,
+    "hostile_bundles": 27
+  },
+  "seen_stage_seconds": {
+    "native_preparation": 4.090110478995484,
+    "cached_reader_continuation": 37.49745765498665,
+    "title_only": 0.5233435910049593
+  },
+  "independent_stage_caps_seconds": [
+    60,
+    60
+  ],
+  "combined_cold_benchmark_claimed": false,
+  "remaining_limits": [
+    "printed source line-end hyphens remain in reflowed words",
+    "wide figures still need local native focus at mobile width",
+    "figure composite copy remains refused",
+    "real browser composition, selection, clipboard and full application build unverified",
+    "separate native-clip replay comparison differs by 20 pixels; serialized replay and source observer comparisons are exact"
+  ],
+  "reading_acceptance": false,
+  "browser_verified": false,
+  "source_pdf_fallback_retained": true,
+  "paper_text_glyph_image_bundle_content_excluded_from_public_and_handoff": true
+}

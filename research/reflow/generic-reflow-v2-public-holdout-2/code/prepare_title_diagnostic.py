@@ -1,0 +1,13 @@
+"""Seen presentation-only title refinement from a verified cached reader."""
+import argparse,hashlib,json,pathlib,sys,time
+p=argparse.ArgumentParser();p.add_argument('reader');p.add_argument('model');p.add_argument('out');a=p.parse_args();R=pathlib.Path(__file__).resolve().parents[2];sys.path.insert(0,str(R/'generic-reflow-v2-localgeometry/code'))
+from title_structure import apply_titles
+folder=pathlib.Path(a.reader).resolve();model=pathlib.Path(a.model).resolve();out=pathlib.Path(a.out).resolve();out.mkdir(exist_ok=False);read=lambda p:json.loads((folder/p).read_text());start=time.perf_counter()
+data=read('final/reader-data-private.json');plan=read('native/fractions/plan-private.json');assets=read('native/fractions/native-unit-assets-private.json');leaves=read('native/order/source-leaves-private.json');order=read('native/order/order-tree-private.json');cost=json.loads((model/'model-costs.json').read_text());size=cost['native_model_input_size'];W,H=plan['page_size'];pred=json.loads((model/'prediction-private.json').read_text());priors=[dict(label=p['label'],score=p['score'],box=[p['coordinate'][0]*W/size[0],p['coordinate'][1]*H/size[1],p['coordinate'][2]*W/size[0],p['coordinate'][3]*H/size[1]]) for p in pred['res']['boxes']]
+assert read('native/fractions/masked-native-replay.json')['ownership_and_replay_pass'] and not assets['unsupported_source_support_units'] and order['order_tree_built'] and not order['native_index_boundary_conflicts'],'verified native source/order required'
+result,trace=apply_titles(data,plan,assets,leaves,order,priors,data['body_font_pdf']);(out/'final').mkdir();(out/'final/reader-data-private.json').write_text(json.dumps(result,separators=(',',':')))
+for name in ['native','local-images','capture','bridge-private.json']:(out/name).symlink_to(folder/name)
+before=[t for b in data['blocks'] for t in b['tokens']];after=[t for b in result['blocks'] for t in b['tokens']];changes=[(i,a,b) for i,(a,b) in enumerate(zip(before,after)) if a!=b]
+assert all({k:v for k,v in a.items() if k!='gap_em'}=={k:v for k,v in b.items() if k!='gap_em'} for _,a,b in changes)
+report=dict(scope='seen cached native title-structure refinement; no model/extraction rerun',trace=trace,blocks_before=len(data['blocks']),blocks_after=len(result['blocks']),changed_token_gaps=len(changes),source_token_order_unchanged=True,all_other_token_fields_identical=True,native_resource_tables_identical=True,reader_sha256=hashlib.sha256((out/'final/reader-data-private.json').read_bytes()).hexdigest(),seconds=time.perf_counter()-start,reading_acceptance=False,browser_verified=False)
+(out/'title-result-private.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))

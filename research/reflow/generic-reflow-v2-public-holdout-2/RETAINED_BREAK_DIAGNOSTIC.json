@@ -1,0 +1,280 @@
+{
+  "scope": "seen opt-in native source-break retention; no semantic dehyphenation",
+  "original_H8_holdout": {
+    "passes": 0,
+    "total": 1,
+    "unchanged": true
+  },
+  "default_unmarked_layout_unchanged": true,
+  "explicit_policy": "native-retained-line-v1",
+  "model_or_extraction_rerun": false,
+  "retained_boundaries": 8,
+  "layout_only_annotation": {
+    "new_layout_only_flags": 8,
+    "all_existing_fields_and_resources_identical": true,
+    "text_map_byte_identical": true,
+    "printed_glyphs_deleted": 0,
+    "semantic_selection_certified": false,
+    "browser_verified": false
+  },
+  "user_visible_result": {
+    "retained_marks_at_row_ends": true,
+    "no_one_token_prefix_rows_in_six_grids": true,
+    "whole_reader_and_changed_paragraphs_inspected": true,
+    "title_and_panel_labels_preserved": true,
+    "greedy_force_break_variant_rejected": true,
+    "greedy_orphan_prefix_rows_by_grid": [
+      1,
+      3,
+      4,
+      1,
+      0,
+      2
+    ],
+    "height_growth_min_percent": 0.593723494486853,
+    "height_growth_max_percent": 5.079962370649116
+  },
+  "layout": {
+    "scope": "seen geometry comparison; actual pixels checked separately",
+    "cases": [
+      {
+        "font": 20,
+        "width": 320,
+        "retained_boundaries": 8,
+        "inline_retained_hyphens": 0,
+        "one_token_prefix_rows": 0,
+        "height_before_css": 3669,
+        "height_after_css": 3789,
+        "height_growth_fraction": 0.03270645952575624
+      },
+      {
+        "font": 20,
+        "width": 390,
+        "retained_boundaries": 8,
+        "inline_retained_hyphens": 0,
+        "one_token_prefix_rows": 0,
+        "height_before_css": 3141,
+        "height_after_css": 3231,
+        "height_growth_fraction": 0.02865329512893977
+      },
+      {
+        "font": 24,
+        "width": 320,
+        "retained_boundaries": 8,
+        "inline_retained_hyphens": 0,
+        "one_token_prefix_rows": 0,
+        "height_before_css": 5082,
+        "height_after_css": 5226,
+        "height_growth_fraction": 0.02833530106257376
+      },
+      {
+        "font": 24,
+        "width": 390,
+        "retained_boundaries": 8,
+        "inline_retained_hyphens": 0,
+        "one_token_prefix_rows": 0,
+        "height_before_css": 4252,
+        "height_after_css": 4468,
+        "height_growth_fraction": 0.05079962370649116
+      },
+      {
+        "font": 28,
+        "width": 320,
+        "retained_boundaries": 8,
+        "inline_retained_hyphens": 0,
+        "one_token_prefix_rows": 0,
+        "height_before_css": 7074,
+        "height_after_css": 7116,
+        "height_growth_fraction": 0.00593723494486853
+      },
+      {
+        "font": 28,
+        "width": 390,
+        "retained_boundaries": 8,
+        "inline_retained_hyphens": 0,
+        "one_token_prefix_rows": 0,
+        "height_before_css": 5801,
+        "height_after_css": 5843,
+        "height_growth_fraction": 0.007240131011894579
+      }
+    ],
+    "glyph_deletion": 0,
+    "semantic_dehyphenation": false,
+    "browser_verified": false
+  },
+  "render": {
+    "scope": "actual native Node Canvas renders; not browser evidence",
+    "cases": [
+      {
+        "font": 20,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 20,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 24,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 24,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 28,
+        "width": 320,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      },
+      {
+        "font": 28,
+        "width": 390,
+        "dpr": 2,
+        "blocks": 10,
+        "vector_paints": 2806,
+        "native_images": 16,
+        "logical_placements_outside_canvas": 0,
+        "native_asset_boxes_outside_canvas": 0,
+        "native_vector_contours_outside_canvas": 0,
+        "undersampled_images": 0
+      }
+    ],
+    "browser_verified": false,
+    "reading_acceptance": false,
+    "mixed_engine_pixel_ownership_proven": false
+  },
+  "conservation": {
+    "scope": "seen cached-plan diagnostic; no blind or cold-request claim",
+    "blocks": 10,
+    "source_units": 529,
+    "native_glyphs": 3072,
+    "source_plan_byte_identical": true,
+    "source_unit_bijection": true,
+    "native_glyph_bijection": true,
+    "vector_paints": 2806,
+    "vector_paint_bijection": true,
+    "native_vector_geometry_resources_and_state_unchanged": true,
+    "native_image_tokens": 16,
+    "independent_native_composite_pixel_equality": true,
+    "composite_supported_pixels": 3430900,
+    "unsupported_source_units": 0,
+    "target_requests_accepted": true,
+    "source_replay_exact": true,
+    "observer_pixel_difference": 0,
+    "serialized_clip_replay_pixel_difference": 0,
+    "native_clip_replay_pixel_difference": 20,
+    "native_character_bijection": true,
+    "native_interval_conflicts": 0,
+    "reader_sha256": "71f62c6f2b688560f1fcf1d0d9c75fe3007781bd2581bb7f226566349892bb6a",
+    "mixed_engine_pixel_ownership_proven": false,
+    "browser_verified": false,
+    "reading_acceptance": false
+  },
+  "unchanged_renders": {
+    "unmarked_block_renders_byte_identical": 42,
+    "all_figure_and_title_renders_unchanged": true,
+    "browser_verified": false
+  },
+  "retained_runtime": {
+    "scope": "actual shipped-module jsdom/native Canvas",
+    "retained_boundaries_checked": 8,
+    "next_fragment_visually_on_following_row": true,
+    "uncertain_copy_still_blocked": true,
+    "no_clipboard_payload_written": true,
+    "browser_verified": false
+  },
+  "native_focus": {
+    "scope": "actual shipped-module jsdom/native Canvas usability smoke",
+    "figure_focus_contains_exact_native_composite": true,
+    "focus_native_width_pixels": 2747,
+    "focus_larger_than_mobile_width": true,
+    "source_region_contains_whole_composite": true,
+    "source_full_page_action": true,
+    "close_cleans_and_restores_focus": true,
+    "reader_preserved": true,
+    "browser_verified": false
+  },
+  "h5h6_regression": {
+    "module_initialization": true,
+    "real_pages_imported": 2,
+    "paragraph_copy": true,
+    "font_change_selection_cleared": true,
+    "page_change": true,
+    "invalid_import_preserves_reader": true,
+    "overbudget_page_preserves_reader_and_source": true,
+    "decode_failure_import_preserves_reader": true,
+    "failure_bundle_source_fallback": true,
+    "network_attempts": 0,
+    "paint_calls": 8303,
+    "renderer": "native Node canvas",
+    "native_canvas_reference_blocks": 30,
+    "compiled_paths": 405,
+    "decoded_images": 39,
+    "return_to_first_page_resource_work": 0,
+    "browser_verified": false
+  },
+  "mapping_eligible": 454,
+  "mapping_refused": 27,
+  "mapping_byte_identical": true,
+  "controls": {
+    "retained_annotation": 8,
+    "source_break_layout": 12,
+    "source_break_bundle": 8,
+    "python_unittest_total": 230,
+    "selection": 31,
+    "mapping": 35,
+    "interaction": 10,
+    "legacy_hostile_bundles": 27
+  },
+  "work_budget_pairs_per_marked_block": 100000,
+  "remaining_limits": [
+    "one uppercase-continuation reference boundary does not satisfy the unchanged evidence gate and remains untreated",
+    "all eight uncertain terminal mappings remain refused for copy",
+    "wide figures still use the native local-focus action",
+    "real browser composition, selection, clipboard and full app build remain unverified",
+    "native-clip replay comparison still differs by 20 pixels; serialized and observer replay comparisons remain exact"
+  ],
+  "reading_acceptance": false,
+  "browser_verified": false,
+  "source_pdf_fallback_retained": true,
+  "source_content_excluded_from_public_and_handoff": true
+}
