@@ -85,6 +85,7 @@ const scholarly: ScholarlyDocument = {
   warnings: [],
 };
 const createSession = () => ({
+  pageCount: 1,
   analyze: vi.fn<AcademicPdfSession['analyze']>().mockResolvedValue(scholarly),
   destroy: vi.fn<AcademicPdfSession['destroy']>().mockResolvedValue(undefined),
   renderRegion: vi.fn<AcademicPdfSession['renderRegion']>().mockResolvedValue(undefined),
@@ -249,7 +250,7 @@ describe('academic dialog lifecycle and navigation', () => {
   it('opens only on request and repeatedly releases each parser session', async () => {
     const { onOpenChange } = await openReading();
     expect(mocks.open).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close Reading Mode' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(session.destroy).toHaveBeenCalledOnce());
     fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
@@ -385,7 +386,7 @@ describe('academic dialog lifecycle and navigation', () => {
   it('normal close removes same-URL overlay entries even during rapid reopen', async () => {
     const baseState = window.history.state;
     await openReading();
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close Reading Mode' }));
     fireEvent.click(screen.getByRole('button', { name: 'PDF / Reading' }));
     await screen.findByRole('button', { name: 'Figure: Tap to zoom' });
     await waitFor(() => expect(window.history.state.readestAcademicLayers).toHaveLength(1));
@@ -398,7 +399,7 @@ describe('academic dialog lifecycle and navigation', () => {
   it('Forward skips a closed Reading entry without automatically restarting analysis', async () => {
     const baseState = window.history.state;
     await openReading();
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Close Reading Mode' }));
     await waitFor(() => expect(window.history.state).toEqual(baseState));
     const popped = new Promise<void>((resolve) =>
       window.addEventListener('popstate', () => resolve(), { once: true }),
