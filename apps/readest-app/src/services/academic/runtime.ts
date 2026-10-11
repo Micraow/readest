@@ -116,7 +116,6 @@ export class NoTextLayerError extends Error {
 }
 
 export interface AcademicPdfSession {
-  readonly pageCount: number;
   analyze(
     storage: AcademicStorage,
     onProgress?: Progress,
@@ -131,12 +130,7 @@ export interface AcademicPdfSession {
     /** Lowest selected glyph baseline in scale-one viewport coordinates. */
     trimBelow?: number,
   ): Promise<void>;
-  renderPage(
-    page: number,
-    canvas: HTMLCanvasElement,
-    signal?: AbortSignal,
-    targetWidth?: number,
-  ): Promise<void>;
+  renderPage(page: number, canvas: HTMLCanvasElement, signal?: AbortSignal): Promise<void>;
   destroy(): Promise<void>;
 }
 
@@ -384,7 +378,6 @@ function createSession(
   openingSignal?.addEventListener('abort', destroyOnAbort, { once: true });
 
   return {
-    pageCount: pdf.numPages,
     async analyze(storage, onProgress, signal) {
       return withOperationSignal(signal, async (operationSignal) => {
         onProgress?.({ stage: 'hashing', completed: 0, total: file.size });
@@ -441,7 +434,7 @@ function createSession(
       });
     },
     renderRegion,
-    async renderPage(pageNumber, canvas, signal, targetWidth) {
+    async renderPage(pageNumber, canvas, signal) {
       return withOperationSignal(signal, async (operationSignal) => {
         const page = await abortable(pdf.getPage(pageNumber), [operationSignal]);
         const viewport = page.getViewport({ scale: 1 });
@@ -449,7 +442,7 @@ function createSession(
           pageNumber,
           { x: 0, y: 0, width: viewport.width, height: viewport.height },
           canvas,
-          targetWidth ?? viewport.width,
+          viewport.width,
           operationSignal,
         );
       });

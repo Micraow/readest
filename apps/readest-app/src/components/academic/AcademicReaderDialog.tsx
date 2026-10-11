@@ -10,14 +10,11 @@ import type {
   AnalysisProgress,
   ScholarlyBlock,
   ScholarlyDocument,
-  SourceSpan,
 } from '@/services/academic/types';
 import ModalPortal from '@/components/ModalPortal';
 import ImageViewer from '@/app/reader/components/ImageViewer';
 import LayoutInspector from './LayoutInspector';
 import ScholarlyReader from './ScholarlyReader';
-import AcademicSourceView from './AcademicSourceView';
-import { captureReadingAnchor } from './readingAnchor';
 import { useAcademicHistory } from './useAcademicHistory';
 import { visualRoleLabel } from './labels';
 import AcademicAppearancePanel from './AcademicAppearancePanel';
@@ -43,10 +40,6 @@ export default function AcademicReaderDialog({
   const [progress, setProgress] = useState<AnalysisProgress | null>(null);
   const [error, setError] = useState<'' | 'unsupported' | 'failed'>('');
   const [attempt, setAttempt] = useState(0);
-  const [sourceOpen, setSourceOpen] = useState(false);
-  const [sourcePage, setSourcePage] = useState(1);
-  const [source, setSource] = useState<SourceSpan | undefined>();
-  const sourceButton = useRef<HTMLButtonElement>(null);
   const [inspecting, setInspecting] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const appearanceButton = useRef<HTMLButtonElement>(null);
@@ -72,43 +65,15 @@ export default function AcademicReaderDialog({
     setAppearanceOpen(false);
     appearanceButton.current?.focus();
   };
-  const closeSource = () => {
-    setSourceOpen(false);
-    sourceButton.current?.focus();
-  };
-  const openSource = () => {
-    if (!session || sourceOpen) return;
-    const root = scrollRef.current;
-    const selection = window.getSelection();
-    const selected = selection && !selection.isCollapsed ? selection.anchorNode : null;
-    const element =
-      selected?.nodeType === Node.ELEMENT_NODE ? (selected as Element) : selected?.parentElement;
-    const selectedBlock =
-      element && root?.contains(element)
-        ? element.closest<HTMLElement>('[data-block-id]')?.dataset['blockId']
-        : undefined;
-    const blockId = selectedBlock ?? (root ? captureReadingAnchor(root)?.blockId : undefined);
-    const anchor = blockId ? document?.sourceMap[blockId]?.[0] : undefined;
-    if (anchor) setSourcePage(anchor.page);
-    setSource(anchor);
-    selection?.removeAllRanges();
-    closeZoom();
-    setInspecting(false);
-    setAppearanceOpen(false);
-    setZoomError(false);
-    setSourceOpen(true);
-  };
   const closeTop = () => {
     if (zoomUrl || zooming) closeZoom();
     else if (inspecting) setInspecting(false);
     else if (appearanceOpen) closeAppearance();
-    else if (sourceOpen) closeSource();
     else if (!referenceControl.current?.returnToReading()) onClose();
   };
   const closeRef = useRef(closeTop);
   closeRef.current = closeTop;
   useKeyDownActions({ onCancel: closeTop });
-  useAcademicHistory(sourceOpen, closeSource);
   useAcademicHistory(inspecting, () => setInspecting(false));
   useAcademicHistory(zooming || !!zoomUrl, closeZoom);
   useAcademicHistory(appearanceOpen, closeAppearance);
@@ -127,7 +92,7 @@ export default function AcademicReaderDialog({
           panel.current.querySelectorAll<HTMLElement>(
             ':is(a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"])',
           ),
-        ).filter((node) => !node.closest('[inert]') && node.getClientRects().length);
+        ).filter((node) => node.getClientRects().length);
         const first = controls[0],
           last = controls.at(-1);
         if (event.shiftKey && window.document.activeElement === first) {
@@ -152,9 +117,6 @@ export default function AcademicReaderDialog({
     let active: AcademicPdfSession | undefined;
     setDocument(null);
     setSession(null);
-    setSourceOpen(false);
-    setSourcePage(1);
-    setSource(undefined);
     setError('');
     setProgress(null);
     setInspecting(false);
@@ -249,26 +211,22 @@ export default function AcademicReaderDialog({
           >
             <button
               type='button'
-              ref={sourceButton}
-              className={`btn btn-sm join-item min-h-10 ${sourceOpen ? 'btn-contrast' : 'btn-ghost'}`}
+              className='btn btn-ghost btn-sm join-item min-h-10'
               aria-label={_('Original PDF')}
-              aria-pressed={sourceOpen}
-              disabled={!session}
-              onClick={openSource}
+              onClick={onClose}
             >
               {_('PDF')}
             </button>
             <button
               type='button'
-              className={`btn btn-sm join-item min-h-10 ${sourceOpen ? 'btn-ghost' : 'btn-contrast'}`}
-              aria-pressed={!sourceOpen}
-              onClick={closeSource}
+              className='btn btn-contrast btn-sm join-item min-h-10'
+              aria-pressed='true'
             >
               {_('Reading mode')}
             </button>
           </div>
           <span className='min-w-0 flex-1 truncate text-sm font-medium'>{title}</span>
-          {document && !sourceOpen && (
+          {document && (
             <button
               ref={appearanceButton}
               type='button'
@@ -290,7 +248,7 @@ export default function AcademicReaderDialog({
               </span>
             </button>
           )}
-          {process.env.NODE_ENV !== 'production' && document && !sourceOpen && (
+          {process.env.NODE_ENV !== 'production' && document && (
             <button
               type='button'
               className='btn btn-ghost btn-sm eink-bordered'
@@ -324,67 +282,47 @@ export default function AcademicReaderDialog({
             />
           )}
         </header>
-        <div className='relative min-h-0 min-w-0 flex-1'>
-          <div
-            className='absolute inset-0 flex min-h-0 min-w-0 flex-col'
-            style={{ visibility: sourceOpen ? 'hidden' : 'visible' }}
-            inert={sourceOpen}
-            aria-hidden={sourceOpen}
-          >
-            {error ? (
-              <div className='space-y-4 p-6'>
-                <p role='alert'>
-                  {error === 'unsupported'
-                    ? _('Reading mode is not available for this PDF. Please use the PDF view.')
-                    : _('Could not open reading mode. Try again or return to the PDF.')}
-                </p>
-                <button
-                  type='button'
-                  className='btn btn-contrast'
-                  onClick={() => setAttempt((value) => value + 1)}
-                >
-                  {_('Retry')}
-                </button>
-              </div>
-            ) : document && session ? (
-              <ScholarlyReader
-                key={document.fingerprint}
-                referenceControl={referenceControl}
-                document={document}
-                session={session}
-                viewSettings={readingSettings}
-                scrollRef={scrollRef}
-                positionControl={positionControl}
-                onZoom={(block) => void zoom(block)}
-              />
-            ) : (
-              <div role='status' aria-live='polite' className='space-y-3 p-6'>
-                <p>{progress ? labels[progress.stage] : _('Opening PDF…')}</p>
-                {progress && progress.total > 0 && (
-                  <progress
-                    className='progress w-full'
-                    value={progress.completed}
-                    max={progress.total}
-                  />
-                )}
-                <button type='button' className='btn btn-ghost eink-bordered' onClick={onClose}>
-                  {_('Cancel')}
-                </button>
-              </div>
-            )}
+        {error ? (
+          <div className='space-y-4 p-6'>
+            <p role='alert'>
+              {error === 'unsupported'
+                ? _('Reading mode is not available for this PDF. Please use the PDF view.')
+                : _('Could not open reading mode. Try again or return to the PDF.')}
+            </p>
+            <button
+              type='button'
+              className='btn btn-contrast'
+              onClick={() => setAttempt((value) => value + 1)}
+            >
+              {_('Retry')}
+            </button>
           </div>
-          {sourceOpen && session && (
-            <div className='absolute inset-0'>
-              <AcademicSourceView
-                session={session}
-                page={sourcePage}
-                onPageChange={setSourcePage}
-                source={source}
-                geometry={document?.pages.find((page) => page.page === source?.page)}
+        ) : document && session ? (
+          <ScholarlyReader
+            key={document.fingerprint}
+            referenceControl={referenceControl}
+            document={document}
+            session={session}
+            viewSettings={readingSettings}
+            scrollRef={scrollRef}
+            positionControl={positionControl}
+            onZoom={(block) => void zoom(block)}
+          />
+        ) : (
+          <div role='status' aria-live='polite' className='space-y-3 p-6'>
+            <p>{progress ? labels[progress.stage] : _('Opening PDF…')}</p>
+            {progress && progress.total > 0 && (
+              <progress
+                className='progress w-full'
+                value={progress.completed}
+                max={progress.total}
               />
-            </div>
-          )}
-        </div>
+            )}
+            <button type='button' className='btn btn-ghost eink-bordered' onClick={onClose}>
+              {_('Cancel')}
+            </button>
+          </div>
+        )}
         {zooming && (
           <div className='border-base-300 flex items-center gap-3 border-t p-3' role='status'>
             <span>{_('Loading a clearer image…')}</span>

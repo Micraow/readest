@@ -59,7 +59,6 @@ const scholarly: ScholarlyDocument = {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.open.mockResolvedValue({
-    pageCount: 3,
     analyze: mocks.analyze,
     destroy: mocks.destroy,
     renderRegion: mocks.renderRegion,
@@ -75,127 +74,6 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 describe('manual academic reading session', () => {
-  it('switches to the same session original pages without closing or losing reading position', async () => {
-    const onClose = vi.fn();
-    render(
-      <AcademicReaderDialog
-        file={new File(['%PDF-'], 'test.pdf')}
-        title='Paper'
-        onClose={onClose}
-      />,
-    );
-    await screen.findByText('A continuous academic paragraph');
-    const scroller = screen.getByTestId('scholarly-scroll');
-    scroller.scrollTop = 512;
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
-    expect(onClose).not.toHaveBeenCalled();
-    await waitFor(() => expect(mocks.renderPage).toHaveBeenCalled());
-    expect(screen.getByRole('spinbutton', { name: 'PDF page' })).toBeTruthy();
-    expect(mocks.destroy).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Reading mode' }));
-    expect(screen.getByTestId('scholarly-scroll')).toBe(scroller);
-    expect(scroller.scrollTop).toBe(512);
-    expect(mocks.open).toHaveBeenCalledOnce();
-    expect(mocks.analyze).toHaveBeenCalledOnce();
-  });
-
-  it('locates the selected reading block in the original and Back returns without destroying it', async () => {
-    const selectedSource = [{ page: 2, boxes: [box], itemIndices: [5] }];
-    mocks.analyze.mockResolvedValue({ ...scholarly, sourceMap: { 'p1-b1': selectedSource } });
-    render(
-      <AcademicReaderDialog
-        file={new File(['%PDF-'], 'test.pdf')}
-        title='Paper'
-        onClose={vi.fn()}
-      />,
-    );
-    const paragraph = await screen.findByText('A continuous academic paragraph');
-    const range = document.createRange();
-    range.selectNodeContents(paragraph);
-    window.getSelection()?.removeAllRanges();
-    window.getSelection()?.addRange(range);
-    expect(window.getSelection()?.anchorNode).toBe(paragraph);
-    expect(paragraph.closest<HTMLElement>('[data-block-id]')?.dataset['blockId']).toBe('p1-b1');
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
-    await waitFor(() => expect(mocks.renderPage.mock.calls.at(-1)?.[0]).toBe(2));
-    expect(window.getSelection()?.rangeCount).toBe(0);
-    window.history.back();
-    await waitFor(() =>
-      expect(screen.queryByRole('region', { name: 'Original PDF pages' })).toBeNull(),
-    );
-    expect(screen.getByText('A continuous academic paragraph')).toBe(paragraph);
-    expect(mocks.destroy).not.toHaveBeenCalled();
-  });
-
-  it('ignores a collapsed caret in an offscreen block when locating the visible passage', async () => {
-    const lastSource = [{ page: 3, boxes: [box], itemIndices: [8] }];
-    mocks.analyze.mockResolvedValue({
-      ...scholarly,
-      blocks: [
-        ...scholarly.blocks,
-        { ...scholarly.blocks[0], id: 'last', text: 'Offscreen block', source: lastSource },
-      ],
-      readingOrder: ['p1-b1', 'last'],
-      sourceMap: { ...scholarly.sourceMap, last: lastSource },
-    });
-    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
-      this: HTMLElement,
-    ) {
-      const top = this.dataset['blockId'] === 'last' ? 800 : 0;
-      return {
-        x: 0,
-        y: top,
-        top,
-        left: 0,
-        right: 360,
-        bottom: top + 100,
-        width: 360,
-        height: 100,
-        toJSON() {},
-      };
-    });
-    render(
-      <AcademicReaderDialog
-        file={new File(['%PDF-'], 'test.pdf')}
-        title='Paper'
-        onClose={vi.fn()}
-      />,
-    );
-    const last = await screen.findByText('Offscreen block');
-    const range = document.createRange();
-    range.selectNodeContents(last);
-    range.collapse(true);
-    window.getSelection()?.removeAllRanges();
-    window.getSelection()?.addRange(range);
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
-    await waitFor(() => expect(mocks.renderPage.mock.calls.at(-1)?.[0]).toBe(1));
-  });
-
-  it('keeps original pages available when analysis refuses the PDF', async () => {
-    mocks.analyze.mockRejectedValue(
-      Object.assign(new Error('No text'), { name: 'NoTextLayerError' }),
-    );
-    const onClose = vi.fn();
-    render(
-      <AcademicReaderDialog
-        file={new File(['%PDF-'], 'scan.pdf')}
-        title='Scan'
-        onClose={onClose}
-      />,
-    );
-    await screen.findByRole('alert');
-    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
-    await waitFor(() => expect(mocks.renderPage).toHaveBeenCalled());
-    fireEvent.change(screen.getByRole('spinbutton', { name: 'PDF page' }), {
-      target: { value: '3' },
-    });
-    await waitFor(() => expect(mocks.renderPage.mock.calls.at(-1)?.[0]).toBe(3));
-    expect(onClose).not.toHaveBeenCalled();
-    expect(mocks.analyze).toHaveBeenCalledOnce();
-    fireEvent.keyDown(window, { key: 'Escape' });
-    expect(screen.getByRole('alert').textContent).toContain('Reading mode is not available');
-  });
-
   it('adjusts the current PDF typography without changing book settings or analyzing again', async () => {
     const viewSettings = { defaultFontSize: 20, lineHeight: 1.7, serifFont: 'Bitter' };
     render(
@@ -379,7 +257,7 @@ describe('manual academic reading session', () => {
     );
     await screen.findByText('A continuous academic paragraph');
     expect(screen.queryByText('Page 1')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Close Reading Mode' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
     expect(onClose).toHaveBeenCalledOnce();
     result.unmount();
     expect(mocks.destroy).toHaveBeenCalled();
@@ -411,8 +289,7 @@ describe('manual academic reading session', () => {
     );
     await screen.findByText(/Reading mode is not available/);
     fireEvent.click(screen.getByRole('button', { name: 'Original PDF' }));
-    expect(screen.getByRole('region', { name: 'Original PDF pages' })).toBeTruthy();
-    expect(onClose).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledOnce();
   });
   it('aborts parsing and destroys a session that arrives after dismissal', async () => {
     let finish!: (value: unknown) => void;

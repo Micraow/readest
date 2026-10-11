@@ -55,7 +55,6 @@ describe('Chinese academic reader product copy', () => {
       <ScholarlyReader
         document={doc}
         session={{
-          pageCount: 1,
           analyze: vi.fn(),
           renderPage: vi.fn(),
           renderRegion: vi.fn().mockResolvedValue(undefined),

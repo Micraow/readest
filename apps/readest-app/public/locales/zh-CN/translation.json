@@ -2609,13 +2609,5 @@
   "Reset reading appearance": "重置阅读排版",
   "Back to reading": "返回正文",
   "Reference {{number}}": "参考文献 {{number}}",
-  "Footnote {{number}}": "脚注 {{number}}",
-  "Original PDF page": "原 PDF 页码",
-  "Original PDF pages": "原 PDF 页面",
-  "PDF page": "PDF 页码",
-  "Fit width": "适合宽度",
-  "Original page image. Reflow is not applied in this view.": "此视图显示原页图像，未应用重排。",
-  "Loading PDF page…": "正在加载 PDF 页面…",
-  "Could not load this PDF page. The previous page is kept when available.": "无法加载此 PDF 页面。已加载的上一页会保留显示。",
-  "Highlighted area marks the start of the reading block.": "标记区域对应阅读段落的起始来源。"
+  "Footnote {{number}}": "脚注 {{number}}"
 }

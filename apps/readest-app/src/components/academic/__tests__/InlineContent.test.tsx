@@ -26,7 +26,6 @@ const source: InlineRun = {
 };
 const renderRegion = vi.fn<AcademicPdfSession['renderRegion']>();
 const session: AcademicPdfSession = {
-  pageCount: 3,
   renderRegion,
   renderPage: vi.fn(),
   analyze: vi.fn(),

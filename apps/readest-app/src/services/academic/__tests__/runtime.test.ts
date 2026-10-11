@@ -82,23 +82,6 @@ beforeEach(() => {
 });
 
 describe('academic PDF session lifecycle', () => {
-  it('exposes original page navigation before analysis and fits full pages to the reader width', async () => {
-    const session = await openAcademicPdf(file());
-    expect(session.pageCount).toBe(2);
-    expect(mocks.layout).not.toHaveBeenCalled();
-    const canvas = {
-      width: 0,
-      height: 0,
-      style: { width: '', height: '' },
-      getContext: vi.fn(() => ({})),
-    } as unknown as HTMLCanvasElement;
-    await session.renderPage(2, canvas, undefined, 360);
-    expect(canvas.style.width).toBe('360px');
-    expect(Number.parseFloat(canvas.style.height)).toBeCloseTo((792 * 360) / 612);
-    expect(mocks.layout).not.toHaveBeenCalled();
-    await session.destroy();
-  });
-
   it('opens only on request, extracts sequential pages, reports stages, caches and destroys loading task', async () => {
     const session = await openAcademicPdf(file());
     const progress = vi.fn();
