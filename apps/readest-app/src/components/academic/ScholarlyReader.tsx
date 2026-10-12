@@ -6,6 +6,7 @@ import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument, SourceSpan } from '@/services/academic/types';
 import { visualRoleLabel } from './labels';
 import InlineContent from './InlineContent';
+import OvisMarkdown from './OvisMarkdown';
 import { useMathCanvasStyle } from './useMathCanvasStyle';
 import { useAcademicPosition, type AcademicPositionControl } from './useAcademicPosition';
 import {
@@ -189,6 +190,11 @@ function VisualRegion({
             />
           </figcaption>
         ))}
+      {block.markdown && (
+        <figcaption className='text-base-content/75 mt-3 text-[0.88em] leading-snug'>
+          <OvisMarkdown markdown={block.markdown} />
+        </figcaption>
+      )}
       <figcaption className='text-base-content/60 mt-1 text-center text-xs'>
         {_('Tap to zoom')}
       </figcaption>
@@ -312,6 +318,24 @@ export default function ScholarlyReader({
                 </div>
               );
             }
+            if (block.markdown !== undefined)
+              return (
+                <section
+                  key={block.id}
+                  {...props}
+                  id={block.id}
+                  tabIndex={-1}
+                  role={block.type === 'footnote' ? 'note' : undefined}
+                  className={
+                    block.type === 'footnote'
+                      ? 'mb-4 border-s-2 border-base-300 ps-3 text-[0.9em]'
+                      : undefined
+                  }
+                >
+                  {block.footnoteMarker && <sup className='me-1'>{block.footnoteMarker}</sup>}
+                  <OvisMarkdown markdown={block.markdown} />
+                </section>
+              );
             if (block.type === 'heading')
               return block.level === 1 ? (
                 <h1 key={block.id} {...props} className='mb-4 mt-8 text-[1.5em] font-semibold'>

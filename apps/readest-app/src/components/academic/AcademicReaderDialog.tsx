@@ -6,6 +6,7 @@ import { useThemeStore } from '@/store/themeStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useKeyDownActions } from '@/hooks/useKeyDownActions';
 import { openAcademicPdf, type AcademicPdfSession } from '@/services/academic/runtime';
+import { importOvisBundle, readOvisCache } from '@/services/academic/ovis';
 import type {
   AnalysisProgress,
   ScholarlyBlock,
@@ -36,6 +37,19 @@ export default function AcademicReaderDialog({
   const { appService } = useEnv();
   const insets = useThemeStore((state) => state.safeAreaInsets);
   const [document, setDocument] = useState<ScholarlyDocument | null>(null);
+  const activeDocument = useRef<ScholarlyDocument | null>(null);
+  const showDocument = (next: ScholarlyDocument | null) => {
+    activeDocument.current = next;
+    setDocument(next);
+  };
+  const [nativeDocument, setNativeDocument] = useState<ScholarlyDocument | null>(null);
+  const [ovisDocument, setOvisDocument] = useState<ScholarlyDocument | null>(null);
+  const [engine, setEngine] = useState<'native' | 'ovis'>('native');
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState(false);
+  const importInput = useRef<HTMLInputElement>(null);
+  const importAbort = useRef<AbortController | null>(null);
+  const generation = useRef(0);
   const [session, setSession] = useState<AcademicPdfSession | null>(null);
   const [progress, setProgress] = useState<AnalysisProgress | null>(null);
   const [error, setError] = useState<'' | 'unsupported' | 'failed'>('');
@@ -115,7 +129,14 @@ export default function AcademicReaderDialog({
     if (!appService) return;
     const controller = new AbortController();
     let active: AcademicPdfSession | undefined;
-    setDocument(null);
+    const opening = ++generation.current;
+    importAbort.current?.abort();
+    setNativeDocument(null);
+    setOvisDocument(null);
+    setEngine('native');
+    setImporting(false);
+    setImportError(false);
+    showDocument(null);
     setSession(null);
     setError('');
     setProgress(null);
@@ -132,10 +153,27 @@ export default function AcademicReaderDialog({
           return;
         }
         setSession(active);
-        const parsed = await active.analyze(appService, setProgress, controller.signal);
-        if (!controller.signal.aborted) setDocument(parsed);
-      } catch (cause) {
+        const cached = await readOvisCache(file, appService, controller.signal);
         if (controller.signal.aborted) return;
+        if (cached) {
+          if (generation.current === opening || !activeDocument.current) {
+            setOvisDocument(cached);
+            showDocument(cached);
+            setEngine('ovis');
+          }
+        } else {
+          const parsed = await active.analyze(appService, setProgress, controller.signal);
+          if (!controller.signal.aborted) {
+            setNativeDocument(parsed);
+            if (generation.current === opening || !activeDocument.current) {
+              showDocument(parsed);
+              setEngine('native');
+            }
+          }
+        }
+      } catch (cause) {
+        if (controller.signal.aborted || (generation.current !== opening && activeDocument.current))
+          return;
         setError(
           cause instanceof Error && cause.name === 'NoTextLayerError' ? 'unsupported' : 'failed',
         );
@@ -143,10 +181,72 @@ export default function AcademicReaderDialog({
     })();
     return () => {
       controller.abort();
+      generation.current++;
+      importAbort.current?.abort();
       zoomAbort.current?.abort();
       void active?.destroy().catch(() => undefined);
     };
   }, [file, appService, attempt]);
+
+  const selectEngine = async (next: 'native' | 'ovis') => {
+    if (!session || !appService) return;
+    const request = ++generation.current;
+    importAbort.current?.abort();
+    const controller = new AbortController();
+    importAbort.current = controller;
+    closeZoom();
+    setInspecting(false);
+    setImportError(false);
+    const ready = next === 'ovis' ? ovisDocument : nativeDocument;
+    if (ready) {
+      showDocument(ready);
+      setEngine(next);
+      setImporting(false);
+      return;
+    }
+    setImporting(true);
+    try {
+      const parsed = await session.analyze(appService, setProgress, controller.signal);
+      if (!controller.signal.aborted && generation.current === request) {
+        setNativeDocument(parsed);
+        showDocument(parsed);
+        setEngine('native');
+      }
+    } catch {
+      if (!controller.signal.aborted) setImportError(true);
+    } finally {
+      if (generation.current === request) setImporting(false);
+    }
+  };
+  const importResult = async (result: File) => {
+    if (!appService || !session) return;
+    const request = ++generation.current;
+    importAbort.current?.abort();
+    const controller = new AbortController();
+    importAbort.current = controller;
+    setImporting(true);
+    setImportError(false);
+    try {
+      const parsed = await importOvisBundle(
+        file,
+        JSON.parse(await result.text()) as unknown,
+        appService,
+        controller.signal,
+      );
+      if (!controller.signal.aborted && generation.current === request) {
+        closeZoom();
+        setInspecting(false);
+        setOvisDocument(parsed);
+        showDocument(parsed);
+        setEngine('ovis');
+        setError('');
+      }
+    } catch {
+      if (!controller.signal.aborted) setImportError(true);
+    } finally {
+      if (generation.current === request) setImporting(false);
+    }
+  };
 
   useEffect(
     () => () => {
@@ -226,6 +326,50 @@ export default function AcademicReaderDialog({
             </button>
           </div>
           <span className='min-w-0 flex-1 truncate text-sm font-medium'>{title}</span>
+          <input
+            ref={importInput}
+            type='file'
+            accept='.json,application/json'
+            aria-label={_('Ovis result file')}
+            className='hidden'
+            onChange={(event) => {
+              const selected = event.target.files?.[0];
+              event.target.value = '';
+              if (selected) void importResult(selected);
+            }}
+          />
+          <button
+            type='button'
+            className='btn btn-ghost btn-sm eink-bordered min-h-10'
+            disabled={!session || importing}
+            onClick={() => importInput.current?.click()}
+          >
+            {_('Import Ovis result')}
+          </button>
+          {ovisDocument && (
+            <div
+              role='group'
+              aria-label={_('Reading source')}
+              className='join eink-bordered border-base-300 rounded-lg border'
+            >
+              <button
+                type='button'
+                className='btn btn-ghost btn-sm join-item min-h-10'
+                aria-pressed={engine === 'native'}
+                onClick={() => void selectEngine('native')}
+              >
+                {_('Native PDF text')}
+              </button>
+              <button
+                type='button'
+                className='btn btn-ghost btn-sm join-item min-h-10'
+                aria-pressed={engine === 'ovis'}
+                onClick={() => void selectEngine('ovis')}
+              >
+                Ovis
+              </button>
+            </div>
+          )}
           {document && (
             <button
               ref={appearanceButton}
@@ -248,7 +392,7 @@ export default function AcademicReaderDialog({
               </span>
             </button>
           )}
-          {process.env.NODE_ENV !== 'production' && document && (
+          {process.env.NODE_ENV !== 'production' && document && !document.metadata.ovis && (
             <button
               type='button'
               className='btn btn-ghost btn-sm eink-bordered'
@@ -282,6 +426,24 @@ export default function AcademicReaderDialog({
             />
           )}
         </header>
+        {importing && (
+          <p role='status' className='px-4 py-2 text-sm'>
+            {_('Preparing reading mode…')}
+          </p>
+        )}
+        {importError && (
+          <p role='alert' className='px-4 py-2 text-sm'>
+            {_('Could not import this Ovis result. Check that it belongs to this PDF.')}
+          </p>
+        )}
+        {document?.metadata.ovis && (
+          <div className='border-base-300 border-b px-4 py-2 text-sm'>
+            <p>{_('Imported Ovis result. Inline symbols may still need checking.')}</p>
+            {document.warnings.map((warning) => (
+              <p key={warning}>{warning}</p>
+            ))}
+          </div>
+        )}
         {error ? (
           <div className='space-y-4 p-6'>
             <p role='alert'>
@@ -299,7 +461,7 @@ export default function AcademicReaderDialog({
           </div>
         ) : document && session ? (
           <ScholarlyReader
-            key={document.fingerprint}
+            key={`${document.fingerprint}:${document.parserVersion}`}
             referenceControl={referenceControl}
             document={document}
             session={session}

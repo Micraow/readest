@@ -7,6 +7,8 @@ import { mockReadingLayout } from './position-test-layout';
 
 const mocks = vi.hoisted(() => ({
   open: vi.fn(),
+  importOvis: vi.fn(),
+  readOvis: vi.fn(),
   analyze: vi.fn(),
   destroy: vi.fn(),
   renderRegion: vi.fn(),
@@ -14,6 +16,10 @@ const mocks = vi.hoisted(() => ({
   service: { exists: vi.fn(), readFile: vi.fn(), writeFile: vi.fn(), createDir: vi.fn() },
 }));
 vi.mock('@/services/academic/runtime', () => ({ openAcademicPdf: mocks.open }));
+vi.mock('@/services/academic/ovis', () => ({
+  importOvisBundle: mocks.importOvis,
+  readOvisCache: mocks.readOvis,
+}));
 vi.mock('@/hooks/useTranslation', () => ({ useTranslation: () => (key: string) => key }));
 vi.mock('@/hooks/useKeyDownActions', () => ({ useKeyDownActions: () => ({}) }));
 vi.mock('@/context/EnvContext', () => ({ useEnv: () => ({ appService: mocks.service }) }));
@@ -58,6 +64,8 @@ const scholarly: ScholarlyDocument = {
 };
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.readOvis.mockResolvedValue(null);
+  mocks.importOvis.mockReset();
   mocks.open.mockResolvedValue({
     analyze: mocks.analyze,
     destroy: mocks.destroy,
@@ -317,5 +325,124 @@ describe('manual academic reading session', () => {
     });
     await waitFor(() => expect(mocks.destroy).toHaveBeenCalled());
     expect(mocks.analyze).not.toHaveBeenCalled();
+  });
+});
+
+const ovisDocument: ScholarlyDocument = {
+  ...scholarly,
+  parserVersion: 'ovis-test',
+  metadata: { pdfjsVersion: 'imported', ovis: { identity: 'test-identity', coveredPages: [1] } },
+  blocks: [
+    {
+      ...scholarly.blocks[0]!,
+      id: 'ovis-paragraph',
+      text: 'Imported Ovis prose',
+      markdown: 'Imported Ovis prose with $x^2$.',
+      source: [{ page: 1, boxes: [], itemIndices: [] }],
+    },
+  ],
+};
+const resultFile = () =>
+  Object.assign(new File(['{}'], 'sample.ovis.json', { type: 'application/json' }), {
+    text: async () => '{}',
+  });
+describe('local Ovis result import', () => {
+  it('imports into the reader and can switch back to native text and Ovis', async () => {
+    mocks.importOvis.mockResolvedValue(ovisDocument);
+    render(
+      <AcademicReaderDialog file={new File(['pdf'], 'test.pdf')} title='Paper' onClose={vi.fn()} />,
+    );
+    await screen.findByText('A continuous academic paragraph');
+    fireEvent.change(screen.getByLabelText('Ovis result file'), {
+      target: { files: [resultFile()] },
+    });
+    await screen.findByText(/Imported Ovis prose/);
+    expect(mocks.importOvis).toHaveBeenCalledOnce();
+    expect(screen.getByRole('button', { name: 'Ovis' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Native PDF text' }));
+    await screen.findByText('A continuous academic paragraph');
+    fireEvent.click(screen.getByRole('button', { name: 'Ovis' }));
+    await screen.findByText(/Imported Ovis prose/);
+    expect(mocks.analyze).toHaveBeenCalledOnce();
+  });
+  it('reopens the cached Ovis result without rerunning native extraction', async () => {
+    mocks.readOvis.mockResolvedValue(ovisDocument);
+    render(
+      <AcademicReaderDialog file={new File(['pdf'], 'test.pdf')} title='Paper' onClose={vi.fn()} />,
+    );
+    await screen.findByText(/Imported Ovis prose/);
+    expect(mocks.analyze).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Native PDF text' }));
+    await screen.findByText('A continuous academic paragraph');
+    expect(mocks.analyze).toHaveBeenCalledOnce();
+  });
+  it('ignores an older native analysis failure after a successful Ovis import', async () => {
+    let failNative: (error: Error) => void = () => {};
+    mocks.analyze.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          failNative = reject;
+        }),
+    );
+    mocks.importOvis.mockResolvedValue(ovisDocument);
+    render(
+      <AcademicReaderDialog file={new File(['pdf'], 'test.pdf')} title='Paper' onClose={vi.fn()} />,
+    );
+    await waitFor(() => expect(mocks.analyze).toHaveBeenCalledOnce());
+    fireEvent.change(screen.getByLabelText('Ovis result file'), {
+      target: { files: [resultFile()] },
+    });
+    await screen.findByText(/Imported Ovis prose/);
+    failNative(new Error('stale native extraction'));
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
+    expect(screen.getByText(/Imported Ovis prose/)).toBeTruthy();
+  });
+  it('finishes initial reading when an import fails during cache loading', async () => {
+    let finishCache: (value: null) => void = () => {};
+    mocks.readOvis.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finishCache = resolve;
+        }),
+    );
+    render(
+      <AcademicReaderDialog file={new File(['pdf'], 'test.pdf')} title='Paper' onClose={vi.fn()} />,
+    );
+    await waitFor(() => expect(mocks.readOvis).toHaveBeenCalledOnce());
+    const invalid = Object.assign(resultFile(), { text: async () => 'invalid JSON' });
+    fireEvent.change(screen.getByLabelText('Ovis result file'), { target: { files: [invalid] } });
+    await screen.findByRole('alert');
+    finishCache(null);
+    await screen.findByText('A continuous academic paragraph');
+  });
+  it('aborts a pending import when the dialog unmounts', async () => {
+    let pendingSignal: AbortSignal | undefined;
+    mocks.importOvis.mockImplementation((_file, _value, _storage, signal: AbortSignal) => {
+      pendingSignal = signal;
+      return new Promise(() => {});
+    });
+    const view = render(
+      <AcademicReaderDialog file={new File(['pdf'], 'test.pdf')} title='Paper' onClose={vi.fn()} />,
+    );
+    await screen.findByText('A continuous academic paragraph');
+    fireEvent.change(screen.getByLabelText('Ovis result file'), {
+      target: { files: [resultFile()] },
+    });
+    await waitFor(() => expect(pendingSignal).toBeDefined());
+    view.unmount();
+    expect(pendingSignal?.aborted).toBe(true);
+  });
+  it('retains the current reader when the imported PDF identity is rejected', async () => {
+    mocks.importOvis.mockRejectedValue(new Error('PDF identity mismatch'));
+    render(
+      <AcademicReaderDialog file={new File(['pdf'], 'test.pdf')} title='Paper' onClose={vi.fn()} />,
+    );
+    await screen.findByText('A continuous academic paragraph');
+    fireEvent.change(screen.getByLabelText('Ovis result file'), {
+      target: { files: [resultFile()] },
+    });
+    await screen.findByRole('alert');
+    expect(screen.getByText('A continuous academic paragraph')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Ovis' })).toBeNull();
   });
 });

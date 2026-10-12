@@ -89,6 +89,9 @@ export interface ScholarlyBlock {
   id: string;
   type: 'heading' | 'paragraph' | 'list' | 'reference' | 'footnote' | 'visual-region';
   text: string;
+  /** Imported Ovis content; prose does not imply native text coordinates. */
+  markdown?: string;
+  footnoteMarker?: string;
   source: SourceSpan[];
   order: number;
   confidence: number;
@@ -120,7 +123,11 @@ export interface ScholarlyDocument {
   parserVersion: string;
   fingerprint: string;
   pageCount: number;
-  metadata: { title?: string; pdfjsVersion: string };
+  metadata: {
+    title?: string;
+    pdfjsVersion: string;
+    ovis?: { identity: string; coveredPages: number[] };
+  };
   pages: PageAnalysis[];
   blocks: ScholarlyBlock[];
   readingOrder: string[];
