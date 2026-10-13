@@ -74,6 +74,70 @@ The processed directory contains `blocks.json`, `receipt.json` and
 `native-math.json` from the local Ovis-first adapter. No research paper, real OCR
 result, model weights or private inputs belong in the public repository.
 
+## Exporting arbitrary raw Ovis Markdown
+
+The same offline utility can take a PDF, an explicit 1-based page, the raw UTF-8
+Ovis Markdown for that page, and a complete identity JSON. Filenames, paper
+titles, figure numbers and page numbers are not a fixed case list.
+
+```sh
+python scripts/academic/export-ovis-result.py \
+  --pdf /local/document.pdf --page 3 \
+  --markdown /local/raw-page.md \
+  --identity /local/ovis-identity.json --output /local/page.ovis.json
+python -m unittest discover -s scripts/academic -p 'test_export_ovis*.py'
+```
+
+`--markdown` and `--result-dir` are mutually exclusive. Both require PyMuPDF;
+neither runs a model. Raw mode requires all identity fields from the version 1
+contract above. Optional `--expected-pdf-sha256` and
+`--expected-markdown-sha256` reject input bytes that differ from known hashes.
+These hash options apply only to raw mode; reviewed mode continues checking
+its existing `native-math.json` source PDF/page receipt.
+
+Raw mode preserves model words, LaTeX and table markup, including recognition
+errors. Starting with an image, it groups adjacent Ovis images and intervening
+short labels with a following `Figure N`, `Fig. N` or `图 N` caption. Short
+paragraphs before the first image remain visible in the body; their location
+inside a figure cannot be assumed. Grouped labels remain available in the
+figure disclosure. Referenced, unambiguous superscript note definitions
+move to linked footnotes with a return link; unreferenced or duplicate definitions
+remain in the body. Code spans, fences, indented code and HTML `pre`/`code`
+contents are not interpreted as notes or images. No native formula/table
+comparison or source replacement runs here.
+Use the reviewed mode when such evidence-based replacements already exist.
+
+Image geometry must be supplied as a standalone Ovis tag:
+`<img src="images/bbox_LEFT_TOP_RIGHT_BOTTOM.jpg" />`, with integer coordinates
+in the model's normalized 0–1000 page space. The utility converts those boxes
+to PDF points and crops only the supplied PDF. A figure group uses the panel
+union with 2.5% of the shorter page side as padding, clipped to the page and,
+when native caption text is available, capped above its matching caption.
+Other images retain their individual boxes. There are no paper-specific
+coordinates or text corrections. Unsupported/missing image geometry, nonpositive
+or out-of-bounds boxes, an exact whole-page crop or group union, out-of-range
+pages, and rotated pages are rejected rather than silently replaced.
+
+The output is the same strict importable bundle, plus local audit files:
+
+- `page.ovis.provenance.json`: raw PDF/Markdown/identity-file SHA-256 values,
+  the declared page and identity, exact bundle hash, adapter/PyMuPDF version,
+  and crop source block IDs, normalized model boxes, PDF boxes and PNG hashes
+- `page.ovis-assets/`: 144-DPI source-PDF crop PNGs for offline inspection
+
+The audit PNGs and sidecar are not needed by the app. The app renders visual
+regions from its already-open local PDF. A crop can be reproduced with the
+recorded PDF bytes, page, point box, DPI and PyMuPDF version; its hash can then
+be compared with the receipt. The original raw Markdown is not overwritten.
+Keep these generated audit artifacts local when their inputs are private.
+
+**Provenance boundary:** the caller declares that the Markdown belongs to the
+selected PDF/page. Bbox coordinates and model/runtime identity are also
+producer-declared. Hashes establish byte identity, not correct OCR, correct
+image detection or an authenticated model run. The sidecar explicitly records
+that OCR accuracy, model geometry and native mathematics were not verified.
+No `native-math.json` or inference receipt is fabricated by raw mode.
+
 ## Verification boundary
 
 This is a candidate integration. Real-browser end-to-end import acceptance is
