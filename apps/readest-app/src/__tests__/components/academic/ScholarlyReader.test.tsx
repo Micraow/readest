@@ -1,6 +1,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ScholarlyReader from '@/components/academic/ScholarlyReader';
+import { fingerprintFile, type AcademicStorage } from '@/services/academic/cache';
+import { importOvisBundle } from '@/services/academic/ovis';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument } from '@/services/academic/types';
 import { useThemeStore } from '@/store/themeStore';
@@ -91,6 +93,85 @@ afterEach(async () => {
 });
 
 describe('continuous academic flow', () => {
+  it.each([
+    { sourceFont: 8, sourceScale: 1, paperWidth: 612, readingFont: 16, available: 360 },
+    { sourceFont: 8, sourceScale: 2, paperWidth: 1224, readingFont: 16, available: 360 },
+    { sourceFont: 18, sourceScale: 0.5, paperWidth: 420, readingFont: 24, available: 360 },
+    { sourceFont: 8, sourceScale: 1, paperWidth: 612, readingFont: 24, available: 100 },
+  ])('scales imported source equations by physical font ratio: %j', async ({
+    sourceFont,
+    sourceScale,
+    paperWidth,
+    readingFont,
+    available,
+  }) => {
+    const pdf = new Blob();
+    const sourceBox = {
+      x: 20 * sourceScale,
+      y: 50 * sourceScale,
+      width: 80 * sourceScale,
+      height: 20 * sourceScale,
+    };
+    const storage: AcademicStorage = {
+      exists: vi.fn(async () => false),
+      readFile: vi.fn(async () => ''),
+      writeFile: vi.fn(async () => {}),
+      createDir: vi.fn(async () => {}),
+    };
+    const bundle = {
+      format: 'readest-ovis-reflow',
+      version: 1,
+      pdfSha256: await fingerprintFile(pdf),
+      pageCount: 1,
+      identity: {
+        modelSha256: 'a'.repeat(64),
+        projectorSha256: 'b'.repeat(64),
+        promptSha256: 'c'.repeat(64),
+        runtimeRevision: 'd'.repeat(40),
+        configuration: { fixture: 'synthetic source-font geometry' },
+      },
+      pages: [
+        {
+          page: 1,
+          width: paperWidth,
+          height: paperWidth * 1.4,
+          blocks: [
+            {
+              id: 'source-equation',
+              kind: 'visual',
+              role: 'equation',
+              box: sourceBox,
+              sourceFontSize: sourceFont * sourceScale,
+            },
+          ],
+        },
+      ],
+    };
+    const originalBundle = JSON.stringify(bundle);
+    const scholarly = await importOvisBundle(pdf, bundle, storage);
+    const originalDocument = JSON.stringify(scholarly);
+    width = available;
+    const onZoom = vi.fn();
+    render(
+      <ScholarlyReader
+        document={scholarly}
+        session={session}
+        onZoom={onZoom}
+        viewSettings={{ defaultFontSize: readingFont }}
+      />,
+    );
+    await act(async () => intersect(true));
+    const naturalWidth = (sourceBox.width * readingFont) / (sourceFont * sourceScale);
+    expect(renderRegion.mock.calls.at(-1)?.[3]).toBeCloseTo(Math.min(available, naturalWidth));
+    expect(renderRegion.mock.calls.at(-1)?.slice(0, 2)).toEqual([1, sourceBox]);
+    const preview = screen.getByRole('button', { name: 'Equation: Tap to zoom' });
+    expect(parseFloat(preview.style.maxWidth)).toBeCloseTo(naturalWidth);
+    fireEvent.click(preview);
+    expect(onZoom).toHaveBeenCalledWith(scholarly.blocks[0]);
+    expect(JSON.stringify(bundle)).toBe(originalBundle);
+    expect(JSON.stringify(scholarly)).toBe(originalDocument);
+  });
+
   it('themes equations live while leaving figures, source geometry and zoom unchanged', async () => {
     vi.stubGlobal('IntersectionObserver', undefined);
     const equation = { ...block('equation', 1, 'visual-region'), role: 'equation' as const };

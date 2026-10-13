@@ -28,7 +28,9 @@ rotated viewport points, and ordered `blocks` with globally unique `id` values:
 
 - `kind: "markdown"`, `markdown`: selectable prose, math or HTML table content
 - `kind: "visual"`, `role: "figure" | "equation"`, `box: {x,y,width,height}`,
-  optional Markdown `caption`: a local original-PDF region
+  optional Markdown `caption`: a local original-PDF region; optional finite
+  `sourceFontSize` of at least one source-PDF point scales equation crops relative
+  to the reader's text size (it has no effect on figure sizing)
 - `kind: "footnote"`, `marker`, `markdown`: preserved note text
 
 Internal Markdown links may target a block ID. Native prose coordinates are not
@@ -36,6 +38,15 @@ required or fabricated. Visual boxes must lie within the declared source page.
 Groups of related panels should be supplied as one source region with their
 shared caption. A formula source region preserves its appearance; keep its
 number as a separate Markdown block when it is outside the region.
+
+Bundles without `sourceFontSize` retain the existing 12-point fallback. Adding
+the measurement changes the bundle content checksum, not the model identity.
+The source box and PDF pixels are unchanged; the measurement only supplies the
+point-to-reader-font ratio. Unknown fields and invalid sizes remain errors.
+The reader still caps crops to the available width. Its existing one-point
+denominator safety floor determines the supported minimum: the exporter omits
+sub-point measurements and the importer rejects explicitly supplied sizes below
+one point.
 
 All imported Markdown is sanitized. Model-supplied images/media/frames cannot
 load; visuals use the already opened local PDF session. Markdown and raw table
@@ -73,6 +84,38 @@ python scripts/academic/test_export_ovis_result.py
 The processed directory contains `blocks.json`, `receipt.json` and
 `native-math.json` from the local Ovis-first adapter. No research paper, real OCR
 result, model weights or private inputs belong in the public repository.
+
+Reviewed equation crops additionally measure native PDF font sizes. PyMuPDF's
+[RAWDICT span size and character positions](https://pymupdf.readthedocs.io/en/latest/textpage.html#span-dictionary)
+provide this geometry; glyph/line bounding-box height is not a font size. The
+exporter selects characters whose bbox centers lie in the crop and excludes
+whitespace, synthetic characters and text marked invisible or transparent.
+Measurement requires native `alpha` and `char_flags` visibility fields
+(PyMuPDF 1.25.3 or newer); missing fields on older versions cannot establish
+visible glyphs, so their equation crops keep the fallback.
+If an in-crop glyph's visibility is unknown, the whole crop's measurement is
+omitted; discarding just that glyph could bias the remaining size samples.
+Each selected horizontal glyph's scalar size must agree with its independently
+reported `get_texttrace()` writing-axis scale, matched by character and origin.
+All trace glyphs at that origin must agree in scale, including glyphs with a
+different or unavailable Unicode mapping. Unmatched characters remain unknown.
+Nonuniform transforms, rotated glyphs and missing/conflicting native evidence
+omit the measurement. This avoids relying on glyph height, which PyMuPDF may
+normalize even for fonts with less than one em between ascender and descender.
+The check follows the upstream [text-trace scale calculation](https://github.com/pymupdf/PyMuPDF/blob/1.26.6/src/__init__.py#L21320-L21322)
+and [MuPDF matrix expansion](https://github.com/ArtifexSoftware/mupdf/blob/1.26.11/source/fitz/geometry.c#L297-L301).
+Each character contributes one size sample, regardless of font, span splitting
+or glyph area. The median must also equal the largest sampled size, allowing
+minority smaller scripts but abstaining when any larger glyph competes with it.
+A lone large glyph might be an operator or the only main letter above a long
+script; geometry alone cannot decide. This deliberately skips some valid
+large-symbol formulas and script-dominated formulas rather than guessing their
+primary size. Distinct middle samples, empty/raster-only crops and sub-point
+measurements also omit the field.
+
+This is a conservative geometric estimate, not formula recognition, semantic
+validation or proof that a PDF's hidden text is accurate. It does not alter
+formula crop resolution, boxes, raw Markdown/KaTeX, figure sizing or provenance.
 
 ## Exporting arbitrary raw Ovis Markdown
 

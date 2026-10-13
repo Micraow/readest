@@ -20,6 +20,74 @@ def rect(bounds):
     return {'x': x, 'y': y, 'width': right-x, 'height': bottom-y}
 
 
+def measure_source_font_size(page, bounds):
+    """Measure native PDF points, not crop height or recognized math semantics.
+
+    RAWDICT span.size is the font size; a char bbox may include line leading.
+    Select by character center so tight ink crops still include their glyphs,
+    while nearby text in an intersecting span cannot affect the measurement.
+    Each non-whitespace character gets one vote, independent of span splitting,
+    font family and glyph area. The median must also be the largest size: a
+    minority larger glyph could be either a main letter or an enlarged symbol.
+    Leave that scale unknown instead of guessing which belongs to script text.
+    """
+    import fitz
+    left, top, right, bottom = bounds
+    sizes = []
+    characters = []
+    native = page.get_text('rawdict', flags=fitz.TEXTFLAGS_RAWDICT & ~fitz.TEXT_PRESERVE_IMAGES)
+    for block in native['blocks']:
+        for line in block.get('lines', []):
+            for span in line['spans']:
+                size = span['size']
+                alpha, flags = span.get('alpha'), span.get('char_flags')
+                if alpha == 0 or (flags is not None and not flags & 24):
+                    continue
+                for char in span['chars']:
+                    if not char['c'].strip() or char.get('synthetic', False):
+                        continue
+                    x0, y0, x1, y1 = char['bbox']
+                    if left <= (x0 + x1) / 2 <= right and top <= (y0 + y1) / 2 <= bottom:
+                        # Ignoring unknown in-crop glyphs could turn a script
+                        # size into the median of the remaining known glyphs.
+                        if alpha is None or flags is None or not math.isfinite(size) or size <= 0:
+                            return None
+                        dx, dy = line['dir']
+                        if (not math.isclose(abs(dx), 1, rel_tol=1e-5) or abs(dy) > 1e-5
+                                or line.get('wmode', 0) != 0 or len(char['c']) != 1):
+                            return None
+                        sizes.append(size)
+                        characters.append((tuple(char['origin']), ord(char['c']), size))
+    if not sizes:
+        return None
+    sizes.sort()
+    lower, upper = sizes[(len(sizes) - 1) // 2], sizes[len(sizes) // 2]
+    # Only tolerate floating-point transform noise, not distinct font sizes.
+    if not math.isclose(lower, upper, rel_tol=1e-5):
+        return None
+    median = lower + (upper - lower) / 2
+    # The reader already floors the scale denominator at one PDF point. Do not
+    # export a measurement that it cannot proportionally represent.
+    if median < 1 or not math.isclose(median, sizes[-1], rel_tol=1e-5):
+        return None
+    # RAWDICT size uses sqrt(abs(det(text transform))); texttrace uses the
+    # transformed writing-axis length. For horizontal text these must agree.
+    # Unlike glyph height, this check survives PyMuPDF's bbox normalization for
+    # fonts with ascender - descender < 1, without accepting nonuniform scales.
+    traced = {}
+    for span in page.get_texttrace():
+        for codepoint, _, origin, _ in span['chars']:
+            traced.setdefault(tuple(origin), []).append((codepoint, span['size']))
+    for origin, codepoint, size in characters:
+        matches = traced.get(origin, [])
+        # A different/unmapped character at the same origin must not conceal
+        # conflicting scale evidence. Still require a decoded match to align.
+        if (not any(code == codepoint for code, _ in matches)
+                or any(not math.isclose(size, other, rel_tol=1e-5) for _, other in matches)):
+            return None
+    return median
+
+
 def export_result(pdf_path, page_number, result_dir, identity):
     import fitz
     sha = hashlib.sha256(pdf_path.read_bytes()).hexdigest()
@@ -33,7 +101,15 @@ def export_result(pdf_path, page_number, result_dir, identity):
         if page.rotation:
             raise ValueError('This exporter currently supports unrotated PDF pages only')
         width, height, count = page.rect.width, page.rect.height, len(pdf)
-    return bundle_from_blocks(sha, page_number, width, height, count, structure, receipt, identity)
+        bundle = bundle_from_blocks(sha, page_number, width, height, count, structure, receipt, identity)
+        for block in bundle['pages'][0]['blocks']:
+            if block.get('role') == 'equation':
+                box = block['box']
+                size = measure_source_font_size(page, [box['x'], box['y'],
+                                                box['x'] + box['width'], box['y'] + box['height']])
+                if size is not None:
+                    block['sourceFontSize'] = size
+    return bundle
 
 
 def bundle_from_blocks(sha, page_number, width, height, count, structure, receipt, identity):

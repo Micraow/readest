@@ -126,6 +126,81 @@ describe('Ovis local reflow import', () => {
   });
 
   it.each([
+    6.5, 10, 18, 1,
+  ])('keeps measured equation font size %s in PDF points without changing its crop', async (sourceFontSize) => {
+    const bundle = await fixture();
+    const original = structuredClone(bundle.pages[1]!.blocks[0]!);
+    if (original.kind !== 'visual') throw new Error('Expected the equation fixture');
+    bundle.pages[1]!.blocks[0] = { ...original, sourceFontSize };
+    const { storage } = storageFixture();
+    const document = await importOvisBundle(pdf, bundle, storage);
+    const equation = document.blocks[3]!;
+    expect(equation.fontStats).toEqual({
+      median: sourceFontSize,
+      min: sourceFontSize,
+      max: sourceFontSize,
+      names: [],
+    });
+    expect(equation.source[0]!.boxes[0]).toEqual(original.box);
+    expect(equation.previewBox).toEqual(original.box);
+    expect(document.blocks.slice(0, 3).every((block) => block.fontStats.median === 12)).toBe(true);
+    expect(await readOvisCache(pdf, storage)).toEqual(document);
+  });
+
+  it('does not apply equation font metadata to figure scaling', async () => {
+    const bundle = await fixture();
+    const figure = bundle.pages[0]!.blocks[1]!;
+    if (figure.kind !== 'visual') throw new Error('Expected the figure fixture');
+    bundle.pages[0]!.blocks[1] = { ...figure, sourceFontSize: 8 };
+    const document = await importOvisBundle(pdf, bundle, storageFixture().storage);
+    expect(document.blocks[1]!.fontStats).toEqual({ median: 12, min: 12, max: 12, names: [] });
+  });
+
+  it.each([
+    0,
+    -1,
+    Number.MIN_VALUE,
+    0.5,
+    0.999,
+    NaN,
+    Infinity,
+    -Infinity,
+    '10',
+    null,
+    true,
+  ])('rejects invalid source font size %s before writing anything', async (sourceFontSize) => {
+    const bundle = await fixture();
+    const { storage } = storageFixture();
+    const value = {
+      ...bundle,
+      pages: [{ ...bundle.pages[1], blocks: [{ ...bundle.pages[1]!.blocks[0], sourceFontSize }] }],
+    };
+    await expect(importOvisBundle(pdf, value, storage)).rejects.toThrow();
+    expect(storage.writeFile).not.toHaveBeenCalled();
+  });
+
+  it('keeps strict unknown-field rejection and leaves legacy bundles unchanged', async () => {
+    const bundle = await fixture();
+    expect(parseOvisBundle(bundle)).toEqual(bundle);
+    for (const extra of [{ sourceFontsize: 10 }, { sourceFontSize: 10, trusted: true }]) {
+      expect(() =>
+        parseOvisBundle({
+          ...bundle,
+          pages: [{ ...bundle.pages[1], blocks: [{ ...bundle.pages[1]!.blocks[0], ...extra }] }],
+        }),
+      ).toThrow();
+    }
+    expect(() =>
+      parseOvisBundle({
+        ...bundle,
+        pages: [
+          { ...bundle.pages[0], blocks: [{ ...bundle.pages[0]!.blocks[0], sourceFontSize: 10 }] },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  it.each([
     [
       'no pages',
       (bundle: OvisBundle) => {
@@ -210,6 +285,23 @@ describe('Ovis local reflow import', () => {
 });
 
 describe('Ovis isolated cache', () => {
+  it('checksums font measurements as content without changing model identity or legacy payloads', async () => {
+    const bundle = await fixture();
+    const { storage, files } = storageFixture();
+    const legacy = await importOvisBundle(pdf, bundle, storage);
+    const legacyPath = payloadPaths(files)[0]!;
+    const legacyPayload = files.get(legacyPath);
+    const equation = bundle.pages[1]!.blocks[0]!;
+    if (equation.kind !== 'visual') throw new Error('Expected the equation fixture');
+    bundle.pages[1]!.blocks[0] = { ...equation, sourceFontSize: 9 };
+    const measured = await importOvisBundle(pdf, bundle, storage);
+    expect(measured.metadata.ovis!.identity).toBe(legacy.metadata.ovis!.identity);
+    expect(measured.parserVersion).toBe(legacy.parserVersion);
+    expect(payloadPaths(files)).toHaveLength(2);
+    expect(files.get(legacyPath)).toBe(legacyPayload);
+    expect(await readOvisCache(pdf, storage)).toEqual(measured);
+  });
+
   it('round-trips through the latest pointer without touching the native cache', async () => {
     const { storage, files } = storageFixture();
     const nativePath = 'academic/native-document-1-native.json';

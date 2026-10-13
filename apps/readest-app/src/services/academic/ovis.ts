@@ -24,6 +24,7 @@ const block = z.discriminatedUnion('kind', [
       kind: z.literal('visual'),
       role: z.enum(['figure', 'equation']),
       box,
+      sourceFontSize: positive.min(1).optional(),
       caption: nonempty.optional(),
     })
     .strict(),
@@ -122,6 +123,7 @@ function toDocument(bundle: OvisBundle, identity: string): ScholarlyDocument {
   for (const page of pages) {
     for (const block of page.blocks) {
       const visual = block.kind === 'visual';
+      const fontSize = visual && block.role === 'equation' ? (block.sourceFontSize ?? 12) : 12;
       blocks.push({
         id: block.id,
         type: visual ? 'visual-region' : block.kind === 'footnote' ? 'footnote' : 'paragraph',
@@ -130,7 +132,7 @@ function toDocument(bundle: OvisBundle, identity: string): ScholarlyDocument {
         source: [{ page: page.page, boxes: visual ? [block.box] : [], itemIndices: [] }],
         order: blocks.length,
         confidence: 0,
-        fontStats: { median: 12, min: 12, max: 12, names: [] },
+        fontStats: { median: fontSize, min: fontSize, max: fontSize, names: [] },
         ...(visual ? { role: block.role, previewBox: block.box } : {}),
         ...(block.kind === 'footnote' ? { footnoteMarker: block.marker } : {}),
       });
