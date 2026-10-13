@@ -99,8 +99,47 @@ describe('manual academic reading session', () => {
     expect(
       (screen.getByRole('button', { name: 'Import Ovis result' }) as HTMLButtonElement).disabled,
     ).toBe(false);
+    const help = screen.getByText('How to use an external Ovis result');
+    const disclosure = help.closest('details')!;
+    expect(disclosure.open).toBe(false);
+    fireEvent.click(help);
+    expect(disclosure.open).toBe(true);
+    expect(
+      screen.getByText(
+        'Choose Import Ovis result and select the completed run’s result/bundle.json file.',
+      ),
+    ).toBeTruthy();
+    fireEvent.click(help);
+    expect(disclosure.open).toBe(false);
     expect(mocks.importOvis).not.toHaveBeenCalled();
     expect(mocks.service.readFile).not.toHaveBeenCalled();
+  });
+
+  it('includes the external-result help disclosure in the keyboard focus loop', async () => {
+    render(
+      <AcademicReaderDialog
+        file={new File(['%PDF-'], 'test.pdf')}
+        title='Paper'
+        onClose={vi.fn()}
+      />,
+    );
+    await screen.findByText('A continuous academic paragraph');
+    vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue({ length: 1 } as DOMRectList);
+    const first = screen.getByRole('button', { name: 'Original PDF' });
+    const close = screen.getByRole('button', { name: 'Close Reading Mode' });
+    const summary = screen.getByText('How to use an external Ovis result');
+    close.focus();
+    const reachHelp = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    fireEvent(close, reachHelp);
+    expect(reachHelp.defaultPrevented).toBe(false);
+    // Browser-native Tab navigation reaches summary; jsdom does not move focus for Tab.
+    summary.focus();
+    const wrap = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    fireEvent(summary, wrap);
+    expect(wrap.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(first);
+    fireEvent.keyDown(first, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(summary);
   });
 
   it('adjusts the current PDF typography without changing book settings or analyzing again', async () => {

@@ -104,7 +104,7 @@ export default function AcademicReaderDialog({
       if (event.key === 'Tab' && panel.current) {
         const controls = Array.from(
           panel.current.querySelectorAll<HTMLElement>(
-            ':is(a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex="0"])',
+            ':is(a[href],button:not(:disabled),input:not(:disabled),select:not(:disabled),summary,[tabindex="0"])',
           ),
         ).filter((node) => node.getClientRects().length);
         const first = controls[0],
@@ -426,11 +426,38 @@ export default function AcademicReaderDialog({
             />
           )}
         </header>
-        <p className='text-base-content/70 border-base-300 border-b px-4 py-2 text-sm'>
-          {_(
-            'Local Ovis inference is unavailable in this build. You can import a previously generated Ovis result.',
-          )}
-        </p>
+        <div className='text-base-content/70 border-base-300 border-b px-4 py-2 text-sm'>
+          <p>
+            {_(
+              'Local Ovis inference is unavailable in this build. You can import a previously generated Ovis result.',
+            )}
+          </p>
+          <details className='mt-1'>
+            <summary className='cursor-pointer'>{_('How to use an external Ovis result')}</summary>
+            <ol className='mt-2 list-decimal space-y-1 ps-5'>
+              <li>
+                {_(
+                  'Generate a completed bundle with the external Ovis PDF runner. Keep the PDF unchanged.',
+                )}
+              </li>
+              <li>
+                {_(
+                  'Choose Import Ovis result and select the completed run’s result/bundle.json file.',
+                )}
+              </li>
+              <li>
+                {_(
+                  'Check page coverage and compare text, figures and formulas with PDF. Full coverage does not guarantee correct recognition.',
+                )}
+              </li>
+            </ol>
+            <p className='mt-2'>
+              {_(
+                'A failed import keeps the current reading source. After import, use Ovis or Native PDF text to switch sources. Keep the completed bundle to restore it if the local cache is cleared.',
+              )}
+            </p>
+          </details>
+        </div>
         {importing && (
           <p role='status' className='px-4 py-2 text-sm'>
             {_('Preparing reading mode…')}

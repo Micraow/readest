@@ -53,8 +53,80 @@ Unchanged PDF bytes reuse a versioned reflow cache. Regions are rendered near th
 viewport rather than saved as a persistent image collection. Typography reuses
 Readest's global or current-book font size, family and line spacing.
 
-There is no OCR, AI, translation, remote parsing, Markdown/EPUB conversion or
-annotation-write integration in this feature.
+The built-in PDF-text path does not run OCR, AI, translation, remote parsing,
+Markdown/EPUB conversion or annotation writes. Pre-generated Ovis results can
+also be imported as a separate reading source, as described below.
+
+## Read an external Ovis result
+
+The usable Ovis workflow has two steps: generate a local bundle outside Readest,
+then import it into Reading mode. This build does not start the model in the app.
+No account or upload is required by the runner/import workflow.
+
+If you already have the bundle:
+
+1. Open the **same, unchanged PDF** in Readest and enter **Reading**.
+2. Choose **Import Ovis result** and select the completed run's
+   `result/bundle.json`. Do not select `raw.md`, `identity.json`, `run.json`,
+   `bundle.provenance.json`, or an individual page result by mistake.
+3. Check the displayed page coverage, reading order, figures, formula symbols
+   and notes against **PDF**. Full page coverage does not prove correct OCR.
+4. **Native PDF text** and **Ovis** switch the reading source. **PDF** returns to
+   the original page view. Native PDF text requires a usable text layer; if that
+   switch fails, the current Ovis source stays active. A rejected import also
+   leaves the current source intact.
+5. Reopening the same PDF reuses an intact Ovis cache where the app's local
+   storage is available. Keep the original PDF and completed bundle as recovery
+   files; cache persistence can fail or be cleared independently.
+
+### Generate the bundle on Linux
+
+This is currently a developer-prepared workflow, not a one-click runtime
+installer. Obtain trusted local resources first: Python with PyMuPDF, a compatible
+`llama-mtmd-cli` and its full libraries, Ovis GGUF model/projector, and a UTF-8 OCR
+prompt. The repository does not ship a redistributable runtime/weights package.
+Use independently checked sources and hashes; a supplied source revision alone
+is not a build attestation. The fixed resource inspection tool is documented in
+[OVIS-RUNTIME.md](../apps/readest-app/scripts/academic/OVIS-RUNTIME.md); its snapshot
+verification does not authorize execution.
+
+From the repository root, replace these example paths with your prepared local
+files. The output parent must exist, and `paper-run` must **not** already exist.
+All four producer scripts must remain together in
+`apps/readest-app/scripts/academic/`.
+
+```sh
+python3 apps/readest-app/scripts/academic/run-ovis-pdf.py \
+  --pdf /absolute/input.pdf \
+  --cli /absolute/runtime/bin/llama-mtmd-cli \
+  --model /absolute/runtime/models/model.gguf \
+  --mmproj /absolute/runtime/models/projector.gguf \
+  --prompt /absolute/runtime/prompt.txt \
+  --runtime-revision 5266f24da75dc449bd56cbed7addb9c8e4a6a73e \
+  --output-dir /absolute/outputs/paper-run
+```
+
+That revision is the inspected llama.cpp source revision; use it only for a
+runtime actually built from that source. The runner does not authenticate this
+operator-declared value. It records the actual input and producer byte hashes.
+Its current defaults process every page sequentially on CPU with two threads.
+It does not download dependencies or weights. The CLI's `--offline` flag prevents
+its automatic downloads; it is not an operating-system network sandbox.
+
+Import only after the process exits successfully **and**
+`paper-run/result/run.json` has `status: "process-completed"`, complete coverage
+and no missing pages. The final bundle and receipts are published together.
+`Ctrl+C`, timeout or failure after run-directory creation leaves diagnostics
+there without publishing a completed result. An earlier preflight or input-hash
+failure may create no directory. Retry into a different new directory;
+there is no automatic resume and no overwrite of previous runs.
+
+The default limits are 15 minutes per page and one hour per document. Larger
+inputs may need reviewed limits; the sampled RSS guard is not a hard kernel
+memory limit. Encrypted PDFs, rotated pages and excessively large rasterized
+pages are rejected. A zero CLI exit cannot distinguish EOS from token truncation,
+so inspect content before relying on it. Model misreadings are not silently
+corrected or hidden behind whole-page images.
 
 ## Developer inspection and regression
 
