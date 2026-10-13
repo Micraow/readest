@@ -98,6 +98,55 @@ or a failed pointer write restores the prior selection before the next publicati
 reads wait for publication to settle. If storage itself cannot accept the rollback,
 persistence is unavailable, while the current in-memory document stays usable.
 
+## Running a whole PDF locally
+
+`scripts/academic/run-ovis-pdf.py` provides a separate Linux command-line path
+from an existing local Ovis-compatible `llama-mtmd-cli` and model files to an
+importable whole-document bundle. It requires Python, PyMuPDF and Linux `/proc`.
+The app does not start this command or perform inference itself.
+
+```sh
+python scripts/academic/run-ovis-pdf.py \
+  --pdf /local/source.pdf \
+  --cli /local/llama-mtmd-cli \
+  --model /local/ovis.gguf --mmproj /local/mmproj.gguf \
+  --prompt /local/prompt.txt \
+  --runtime-revision YOUR_40_CHARACTER_RUNTIME_COMMIT \
+  --output-dir /local/new-ovis-run
+```
+
+The output directory must be new. Only unencrypted, unrotated PDFs are
+currently supported; oversized raster pages are rejected before inference. The
+command freezes input and producer hashes, renders each page, and invokes one
+CPU model process at a time. It preserves the child process's raw Markdown bytes and uses
+the existing exporter and complete-page merger. Effective generation and render
+settings are recorded in the identity. No page names, paper titles or document-
+specific coordinates select the processing rules. Page and run time limits,
+sampled process-group RSS limits, and cancellation are supervised by the runner.
+They are not hard kernel bounds; rendering and hashing occur in the parent
+process, outside the child RSS measurement. Use `--help` for limits and generation
+options, including `--flash-attn on|off|auto` (default `off`).
+
+After success, open the same PDF in Readest and import `result/bundle.json` from
+the output directory. Successful completion is recorded in `result/run.json`;
+the top-level `run.json` points to that terminal receipt at publication time.
+The adjacent receipts report individual page execution, source hashes and coverage. Page assets and raw outputs remain local for
+inspection. A failed, cancelled, timed-out or resource-limited run must not be
+presented as a successfully generated whole-document result.
+
+The command uses only explicit local model files and the CLI's `--offline`
+option; it does not download weights. This is not an operating-system network
+sandbox. Run it inside an independently configured offline environment if you
+need process-level network isolation. Treat output directories and their local
+file paths as private unless deliberately reviewed for sharing.
+
+**Coverage is not recognition completeness.** The current upstream CLI can exit
+successfully after a stop token, token limit or interruption without reporting
+which occurred. Receipts therefore retain `nativeFinishReason: "unknown"` and
+do not infer an end-of-generation token from timing counters. Inspect the
+original PDF for missing text, incorrect notation and truncated content before
+relying on the result.
+
 ## Exporting reviewed local adapter results
 
 `scripts/academic/export-ovis-result.py` consumes a PDF, one processed page's

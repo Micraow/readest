@@ -1,0 +1,253 @@
+"""Original synthetic PDFs and fake local children; no models or network needed."""
+import hashlib
+import json
+import os
+import pathlib
+import signal
+import subprocess
+import sys
+import tempfile
+import time
+import unittest
+
+import fitz
+
+SCRIPT = pathlib.Path(__file__).with_name('run-ovis-pdf.py')
+
+FAKE = '''#!/usr/bin/env python3
+import json, os, pathlib, signal, subprocess, sys, time
+args = sys.argv[1:]
+def arg(flag): return args[args.index(flag) + 1]
+mode = pathlib.Path(arg('--file')).read_text().strip()
+page = int(pathlib.Path(arg('--image')).parent.name.split('-')[-1])
+pathlib.Path('child.json').write_text(json.dumps({'pid': os.getpid(), 'args': args,
+    'page': page, 'llamaEnv': [k for k in os.environ if k.startswith('LLAMA_ARG_')],
+    'threadEnv': {k: os.environ[k] for k in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS')}}))
+if mode == 'sleep':
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    grandchild = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
+    pathlib.Path('grandchild.pid').write_text(str(grandchild.pid))
+    time.sleep(60)
+if mode == 'rss':
+    memory = bytearray(80 * 1024 * 1024)
+    time.sleep(60)
+if mode == 'mutate': pathlib.Path(arg('--model')).write_bytes(b'changed')
+if mode == 'mutate-identity': pathlib.Path('../../identity.json').write_text('{}')
+if mode == 'mutate-previous' and page == 2: pathlib.Path('../page-000001/raw.md').write_text('Changed')
+if mode == 'block-publication': pathlib.Path('../../.publication').touch(exist_ok=True)
+if mode == 'descendants': subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
+if mode == 'nonzero':
+    sys.stdout.buffer.write(b'Partial text\\n')
+    sys.exit(7)
+if mode == 'empty': sys.exit(0)
+if mode == 'invalid-utf8':
+    sys.stdout.buffer.write(b'\\xff')
+    sys.exit(0)
+# The long first page is deliberately slower; a parallel runner could reorder it.
+time.sleep(0.04 if page == 1 else 0)
+sys.stdout.buffer.write(('Page %d: exact raw bytes.\\r\\n\\n$ x + y $\\n' % page).encode())
+# Performance output does not authenticate a finish reason or emitted-token count.
+sys.stderr.write('llama_perf_context_print: eval time = 4 ms / 1 runs\\n')
+'''
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+@unittest.skipUnless(sys.platform.startswith('linux'), 'Linux /proc process-group accounting')
+class RunnerTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = pathlib.Path(self.temp.name)
+        self.pdf = self.root / 'synthetic.pdf'
+        with fitz.open() as pdf:
+            for index in range(3):
+                page = pdf.new_page(width=240 + index * 10, height=360)
+                page.insert_text((20, 30), f'Original synthetic page {index + 1}')
+            pdf.save(self.pdf)
+        self.cli = self.root / 'fake-cli'
+        self.cli.write_text(FAKE)
+        self.cli.chmod(0o700)
+        self.model, self.mmproj, self.prompt = [self.root / name for name in ('model', 'mmproj', 'prompt')]
+        self.model.write_bytes(b'synthetic model')
+        self.mmproj.write_bytes(b'synthetic projector')
+        self.prompt.write_text('normal')
+        self.output = self.root / 'output'
+
+    def command(self, *extra):
+        return [sys.executable, str(SCRIPT), '--pdf', str(self.pdf), '--cli', str(self.cli),
+                '--model', str(self.model), '--mmproj', str(self.mmproj), '--prompt', str(self.prompt),
+                '--runtime-revision', 'd' * 40, '--output-dir', str(self.output),
+                '--page-timeout-seconds', '5', '--kill-grace-seconds', '0.1', *extra]
+
+    def run_cli(self, mode='normal', *extra):
+        self.prompt.write_text(mode)
+        return subprocess.run(self.command(*extra), capture_output=True, text=True, timeout=15)
+
+    def receipt(self):
+        return json.loads((self.output / 'run.json').read_text())
+
+    def assert_failed(self, result):
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse((self.output / 'result').exists())
+        self.assertIn(self.receipt()['status'], ('failed', 'cancelled'))
+
+    def test_complete_order_exact_raw_bytes_and_truthful_finish(self):
+        environment = dict(os.environ, LLAMA_ARG_THREADS='99', LLAMA_ARG_MODEL_URL='https://invalid.example')
+        result = subprocess.run(self.command('--flash-attn', 'on'), capture_output=True, text=True, env=environment, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        final = self.output / 'result'
+        bundle = json.loads((final / 'bundle.json').read_text())
+        receipt = json.loads((final / 'run.json').read_text())
+        self.assertEqual([page['page'] for page in bundle['pages']], [1, 2, 3])
+        self.assertEqual(receipt['status'], 'process-completed')
+        self.assertEqual(receipt['nativeFinishReason'], 'unknown')
+        self.assertEqual(receipt['generationCompleteness'], 'unknown')
+        self.assertTrue(receipt['coverage']['complete'])
+        self.assertEqual(receipt['bundleSha256'], sha(final / 'bundle.json'))
+        self.assertEqual(receipt['identity'], bundle['identity'])
+        self.assertEqual(receipt['identity']['configuration']['flashAttention'], 'on')
+        self.assertEqual(self.receipt()['status'], 'publication-ready')
+        self.assertEqual(self.receipt()['terminalReceipt'], 'result/run.json')
+        self.assertFalse(receipt['offline']['osNetworkIsolationVerified'])
+        self.assertNotIn('generatedTokens', json.dumps(receipt))
+        for number in range(1, 4):
+            page_dir = self.output / 'pages' / f'page-{number:06d}'
+            raw = page_dir / 'raw.md'
+            self.assertEqual(raw.read_bytes(), f'Page {number}: exact raw bytes.\r\n\n$ x + y $\n'.encode())
+            execution = json.loads((page_dir / 'execution.json').read_text())
+            provenance = json.loads((page_dir / 'bundle.provenance.json').read_text())
+            self.assertEqual(execution['nativeFinishReason'], 'unknown')
+            self.assertEqual(execution['source']['page'], number)
+            self.assertEqual(execution['source']['pdfSha256'], sha(self.pdf))
+            self.assertEqual(execution['rawSha256'], sha(raw))
+            self.assertEqual(provenance['source']['markdownSha256'], sha(raw))
+            child = json.loads((page_dir / 'child.json').read_text())
+            self.assertEqual(child['page'], number)
+            self.assertEqual(child['llamaEnv'], [])
+            self.assertEqual(set(child['threadEnv'].values()), {'2'})
+            self.assertIn('--offline', child['args'])
+            self.assertEqual(child['args'][child['args'].index('--threads') + 1], '2')
+            self.assertEqual(child['args'][child['args'].index('--gpu-layers') + 1], '0')
+            self.assertIn('--no-mmproj-offload', child['args'])
+            self.assertEqual(child['args'][child['args'].index('--flash-attn') + 1], 'on')
+
+    def test_empty_nonzero_and_invalid_utf8_never_publish(self):
+        for mode in ('empty', 'nonzero', 'invalid-utf8'):
+            with self.subTest(mode=mode):
+                self.output = self.root / mode
+                self.assert_failed(self.run_cli(mode))
+                self.assertEqual(len(list((self.output / 'pages').glob('page-*'))), 1)
+
+    def test_timeout_kills_and_reaps(self):
+        result = self.run_cli('sleep', '--page-timeout-seconds', '0.25')
+        self.assert_failed(result)
+        execution = json.loads((self.output / 'pages/page-000001/execution.json').read_text())
+        self.assertEqual(execution['status'], 'timeout')
+        self.assertTrue(execution['childReaped'])
+        self.assertTrue(execution['processGroupStopped'])
+
+    def test_rss_limit(self):
+        result = self.run_cli('rss', '--max-rss-mib', '40')
+        self.assert_failed(result)
+        execution = json.loads((self.output / 'pages/page-000001/execution.json').read_text())
+        self.assertEqual(execution['status'], 'rss-limit')
+        self.assertGreater(execution['peakSampledGroupRssBytes'], 40 * 1024 * 1024)
+
+    def test_parent_signals_stop_child_group(self):
+        for signum in (signal.SIGINT, signal.SIGTERM):
+            with self.subTest(signum=signum):
+                self.output = self.root / f'cancel-{signum}'
+                self.prompt.write_text('sleep')
+                process = subprocess.Popen(self.command(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                marker = self.output / 'pages/page-000001/grandchild.pid'
+                deadline = time.monotonic() + 8
+                while not marker.exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(0.02)
+                if not marker.exists():
+                    process.kill()
+                    out, err = process.communicate()
+                    self.fail(out + err)
+                process.send_signal(signum)
+                out, err = process.communicate(timeout=8)
+                self.assertEqual(process.returncode, 128 + signum, out + err)
+                self.assertEqual(self.receipt()['status'], 'cancelled')
+                self.assertFalse((self.output / 'result').exists())
+                execution = json.loads((marker.parent / 'execution.json').read_text())
+                self.assertTrue(execution['childReaped'])
+                self.assertTrue(execution['processGroupStopped'])
+                child_pid = json.loads((marker.parent / 'child.json').read_text())['pid']
+                self.assertFalse(pathlib.Path(f'/proc/{child_pid}').exists())
+
+    def test_existing_directory_and_input_collision_are_untouched(self):
+        self.output.mkdir()
+        sentinel = self.output / 'sentinel'
+        sentinel.write_text('keep')
+        result = self.run_cli()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(list(self.output.iterdir()), [sentinel])
+        before = self.pdf.read_bytes()
+        self.output = self.pdf
+        self.assertNotEqual(self.run_cli().returncode, 0)
+        self.assertEqual(self.pdf.read_bytes(), before)
+
+    def test_identity_change_fails_without_publication(self):
+        self.assert_failed(self.run_cli('mutate'))
+        self.assertIn('identity changed', self.receipt()['error'].lower())
+
+    def test_identity_file_change_fails_without_publication(self):
+        self.assert_failed(self.run_cli('mutate-identity'))
+        self.assertIn('identity changed', self.receipt()['error'].lower())
+
+    def test_completed_page_tampering_fails_without_publication(self):
+        self.assert_failed(self.run_cli('mutate-previous'))
+        self.assertIn('artifact identity changed', self.receipt()['error'].lower())
+
+    def test_unicode_and_space_paths(self):
+        self.output = self.root / '精确 raw output'
+        result = self.run_cli()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.output / 'result/bundle.json').is_file())
+
+    def test_live_descendants_are_stopped_and_fail_the_run(self):
+        self.assert_failed(self.run_cli('descendants'))
+        execution = json.loads((self.output / 'pages/page-000001/execution.json').read_text())
+        self.assertEqual(execution['status'], 'unexpected-descendants')
+        self.assertTrue(execution['liveDescendantsAfterChildExit'])
+        self.assertTrue(execution['processGroupStopped'])
+
+    def test_publication_preparation_failure_leaves_no_final_bundle(self):
+        self.assert_failed(self.run_cli('block-publication'))
+        self.assertEqual(self.receipt()['coverage']['coveredPages'], [1, 2, 3])
+
+    def test_rotated_encrypted_and_empty_pdfs_rejected_preflight(self):
+        original = self.pdf.read_bytes()
+        for mode in ('rotation', 'encryption', 'empty-password-encryption', 'empty'):
+            with self.subTest(mode=mode):
+                self.output = self.root / f'bad-{mode}'
+                if mode == 'empty':
+                    self.pdf.write_bytes(b'%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Count 0/Kids[]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF')
+                else:
+                    with fitz.open(stream=original, filetype='pdf') as document:
+                        if mode == 'rotation':
+                            document[1].set_rotation(90)
+                            data = document.tobytes()
+                        else:
+                            data = document.tobytes(encryption=fitz.PDF_ENCRYPT_AES_256,
+                                                    user_pw='' if mode == 'empty-password-encryption' else 'synthetic',
+                                                    owner_pw='synthetic-owner')
+                    self.pdf.write_bytes(data)
+                self.assertNotEqual(self.run_cli().returncode, 0)
+                self.assertFalse(self.output.exists())
+
+    def test_empty_prompt_and_invalid_revision_rejected(self):
+        self.assertNotEqual(self.run_cli('').returncode, 0)
+        self.assertFalse(self.output.exists())
+        self.assertNotEqual(self.run_cli('normal', '--runtime-revision', 'not-a-revision').returncode, 0)
+        self.assertFalse(self.output.exists())
+
+
+if __name__ == '__main__':
+    unittest.main()
