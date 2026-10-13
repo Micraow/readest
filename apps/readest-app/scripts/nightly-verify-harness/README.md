@@ -13,11 +13,13 @@ Throwaway-signed fixtures only (the signing key was discarded).
 - ✅ **Resolver decision (no GUI)** — the unit test `resolveNightlyUpdate —
   harness scenarios` in `src/__tests__/helpers/updater.test.ts` runs the real
   resolver against these manifest builders (`pnpm test src/__tests__/helpers/updater.test.ts`).
-- ⚠️ **Full install / accept-valid** — needs the **real** signing key (CI only):
-  the app verifies against the production `READEST_UPDATER_PUBKEY`, so the
+- ⚠️ **Full install / accept-valid** — needs an artifact signed by the **official** key:
+  the app verifies against the public key compiled from `src-tauri/tauri.conf.json`, so the
   throwaway artifact correctly fails real-key verification if you click
-  "Download & Install". Accept-valid is covered by the Rust test
-  `pnpm test:rust` → `nightly_update::tests::verify_accepts_valid_signature`.
+  "Download & Install". The Rust test
+  `pnpm test:rust` → `update_signature::tests::verify_accepts_valid_signature`
+  covers the cryptographic primitive using a throwaway key, not an official-key
+  accept-valid fixture. The official policy rejects that same fixture.
 - On **macOS** the install path routes through Tauri's updater (darwin key), so
   the custom verify-gate isn't hit from the UI — use the Tier 4 devtools snippet
   below (or the Rust test) to exercise it directly.
@@ -66,14 +68,23 @@ const path = await invoke('plugin:dialog|open', {
 });
 const pubKey = 'dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEZFQTAxMjIzNUEwRkE0OUIKUldTYnBBOWFJeEtnL2x4Q3dKR3dSWVJCY3dLNXdCR1l4d1YyVkhaZUppOVVNVm1kOGprbU85bTMK';
 const goodSig = 'dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTYnBBOWFJeEtnL3RvRC83dEJEUXZONVFZM1hranhKTUZxQzllR2lGWnNjckZMbCtOa3RXMi80aFdDYUNDUkdOa0NqUjJUQkZDL2dqaUVTeURlNzI0cW1BcUlZY2ZsOGcwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgxNDE0MzExCWZpbGU6bnYuYmluCkQzajlpbVZPOXVDYXdna2JBVWZ0TTE4K1d1cWdEYWVYQzVraGh4U1ZuOGNSTDZaOU5zV093OEVDajBvV0JydVV5VGY2K0tkb0hBbGJHYWprK0NsNUN3PT0K';
-await invoke('verify_update_signature', { path, signature: goodSig, pubKey });        // → true
+await invoke('verify_update_signature', { path, signature: goodSig, pubKey });        // → false
 await invoke('verify_update_signature', { path, signature: 'AAAAgarbage', pubKey });  // → false
 ```
 Select `scripts/nightly-verify-harness/artifacts/test.bin` in the dialog to grant
 Readest access to the fixture. (`pubKey` is the *throwaway* key that signed `test.bin`, not the
-production key.) Tampering `test.bin` and re-running the good-sig call also → false.
+production key.) The extra `pubKey` IPC field cannot select the verification key.
+The fixture fails even though its signature is valid under that throwaway key.
+Tampering `test.bin` and re-running the good-sig call also → false.
+
+This command only verifies bytes currently read. It does not make the later
+pathname-based install/launch atomic or close the existing generic shell launch
+capability. No native Ovis execution is enabled by this change.
 
 ## Notes
+- Custom verification pins the base `src-tauri/tauri.conf.json` at compilation.
+  Key rotation must update that base configuration and rebuild; a key supplied
+  only by `--config` or `TAURI_CONFIG` does not replace this policy.
 - Nightly is stamped `<base>-2099010100` so it's always newer than installed.
 - `serve.mjs` reads the base version from `package.json` each request, so it stays
   correct as the app version changes.

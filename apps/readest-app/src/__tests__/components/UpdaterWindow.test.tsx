@@ -68,7 +68,6 @@ vi.mock('@/helpers/updater', () => ({
 vi.mock('@/services/constants', () => ({
   READEST_UPDATER_FILE: 'https://example.com/latest.json',
   READEST_CHANGELOG_FILE: 'https://example.com/release-notes.json',
-  READEST_UPDATER_PUBKEY: 'pk',
 }));
 
 // ── Tauri / heavy modules pulled in by UpdaterWindow's top-level imports ──
@@ -93,7 +92,7 @@ vi.mock('@/components/Link', () => ({ default: () => null }));
 
 import { UpdaterContent } from '@/components/UpdaterWindow';
 import { tauriDownload } from '@/utils/transfer';
-import { installPackage } from '@/utils/bridge';
+import { installPackage, verifyUpdateSignature } from '@/utils/bridge';
 
 const RELEASE_NOTES = {
   releases: {
@@ -106,6 +105,7 @@ beforeEach(() => {
   mockOS = 'macos';
   vi.mocked(tauriDownload).mockReset();
   vi.mocked(installPackage).mockReset();
+  vi.mocked(verifyUpdateSignature).mockReset();
   mockTranslate.mockClear();
   mockInstallNightlyUpdate.mockReset();
   window.fetch = vi.fn(async () => ({
@@ -164,6 +164,45 @@ describe('UpdaterContent — auto-translated changelog', () => {
       expect(screen.getByText('Failed to download and install update')).toBeTruthy();
     });
     expect(consoleError).toHaveBeenCalledWith('Failed to download and install update:', failure);
+  });
+
+  it.each([
+    false,
+    true,
+  ])('nightly custom flow respects native official signature result: %s', async (accepted) => {
+    mockOS = 'android';
+    vi.mocked(tauriDownload).mockResolvedValueOnce(undefined);
+    vi.mocked(verifyUpdateSignature).mockResolvedValueOnce(accepted);
+    vi.mocked(installPackage).mockResolvedValueOnce({ success: true });
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(
+      <UpdaterContent
+        latestVersion='0.11.20'
+        nightlyUpdate={{
+          endpoint: 'https://example.com/nightly.json',
+          version: '0.11.20',
+          platformKey: 'android-arm64',
+          url: 'https://example.com/Readest.apk',
+          signature: 'official-artifact-signature',
+        }}
+      />,
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'DOWNLOAD & INSTALL' }));
+    await waitFor(() =>
+      expect(verifyUpdateSignature).toHaveBeenCalledExactlyOnceWith(
+        '/cache/Readest.apk',
+        'official-artifact-signature',
+      ),
+    );
+    if (accepted) {
+      await waitFor(() =>
+        expect(installPackage).toHaveBeenCalledExactlyOnceWith({ path: '/cache/Readest.apk' }),
+      );
+    } else {
+      expect(await screen.findByText('Failed to download and install update')).toBeTruthy();
+      expect(installPackage).not.toHaveBeenCalled();
+    }
+    consoleError.mockRestore();
   });
 
   it('shows a "Show original" toggle that swaps the translation for the source English', async () => {

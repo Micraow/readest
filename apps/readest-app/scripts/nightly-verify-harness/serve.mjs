@@ -10,8 +10,9 @@
 //
 // The artifact is signed with a THROWAWAY minisign key (private key discarded),
 // so it proves DETECTION and the verify-gate REJECT path. Accept-valid needs the
-// real signing key (CI) and is covered by the Rust test
-// `nightly_update::tests::verify_accepts_valid_signature`.
+// an artifact signed by the official key. The Rust test
+// `update_signature::tests::verify_accepts_valid_signature` covers only the
+// cryptographic primitive with the throwaway key.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';

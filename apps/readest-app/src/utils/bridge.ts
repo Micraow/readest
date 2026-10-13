@@ -695,16 +695,13 @@ export async function setReadingWidgetCatalog(catalog: ReadingWidgetCatalog): Pr
 }
 
 // ── Nightly updater (main-app commands, no native-bridge prefix) ─────────
-// `verify_update_signature` gates the custom install flows (portable /
+// `verify_update_signature` authenticates current bytes for custom flows (portable /
 // AppImage / Android); `install_nightly_update` drives the Tauri updater for
-// the platform keys it natively installs (macOS / Windows-NSIS).
+// the platform keys it natively installs (macOS / Windows-NSIS). Signature
+// verification uses the compiled native key; it does not bind a later path launch.
 
-export async function verifyUpdateSignature(
-  path: string,
-  signature: string,
-  pubKey: string,
-): Promise<boolean> {
-  return invoke<boolean>('verify_update_signature', { path, signature, pubKey });
+export async function verifyUpdateSignature(path: string, signature: string): Promise<boolean> {
+  return invoke<boolean>('verify_update_signature', { path, signature });
 }
 
 export interface NightlyProgress {

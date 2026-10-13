@@ -54,6 +54,7 @@ mod sentry_config;
 #[cfg(desktop)]
 mod spawn_fresh_browser;
 mod transfer_file;
+mod update_signature;
 mod web_browser;
 #[cfg(desktop)]
 mod window_state;
