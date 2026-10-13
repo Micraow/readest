@@ -192,3 +192,81 @@ blocked active content, route switching, cached reopen and stale native analysis
 The local fixed-PDF acceptance is recorded outside the public source tree.
 A successful import does not prove that OCR formulas are semantically correct,
 that missing pages were processed, or that inference has phone-level latency.
+
+## Assemble multiple exported pages
+
+`scripts/academic/merge-ovis-results.py` combines existing single-page or
+multi-page bundles into one file accepted by **Import Ovis result**. It requires
+Python and the same PyMuPDF dependency as the exporter. Run these commands from
+`apps/readest-app`; the output directory must already exist.
+
+First export each processed page using either exporter mode above, using the
+same complete model/runtime/configuration identity. Then assemble the results:
+
+```sh
+python scripts/academic/merge-ovis-results.py \
+  --pdf /local/document.pdf \
+  --input /local/page-3.ovis.json \
+  --input /local/pages-1-2.ovis.json \
+  --output /local/document.ovis.json \
+  --require-complete
+python -m unittest discover -s scripts/academic -p 'test_*.py'
+```
+
+Repeat `--input` for every bundle; each may already contain several pages and
+input order does not matter. `--require-complete` rejects any missing page from
+the actual PDF before writing. For a deliberately partial result, omit that
+flag: the command warns on stderr and reports exact covered and missing page
+numbers in its JSON stdout and audit receipt. Page numbers always refer to the
+original PDF. Open that PDF in Readest, choose **Reading mode → Import Ovis
+result**, and select `document.ovis.json`. A complete assembly covers all of the
+PDF's pages through the existing reader; a partial assembly still shows the
+reader's coverage warning. The audit receipt is not imported into the app.
+
+The merger reads the actual PDF bytes once and verifies every input's SHA-256,
+page count and per-page rotated viewport dimensions against that PDF. Dimension
+comparison allows only floating-point geometry noise (absolute `0.0001` PDF
+point or relative `0.0000001`); it never rewrites a page size or crop. Mixed
+page sizes and already-exported rotated viewport geometry are supported; the
+single-page exporter itself still accepts only unrotated pages.
+All model, projector, prompt, runtime and flat configuration fields must match.
+Configuration key order and equivalent JSON numbers (`0` and `0.0`) do not
+matter, while booleans and numbers remain distinct. It rejects duplicate pages,
+even identical copies, and duplicate block IDs within or across inputs.
+
+Validation mirrors the strict v1 reader contract in
+`src/services/academic/ovis.ts`, including optional `sourceFontSize` and
+`caption` types, nonempty text, finite values and in-page crop bounds. Unknown
+fields, invalid JSON and ambiguous duplicate JSON field names are errors.
+Pages are sorted by their original number; block order, repeated paragraphs
+across pages, Markdown/HTML, equations, footnotes, link targets, crop boxes and
+optional metadata remain unchanged. The merger neither deduplicates text nor
+repairs OCR or dangling links. DOM sanitization and local-PDF crop rendering
+remain the reader's responsibility.
+
+Alongside `document.ovis.json`, the command writes
+`document.ovis.provenance.json` with:
+
+- The supplied PDF's SHA-256 and the declared common identity
+- Each input's exact byte hash and original page numbers, indexed by CLI order
+- Every output page's input index and source-bundle byte hash
+- Actual page count, covered/missing page lists and completeness
+- Exact output bundle byte hash and merger/PyMuPDF versions
+- Explicit verification limits; a model run and OCR accuracy are not authenticated
+
+Filenames and local paths are not recorded. Renaming the PDF or input files
+without changing their bytes does not change the assembled bundle or receipt.
+The receipt binds existing input bytes, not the truth of producer-declared
+model identity or page attribution. It does not ingest or authenticate an
+input's separate exporter sidecar. Keep original inputs and their sidecars
+locally if you need to trace back further to raw Markdown or crop PNGs.
+
+The merger validates all inputs and output destinations before publishing.
+Bundle/receipt paths must differ from all sources and cannot be file symlinks,
+hardlinked files or directories. An output name ending `.provenance.json` is
+reserved for receipts. Both outputs are serialized and staged before replacing
+either; the receipt is published first and the bundle last. A caught bundle
+publication failure restores the previous receipt. Each replacement is atomic,
+but the pair is not a crash-atomic transaction: after interruption, check that
+the receipt's `bundleSha256` matches the bundle bytes or rerun the command. A
+receipt restoration failure is reported explicitly instead of claiming success.
