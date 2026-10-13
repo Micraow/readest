@@ -151,12 +151,25 @@ describe('downloadNovel', () => {
       '<div id="content">',
       '<div id="content"><img src="https://cdn.example.org/x.jpg"/><figure><img src="/y.png"/></figure>',
     );
-    const book = await downloadNovel(toc({ chapters: toc().chapters.slice(0, 5) }), TOC_URL, {
-      fetchPage: makeFetchPage({ [`${BASE}/novel/7/1`]: page }),
-    });
-    const files = await unzipEpub(book.file);
-    expect(files.get('OEBPS/chapter1.xhtml')).not.toContain('src="https://cdn.example.org');
-    expect(files.get('OEBPS/chapter1.xhtml')).not.toContain('src="/y.png');
+    // Assets use a separate fetch path from fetchPage. Keep this failure
+    // fixture offline instead of waiting for a real network timeout.
+    const fetch = vi
+      .spyOn(globalThis, 'fetch')
+      .mockRejectedValue(new TypeError('Synthetic asset failure'));
+    try {
+      const book = await downloadNovel(toc({ chapters: toc().chapters.slice(0, 5) }), TOC_URL, {
+        fetchPage: makeFetchPage({ [`${BASE}/novel/7/1`]: page }),
+      });
+      expect(fetch.mock.calls.map(([url]) => url).sort()).toEqual([
+        'https://cdn.example.org/x.jpg',
+        `${BASE}/y.png`,
+      ]);
+      const files = await unzipEpub(book.file);
+      expect(files.get('OEBPS/chapter1.xhtml')).not.toContain('src="https://cdn.example.org');
+      expect(files.get('OEBPS/chapter1.xhtml')).not.toContain('src="/y.png');
+    } finally {
+      fetch.mockRestore();
+    }
   });
 
   it('keeps going when a chapter fails and inserts a placeholder', async () => {
