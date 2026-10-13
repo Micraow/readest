@@ -68,6 +68,22 @@ These blockers are unconditional in this tool. A future implementation must
 replace them only with evidence from the corresponding product path. There is
 no enabled button, new IPC command, capability grant or native resource mapping.
 
+## Executable search directory
+
+The PDF runner launches the CLI with its resolved executable directory as the
+working directory. Model, projector, prompt and page-image arguments remain
+absolute paths; logs and output are still written to the selected run directory.
+This keeps writable page data out of the CLI's current-directory backend search.
+The pinned llama.cpp loader can search for optional `libggml-*.so` backends even
+when `GGML_BACKEND_DL` was disabled at build time.
+
+This change does **not** make a user-writable executable directory trustworthy.
+Native activation still needs the entire executable directory and dependency
+closure verified and protected, including rejecting unexpected backend files.
+Changing the runner changes its code-owned resource pin and producer identity;
+older frozen packages must be inspected against their own recorded version,
+not silently treated as the current candidate.
+
 ## Native app build route
 
 Use the existing Linux CEF route, not a substitute Wry build:

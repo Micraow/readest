@@ -180,6 +180,10 @@ def child_environment(threads):
 def infer(command, page_dir, args, deadline, source, identity):
     if signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL:
         raise ValueError('Inference requires default SIGCHLD and exclusive child ownership')
+    if not command or not pathlib.Path(command[0]).is_absolute():
+        raise ValueError('Inference requires an absolute executable path')
+    executable = pathlib.Path(command[0]).resolve(strict=True)
+    command = [str(executable), *command[1:]]
     receipt = {'format': 'readest-ovis-page-execution', 'version': 1,
                'source': source, 'identity': identity, 'status': 'starting',
                'nativeFinishReason': 'unknown', 'generationCompleteness': 'unknown',
@@ -191,7 +195,12 @@ def infer(command, page_dir, args, deadline, source, identity):
     try:
         checkpoint(deadline)
         with raw_path.open('xb') as out, stderr_path.open('xb') as err:
-            child = subprocess.Popen(command, cwd=page_dir, stdin=subprocess.DEVNULL,
+            # llama.cpp may search its CWD for optional ggml backend libraries,
+            # even when backend-DL was disabled at build time. Never make the
+            # writable PDF/page/output directory that executable search root.
+            # This does not attest the resource directory: native activation
+            # must still protect and verify its complete contents separately.
+            child = subprocess.Popen(command, cwd=executable.parent, stdin=subprocess.DEVNULL,
                                      stdout=out, stderr=err, env=child_environment(args.threads),
                                      start_new_session=True)
             receipt['pid'] = child.pid
@@ -344,6 +353,7 @@ def run(args):
         'renderMaxPixels': 24_000_000, 'pythonVersion': sys.version.split()[0],
         'pymupdfVersion': fitz.VersionBind,
         'otherCliDefaults': 'bound-to-cli-sha256',
+        'cliWorkingDirectory': 'resolved-executable-directory',
         **{name + 'Sha256': hashes[name] for name in ('cli', 'runner', 'exporter', 'merger', 'adapter')},
     }
     identity = {'modelSha256': hashes['model'], 'projectorSha256': hashes['mmproj'],

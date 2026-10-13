@@ -22,22 +22,24 @@ import json, os, pathlib, signal, subprocess, sys, time
 args = sys.argv[1:]
 def arg(flag): return args[args.index(flag) + 1]
 mode = pathlib.Path(arg('--file')).read_text().strip()
-page = int(pathlib.Path(arg('--image')).parent.name.split('-')[-1])
-pathlib.Path('child.json').write_text(json.dumps({'pid': os.getpid(), 'args': args,
+page_dir = pathlib.Path(arg('--image')).parent
+page = int(page_dir.name.split('-')[-1])
+(page_dir / 'child.json').write_text(json.dumps({'pid': os.getpid(), 'args': args,
+    'cwd': str(pathlib.Path.cwd()),
     'page': page, 'llamaEnv': [k for k in os.environ if k.startswith('LLAMA_ARG_')],
     'threadEnv': {k: os.environ[k] for k in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS')}}))
 if mode == 'sleep':
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
     grandchild = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
-    pathlib.Path('grandchild.pid').write_text(str(grandchild.pid))
+    (page_dir / 'grandchild.pid').write_text(str(grandchild.pid))
     time.sleep(60)
 if mode == 'rss':
     memory = bytearray(80 * 1024 * 1024)
     time.sleep(60)
 if mode == 'mutate': pathlib.Path(arg('--model')).write_bytes(b'changed')
-if mode == 'mutate-identity': pathlib.Path('../../identity.json').write_text('{}')
-if mode == 'mutate-previous' and page == 2: pathlib.Path('../page-000001/raw.md').write_text('Changed')
-if mode == 'block-publication': pathlib.Path('../../.publication').touch(exist_ok=True)
+if mode == 'mutate-identity': (page_dir.parent.parent / 'identity.json').write_text('{}')
+if mode == 'mutate-previous' and page == 2: (page_dir.parent / 'page-000001/raw.md').write_text('Changed')
+if mode == 'block-publication': (page_dir.parent.parent / '.publication').touch(exist_ok=True)
 if mode == 'descendants': subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
 if mode == 'nonzero':
     sys.stdout.buffer.write(b'Partial text\\n')
@@ -129,6 +131,9 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(provenance['source']['markdownSha256'], sha(raw))
             child = json.loads((page_dir / 'child.json').read_text())
             self.assertEqual(child['page'], number)
+            self.assertEqual(child['cwd'], str(self.cli.resolve().parent))
+            for flag in ('--model', '--mmproj', '--file', '--image'):
+                self.assertTrue(pathlib.Path(child['args'][child['args'].index(flag) + 1]).is_absolute())
             self.assertEqual(child['llamaEnv'], [])
             self.assertEqual(set(child['threadEnv'].values()), {'2'})
             self.assertIn('--offline', child['args'])
@@ -266,6 +271,41 @@ class ProcessIdentityTests(unittest.TestCase):
         spec = importlib.util.spec_from_file_location('ovis_runner_ownership', SCRIPT)
         self.runner = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(self.runner)
+
+    def test_loader_working_directory_is_not_the_writable_page_directory(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = pathlib.Path(temporary)
+            runtime = root / 'fixed runtime'
+            page = root / 'writable page'
+            runtime.mkdir()
+            page.mkdir()
+            # A harmless file named like a ggml backend. The synthetic child
+            # observes the loader search location; it never loads this file.
+            (page / 'libggml-poison-test.so').write_bytes(b'not a shared library')
+            cli = runtime / 'synthetic-cli'
+            cli.write_text(
+                '#!' + sys.executable + '\n'
+                'import json, pathlib\n'
+                'print(json.dumps({"cwd": str(pathlib.Path.cwd()), '
+                '"backends": [p.name for p in pathlib.Path.cwd().glob("libggml-*.so")]}))\n')
+            cli.chmod(0o700)
+            self.runner.infer(
+                [str(cli)], page,
+                SimpleNamespace(threads=1, page_timeout_seconds=3, max_rss_mib=100,
+                                kill_grace_seconds=0.05),
+                time.monotonic() + 5, {}, {})
+            observed = json.loads((page / 'raw.md').read_text())
+            self.assertEqual(observed['cwd'], str(runtime.resolve()))
+            self.assertEqual(observed['backends'], [])
+
+    def test_relative_executable_is_rejected_before_spawn(self):
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(self.runner.subprocess, 'Popen') as spawn:
+            with self.assertRaisesRegex(ValueError, 'absolute executable'):
+                self.runner.infer(
+                    ['relative-cli'], pathlib.Path(temporary),
+                    SimpleNamespace(threads=1), time.monotonic() + 5, {}, {})
+            spawn.assert_not_called()
 
     def test_group_leader_is_not_reaped_before_last_group_signal(self):
         child = subprocess.Popen([sys.executable, '-c', 'pass'], start_new_session=True)

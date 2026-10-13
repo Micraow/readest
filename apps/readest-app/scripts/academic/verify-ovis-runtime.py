@@ -28,7 +28,7 @@ PROFILE = {
 # (relative path, exact size, SHA-256, must have an executable mode bit).
 # These are code-owned pins. Never accept replacement hashes from the package.
 ARTIFACTS = (
-    ('scripts/run-ovis-pdf.py', 24672, '038e22ddcdeac9c10cb55fdb68f967b45b70e9b3872121c5b73e2f113bd1ee2d', False),
+    ('scripts/run-ovis-pdf.py', 25386, 'acfc2d015d5bee721b2fc537ec247031acb60b3fba2a289b28e5fc5d82d7ff6b', False),
     ('scripts/export-ovis-result.py', 17842, '474c20552b3e9305fa3cb3c48d88e2f54fe648b64ca5f00d3e9183a26c661185', False),
     ('scripts/merge-ovis-results.py', 15277, '6b4030786512281d41c7d2a10b92481384f12dcc233dabd3d7603e8c28fe071c', False),
     ('scripts/ovis_markdown.py', 9020, '2e5496036eb1aeb6908cb4d3b8d170312cae670b10afcd2f2fbba2957df400e5', False),
