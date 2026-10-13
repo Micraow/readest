@@ -49,9 +49,19 @@ sub-point measurements and the importer rejects explicitly supplied sizes below
 one point.
 
 All imported Markdown is sanitized. Model-supplied images/media/frames cannot
-load; visuals use the already opened local PDF session. Markdown and raw table
-math use the existing KaTeX/MathML path. Figure/formula zoom and reading
-appearance reuse the existing reader.
+load; visuals use the already opened local PDF session. After sanitization,
+Markdown and raw table math use KaTeX's HTML visual layer with bundled local
+fonts and accessible MathML. Only the trusted renderer may generate math layout
+styles; imported HTML styles remain blocked. Mathematical alphabets therefore
+do not depend on a browser implementing legacy MathML `mathvariant` values.
+The KaTeX stylesheet is scoped to Ovis content and retains its upstream license.
+Figure/formula zoom and reading appearance reuse the existing reader.
+
+The original TeX remains in the formula's accessibility annotation. Ordinary
+text selection is not a structured-math or lossless-LaTeX clipboard export.
+Some bracket-delimited TeX containing URL-shaped text still conflicts with
+Markdown link boundaries; this renderer change does not claim complete TeX
+syntax support. Compare unfamiliar notation with the original PDF.
 
 ## Local cache
 

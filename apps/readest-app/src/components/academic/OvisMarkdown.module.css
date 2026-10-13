@@ -32,13 +32,34 @@
   padding: 0.35em 0.5em;
   vertical-align: top;
 }
-.content td math {
-  white-space: nowrap;
-}
-.content math[display='block'] {
+.content :global(.katex-display) {
   max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
   padding: 0.4em 0;
+}
+.content :global(.katex-display > .katex > .katex-html).tagged {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) max-content;
+  column-gap: 1em;
+  align-items: baseline;
+  width: max-content;
+  min-width: 100%;
+}
+.tagged > .equation {
+  grid-column: 1;
+}
+.content :global(.katex-display > .katex > .katex-html).tagged > :global(.tag) {
+  position: static;
+  grid-column: 2;
+  justify-self: end;
+}
+.content :global(.katex-mathml) {
+  /* Keep the accessible MathML, but copy only the visible formula once. */
+  user-select: none;
+}
+.content :global(.katex-error) {
+  color: #cc0000;
 }
 .content a {
   text-decoration: underline;

@@ -1,56 +1,86 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
+import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import { parseOvisMarkdown } from '@/services/academic/ovisMarkdown';
 import styles from './OvisMarkdown.module.css';
+import mathStyles from './OvisKatex.module.css';
+
+const mathOptions = { output: 'htmlAndMathml', trust: false, throwOnError: false } as const;
 
 /** Ovis prose stays selectable; source images are rendered by the existing PDF session. */
 export default function OvisMarkdown({ markdown }: { markdown: string }) {
   const root = useRef<HTMLDivElement>(null);
-  const html = useMemo(
-    () =>
-      DOMPurify.sanitize(parseOvisMarkdown(markdown), {
-        USE_PROFILES: { html: true, mathMl: true },
-        FORBID_TAGS: [
-          'img',
-          'picture',
-          'source',
-          'audio',
-          'video',
-          'iframe',
-          'object',
-          'embed',
-          'style',
-          'form',
-          'input',
-          'button',
-          'textarea',
-          'select',
-        ],
-        FORBID_ATTR: ['style', 'src', 'srcset', 'background'],
-      }),
-    [markdown],
-  );
-  useEffect(() => {
+  const html = useMemo(() => {
+    const content = document.createElement('div');
+    content.innerHTML = DOMPurify.sanitize(parseOvisMarkdown(markdown), {
+      USE_PROFILES: { html: true, mathMl: true },
+      ADD_TAGS: ['semantics', 'annotation'],
+      FORBID_TAGS: [
+        'img',
+        'picture',
+        'source',
+        'audio',
+        'video',
+        'iframe',
+        'object',
+        'embed',
+        'style',
+        'form',
+        'input',
+        'button',
+        'textarea',
+        'select',
+      ],
+      FORBID_ATTR: ['style', 'src', 'srcset', 'background'],
+    });
+    // Native MathML does not reliably distinguish mathematical alphabets.
+    // Only KaTeX may generate layout styles, after all model HTML is sanitized.
+    content.querySelectorAll('.katex > math').forEach((math) => {
+      const tex = math.querySelector('annotation[encoding="application/x-tex"]')?.textContent;
+      if (tex === undefined || tex === null) return;
+      const displayMode = math.getAttribute('display') === 'block';
+      const inline = math.parentElement!;
+      const original =
+        displayMode && inline.parentElement?.classList.contains('katex-display')
+          ? inline.parentElement
+          : inline;
+      const rendered = document.createElement('span');
+      katex.render(tex, rendered, { ...mathOptions, displayMode });
+      original.replaceWith(...rendered.childNodes);
+    });
     // Markdown's raw HTML table cells bypass its inline-math tokenizer.
-    root.current?.querySelectorAll('table').forEach((table) =>
+    content.querySelectorAll('table').forEach((table) =>
       renderMathInElement(table, {
+        ...mathOptions,
         delimiters: [
           { left: '$$', right: '$$', display: true },
           { left: '$', right: '$', display: false },
           { left: '\\(', right: '\\)', display: false },
           { left: '\\[', right: '\\]', display: true },
         ],
-        output: 'mathml',
-        trust: false,
-        throwOnError: false,
+        ignoredClasses: ['katex', 'katex-display', 'katex-error'],
       }),
     );
-  }, [html]);
+    // Keep the intrinsic equation and its number in separate columns. KaTeX's
+    // absolute tag placement overlaps long equations in a narrow reader.
+    content.querySelectorAll('.katex-display > .katex > .katex-html').forEach((math) => {
+      const tag = math.querySelector(':scope > .tag');
+      if (!tag) return;
+      const equation = document.createElement('span');
+      equation.className = styles['equation']!;
+      for (const node of Array.from(math.childNodes)) {
+        if (node !== tag) equation.appendChild(node);
+      }
+      math.classList.add(styles['tagged']!);
+      math.prepend(equation);
+    });
+    return content.innerHTML;
+  }, [markdown]);
   return (
     <div
       ref={root}
-      className={styles['content']}
+      className={`${styles['content']} ${mathStyles['math']}`}
       onClick={(event) => {
         const anchor = event.target instanceof Element ? event.target.closest('a') : null;
         const href = anchor?.getAttribute('href');
@@ -70,7 +100,7 @@ export default function OvisMarkdown({ markdown }: { markdown: string }) {
         target?.scrollIntoView({ block: 'start' });
         (target?.querySelector<HTMLElement>('button') ?? target)?.focus({ preventScroll: true });
       }}
-      // Both Markdown and table math are sanitized; no model-supplied media loads.
+      // Model HTML is sanitized before trusted, non-networked math rendering.
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
