@@ -1,8 +1,9 @@
 import { useMemo, useRef } from 'react';
-import DOMPurify from 'dompurify';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import { parseOvisMarkdown } from '@/services/academic/ovisMarkdown';
+import { sanitizeOvisMarkdown } from '@/services/academic/ovisMarkdownSanitizer';
+import { getOvisMathReplacement } from '@/services/academic/ovisMathReplacement';
 import styles from './OvisMarkdown.module.css';
 import mathStyles from './OvisKatex.module.css';
 
@@ -13,38 +14,13 @@ export default function OvisMarkdown({ markdown }: { markdown: string }) {
   const root = useRef<HTMLDivElement>(null);
   const html = useMemo(() => {
     const content = document.createElement('div');
-    content.innerHTML = DOMPurify.sanitize(parseOvisMarkdown(markdown), {
-      USE_PROFILES: { html: true, mathMl: true },
-      ADD_TAGS: ['semantics', 'annotation'],
-      FORBID_TAGS: [
-        'img',
-        'picture',
-        'source',
-        'audio',
-        'video',
-        'iframe',
-        'object',
-        'embed',
-        'style',
-        'form',
-        'input',
-        'button',
-        'textarea',
-        'select',
-      ],
-      FORBID_ATTR: ['style', 'src', 'srcset', 'background'],
-    });
+    content.innerHTML = sanitizeOvisMarkdown(parseOvisMarkdown(markdown));
     // Native MathML does not reliably distinguish mathematical alphabets.
     // Only KaTeX may generate layout styles, after all model HTML is sanitized.
     content.querySelectorAll('.katex > math').forEach((math) => {
-      const tex = math.querySelector('annotation[encoding="application/x-tex"]')?.textContent;
-      if (tex === undefined || tex === null) return;
-      const displayMode = math.getAttribute('display') === 'block';
-      const inline = math.parentElement!;
-      const original =
-        displayMode && inline.parentElement?.classList.contains('katex-display')
-          ? inline.parentElement
-          : inline;
+      const replacement = getOvisMathReplacement(math);
+      if (!replacement) return;
+      const { tex, displayMode, original } = replacement;
       const rendered = document.createElement('span');
       katex.render(tex, rendered, { ...mathOptions, displayMode });
       original.replaceWith(...rendered.childNodes);

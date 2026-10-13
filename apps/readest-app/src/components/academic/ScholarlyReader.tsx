@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import type { ViewSettings } from '@/types/book';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { AcademicPdfSession } from '@/services/academic/runtime';
 import type { ScholarlyBlock, ScholarlyDocument, SourceSpan } from '@/services/academic/types';
+import { linkedOvisFootnoteIds } from '@/services/academic/ovisFootnotes';
 import { visualRoleLabel } from './labels';
 import InlineContent from './InlineContent';
 import OvisMarkdown from './OvisMarkdown';
@@ -238,6 +239,139 @@ export default function ScholarlyReader({
     }),
   );
   const font = settings.defaultFont === 'Sans-serif' ? settings.sansSerifFont : settings.serifFont;
+  const [bodyRows, noteRows] = useMemo(() => {
+    // Group source-adjacent visuals before removing any intervening notes.
+    const rows = sourceVisualRows(scholarly.blocks);
+    const notes = linkedOvisFootnoteIds(scholarly);
+    return [
+      rows.map((row) => row.filter((block) => !notes.has(block.id))).filter((row) => row.length),
+      rows.map((row) => row.filter((block) => notes.has(block.id))).filter((row) => row.length),
+    ] as const;
+  }, [scholarly]);
+  const renderRow = (row: ScholarlyBlock[]) => {
+    const block = row[0]!;
+    const props = {
+      ...navigation.targetProps(block.id),
+      'data-block-id': block.id,
+      'data-source-page': block.source[0]?.page,
+    };
+    const content = (
+      <InlineContent
+        runs={block.inlineRuns}
+        references={navigation.references(block.id)}
+        text={block.text}
+        session={session}
+        fontSize={fontSize}
+        root={root}
+        onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
+      />
+    );
+    if (block.type === 'visual-region') {
+      const visuals = row.map((visual) => (
+        <VisualRegion
+          key={visual.id}
+          block={visual}
+          fontSize={fontSize}
+          sourceFontSize={
+            visual.role === 'equation' ? undefined : sourceFonts.get(visual.source[0]?.page ?? 0)
+          }
+          session={session}
+          root={root}
+          onZoom={onZoom}
+        />
+      ));
+      return row.length === 1 ? (
+        visuals[0]
+      ) : (
+        <div
+          key={block.id}
+          className={`grid items-start gap-x-6 ${row.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}
+        >
+          {visuals}
+        </div>
+      );
+    }
+    if (block.markdown !== undefined)
+      return (
+        <section
+          key={block.id}
+          {...props}
+          id={block.id}
+          tabIndex={-1}
+          role={block.type === 'footnote' ? 'note' : undefined}
+          className={
+            block.type === 'footnote'
+              ? 'mb-4 border-s-2 border-base-300 ps-3 text-[0.9em]'
+              : undefined
+          }
+        >
+          {block.footnoteMarker && <sup className='me-1'>{block.footnoteMarker}</sup>}
+          <OvisMarkdown markdown={block.markdown} />
+        </section>
+      );
+    if (block.type === 'heading')
+      return block.level === 1 ? (
+        <h1 key={block.id} {...props} className='mb-4 mt-8 text-[1.5em] font-semibold'>
+          {content}
+        </h1>
+      ) : (
+        <h2 key={block.id} {...props} className='mb-3 mt-7 text-[1.2em] font-semibold'>
+          {content}
+        </h2>
+      );
+    if (block.type === 'list') {
+      const items = block.listItems ?? [block.text];
+      const numbered = items.every((item) => /^\s*\d+[.)]/.test(item));
+      const children = items.map((item, index) => (
+        <li key={`${block.id}-${index}`} {...navigation.targetProps(block.id, index)}>
+          <InlineContent
+            runs={block.listInlineRuns?.[index]}
+            references={navigation.references(block.id, index)}
+            omitListMarker
+            text={item}
+            session={session}
+            fontSize={fontSize}
+            root={root}
+            onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
+          />
+        </li>
+      ));
+      return numbered ? (
+        <ol
+          key={block.id}
+          {...props}
+          start={Number(/^\s*(\d+)/.exec(items[0] ?? '')?.[1] ?? 1)}
+          className='mb-4 list-decimal space-y-1 pl-6'
+        >
+          {children}
+        </ol>
+      ) : (
+        <ul key={block.id} {...props} className='mb-4 list-disc space-y-1 pl-6'>
+          {children}
+        </ul>
+      );
+    }
+    if (block.type === 'footnote')
+      return (
+        <aside
+          key={block.id}
+          {...props}
+          role='note'
+          className='mb-4 border-s-2 border-base-300 ps-3 text-[0.9em] [&>sup:first-child]:me-1'
+        >
+          {content}
+        </aside>
+      );
+    return (
+      <p
+        key={block.id}
+        {...props}
+        className={block.type === 'reference' ? 'mb-3 pl-6 -indent-6 text-[0.95em]' : 'mb-4'}
+      >
+        {content}
+      </p>
+    );
+  };
   return (
     <>
       {navigation.entries.map((entry) => (
@@ -273,136 +407,13 @@ export default function ScholarlyReader({
             fontFamily: font ? `"${font}", serif` : 'serif',
           }}
         >
-          {sourceVisualRows(scholarly.blocks).map((row) => {
-            const block = row[0]!;
-            const props = {
-              ...navigation.targetProps(block.id),
-              'data-block-id': block.id,
-              'data-source-page': block.source[0]?.page,
-            };
-            const content = (
-              <InlineContent
-                runs={block.inlineRuns}
-                references={navigation.references(block.id)}
-                text={block.text}
-                session={session}
-                fontSize={fontSize}
-                root={root}
-                onZoom={(source, trimBelow) => onZoom(inlineZoomBlock(block, source, trimBelow))}
-              />
-            );
-            if (block.type === 'visual-region') {
-              const visuals = row.map((visual) => (
-                <VisualRegion
-                  key={visual.id}
-                  block={visual}
-                  fontSize={fontSize}
-                  sourceFontSize={
-                    visual.role === 'equation'
-                      ? undefined
-                      : sourceFonts.get(visual.source[0]?.page ?? 0)
-                  }
-                  session={session}
-                  root={root}
-                  onZoom={onZoom}
-                />
-              ));
-              return row.length === 1 ? (
-                visuals[0]
-              ) : (
-                <div
-                  key={block.id}
-                  className={`grid items-start gap-x-6 ${row.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}
-                >
-                  {visuals}
-                </div>
-              );
-            }
-            if (block.markdown !== undefined)
-              return (
-                <section
-                  key={block.id}
-                  {...props}
-                  id={block.id}
-                  tabIndex={-1}
-                  role={block.type === 'footnote' ? 'note' : undefined}
-                  className={
-                    block.type === 'footnote'
-                      ? 'mb-4 border-s-2 border-base-300 ps-3 text-[0.9em]'
-                      : undefined
-                  }
-                >
-                  {block.footnoteMarker && <sup className='me-1'>{block.footnoteMarker}</sup>}
-                  <OvisMarkdown markdown={block.markdown} />
-                </section>
-              );
-            if (block.type === 'heading')
-              return block.level === 1 ? (
-                <h1 key={block.id} {...props} className='mb-4 mt-8 text-[1.5em] font-semibold'>
-                  {content}
-                </h1>
-              ) : (
-                <h2 key={block.id} {...props} className='mb-3 mt-7 text-[1.2em] font-semibold'>
-                  {content}
-                </h2>
-              );
-            if (block.type === 'list') {
-              const items = block.listItems ?? [block.text];
-              const numbered = items.every((item) => /^\s*\d+[.)]/.test(item));
-              const children = items.map((item, index) => (
-                <li key={`${block.id}-${index}`} {...navigation.targetProps(block.id, index)}>
-                  <InlineContent
-                    runs={block.listInlineRuns?.[index]}
-                    references={navigation.references(block.id, index)}
-                    omitListMarker
-                    text={item}
-                    session={session}
-                    fontSize={fontSize}
-                    root={root}
-                    onZoom={(source, trimBelow) =>
-                      onZoom(inlineZoomBlock(block, source, trimBelow))
-                    }
-                  />
-                </li>
-              ));
-              return numbered ? (
-                <ol
-                  key={block.id}
-                  {...props}
-                  start={Number(/^\s*(\d+)/.exec(items[0] ?? '')?.[1] ?? 1)}
-                  className='mb-4 list-decimal space-y-1 pl-6'
-                >
-                  {children}
-                </ol>
-              ) : (
-                <ul key={block.id} {...props} className='mb-4 list-disc space-y-1 pl-6'>
-                  {children}
-                </ul>
-              );
-            }
-            if (block.type === 'footnote')
-              return (
-                <aside
-                  key={block.id}
-                  {...props}
-                  role='note'
-                  className='mb-4 border-s-2 border-base-300 ps-3 text-[0.9em] [&>sup:first-child]:me-1'
-                >
-                  {content}
-                </aside>
-              );
-            return (
-              <p
-                key={block.id}
-                {...props}
-                className={
-                  block.type === 'reference' ? 'mb-3 pl-6 -indent-6 text-[0.95em]' : 'mb-4'
-                }
-              >
-                {content}
-              </p>
-            );
-          })}
+          {bodyRows.map(renderRow)}
+          {noteRows.length > 0 && (
+            <section aria-label={_('Notes')} className='border-base-300 mt-8 border-t pt-5'>
+              <h2 className='mb-4 text-[1.2em] font-semibold'>{_('Notes')}</h2>
+              {noteRows.map(renderRow)}
+            </section>
+          )}
         </article>
       </div>
     </>

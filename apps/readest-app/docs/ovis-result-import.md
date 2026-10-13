@@ -63,6 +63,28 @@ Some bracket-delimited TeX containing URL-shaped text still conflicts with
 Markdown link boundaries; this renderer change does not claim complete TeX
 syntax support. Compare unfamiliar notation with the original PDF.
 
+## Collected Ovis notes
+
+An explicitly typed Ovis footnote with an unambiguous Markdown link from another
+non-footnote block is shown in a **Notes** section after the main reading flow.
+This keeps page-end notes from interrupting the next page's prose. Figure
+captions can provide the link too. Note text, labels, block IDs, source pages and
+existing return links are retained; repeated labels on different pages are not
+merged or renumbered.
+
+The reader uses the same Markdown parser and sanitizer as the displayed content;
+the Markdown-generated link must survive as a clickable HTML anchor. Link-like
+examples in code, mathematics or image descriptions do not move a note. Raw HTML
+links alone are not used to infer this relationship. Unlinked notes and notes
+with competing HTML targets remain in place. Native PDF footnotes, including
+author and publication information, keep their existing presentation.
+
+Collection changes only the displayed rows, not the imported bundle, cached
+reading order or source ownership. It does not merge split paragraphs, remove
+page numbers or invent missing references. Existing Ovis return links still
+point to their recorded block, which may be the first reference rather than the
+precise place most recently clicked.
+
 ## Local cache
 
 Ovis uses `academic/ovis/<pdf SHA>/`, independent of the native layout cache.

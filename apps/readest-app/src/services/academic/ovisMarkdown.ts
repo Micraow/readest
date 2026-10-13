@@ -1,6 +1,8 @@
 import katex from 'katex';
-import { Lexer, Marked, type Token, type TokenizerAndRendererExtension } from 'marked';
+import { Lexer, Marked, Renderer, type Token, type TokenizerAndRendererExtension } from 'marked';
 import markedKatex from 'marked-katex-extension';
+import { sanitizeOvisMarkdown } from './ovisMarkdownSanitizer';
+import { getOvisMathReplacement } from './ovisMathReplacement';
 
 const mathOptions = { output: 'mathml', trust: false, throwOnError: false } as const;
 // Complete TeX owns link/code-like text inside it. A closing delimiter inside
@@ -83,3 +85,39 @@ const ovisMarkdown = new Marked({ gfm: true }).use(
 /** OvisMarkdown sanitizes this result before inserting it into the reader. */
 export const parseOvisMarkdown = (markdown: string) =>
   ovisMarkdown.parse(markdown, { async: false });
+
+/** Match the reader's fragment semantics, using only surviving Markdown links. */
+export function ovisMarkdownFragmentTargets(markdown: string): string[] {
+  if (typeof document === 'undefined') return [];
+  const source = markdown.toLowerCase();
+  const prefix = 'data-readest-markdown-link';
+  let marker = prefix;
+  for (let suffix = 1; source.includes(marker); suffix++) marker = `${prefix}-${suffix}`;
+  // HTML attribute names cannot contain decoded entities. A name absent from
+  // the source (case-insensitively) cannot be supplied by a raw HTML anchor.
+  const renderer = new Renderer();
+  const renderLink = renderer.link.bind(renderer);
+  renderer.link = (token) => renderLink(token).replace(/^<a /, `<a ${marker}="" `);
+  const template = document.createElement('template');
+  template.innerHTML = sanitizeOvisMarkdown(
+    ovisMarkdown.parse(markdown, { async: false, renderer }),
+  );
+  // These containers are subsequently replaced in the real reader. Their
+  // original anchors do not survive, even when they passed sanitation.
+  for (const math of template.content.querySelectorAll('.katex > math')) {
+    getOvisMathReplacement(math)?.original.remove();
+  }
+  const targets: string[] = [];
+  for (const anchor of template.content.querySelectorAll(`a[${marker}]`)) {
+    if (anchor.namespaceURI !== 'http://www.w3.org/1999/xhtml') continue;
+    const href = anchor.getAttribute('href');
+    if (!href?.startsWith('#')) continue;
+    try {
+      const id = decodeURIComponent(href.slice(1));
+      if (id) targets.push(id);
+    } catch {
+      // The existing reader also ignores malformed percent escapes.
+    }
+  }
+  return targets;
+}
