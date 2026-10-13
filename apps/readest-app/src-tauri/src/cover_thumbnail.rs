@@ -1,5 +1,5 @@
 use crate::parser_common::{COVER_JPEG_QUALITY, COVER_MAX_LONG_EDGE, COVER_RESIZE_FILTER};
-use crate::transfer_file::ensure_path_allowed;
+use crate::transfer_file::{ensure_path_allowed, ensure_path_not_reserved};
 use image::{codecs::jpeg::JpegEncoder, GenericImageView};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, VecDeque};
@@ -171,6 +171,8 @@ pub fn optimize_cover_thumbnails<R: tauri::Runtime>(
 ) -> Result<(), String> {
     ensure_path_allowed(&app, &books_dir).map_err(|error| error.to_string())?;
     ensure_path_allowed(&app, &cache_dir).map_err(|error| error.to_string())?;
+    ensure_path_not_reserved(&app, Path::new(&books_dir)).map_err(|error| error.to_string())?;
+    ensure_path_not_reserved(&app, Path::new(&cache_dir)).map_err(|error| error.to_string())?;
 
     let jobs = build_jobs(Path::new(&books_dir), Path::new(&cache_dir), covers);
     let should_start = lock_queue().enqueue(jobs);
@@ -192,19 +194,23 @@ fn run_worker<R: tauri::Runtime>(app: AppHandle<R>) {
             }
         };
 
-        let outcome = catch_worker_panic(|| match create_or_reuse_thumbnail(&job) {
-            Ok(path) => {
-                let _ = app.emit(
-                    COVER_THUMBNAIL_READY_EVENT,
-                    CoverThumbnailReadyPayload {
-                        book_hash: job.book_hash.clone(),
-                        cover_hash: job.cover_hash.clone(),
-                        thumbnail_path: path.to_string_lossy().into_owned(),
-                    },
-                );
-            }
-            Err(error) => {
-                log::warn!("Cover thumbnail failed for {}: {error}", job.book_hash);
+        let outcome = catch_worker_panic(|| {
+            match create_or_reuse_thumbnail_checked(&job, |path| {
+                ensure_path_not_reserved(&app, path).map_err(|error| error.to_string())
+            }) {
+                Ok(path) => {
+                    let _ = app.emit(
+                        COVER_THUMBNAIL_READY_EVENT,
+                        CoverThumbnailReadyPayload {
+                            book_hash: job.book_hash.clone(),
+                            cover_hash: job.cover_hash.clone(),
+                            thumbnail_path: path.to_string_lossy().into_owned(),
+                        },
+                    );
+                }
+                Err(error) => {
+                    log::warn!("Cover thumbnail failed for {}: {error}", job.book_hash);
+                }
             }
         });
         if outcome.is_err() {
@@ -217,7 +223,13 @@ fn run_worker<R: tauri::Runtime>(app: AppHandle<R>) {
     }
 }
 
-fn create_or_reuse_thumbnail(job: &CoverJob) -> Result<PathBuf, String> {
+fn create_or_reuse_thumbnail_checked(
+    job: &CoverJob,
+    check_path: impl Fn(&Path) -> Result<(), String>,
+) -> Result<PathBuf, String> {
+    // Recheck in the worker, not only when the asynchronous job is queued.
+    // Do not demand the source for a completed cache checkpoint.
+    check_path(&job.destination)?;
     if fs::metadata(&job.destination)
         .map(|metadata| metadata.len() > 0)
         .unwrap_or(false)
@@ -225,16 +237,22 @@ fn create_or_reuse_thumbnail(job: &CoverJob) -> Result<PathBuf, String> {
         return Ok(job.destination.clone());
     }
 
+    check_path(&job.source)?;
     let bytes = fs::read(&job.source).map_err(|error| format!("read failed: {error}"))?;
     let thumbnail = encode_thumbnail(&bytes)?;
     let parent = job
         .destination
         .parent()
         .ok_or_else(|| "thumbnail destination has no parent".to_string())?;
+    let temporary = job.destination.with_extension("jpg.tmp");
+    check_path(parent)?;
+    check_path(&temporary)?;
     fs::create_dir_all(parent).map_err(|error| format!("create cache dir failed: {error}"))?;
 
-    let temporary = job.destination.with_extension("jpg.tmp");
+    check_path(&temporary)?;
     fs::write(&temporary, thumbnail).map_err(|error| format!("write failed: {error}"))?;
+    check_path(&job.destination)?;
+    check_path(&temporary)?;
     match fs::rename(&temporary, &job.destination) {
         Ok(()) => Ok(job.destination.clone()),
         Err(_) if job.destination.is_file() => {
@@ -246,6 +264,11 @@ fn create_or_reuse_thumbnail(job: &CoverJob) -> Result<PathBuf, String> {
             Err(format!("atomic rename failed: {error}"))
         }
     }
+}
+
+#[cfg(test)]
+fn create_or_reuse_thumbnail(job: &CoverJob) -> Result<PathBuf, String> {
+    create_or_reuse_thumbnail_checked(job, |_| Ok(()))
 }
 
 fn encode_thumbnail(bytes: &[u8]) -> Result<Vec<u8>, String> {
@@ -531,5 +554,155 @@ mod tests {
         assert_eq!(create_or_reuse_thumbnail(&cover).unwrap(), destination);
 
         fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    fn reservation_fixture(tag: &str) -> (PathBuf, CoverJob, crate::reserved_paths::ReservedPaths) {
+        let root = std::env::temp_dir().join(format!(
+            "readest-cover-reservation-{tag}-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(root.join("books")).unwrap();
+        fs::create_dir_all(root.join("private")).unwrap();
+        let source = root.join("books/cover.png");
+        let mut png = Vec::new();
+        image::DynamicImage::ImageRgb8(image::RgbImage::new(8, 12))
+            .write_to(&mut Cursor::new(&mut png), image::ImageFormat::Png)
+            .unwrap();
+        fs::write(&source, &png).unwrap();
+        fs::write(root.join("private/input.png"), &png).unwrap();
+        fs::write(root.join("private/sentinel"), b"unchanged").unwrap();
+        let policy = crate::reserved_paths::ReservedPaths::new([root.join("private")]).unwrap();
+        let cover = CoverJob {
+            book_hash: "a".repeat(32),
+            cover_hash: None,
+            source,
+            destination: root.join("cache/cover.jpg"),
+        };
+        (root, cover, policy)
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn reservation_preserves_thumbnail_creation_and_reopen_without_original() {
+        let (root, cover, policy) = reservation_fixture("ordinary");
+        let check = |path: &Path| {
+            policy
+                .resolve_unreserved(path)
+                .map(|_| ())
+                .map_err(|e| e.to_string())
+        };
+        assert_eq!(
+            create_or_reuse_thumbnail_checked(&cover, check).unwrap(),
+            cover.destination
+        );
+        let bytes = fs::read(&cover.destination).unwrap();
+        assert_eq!(
+            image::load_from_memory(&bytes).unwrap().dimensions(),
+            (8, 12)
+        );
+        fs::remove_file(&cover.source).unwrap();
+        assert_eq!(
+            create_or_reuse_thumbnail_checked(&cover, check).unwrap(),
+            cover.destination
+        );
+        assert_eq!(fs::read(&cover.destination).unwrap(), bytes);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn worker_rejects_source_destination_temporary_and_parent_aliases() {
+        for alias in ["source", "destination", "temporary", "parent"] {
+            let (root, cover, policy) = reservation_fixture(alias);
+            // Build the job first, then replace an I/O path before it runs.
+            fs::create_dir_all(cover.destination.parent().unwrap()).unwrap();
+            match alias {
+                "source" => {
+                    fs::remove_file(&cover.source).unwrap();
+                    std::os::unix::fs::symlink(root.join("private/input.png"), &cover.source)
+                        .unwrap();
+                }
+                "destination" => {
+                    std::os::unix::fs::symlink(root.join("private/sentinel"), &cover.destination)
+                        .unwrap()
+                }
+                "temporary" => std::os::unix::fs::symlink(
+                    root.join("private/sentinel"),
+                    cover.destination.with_extension("jpg.tmp"),
+                )
+                .unwrap(),
+                "parent" => {
+                    fs::remove_dir(root.join("cache")).unwrap();
+                    std::os::unix::fs::symlink(root.join("private"), root.join("cache")).unwrap();
+                }
+                _ => unreachable!(),
+            }
+            let error = create_or_reuse_thumbnail_checked(&cover, |path| {
+                policy
+                    .resolve_unreserved(path)
+                    .map(|_| ())
+                    .map_err(|e| e.to_string())
+            })
+            .unwrap_err();
+            assert!(error.contains("reserved native path"), "{alias}: {error}");
+            assert_eq!(
+                fs::read(root.join("private/sentinel")).unwrap(),
+                b"unchanged",
+                "{alias}"
+            );
+            assert!(!root.join("private/cover.jpg").exists());
+            if alias == "temporary" {
+                assert!(cover.destination.with_extension("jpg.tmp").is_symlink());
+            }
+            fs::remove_dir_all(root).unwrap();
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn unrelated_unavailable_resources_do_not_disable_cover_cache() {
+        use std::os::unix::fs::PermissionsExt;
+        for failure in ["dangling", "unsearchable"] {
+            let (root, cover, _) = reservation_fixture(&format!("resource-{failure}"));
+            let resources = root.join("resources");
+            fs::create_dir(&resources).unwrap();
+            if failure == "dangling" {
+                std::os::unix::fs::symlink("../absent-runtime", resources.join("local-ovis"))
+                    .unwrap();
+            } else {
+                fs::set_permissions(&resources, fs::Permissions::from_mode(0o000)).unwrap();
+            }
+            let result = (|| -> Result<(), String> {
+                let policy = crate::reserved_paths::ReservedPaths::new([
+                    resources.join("local-ovis"),
+                    root.join("private"),
+                ])
+                .map_err(|e| e.to_string())?;
+                let check = |path: &Path| {
+                    policy
+                        .resolve_unreserved(path)
+                        .map(|_| ())
+                        .map_err(|e| e.to_string())
+                };
+                create_or_reuse_thumbnail_checked(&cover, check)?;
+                fs::remove_file(&cover.source).unwrap();
+                create_or_reuse_thumbnail_checked(&cover, check)?;
+                assert!(policy
+                    .resolve_unreserved(&root.join("private/sentinel"))
+                    .is_err());
+                Ok(())
+            })();
+            fs::set_permissions(&resources, fs::Permissions::from_mode(0o755)).unwrap();
+            result.unwrap();
+            assert_eq!(
+                image::load_from_memory(&fs::read(&cover.destination).unwrap())
+                    .unwrap()
+                    .dimensions(),
+                (8, 12)
+            );
+            assert!(!root.join("absent-runtime").exists());
+            fs::remove_dir_all(root).unwrap();
+        }
     }
 }

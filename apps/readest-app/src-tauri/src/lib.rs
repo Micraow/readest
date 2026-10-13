@@ -48,6 +48,8 @@ mod nightly_update;
 mod parser_common;
 mod pdf_parser;
 mod range_file;
+#[cfg(target_os = "linux")]
+mod reserved_paths;
 mod sentry_config;
 #[cfg(desktop)]
 mod spawn_fresh_browser;

@@ -16,7 +16,9 @@ use tauri_plugin_fs::{FilePath, FsExt, OpenOptions};
 use zip::write::SimpleFileOptions;
 use zip::{CompressionMethod, ZipArchive, ZipWriter};
 
-use crate::transfer_file::ensure_path_allowed;
+use crate::transfer_file::{
+    ensure_entry_not_reserved, ensure_path_allowed, ensure_path_not_reserved,
+};
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -65,12 +67,14 @@ fn open_location<R: Runtime>(
     match &file_path {
         FilePath::Path(path) => {
             ensure_path_allowed(app, &path.to_string_lossy()).map_err(|e| e.to_string())?;
+            ensure_path_not_reserved(app, path).map_err(|e| e.to_string())?;
         }
         FilePath::Url(url) if url.scheme() == "file" => {
             let path = url
                 .to_file_path()
                 .map_err(|_| format!("invalid file URL: {location}"))?;
             ensure_path_allowed(app, &path.to_string_lossy()).map_err(|e| e.to_string())?;
+            ensure_path_not_reserved(app, &path).map_err(|e| e.to_string())?;
         }
         FilePath::Url(url) if url.scheme() == "content" => {}
         FilePath::Url(url) => return Err(format!("unsupported location scheme: {}", url.scheme())),
@@ -99,14 +103,22 @@ pub async fn write_backup_zip<R: Runtime>(
     on_progress: Channel<ZipProgress>,
 ) -> Result<(), String> {
     ensure_path_allowed(&app, &src_dir).map_err(|e| e.to_string())?;
+    ensure_path_not_reserved(&app, Path::new(&src_dir)).map_err(|e| e.to_string())?;
     let mut opts = OpenOptions::new();
     opts.write(true).create(true).truncate(true);
     let out = open_location(&app, &dest, opts)?;
     let src_dir = PathBuf::from(src_dir);
+    let entry_app = app.clone();
     let result = tauri::async_runtime::spawn_blocking(move || {
-        write_entries(out, &src_dir, &entries, |progress| {
-            let _ = on_progress.send(progress);
-        })
+        write_entries_checked(
+            out,
+            &src_dir,
+            &entries,
+            |path| ensure_path_not_reserved(&entry_app, path).map_err(|e| e.to_string()),
+            |progress| {
+                let _ = on_progress.send(progress);
+            },
+        )
     })
     .await
     .map_err(|e| format!("join error: {e}"));
@@ -123,14 +135,22 @@ pub async fn extract_backup_zip<R: Runtime>(
     on_progress: Channel<ZipProgress>,
 ) -> Result<(), String> {
     ensure_path_allowed(&app, &dest_dir).map_err(|e| e.to_string())?;
+    ensure_path_not_reserved(&app, Path::new(&dest_dir)).map_err(|e| e.to_string())?;
     let mut opts = OpenOptions::new();
     opts.read(true);
     let archive = open_location(&app, &src, opts)?;
     let dest_dir = PathBuf::from(dest_dir);
+    let entry_app = app.clone();
     let result = tauri::async_runtime::spawn_blocking(move || {
-        extract_entries(archive, &dest_dir, &entries, |progress| {
-            let _ = on_progress.send(progress);
-        })
+        extract_entries_checked(
+            archive,
+            &dest_dir,
+            &entries,
+            |path| ensure_entry_not_reserved(&entry_app, path).map_err(|e| e.to_string()),
+            |progress| {
+                let _ = on_progress.send(progress);
+            },
+        )
     })
     .await
     .map_err(|e| format!("join error: {e}"));
@@ -138,10 +158,11 @@ pub async fn extract_backup_zip<R: Runtime>(
     result?
 }
 
-fn write_entries<W: Write + Seek>(
+fn write_entries_checked<W: Write + Seek>(
     out: W,
     src_dir: &Path,
     entries: &[BackupEntry],
+    check_path: impl Fn(&Path) -> Result<(), String>,
     mut on_progress: impl FnMut(ZipProgress),
 ) -> Result<(), String> {
     for entry in entries.iter().filter(|e| e.content.is_none()) {
@@ -167,7 +188,15 @@ fn write_entries<W: Write + Seek>(
             continue;
         }
         files += 1;
-        let mut src = match File::open(src_dir.join(&entry.name)) {
+        let path = src_dir.join(&entry.name);
+        if let Err(error) = check_path(&path) {
+            // Match the existing unreadable-file behavior without ever opening
+            // the reserved source. An all-skipped backup still fails below.
+            log::warn!("Skipping backup entry {}: {error}", entry.name);
+            skipped += 1;
+            continue;
+        }
+        let mut src = match File::open(path) {
             Ok(file) => file,
             Err(err) => {
                 // Same as the JS writer: an unreadable file is skipped,
@@ -199,10 +228,11 @@ fn write_entries<W: Write + Seek>(
         .map_err(|e| e.to_string())
 }
 
-fn extract_entries<R: Read + Seek>(
+fn extract_entries_checked<R: Read + Seek>(
     archive: R,
     dest_dir: &Path,
     entries: &[String],
+    check_path: impl Fn(&Path) -> Result<(), String>,
     mut on_progress: impl FnMut(ZipProgress),
 ) -> Result<(), String> {
     for name in entries {
@@ -218,9 +248,17 @@ fn extract_entries<R: Read + Seek>(
         });
         let mut file = archive.by_name(name).map_err(|e| format!("{name}: {e}"))?;
         let dest = dest_dir.join(name);
+        let tmp = PathBuf::from(format!("{}.part", dest.display()));
+        // Authorize directory entries, not just the caller's parent. Unlink and
+        // rename replace a leaf link without following it; create_new refuses a
+        // remaining leaf. The guard must still resolve all parent directories.
+        check_path(&dest)?;
+        check_path(&tmp)?;
         let parent = dest
             .parent()
             .ok_or_else(|| format!("{name}: no parent dir"))?;
+        // The entry checks above already resolve this parent fully; do not
+        // misclassify the directory itself as an unlink/rename leaf (e.g. /).
         std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
         // A symlink already under the destination must not lead the write
         // out of it: resolve the parent and require it to stay inside.
@@ -235,7 +273,8 @@ fn extract_entries<R: Read + Seek>(
         // Land the bytes next to the target and rename on success, so a
         // corrupt entry cannot truncate the book the user already has.
         // `create_new` refuses to follow a symlink left in the temp's place.
-        let tmp = PathBuf::from(format!("{}.part", dest.display()));
+        check_path(&dest)?;
+        check_path(&tmp)?;
         let _ = std::fs::remove_file(&tmp);
         let mut out = std::fs::OpenOptions::new()
             .write(true)
@@ -248,9 +287,31 @@ fn extract_entries<R: Read + Seek>(
             let _ = std::fs::remove_file(&tmp);
             return Err(err);
         }
+        check_path(&dest)?;
+        check_path(&tmp)?;
         std::fs::rename(&tmp, &dest).map_err(|e| format!("{}: {e}", dest.display()))?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+fn write_entries<W: Write + Seek>(
+    out: W,
+    src_dir: &Path,
+    entries: &[BackupEntry],
+    on_progress: impl FnMut(ZipProgress),
+) -> Result<(), String> {
+    write_entries_checked(out, src_dir, entries, |_| Ok(()), on_progress)
+}
+
+#[cfg(test)]
+fn extract_entries<R: Read + Seek>(
+    archive: R,
+    dest_dir: &Path,
+    entries: &[String],
+    on_progress: impl FnMut(ZipProgress),
+) -> Result<(), String> {
+    extract_entries_checked(archive, dest_dir, entries, |_| Ok(()), on_progress)
 }
 
 #[cfg(test)]
@@ -428,5 +489,254 @@ mod tests {
         let _ = std::fs::remove_dir_all(outside);
         let _ = std::fs::remove_dir_all(dest);
         let _ = std::fs::remove_dir_all(src);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn reserved_sources_are_never_exported_but_ordinary_books_still_round_trip() {
+        let root = temp_dir("reservation-roundtrip");
+        let private = root.join("local-ovis-private");
+        std::fs::create_dir(&private).unwrap();
+        std::fs::write(private.join("input.pdf"), b"private input").unwrap();
+        std::fs::write(root.join("book.epub"), b"ordinary book").unwrap();
+        let policy = crate::reserved_paths::ReservedPaths::new([private.clone()]).unwrap();
+        let check = |path: &Path| {
+            policy
+                .resolve_unreserved(path)
+                .map(|_| ())
+                .map_err(|e| e.to_string())
+        };
+        let mut zip = Cursor::new(Vec::new());
+        write_entries_checked(
+            &mut zip,
+            &root,
+            &[
+                file_entry("local-ovis-private/input.pdf"),
+                file_entry("book.epub"),
+                BackupEntry {
+                    name: "library.json".into(),
+                    content: Some("[]".into()),
+                },
+            ],
+            check,
+            |_| {},
+        )
+        .unwrap();
+        let bytes = zip.into_inner();
+        let mut archive = ZipArchive::new(Cursor::new(bytes.clone())).unwrap();
+        assert_eq!(archive.len(), 2);
+        assert!(archive.by_name("local-ovis-private/input.pdf").is_err());
+        let dest = root.join("restore");
+        std::fs::create_dir(&dest).unwrap();
+        extract_entries_checked(
+            Cursor::new(bytes),
+            &dest,
+            &["book.epub".into(), "library.json".into()],
+            check,
+            |_| {},
+        )
+        .unwrap();
+        assert_eq!(
+            std::fs::read(dest.join("book.epub")).unwrap(),
+            b"ordinary book"
+        );
+        assert_eq!(std::fs::read(dest.join("library.json")).unwrap(), b"[]");
+        // Reopening the restored bytes and streaming them to an in-memory sink
+        // exercises ordinary file I/O without performing a network transfer.
+        let mut reopened = File::open(dest.join("book.epub")).unwrap();
+        let mut sink = Vec::new();
+        io::copy(&mut reopened, &mut sink).unwrap();
+        assert_eq!(sink, b"ordinary book");
+        let error = write_entries_checked(
+            Cursor::new(Vec::new()),
+            &root,
+            &[file_entry("local-ovis-private/input.pdf")],
+            check,
+            |_| {},
+        )
+        .unwrap_err();
+        assert!(error.contains("none of the 1 book files"));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn restore_cannot_create_a_reserved_child_under_an_allowed_parent() {
+        let root = temp_dir("reserved-restore");
+        let private = root.join("local-ovis-private");
+        let policy = crate::reserved_paths::ReservedPaths::new([private.clone()]).unwrap();
+        let name = "local-ovis-private/new/input.pdf";
+        let mut zip = Cursor::new(Vec::new());
+        write_entries(
+            &mut zip,
+            &root,
+            &[BackupEntry {
+                name: name.into(),
+                content: Some("new input".into()),
+            }],
+            |_| {},
+        )
+        .unwrap();
+        let error = extract_entries_checked(
+            Cursor::new(zip.into_inner()),
+            &root,
+            &[name.into()],
+            |path| {
+                policy
+                    .resolve_unreserved(path)
+                    .map(|_| ())
+                    .map_err(|e| e.to_string())
+            },
+            |_| {},
+        )
+        .unwrap_err();
+        assert!(error.contains("reserved native path"));
+        assert!(!private.exists(), "denial must precede even create_dir_all");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn restore_unlinks_only_temporary_entry_not_its_reserved_target() {
+        let root = temp_dir("reserved-temp-alias");
+        let private = root.join("private");
+        std::fs::create_dir(&private).unwrap();
+        std::fs::write(private.join("sentinel"), b"unchanged").unwrap();
+        let temporary = root.join("book.epub.part");
+        std::os::unix::fs::symlink(private.join("sentinel"), &temporary).unwrap();
+        let policy = crate::reserved_paths::ReservedPaths::new([private.clone()]).unwrap();
+        let mut zip = Cursor::new(Vec::new());
+        write_entries(
+            &mut zip,
+            &root,
+            &[BackupEntry {
+                name: "book.epub".into(),
+                content: Some("book".into()),
+            }],
+            |_| {},
+        )
+        .unwrap();
+        extract_entries_checked(
+            Cursor::new(zip.into_inner()),
+            &root,
+            &["book.epub".into()],
+            |path| {
+                policy
+                    .resolve_entry_unreserved(path)
+                    .map(|_| ())
+                    .map_err(|e| e.to_string())
+            },
+            |_| {},
+        )
+        .unwrap();
+        assert!(!temporary.exists());
+        assert_eq!(
+            std::fs::read(private.join("sentinel")).unwrap(),
+            b"unchanged"
+        );
+        assert_eq!(std::fs::read(root.join("book.epub")).unwrap(), b"book");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn restore_preserves_old_handling_of_an_ordinary_dangling_temporary_link() {
+        let root = temp_dir("ordinary-dangling-temp");
+        let temporary = root.join("book.epub.part");
+        let missing = root.join("unrelated-missing-file");
+        std::os::unix::fs::symlink(&missing, &temporary).unwrap();
+        let policy = crate::reserved_paths::ReservedPaths::new([root.join("private")]).unwrap();
+        let mut zip = Cursor::new(Vec::new());
+        write_entries(
+            &mut zip,
+            &root,
+            &[BackupEntry {
+                name: "book.epub".into(),
+                content: Some("restored".into()),
+            }],
+            |_| {},
+        )
+        .unwrap();
+        extract_entries_checked(
+            Cursor::new(zip.into_inner()),
+            &root,
+            &["book.epub".into()],
+            |path| {
+                policy
+                    .resolve_entry_unreserved(path)
+                    .map(|_| ())
+                    .map_err(|e| e.to_string())
+            },
+            |_| {},
+        )
+        .unwrap();
+        assert_eq!(std::fs::read(root.join("book.epub")).unwrap(), b"restored");
+        assert!(!missing.exists());
+        assert!(!temporary.exists());
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn unrelated_unavailable_resources_do_not_disable_book_backup_and_restore() {
+        use std::os::unix::fs::PermissionsExt;
+        for failure in ["dangling", "unsearchable"] {
+            let root = temp_dir(&format!("ordinary-resource-{failure}"));
+            let resources = root.join("resources");
+            std::fs::create_dir(&resources).unwrap();
+            std::fs::create_dir(root.join("restored")).unwrap();
+            std::fs::write(root.join("book.epub"), b"ordinary").unwrap();
+            if failure == "dangling" {
+                std::os::unix::fs::symlink("../absent-runtime", resources.join("local-ovis"))
+                    .unwrap();
+            } else {
+                std::fs::set_permissions(&resources, std::fs::Permissions::from_mode(0o000))
+                    .unwrap();
+            }
+            let result = (|| -> Result<(), String> {
+                let policy = crate::reserved_paths::ReservedPaths::new([
+                    resources.join("local-ovis"),
+                    root.join("local-ovis-private"),
+                ])
+                .map_err(|e| e.to_string())?;
+                let mut zip = Cursor::new(Vec::new());
+                write_entries_checked(
+                    &mut zip,
+                    &root,
+                    &[file_entry("book.epub")],
+                    |path| {
+                        policy
+                            .resolve_unreserved(path)
+                            .map(|_| ())
+                            .map_err(|e| e.to_string())
+                    },
+                    |_| {},
+                )?;
+                extract_entries_checked(
+                    Cursor::new(zip.into_inner()),
+                    &root.join("restored"),
+                    &["book.epub".into()],
+                    |path| {
+                        policy
+                            .resolve_entry_unreserved(path)
+                            .map(|_| ())
+                            .map_err(|e| e.to_string())
+                    },
+                    |_| {},
+                )?;
+                assert!(policy
+                    .resolve_unreserved(&root.join("local-ovis-private/input.pdf"))
+                    .is_err());
+                Ok(())
+            })();
+            std::fs::set_permissions(&resources, std::fs::Permissions::from_mode(0o755)).unwrap();
+            result.unwrap();
+            assert_eq!(
+                std::fs::read(root.join("restored/book.epub")).unwrap(),
+                b"ordinary"
+            );
+            assert!(!root.join("absent-runtime").exists());
+            std::fs::remove_dir_all(root).unwrap();
+        }
     }
 }

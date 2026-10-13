@@ -177,6 +177,52 @@ pub(crate) fn ensure_path_allowed<R: tauri::Runtime>(
     Err(Error::Forbidden(file_path.to_string()))
 }
 
+/// Additional deny-only boundary for derived ZIP/thumbnail paths on Linux.
+/// This does not grant access, register inference commands, or replace the
+/// existing filesystem authorization. Other native/plugin routes remain a
+/// separate prerequisite before a local inference capability can be enabled.
+pub(crate) fn ensure_path_not_reserved<R: tauri::Runtime>(
+    _app: &AppHandle<R>,
+    _path: &Path,
+) -> Result<()> {
+    #[cfg(target_os = "linux")]
+    {
+        native_path_reservations(_app)?.resolve_unreserved(_path)?;
+    }
+    Ok(())
+}
+
+/// For operations which never follow the leaf: unlink, rename and create_new.
+/// Reads and ordinary writes must use ensure_path_not_reserved instead.
+pub(crate) fn ensure_entry_not_reserved<R: tauri::Runtime>(
+    _app: &AppHandle<R>,
+    _path: &Path,
+) -> Result<()> {
+    #[cfg(target_os = "linux")]
+    {
+        native_path_reservations(_app)?.resolve_entry_unreserved(_path)?;
+    }
+    Ok(())
+}
+
+#[cfg(target_os = "linux")]
+fn native_path_reservations<R: tauri::Runtime>(
+    app: &AppHandle<R>,
+) -> Result<crate::reserved_paths::ReservedPaths> {
+    let resource = app
+        .path()
+        .resource_dir()
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
+    let local_data = app
+        .path()
+        .app_local_data_dir()
+        .map_err(|error| std::io::Error::other(error.to_string()))?;
+    Ok(crate::reserved_paths::ReservedPaths::new([
+        resource.join("local-ovis"),
+        local_data.join("local-ovis-private"),
+    ])?)
+}
+
 impl Serialize for Error {
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
