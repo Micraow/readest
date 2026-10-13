@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import renderMathInElement from 'katex/contrib/auto-render';
-import { parseNoteMarkdown } from '@/app/reader/utils/noteMarkdown';
+import { parseOvisMarkdown } from '@/services/academic/ovisMarkdown';
 import styles from './OvisMarkdown.module.css';
 
 /** Ovis prose stays selectable; source images are rendered by the existing PDF session. */
@@ -9,7 +9,7 @@ export default function OvisMarkdown({ markdown }: { markdown: string }) {
   const root = useRef<HTMLDivElement>(null);
   const html = useMemo(
     () =>
-      DOMPurify.sanitize(parseNoteMarkdown(markdown), {
+      DOMPurify.sanitize(parseOvisMarkdown(markdown), {
         USE_PROFILES: { html: true, mathMl: true },
         FORBID_TAGS: [
           'img',

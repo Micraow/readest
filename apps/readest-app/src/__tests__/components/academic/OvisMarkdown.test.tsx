@@ -11,6 +11,110 @@ describe('Ovis content in the existing reader', () => {
     expect(container.querySelectorAll('math')).toHaveLength(3);
     expect(container.textContent).not.toContain('$');
   });
+  it.each([
+    ['Astronomy: \\(r^2 + h^2\\) is selectable.', 'r2+h2'],
+    ['更换标题：\\(\\nu + v\\) 保留原始符号。', 'ν+v'],
+  ])('renders standard inline TeX delimiters without content-specific rules: %s', (markdown, expectedMath) => {
+    const { container } = render(<OvisMarkdown markdown={markdown} />);
+    expect(container.querySelectorAll('math')).toHaveLength(1);
+    expect(container.querySelector('math mrow')?.textContent).toBe(expectedMath);
+    expect(container.querySelector('math')?.getAttribute('display')).not.toBe('block');
+  });
+  it.each([
+    ['soft-wrapped inline', 'A \\(x +\n\\nu\\) result.', 1, null],
+    ['compact comparisons', String.raw`\(x<y>z\)`, 1, null],
+    ['bracket product', String.raw`A \([x](y)\) product.`, 1, null],
+    ['matrix', String.raw`\(\begin{bmatrix}a&b\\c&d\end{bmatrix}\)`, 1, null],
+    ['complete code-like TeX text', '\\(\\text{`label`}+x\\)', 1, null],
+    ['blank paragraph', 'A \\(x +\n\n y\\) result.', 0, null],
+    ['soft-wrapped code span', 'A \\(x +\n`code \\) literal` after.', 0, 'code'],
+    ['soft-wrapped link', 'A \\(x +\n[link](https://example.org/\\)) after.', 0, 'a'],
+    ['nested code', 'A \\(x +\n**`code \\) literal`** after.', 0, 'code'],
+    ['HTML code', 'A \\(x +\n<code>code \\) literal</code> after.', 0, 'code'],
+    ['single-line code', 'A \\(x + `code \\) literal` after.', 0, 'code'],
+    ['bare URL', 'A \\(x+\nhttps://example.org/y\\) after.', 0, 'a'],
+    ['single-line link', String.raw`A \(x + [link](https://example.org/\)) after.`, 0, 'a'],
+    ['enclosed raw HTML code', String.raw`\(x + <code>y</code>\)`, 0, 'code'],
+    ['unclosed inline', String.raw`A \(x + y result.`, 0, null],
+  ] as const)('applies delimiter precedence to %s', (_name, markdown, count, retainedTag) => {
+    const { container } = render(<OvisMarkdown markdown={markdown} />);
+    expect(container.querySelectorAll('math')).toHaveLength(count);
+    if (retainedTag) expect(container.querySelector(retainedTag)).toBeTruthy();
+    if (count) expect(container.querySelector('a, code')).toBeNull();
+  });
+  it('renders multiline bracket-delimited equations as selectable display math', () => {
+    const { container } = render(
+      <OvisMarkdown markdown={'Before.\n\n\\[\n\\frac{a}{b} + \\nu \\tag{S.9}\n\\]\n\nAfter.'} />,
+    );
+    expect(container.querySelectorAll('math[display="block"]')).toHaveLength(1);
+    expect(container.textContent).toContain('Before.');
+    expect(container.textContent).toContain('After.');
+    expect(container.querySelector('img')).toBeNull();
+  });
+  it('leaves TeX delimiters in code, escaped literals and unclosed delimiters unchanged', () => {
+    const { container } = render(
+      <OvisMarkdown
+        markdown={
+          '`\\(code\\)`\n\n```tex\n\\[not math\\]\n```\n\n\\\\(literal\\\\) and an unclosed \\(formula.'
+        }
+      />,
+    );
+    expect(container.querySelectorAll('math')).toHaveLength(0);
+    expect(container.querySelectorAll('code')[0]?.textContent).toBe('\\(code\\)');
+    expect(container.querySelectorAll('code')[1]?.textContent).toContain('\\[not math\\]');
+    expect(container.textContent).toContain('\\(literal\\)');
+  });
+  it('keeps blank lines inside a display equation out of Markdown paragraph splitting', () => {
+    const { container } = render(
+      <OvisMarkdown
+        markdown={'\\[\n\\begin{aligned}\nx &= 1 \\\\\n y &= 2\n\\end{aligned}\n\\]'}
+      />,
+    );
+    expect(container.querySelectorAll('math[display="block"]')).toHaveLength(1);
+    expect(container.querySelector('p')).toBeNull();
+  });
+  it('preserves standard TeX inside raw inline HTML code', () => {
+    const markdown = String.raw`Example <code>\(not math\)</code> followed by \(x^2\).`;
+    const { container } = render(<OvisMarkdown markdown={markdown} />);
+    expect(container.querySelector('code')?.textContent).toBe(String.raw`\(not math\)`);
+    expect(container.querySelector('code math')).toBeNull();
+    expect(container.querySelectorAll('math')).toHaveLength(1);
+  });
+  it('preserves both math syntaxes inside HTML code and resumes after the closing tag', () => {
+    const { container } = render(
+      <OvisMarkdown markdown={String.raw`<code>$x$ \(y\)</code> then $z$ and \(w\).`} />,
+    );
+    expect(container.querySelector('code')?.textContent).toBe(String.raw`$x$ \(y\)`);
+    expect(container.querySelector('code math')).toBeNull();
+    expect(container.querySelectorAll('math')).toHaveLength(2);
+  });
+  it('does not trust links or media requested from TeX', () => {
+    const { container } = render(
+      <OvisMarkdown
+        markdown={
+          '\\(\\href{javascript:alert(1)}{run}\\) and \\[\\includegraphics{https://example.org/tracker}\\]'
+        }
+      />,
+    );
+    expect(container.querySelector('a, img, iframe, [src]')).toBeNull();
+  });
+  it('is independent of page labels and renamed content for a held-out formula', () => {
+    const expression = '\\sum_{k=1}^{m} \\frac{\\alpha_k}{1+z_k^2}';
+    const math = [];
+    for (const title of ['# Unseen Section 28', '# Renamed Manual B', '# 新的章节']) {
+      const { container, unmount } = render(
+        <OvisMarkdown
+          markdown={`${title}\n\n- Value \\(${expression}\\).\n\n\\[${expression}\\]`}
+        />,
+      );
+      expect(container.querySelectorAll('math')).toHaveLength(2);
+      expect(container.querySelector('li math')).toBeTruthy();
+      math.push(Array.from(container.querySelectorAll('math'), (element) => element.outerHTML));
+      unmount();
+    }
+    expect(math[1]).toEqual(math[0]);
+    expect(math[2]).toEqual(math[0]);
+  });
   it('preserves ordered-list starts and list items', () => {
     const { container } = render(
       <OvisMarkdown markdown={'4. First step\n5. Second step\n\n- Bullet'} />,
