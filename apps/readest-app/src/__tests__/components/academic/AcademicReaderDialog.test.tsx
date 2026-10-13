@@ -82,6 +82,27 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 describe('manual academic reading session', () => {
+  it('explains unavailable local inference while keeping result import usable', async () => {
+    render(
+      <AcademicReaderDialog
+        file={new File(['%PDF-'], 'test.pdf')}
+        title='Paper'
+        onClose={vi.fn()}
+      />,
+    );
+    await screen.findByText('A continuous academic paragraph');
+    expect(
+      screen.getByText(
+        'Local Ovis inference is unavailable in this build. You can import a previously generated Ovis result.',
+      ),
+    ).toBeTruthy();
+    expect(
+      (screen.getByRole('button', { name: 'Import Ovis result' }) as HTMLButtonElement).disabled,
+    ).toBe(false);
+    expect(mocks.importOvis).not.toHaveBeenCalled();
+    expect(mocks.service.readFile).not.toHaveBeenCalled();
+  });
+
   it('adjusts the current PDF typography without changing book settings or analyzing again', async () => {
     const viewSettings = { defaultFontSize: 20, lineHeight: 1.7, serifFont: 'Bitter' };
     render(

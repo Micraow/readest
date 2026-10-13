@@ -426,6 +426,11 @@ export default function AcademicReaderDialog({
             />
           )}
         </header>
+        <p className='text-base-content/70 border-base-300 border-b px-4 py-2 text-sm'>
+          {_(
+            'Local Ovis inference is unavailable in this build. You can import a previously generated Ovis result.',
+          )}
+        </p>
         {importing && (
           <p role='status' className='px-4 py-2 text-sm'>
             {_('Preparing reading mode…')}

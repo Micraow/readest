@@ -1,4 +1,5 @@
 {
+  "Local Ovis inference is unavailable in this build. You can import a previously generated Ovis result.": "此版本暂不支持本地 Ovis 推理。你可以导入已生成的 Ovis 结果。",
   "On hold": "搁置中",
   "Mark as On hold": "标记为搁置",
   "(detected)": "(检测到)",
