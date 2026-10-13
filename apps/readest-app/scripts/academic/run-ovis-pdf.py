@@ -121,16 +121,41 @@ def reap_group(group):
             return
 
 
+def observe_child_exit(child):
+    """Observe exit without releasing our group leader's PID to the kernel."""
+    while True:
+        try:
+            return os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+        except InterruptedError:
+            continue
+
+
+def owns_child(child):
+    # Ignored SIGCHLD can auto-reap a child despite WNOWAIT. Imported callers
+    # must also have the default disposition and no concurrent child reaper.
+    if child.returncode is not None or signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL:
+        return False
+    try:
+        observe_child_exit(child)
+        return True
+    except ChildProcessError:
+        return False
+
+
 def stop_group(child, grace):
+    # The group leader must remain our unreaped child through the final signal.
+    # Otherwise PID/PGID reuse could redirect killpg to an unrelated new group.
+    if not owns_child(child):
+        return False
     signal_group(child.pid, signal.SIGTERM)
     deadline = time.monotonic() + grace
     while time.monotonic() < deadline:
-        child.poll()
-        if child.returncode is not None:
-            reap_group(child.pid)
-        if not process_group(child.pid)[0]:
+        # Do not poll()/wait()/reap_group here: any may release the leader.
+        if all(state == 'Z' for _, state in process_group(child.pid)[0]):
             break
         time.sleep(0.025)
+    if not owns_child(child):
+        return False
     signal_group(child.pid, signal.SIGKILL)
     child.wait()  # Always reap the direct child, including after parent SIGINT.
     deadline = time.monotonic() + max(grace, 1)
@@ -153,6 +178,8 @@ def child_environment(threads):
 
 
 def infer(command, page_dir, args, deadline, source, identity):
+    if signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL:
+        raise ValueError('Inference requires default SIGCHLD and exclusive child ownership')
     receipt = {'format': 'readest-ovis-page-execution', 'version': 1,
                'source': source, 'identity': identity, 'status': 'starting',
                'nativeFinishReason': 'unknown', 'generationCompleteness': 'unknown',
@@ -178,23 +205,31 @@ def infer(command, page_dir, args, deadline, source, identity):
                     receipt['status'] = 'timeout'
                 elif rss > args.max_rss_mib * 1024 * 1024:
                     receipt['status'] = 'rss-limit'
-                elif child.poll() is not None:
-                    receipt['status'] = 'process-completed' if child.returncode == 0 else 'nonzero-exit'
+                elif (exit_info := observe_child_exit(child)) is not None:
+                    receipt['status'] = ('process-completed'
+                                         if exit_info.si_code == os.CLD_EXITED and exit_info.si_status == 0
+                                         else 'nonzero-exit')
                     break
                 else:
                     time.sleep(0.025)
                     continue
                 break
+    except ChildProcessError as error:
+        receipt['status'] = 'ownership-lost'
+        raise RunStopped('Child ownership was lost; refusing process-group signals') from error
     finally:
         if child is not None:
-            if child.poll() is not None:
+            owned = owns_child(child)
+            if not owned:
+                receipt['status'] = 'ownership-lost'
+            elif observe_child_exit(child) is not None:
                 remaining = [pid for pid, state in process_group(child.pid)[0] if state != 'Z']
                 receipt['liveDescendantsAfterChildExit'] = remaining
                 if remaining and receipt['status'] == 'process-completed':
                     receipt['status'] = 'unexpected-descendants'
-            receipt['processGroupStopped'] = stop_group(child, args.kill_grace_seconds)
-            receipt['childReaped'] = child.returncode is not None
-            receipt['exitCode'] = child.returncode
+            receipt['processGroupStopped'] = stop_group(child, args.kill_grace_seconds) if owned else False
+            receipt['childReaped'] = owned and child.returncode is not None
+            receipt['exitCode'] = child.returncode if owned else None
         receipt['elapsedSeconds'] = round(time.monotonic() - started, 6)
         # Preserve and hash raw bytes even for failed/cancelled children. The
         # cancellation-aware source hasher must not prevent this terminal audit.
@@ -437,6 +472,9 @@ def main():
     args = parser().parse_args()
     signal.signal(signal.SIGINT, cancel)
     signal.signal(signal.SIGTERM, cancel)
+    # exec preserves SIG_IGN. Own all waits in this single-process CLI instead
+    # of letting an inherited ignored disposition auto-reap group leaders.
+    signal.signal(signal.SIGCHLD, signal.SIG_DFL)
     try:
         receipt = run(args)
     except (ValueError, OSError, RuntimeError, UnicodeError, OverflowError) as error:

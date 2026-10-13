@@ -1,5 +1,6 @@
 """Original synthetic PDFs and fake local children; no models or network needed."""
 import hashlib
+import importlib.util
 import json
 import os
 import pathlib
@@ -9,6 +10,8 @@ import sys
 import tempfile
 import time
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import fitz
 
@@ -134,6 +137,14 @@ class RunnerTests(unittest.TestCase):
             self.assertIn('--no-mmproj-offload', child['args'])
             self.assertEqual(child['args'][child['args'].index('--flash-attn') + 1], 'on')
 
+    def test_cli_resets_inherited_ignored_sigchld_before_spawning(self):
+        result = subprocess.run(
+            self.command(), capture_output=True, text=True, timeout=15,
+            preexec_fn=lambda: signal.signal(signal.SIGCHLD, signal.SIG_IGN))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        receipt = json.loads((self.output / 'result/run.json').read_text())
+        self.assertEqual(receipt['status'], 'process-completed')
+
     def test_empty_nonzero_and_invalid_utf8_never_publish(self):
         for mode in ('empty', 'nonzero', 'invalid-utf8'):
             with self.subTest(mode=mode):
@@ -247,6 +258,93 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertNotEqual(self.run_cli('normal', '--runtime-revision', 'not-a-revision').returncode, 0)
         self.assertFalse(self.output.exists())
+
+
+@unittest.skipUnless(sys.platform.startswith('linux'), 'Linux waitid ownership')
+class ProcessIdentityTests(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location('ovis_runner_ownership', SCRIPT)
+        self.runner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.runner)
+
+    def test_group_leader_is_not_reaped_before_last_group_signal(self):
+        child = subprocess.Popen([sys.executable, '-c', 'pass'], start_new_session=True)
+        original = self.runner.signal_group
+        signals = []
+        try:
+            deadline = time.monotonic() + 5
+            while os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
+                self.assertLess(time.monotonic(), deadline)
+                time.sleep(0.01)
+
+            def require_owned_leader(group, signum):
+                self.assertEqual(group, child.pid)
+                self.assertIsNone(child.returncode, 'Group leader was reaped before a group signal')
+                self.assertIsNotNone(os.waitid(os.P_PID, child.pid,
+                                              os.WEXITED | os.WNOHANG | os.WNOWAIT))
+                signals.append(signum)
+                return original(group, signum)
+
+            with patch.object(self.runner, 'signal_group', require_owned_leader):
+                self.assertTrue(self.runner.stop_group(child, 0.05))
+            self.assertEqual(signals, [signal.SIGTERM, signal.SIGKILL])
+            self.assertEqual(child.returncode, 0)
+        finally:
+            child.wait(timeout=5)
+
+    def test_inference_does_not_poll_reap_before_cleanup(self):
+        parent = self
+        children = []
+        base = subprocess.Popen
+
+        class OwnedChild(base):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                children.append(self)
+
+            def poll(self):
+                parent.fail('Inference must observe exit without poll() reaping its leader')
+
+        try:
+            with tempfile.TemporaryDirectory() as temporary, patch.object(self.runner.subprocess, 'Popen', OwnedChild):
+                receipt = self.runner.infer(
+                    [sys.executable, '-c', 'print("Original synthetic output")'],
+                    pathlib.Path(temporary),
+                    SimpleNamespace(threads=1, page_timeout_seconds=3, max_rss_mib=100,
+                                    kill_grace_seconds=0.05),
+                    time.monotonic() + 5, {}, {})
+                self.assertEqual(receipt['status'], 'process-completed')
+                self.assertTrue(receipt['childReaped'])
+                self.assertTrue(receipt['processGroupStopped'])
+        finally:
+            for child in children:
+                child.wait(timeout=5)
+
+    def test_lost_child_ownership_keeps_a_truthful_raw_receipt(self):
+        base = subprocess.Popen
+
+        class ExternallyReapedChild(base):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                os.waitpid(self.pid, 0)  # Popen has no exit status from this other reaper.
+
+        with tempfile.TemporaryDirectory() as temporary:
+            page = pathlib.Path(temporary)
+            with patch.object(self.runner.subprocess, 'Popen', ExternallyReapedChild), \
+                    patch.object(self.runner, 'signal_group') as group_signal:
+                with self.assertRaises(Exception):
+                    self.runner.infer(
+                        [sys.executable, '-c', 'print("Preserved synthetic raw")'], page,
+                        SimpleNamespace(threads=1, page_timeout_seconds=3, max_rss_mib=100,
+                                        kill_grace_seconds=0.05),
+                        time.monotonic() + 5, {}, {})
+                group_signal.assert_not_called()
+            receipt = json.loads((page / 'execution.json').read_text())
+            self.assertEqual(receipt['status'], 'ownership-lost')
+            self.assertIsNone(receipt['exitCode'])
+            self.assertFalse(receipt['processGroupStopped'])
+            self.assertEqual(receipt['rawSha256'], sha(page / 'raw.md'))
+            self.assertEqual((page / 'raw.md').read_text(), 'Preserved synthetic raw\n')
 
 
 if __name__ == '__main__':
