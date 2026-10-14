@@ -1,0 +1,186 @@
+{
+  "format": "readest-original-synthetic-native-benchmark/1",
+  "dateUtc": "2026-10-14",
+  "license": "AGPL-3.0-or-later",
+  "projectSourceCommit": "b202a5f28c606c8982cd4713ae1fcaeaff362448",
+  "environment": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "libc": [
+      "glibc",
+      "2.41"
+    ],
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "pythonVersion": "3.12.14",
+    "pymupdfVersion": "1.26.6",
+    "cpuThreadsRequested": 2,
+    "nativeSourceRevision": "5266f24da75dc449bd56cbed7addb9c8e4a6a73e",
+    "cloudSharedEnvironment": true,
+    "exclusiveHostGuaranteed": false
+  },
+  "inputArtifacts": {
+    "cli": {
+      "bytes": 84000,
+      "sha256": "755a8da90acfd0ce590af99ba89e6d341d5205215aa31d15cc5b901262c831a3"
+    },
+    "genericBackend": {
+      "bytes": 946784,
+      "sha256": "bf9d7b09a57e841ac97862bdad5920a0cbb7ba51343d4ebd8e2bca90ebf5aba5"
+    },
+    "avx2Backend": {
+      "bytes": 1201704,
+      "sha256": "2826d562a9e9bb51338a43104a952935dc802a5eb799f5e2cdf5d105cadd8d03"
+    },
+    "model": {
+      "bytes": 466222464,
+      "sha256": "7b63233151df58d5513f9010c7beba99349492a9395a21dd6b64d85fb19a9c20"
+    },
+    "projector": {
+      "bytes": 115923616,
+      "sha256": "af67e31a365f791b416878ea77cbb321c0af6d5c97da0eac4a14ac2dca0701f6"
+    },
+    "raster": {
+      "bytes": 21119,
+      "sha256": "d1b5b2a3acd233aa90f548c7041921bc72e0890305b99a7ff89f158140bb2600"
+    },
+    "prompt": {
+      "bytes": 50,
+      "sha256": "0bb9a6c660dd02a7baa85a22b2d484ef0e43d5bee69875f83922cd6ca16b1773"
+    }
+  },
+  "settings": {
+    "threads": 2,
+    "imageMaxTokens": 1024,
+    "contextSize": 2048,
+    "maxOutputTokens": 64,
+    "batchSize": 512,
+    "microBatchSize": 128,
+    "flashAttention": "on",
+    "perf": true,
+    "logVerbosity": 4,
+    "seed": 0,
+    "temperature": 0,
+    "cpuOnly": true
+  },
+  "supervision": {
+    "pageTimeoutSeconds": 180,
+    "wallDeadlineSeconds": 200,
+    "sampledRssLimitMiB": 1800,
+    "rssSampleSeconds": 0.025,
+    "killGraceSeconds": 1,
+    "rssIsHardKernelLimit": false,
+    "cliEnvironment": "run-ovis-pdf.py child_environment(2)",
+    "timingBoundary": "infer() entry through terminal child cleanup; excludes raster generation and parent input hashing"
+  },
+  "fixture": {
+    "pagePoints": [
+      300,
+      400
+    ],
+    "rasterDpi": 144,
+    "alpha": false,
+    "defaultFont": "helv",
+    "lines": [
+      [
+        24,
+        40,
+        "Readest OCR benchmark",
+        18
+      ],
+      [
+        24,
+        75,
+        "One small original synthetic page.",
+        11
+      ],
+      [
+        24,
+        95,
+        "Alpha beta gamma. 12345.",
+        11
+      ],
+      [
+        24,
+        115,
+        "The quick brown fox jumps.",
+        11
+      ]
+    ],
+    "prompt": "Extract all text from the image. Return text only."
+  },
+  "serialResults": [
+    {
+      "label": "avx2-control-before",
+      "processSeconds": 12.420774,
+      "nativeTimings": {
+        "imageEncodingSeconds": 4.299,
+        "imageEncodingBatches": 1,
+        "warnings": [],
+        "imagePrefillBatches": 1,
+        "imagePrefillSeconds": 5.228,
+        "loadSeconds": 10.43557,
+        "promptEvalSeconds": 9.785129999999999,
+        "evalSeconds": 1.10022
+      },
+      "rawBytes": 137,
+      "rawSha256": "334289b1efa26b2d4f7ac5b0a5057b95276879c02ebb2a0cc493c93e98ee1207",
+      "peakSampledGroupRssBytes": 911159296,
+      "exitCode": 0,
+      "childReaped": true,
+      "processGroupStopped": true
+    },
+    {
+      "label": "generic-control",
+      "processSeconds": 139.595207,
+      "nativeTimings": {
+        "imageEncodingSeconds": 32.908,
+        "imageEncodingBatches": 1,
+        "warnings": [],
+        "imagePrefillBatches": 1,
+        "imagePrefillSeconds": 91.353,
+        "loadSeconds": 128.53795,
+        "promptEvalSeconds": 128.02147,
+        "evalSeconds": 10.18309
+      },
+      "rawBytes": 137,
+      "rawSha256": "334289b1efa26b2d4f7ac5b0a5057b95276879c02ebb2a0cc493c93e98ee1207",
+      "peakSampledGroupRssBytes": 798035968,
+      "exitCode": 0,
+      "childReaped": true,
+      "processGroupStopped": true
+    },
+    {
+      "label": "avx2-control-after",
+      "processSeconds": 12.482859,
+      "nativeTimings": {
+        "imageEncodingSeconds": 4.174,
+        "imageEncodingBatches": 1,
+        "warnings": [],
+        "imagePrefillBatches": 1,
+        "imagePrefillSeconds": 5.814,
+        "loadSeconds": 10.73931,
+        "promptEvalSeconds": 10.24476,
+        "evalSeconds": 0.98802
+      },
+      "rawBytes": 137,
+      "rawSha256": "334289b1efa26b2d4f7ac5b0a5057b95276879c02ebb2a0cc493c93e98ee1207",
+      "peakSampledGroupRssBytes": 911355904,
+      "exitCode": 0,
+      "childReaped": true,
+      "processGroupStopped": true
+    }
+  ],
+  "genericDividedByAvx2Mean": 11.210830724978962,
+  "limitations": [
+    "One original tiny synthetic page with short output; do not extrapolate to full PDFs.",
+    "Two threads, visual cap 1024, context 2048, output cap 64; differs from user full-document settings.",
+    "Other exploratory runs are retained; overlapping trials are excluded from this serial control.",
+    "Shared cloud host; exclusive machine resources and cold-cache conditions were not guaranteed.",
+    "Native load/prompt counters overlap other work and must not be added to stage timings.",
+    "Declared backend file hashes do not themselves prove loaded-library identity."
+  ],
+  "targetMachineMeasured": false,
+  "fullDocumentMeasured": false,
+  "ocrCompletenessAuthenticated": false,
+  "defaultsChanged": false
+}
