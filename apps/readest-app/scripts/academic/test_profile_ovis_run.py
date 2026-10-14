@@ -271,6 +271,33 @@ class ProfileTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertEqual(output.read_text(), 'keep me')
 
+    def test_native_image_prefill_batches_are_separate_from_encoding(self):
+        timing = profile.parse_timings(
+            '0.01.000.000 I mtmd batch encoding done in 1000 ms\n'
+            '0.01.400.000 I image decoded (batch 1/2) in 400 ms\n'
+            '0.02.000.000 I image decoded (batch 2/2) in 600 ms\n')
+        self.assertEqual(timing['imageEncodingSeconds'], 1)
+        self.assertEqual(timing['imagePrefillSeconds'], 1)
+        self.assertEqual(timing['imagePrefillBatches'], 2)
+
+    def test_image_prefill_is_unknown_when_logging_omits_it(self):
+        timing = profile.parse_timings('mtmd batch encoding done in 1000 ms\n')
+        self.assertIsNone(timing['imagePrefillSeconds'])
+        self.assertEqual(timing['imagePrefillBatches'], 0)
+
+    def test_incomplete_image_prefill_log_is_not_a_full_phase(self):
+        timing = profile.parse_timings('image decoded (batch 1/2) in 1000 ms\n')
+        self.assertIsNone(timing['imagePrefillSeconds'])
+        self.assertIn('incomplete-image-prefill-batches', timing['warnings'])
+
+    def test_multiple_images_have_separate_prefill_batch_sequences(self):
+        timing = profile.parse_timings(
+            'image decoded (batch 1/1) in 100 ms\n'
+            'image decoded (batch 1/2) in 200 ms\n'
+            'image decoded (batch 2/2) in 300 ms\n')
+        self.assertAlmostEqual(timing['imagePrefillSeconds'], .6)
+        self.assertEqual(timing['imagePrefillBatches'], 3)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -161,6 +161,24 @@ def parse_timings(stderr):
         r'mtmd batch encoding done in ' + NUMBER + r' ms\b', stderr)]
     result = {'imageEncodingSeconds': round(sum(images), 6) if images else None,
               'imageEncodingBatches': len(images), 'warnings': []}
+    # These helper logs bracket image embeddings being evaluated by the language
+    # model, rather than the separate vision encoder. Require complete batches
+    # for each image; a partial sequence must not masquerade as a full phase.
+    prefill = re.findall(r'image decoded \(batch ([0-9]+)/([0-9]+)\) in ' + NUMBER + r' ms\b', stderr)
+    expected, total, valid = 1, None, True
+    for index, count, _ in prefill:
+        index, count = int(index), int(count)
+        if expected == 1:
+            total = count
+        if count < 1 or count != total or index != expected or index > count:
+            valid = False
+        expected = 1 if index == count else index + 1
+    valid = valid and expected == 1
+    result['imagePrefillBatches'] = len(prefill)
+    result['imagePrefillSeconds'] = (round(sum(float(ms) / 1000 for _, _, ms in prefill), 6)
+                                     if prefill and valid else None)
+    if prefill and not valid:
+        result['warnings'].append('incomplete-image-prefill-batches')
     for label, key in [('load', 'loadSeconds'), ('prompt eval', 'promptEvalSeconds'), ('eval', 'evalSeconds')]:
         values = re.findall(r'llama_perf_context_print:\s+' + label + r' time\s*=\s*' + NUMBER + r' ms\b', stderr)
         result[key] = float(values[0]) / 1000 if len(values) == 1 else None
@@ -246,6 +264,9 @@ def profile_run(path, prefix=None):
             raise ValueError('Page process durations exceed sequential run duration')
         image_times = [page['nativeTimings']['imageEncodingSeconds'] for page in pages]
         image_total = sum(image_times) if image_times and all(t is not None for t in image_times) else None
+        prefill_times = [page['nativeTimings']['imagePrefillSeconds'] for page in pages]
+        prefill_total = (sum(prefill_times) if prefill_times and all(t is not None for t in prefill_times)
+                         else None)
         return {'format': 'readest-ovis-performance-profile', 'version': 1,
                 'status': receipt['status'], 'complete': complete,
                 'source': {'pdfSha256': receipt['source']['pdfSha256'], 'pageCount': count},
@@ -256,7 +277,9 @@ def profile_run(path, prefix=None):
                 'timing': {'runWallSeconds': wall, 'pageProcessSeconds': round(process_time, 6),
                            'outsidePageProcessesSeconds': round(wall - process_time, 6) if complete else None,
                            'imageEncodingSeconds': round(image_total, 6) if image_total is not None else None,
-                           'imageEncodingPageCount': sum(t is not None for t in image_times)},
+                           'imageEncodingPageCount': sum(t is not None for t in image_times),
+                           'imagePrefillSeconds': round(prefill_total, 6) if prefill_total is not None else None,
+                           'imagePrefillPageCount': sum(t is not None for t in prefill_times)},
                 'pages': pages,
                 'verification': {'selectedArtifactHashesChecked': True, 'sourceAuthenticated': False,
                                  'nativeTimingsAuthenticated': False, 'ocrAccuracyChecked': False,

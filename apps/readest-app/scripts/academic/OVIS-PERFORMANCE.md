@@ -32,6 +32,10 @@ input documents or result archives to the public repository.
   native startup, model loading, image encoding, prefill, generation and shutdown.
 - Image encoding is summed from the native `mtmd batch encoding done in ... ms`
   lines when present. It is unknown, not zero, when the logs omit those lines.
+- Image prefill is summed from `image decoded (batch N/M) in ... ms` when all
+  per-image batch sequences are complete. These intervals cover image embeddings
+  being evaluated by the language model, separately from vision encoding. Partial
+  or missing batch sequences remain unknown.
 - Native load, prompt-evaluation and evaluation counters are shown separately
   when an unambiguous `llama_perf_context_print` summary is present. These are
   native counters, not authenticated token counts or proof of generation ending.
@@ -53,6 +57,28 @@ cleanup and exit status must agree. This checks consistency, not provenance or
 all exported assets. SHA-256 is not a signature. Symlinks, ZIP traversal paths,
 duplicate ZIP members and oversized artifacts are rejected. Reads are bounded
 at 8 MiB per JSON receipt, 64 MiB per other artifact and 100,000 ZIP entries.
+
+## Native timing visibility and overlap
+
+At the pinned llama.cpp revision
+[`5266f24`](https://github.com/ggml-org/llama.cpp/tree/5266f24da75dc449bd56cbed7addb9c8e4a6a73e),
+`common/log.cpp` maps libllama INFO messages to trace verbosity level 4, while
+the CLI defaults to level 3. This is why an ordinary run can contain vision
+encoding durations but omit its native performance summary and image-prefill
+helper timings. For a separately prepared diagnostic invocation of the trusted
+native CLI, explicitly use `--perf -lv 4`. These are native CLI flags, not offline
+launcher options; do not insert unlisted files into or silently alter a frozen
+package. Additional logs may include local paths and model metadata, so retain
+them privately. Logging itself can affect timing; use identical logging settings
+for both sides of an experiment.
+
+The native counters are not independent stopwatch phases. In this revision,
+`llama_context::synchronize()` updates the reported load duration through the
+first completed evaluation; it does not measure only model-file loading. Deferred
+synchronization can also include intervening work in prompt-evaluation timing.
+Use the helper's explicitly bracketed encoding and image-prefill intervals to
+locate that work, and do not add native load, prompt-eval, encoding and prefill
+counters together. Neither helper logs nor counters authenticate EOS or accuracy.
 
 ## Conservative A/B comparison
 
