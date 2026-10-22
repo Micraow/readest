@@ -19,8 +19,7 @@ const storeFixture = () => {
       files.delete(name);
     },
   };
-  const secure = { available: async () => false, get: vi.fn(), set: vi.fn(), remove: vi.fn() };
-  return { storage, secure, files };
+  return { storage, files };
 };
 
 describe('Zotero runtime boundary', () => {
@@ -51,30 +50,33 @@ describe('Zotero runtime boundary', () => {
     expect(service.writeFile).toHaveBeenCalledTimes(1);
   });
 
-  it('notifies settings listeners and restores offline provider without a session key after restart', async () => {
-    const { storage, secure, files } = storeFixture();
+  it('notifies settings listeners and restores the offline provider after restart', async () => {
+    const { storage, files } = storeFixture();
     const fetcher = vi.fn().mockResolvedValue(new Response('[]'));
-    const runtime = new ZoteroRuntime(storage, secure, fetcher);
+    const runtime = new ZoteroRuntime(storage, fetcher);
     const listener = vi.fn();
     const unsubscribe = runtime.subscribe(listener);
     await runtime.connect({ userId: '12345', apiKey: 'test-secret' });
     expect(listener).toHaveBeenCalledTimes(1);
     expect((await runtime.load()).account.connected).toBe(true);
-    const offline = await new ZoteroRuntime(storage, secure, vi.fn()).load();
+    // The API key is stored locally (like OPDS/ABS credentials) but only under
+    // the Zotero Data subtree, never in settings or an ordinary book.
+    const offline = await new ZoteroRuntime(storage, vi.fn()).load();
     expect(offline.provider?.userId).toBe('12345');
-    expect(offline.account.connected).toBe(false);
-    expect(
-      [...files.values()].map((value) => new TextDecoder().decode(value)).join(''),
-    ).not.toContain('test-secret');
+    expect(offline.account.connected).toBe(true);
+    expect([...files.keys()]).toEqual(['external-library/zotero/account.json']);
     unsubscribe();
     await runtime.disconnect();
     expect(listener).toHaveBeenCalledTimes(1);
+    const afterDisconnect = await new ZoteroRuntime(storage, vi.fn()).load();
+    expect(afterDisconnect.account.userId).toBe('12345');
+    expect(afterDisconnect.account.connected).toBe(false);
   });
 
   it('does not replace a working account if validation is denied or cancelled', async () => {
-    const { storage, secure } = storeFixture();
+    const { storage } = storeFixture();
     const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response('[]')));
-    const runtime = new ZoteroRuntime(storage, secure, fetcher);
+    const runtime = new ZoteroRuntime(storage, fetcher);
     await runtime.connect({ userId: '12345', apiKey: 'working-secret' });
     fetcher.mockResolvedValueOnce(new Response('Unauthorized', { status: 403 }));
     await expect(runtime.connect({ userId: '67890', apiKey: 'bad-secret' })).rejects.toMatchObject({
@@ -106,9 +108,9 @@ describe('Zotero runtime boundary', () => {
 });
 
 it('serializes an asynchronous load with account replacement without a wrong-user API', async () => {
-  const { storage, secure } = storeFixture();
+  const { storage } = storeFixture();
   const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response('[]')));
-  const runtime = new ZoteroRuntime(storage, secure, fetcher);
+  const runtime = new ZoteroRuntime(storage, fetcher);
   await runtime.connect({ userId: '12345', apiKey: 'first-secret' });
   const read = storage.read;
   let count = 0;
@@ -134,8 +136,8 @@ it('serializes an asynchronous load with account replacement without a wrong-use
 });
 
 it('does not connect or notify when cancelled during account persistence', async () => {
-  const { storage, secure, files } = storeFixture();
-  const runtime = new ZoteroRuntime(storage, secure, async () => new Response('[]'));
+  const { storage, files } = storeFixture();
+  const runtime = new ZoteroRuntime(storage, async () => new Response('[]'));
   const listener = vi.fn();
   runtime.subscribe(listener);
   let release: (() => void) | undefined;

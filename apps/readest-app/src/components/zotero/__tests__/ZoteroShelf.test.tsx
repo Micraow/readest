@@ -173,12 +173,12 @@ describe('Zotero shelf', () => {
 });
 
 describe('Zotero settings', () => {
-  it('discloses session-only storage, uses a password field, and clears it after saving', async () => {
-    mocks.connect.mockResolvedValue({ userId: '12345', mode: 'session', connected: true });
+  it('stores the key locally, uses a password field, and clears it after saving', async () => {
+    mocks.connect.mockResolvedValue({ userId: '12345', connected: true });
     render(<ZoteroSettings />);
     const input = (await screen.findByLabelText('API key')) as HTMLInputElement;
     expect(input.type).toBe('password');
-    await screen.findByText(/API key is kept only for this session/);
+    await screen.findByText(/never synced to Readest Cloud/);
     fireEvent.change(input, { target: { value: 'private-key' } });
     fireEvent.click(screen.getByRole('button', { name: 'Test and save' }));
     await waitFor(() =>

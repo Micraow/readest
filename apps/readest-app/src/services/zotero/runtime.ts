@@ -10,7 +10,7 @@ import {
   type ZoteroFetch,
 } from './api';
 import { ZoteroCache, ZOTERO_ROOT } from './cache';
-import { ZoteroCredentialsStore, type ZoteroAccount, type ZoteroSecureStore } from './credentials';
+import { ZoteroCredentialsStore, type ZoteroAccount } from './credentials';
 import { ZoteroProvider } from './provider';
 import { createNativeZoteroFetch } from './transport';
 
@@ -64,27 +64,6 @@ export function createZoteroStorage(
   };
 }
 
-const nativeSecureStore: ZoteroSecureStore = {
-  async available() {
-    if (!isTauriAppPlatform()) return false;
-    const bridge = await import('@/utils/bridge');
-    return (await bridge.isSyncKeychainAvailable()).available;
-  },
-  async get(key) {
-    const result = await (await import('@/utils/bridge')).getSecureItem({ key });
-    if (result.error) throw new Error('Keychain unavailable');
-    return result.value ?? null;
-  },
-  async set(key, value) {
-    const result = await (await import('@/utils/bridge')).setSecureItem({ key, value });
-    if (!result.success) throw new Error('Keychain unavailable');
-  },
-  async remove(key) {
-    const result = await (await import('@/utils/bridge')).clearSecureItem({ key });
-    if (!result.success) throw new Error('Keychain unavailable');
-  },
-};
-
 const runtimeFetch: ZoteroFetch = async (url, options) => {
   if (!isTauriAppPlatform()) return fetch(url, options);
   const { fetch: nativeFetch } = await import('@tauri-apps/plugin-http');
@@ -101,10 +80,9 @@ export class ZoteroRuntime {
 
   constructor(
     private readonly storage: ExternalLibraryStorage,
-    secure: ZoteroSecureStore,
     private readonly fetcher: ZoteroFetch,
   ) {
-    this.credentials = new ZoteroCredentialsStore(storage, secure);
+    this.credentials = new ZoteroCredentialsStore(storage);
   }
 
   subscribe(listener: () => void): () => void {
@@ -171,7 +149,7 @@ const runtimes = new WeakMap<AppService, ZoteroRuntime>();
 export function getZoteroRuntime(service: AppService): ZoteroRuntime {
   let runtime = runtimes.get(service);
   if (!runtime) {
-    runtime = new ZoteroRuntime(createZoteroStorage(service), nativeSecureStore, runtimeFetch);
+    runtime = new ZoteroRuntime(createZoteroStorage(service), runtimeFetch);
     runtimes.set(service, runtime);
   }
   return runtime;

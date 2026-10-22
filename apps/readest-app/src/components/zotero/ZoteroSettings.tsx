@@ -62,11 +62,7 @@ export default function ZoteroSettings({ onSaved }: ZoteroSettingsProps) {
       if (controller.signal.aborted) return;
       setAccount(saved);
       setApiKey('');
-      setMessage(
-        saved.mode === 'secure'
-          ? _('Connected. Your API key is stored in the system keychain')
-          : _('Connected. Your API key is kept only for this session'),
-      );
+      setMessage(_('Connected. Your API key is saved on this device for Zotero'));
       onSaved?.();
     } catch (error) {
       if (!isCancelled(error) && active.current === controller) setError(zoteroErrorMessage(error));
@@ -157,13 +153,7 @@ export default function ZoteroSettings({ onSaved }: ZoteroSettingsProps) {
           </a>
         </p>
         <p className='text-base-content/70 text-sm leading-relaxed'>
-          {account?.mode === 'secure'
-            ? _(
-                'Your API key will be saved in the system keychain and excluded from Readest cloud sync',
-              )
-            : _(
-                'Your API key is kept only for this session. Enter it again after restarting; saved PDFs still work offline.',
-              )}
+          {_('Your API key is saved on this device and never synced to Readest Cloud')}
         </p>
         <div className='flex flex-wrap gap-2'>
           <button
