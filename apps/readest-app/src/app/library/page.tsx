@@ -1923,6 +1923,7 @@ const LibraryPageContent = ({ searchParams }: { searchParams: ReadonlyURLSearchP
           }
           onOpenCatalogManager={handleShowOPDSDialog}
           onOpenFeeds={handleShowFeeds}
+          onOpenZotero={() => router.push('/zotero')}
           onToggleSelectMode={() => handleSetSelectMode(!isSelectMode)}
           onSelectAll={handleSelectAll}
           onDeselectAll={handleDeselectAll}
@@ -2086,6 +2087,10 @@ const LibraryPageContent = ({ searchParams }: { searchParams: ReadonlyURLSearchP
           }
           onOpenCatalogManager={handleShowOPDSDialog}
           onOpenFeeds={handleShowFeeds}
+          onOpenZotero={() => {
+            setImportMenuAnchor(null);
+            router.push('/zotero');
+          }}
         />
       )}
       <NowPlayingBar isSelectMode={isSelectMode} />
